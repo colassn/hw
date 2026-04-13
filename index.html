@@ -28,12 +28,8 @@
         }
     </script>
 
-    <!-- FontAwesome -->
+    <!-- FontAwesome & Google Fonts -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
-    <!-- GSAP -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
-
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@500;600;700;800&family=JetBrains+Mono:wght@400;700&display=swap');
         
@@ -92,34 +88,7 @@
 
         .overdue-pulse { animation: pulseRed 2s infinite; border-color: rgba(239, 68, 68, 0.5); }
         @keyframes pulseRed { 0% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.4); } 70% { box-shadow: 0 0 0 10px rgba(239, 68, 68, 0); } 100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); } }
-
     </style>
-
-    <!-- 企業級全域錯誤偵測器 -->
-    <script>
-        window.moduleExecuted = false; // 追蹤核心是否成功啟動
-        
-        // 如果 4 秒後核心還是沒反應，攔截畫面並顯示真正死機的原因
-        setTimeout(() => {
-            if (!window.moduleExecuted) {
-                const loader = document.getElementById('system-loader');
-                if(loader) {
-                    let errorHtml = `
-                        <div class="text-center p-6 bg-red-900/50 rounded-2xl border border-red-500 max-w-sm mx-auto shadow-2xl backdrop-blur-md">
-                            <i class="fa-solid fa-triangle-exclamation text-4xl text-red-500 mb-4 animate-bounce"></i>
-                            <h2 class="text-xl font-bold text-white mb-2">無法執行核心程式</h2>
-                            <p class="text-gray-300 text-sm mb-4">瀏覽器攔截了系統的啟動。這通常是因為：</p>
-                            <ul class="text-xs text-red-200 text-left list-disc pl-5 space-y-2 font-mono">
-                                <li>您直接「雙擊」打開了檔案 (file://)。請使用 VScode 的 <b>Live Server</b> 或上傳至網頁伺服器開啟。</li>
-                                <li>您的「擋廣告外掛」阻擋了 Google Firebase 的連線。</li>
-                            </ul>
-                        </div>
-                    `;
-                    loader.innerHTML = errorHtml;
-                }
-            }
-        }, 4000);
-    </script>
 </head>
 <body class="flex flex-col h-screen w-full relative">
 
@@ -137,7 +106,7 @@
         </div>
     </div>
 
-    <!-- 1. 登入頁面 (Auth Landing) -->
+    <!-- 1. 登入頁面 -->
     <section id="view-auth" class="fixed inset-0 z-[100] flex flex-col items-center justify-center px-6 hidden bg-[#030305]/60 backdrop-blur-md">
         <div class="w-full max-w-sm glass-card p-8 text-center relative overflow-hidden shadow-2xl">
             <div class="absolute -top-20 -right-20 w-40 h-40 bg-brand-500/20 blur-3xl rounded-full"></div>
@@ -235,7 +204,7 @@
             </div>
         </header>
 
-        <main class="flex-1 overflow-y-auto pb-32 px-4 md:px-0 md:max-w-2xl md:mx-auto w-full relative z-10 no-scrollbar">
+        <main id="main-scroll-area" class="flex-1 overflow-y-auto pb-32 px-4 md:px-0 md:max-w-2xl md:mx-auto w-full relative z-10 no-scrollbar">
             
             <section id="view-home" class="view-section active w-full">
                 <div class="flex justify-between items-end mb-4 px-2">
@@ -428,7 +397,6 @@
     </div>
     <div id="toast-root" class="fixed top-16 left-0 right-0 z-[500] flex flex-col items-center gap-3 pointer-events-none px-4"></div>
 
-    <!-- JavaScript 企業級核心邏輯 -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
         import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, signInWithPopup, GoogleAuthProvider, onAuthStateChanged, signOut, setPersistence, browserLocalPersistence } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
@@ -449,20 +417,13 @@
 
         try {
             firebaseApp = initializeApp(firebaseConfig);
-            
-            // 動態載入 Analytics 避免被擋廣告外掛整死
-            import("https://www.gstatic.com/firebasejs/11.6.1/firebase-analytics.js").then((module) => {
-                module.getAnalytics(firebaseApp);
-            }).catch(() => console.warn('Analytics blocked by browser'));
-
+            import("https://www.gstatic.com/firebasejs/11.6.1/firebase-analytics.js").then((module) => { module.getAnalytics(firebaseApp); }).catch(() => {});
             auth = getAuth(firebaseApp);
             db = getFirestore(firebaseApp);
             googleProvider = new GoogleAuthProvider();
-
             setPersistence(auth, browserLocalPersistence).catch(console.error);
         } catch (error) {
             console.error("Firebase 初始化失敗:", error);
-            alert("系統啟動失敗：請確認網路連線或關閉擋廣告外掛。");
         }
 
         const state = {
@@ -504,12 +465,6 @@
             }
         };
 
-        document.getElementById('global-overlay').addEventListener('click', () => {
-            if(!document.getElementById('center-modal').classList.contains('hidden')) UI.modal.close();
-            if(!document.getElementById('bottom-sheet').classList.contains('hidden')) UI.sheet.close();
-            if(!document.getElementById('notif-panel').classList.contains('hidden')) app.notifications.toggle();
-        });
-
         const AdminService = {
             log: async (action, meta = {}) => {
                 if(!state.user) return;
@@ -548,9 +503,7 @@
                     const authView = document.getElementById('view-auth');
                     if (typeof gsap !== 'undefined') {
                         gsap.to(loader, { opacity: 0, duration: 0.5, onComplete: () => { loader.style.display = 'none'; authView.classList.remove('hidden'); }});
-                    } else {
-                        loader.style.display = 'none'; authView.classList.remove('hidden');
-                    }
+                    } else { loader.style.display = 'none'; authView.classList.remove('hidden'); }
 
                     onAuthStateChanged(auth, async (user) => {
                         if (user) {
@@ -565,9 +518,7 @@
                             if (typeof gsap !== 'undefined') gsap.to(authView, { opacity: 1, duration: 0.4 });
                         }
                     });
-                } catch(e) {
-                    console.error(e);
-                }
+                } catch(e) {}
             },
             startSystem: async () => {
                 try {
@@ -576,22 +527,18 @@
                     else await setDoc(doc(db, API.paths.userProfile(), 'main'), { role: 'student', isBanned: false, createdAt: new Date().toISOString() });
                     if (state.profile.isBanned) return AdminService.triggerBlocker('帳號已封鎖', '您的帳號已被超級管理員列入黑名單。', true);
                 } catch (e) {
-                    console.warn("DB Rules Blocked:", e);
-                    UI.notify('權限不足：進入唯讀模式', 'error');
+                    console.warn("DB Rules:", e); UI.notify('權限不足：進入唯讀模式', 'error');
                 }
 
                 const d = new Date(); const days = ['星期日','星期一','星期二','星期三','星期四','星期五','星期六'];
                 document.getElementById('header-date').textContent = `${d.getMonth()+1}月${d.getDate()}日, ${days[d.getDay()]}`;
                 
-                if (state.user.photoURL) {
-                    document.getElementById('header-avatar').src = state.user.photoURL; document.getElementById('header-avatar').classList.remove('hidden'); document.getElementById('header-avatar-fallback').classList.add('hidden');
-                }
-                if(state.profile.role === 'provider') {
-                    document.getElementById('provider-target-section').classList.remove('hidden'); document.getElementById('provider-create-group').classList.remove('hidden');
-                }
+                if (state.user.photoURL) { document.getElementById('header-avatar').src = state.user.photoURL; document.getElementById('header-avatar').classList.remove('hidden'); document.getElementById('header-avatar-fallback').classList.add('hidden'); }
+                if(state.profile.role === 'provider') { document.getElementById('provider-target-section').classList.remove('hidden'); document.getElementById('provider-create-group').classList.remove('hidden'); }
 
                 state.timetableConfig = JSON.parse(localStorage.getItem(`lumina_tt_${state.user.uid}`) || '{}');
 
+                if(state.classTimerInterval) clearInterval(state.classTimerInterval); // 清除舊計時器防記憶體洩漏
                 app.setupListeners(); app.renders.subjectsPills(); app.timetable.initTracker(); app.timetable.renderDaySelector();
                 if(state.currentDayTab === 0 || state.currentDayTab === 6) { state.currentDayTab = 1; app.timetable.renderDaySelector(); }
             },
@@ -619,7 +566,7 @@
             },
             updateWidgets: () => {
                 const today = new Date().toISOString().split('T')[0]; let t=0, f=0, e=0;
-                state.tasks.forEach(task => { if(task.status === 'completed') return; if(task.type === 'exam') e++; else { if(task.dueDate <= today) t++; else f++; } });
+                state.tasks.forEach(task => { if(task.status === 'completed') return; if(task.type === 'exam') e++; else { if(task.dueDate && task.dueDate <= today) t++; else f++; } });
                 document.getElementById('widget-today-count').textContent = t; document.getElementById('widget-future-count').textContent = f; document.getElementById('widget-exam-count').textContent = e;
                 app.tasks.checkStress();
             },
@@ -632,8 +579,8 @@
                 switch: (vid) => { if (vid === state.currentView) return; document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active')); document.getElementById(`nav-${vid}`).classList.add('active'); const i = document.getElementById('add-icon'); if(vid === 'add') { i.classList.replace('fa-plus', 'fa-xmark'); i.style.transform = 'rotate(45deg)'; app.tasks.prepareForm(); } else { i.classList.replace('fa-xmark', 'fa-plus'); i.style.transform = 'rotate(0deg)'; } document.querySelectorAll('.view-section').forEach(v => v.classList.remove('active')); const t = document.getElementById(`view-${vid}`); t.classList.add('active'); gsap.fromTo(t, { opacity: 0, y: 15 }, { opacity: 1, y: 0, duration: 0.3, ease: "power2.out" }); state.currentView = vid; }
             },
             tasks: {
-                prepareForm: () => { document.getElementById('form-task-id').value = ''; document.getElementById('form-title').value = ''; document.getElementById('form-content').value = ''; document.getElementById('form-date').value = API.getWorkingDay(); app.tasks.setFormType('task'); app.tasks.checkStress(); },
-                setFormType: (type) => { document.getElementById('form-type').value = type; const bt = document.getElementById('type-btn-task'), be = document.getElementById('type-btn-exam'); if(type === 'task') { bt.className = 'flex-1 py-2.5 text-sm font-bold rounded-lg bg-white/15 text-white shadow-sm transition-all'; be.className = 'flex-1 py-2.5 text-sm font-semibold rounded-lg text-gray-500 hover:text-white transition-all'; document.getElementById('form-header-title').textContent = '新增功課'; } else { be.className = 'flex-1 py-2.5 text-sm font-bold rounded-lg bg-pink-500/20 text-pink-400 shadow-sm transition-all'; bt.className = 'flex-1 py-2.5 text-sm font-semibold rounded-lg text-gray-500 hover:text-white transition-all'; document.getElementById('form-header-title').textContent = '新增考試/測驗'; } },
+                prepareForm: () => { document.getElementById('form-task-id').value = ''; document.getElementById('form-title').value = ''; document.getElementById('form-content').value = ''; document.getElementById('form-date').value = API.getWorkingDay(); app.tasks.setFormType('task'); app.tasks.checkStress(); document.getElementById('form-header-title').textContent = '新增任務'; },
+                setFormType: (type) => { document.getElementById('form-type').value = type; const bt = document.getElementById('type-btn-task'), be = document.getElementById('type-btn-exam'); if(type === 'task') { bt.className = 'flex-1 py-2.5 text-sm font-bold rounded-lg bg-white/15 text-white shadow-sm transition-all'; be.className = 'flex-1 py-2.5 text-sm font-semibold rounded-lg text-gray-500 hover:text-white transition-all'; } else { be.className = 'flex-1 py-2.5 text-sm font-bold rounded-lg bg-pink-500/20 text-pink-400 shadow-sm transition-all'; bt.className = 'flex-1 py-2.5 text-sm font-semibold rounded-lg text-gray-500 hover:text-white transition-all'; } },
                 checkStress: () => { const di = document.getElementById('form-date'); if(!di) return; const check = () => { const c = state.tasks.filter(t => t.dueDate === di.value && t.status !== 'completed').length; const w = document.getElementById('form-warning-msg'); if(c >= 5) { document.getElementById('form-warning-count').textContent = c; w.classList.remove('hidden'); } else { w.classList.add('hidden'); } }; di.addEventListener('change', check); check(); },
                 save: async () => {
                     const id = document.getElementById('form-task-id').value, title = document.getElementById('form-title').value.trim(), content = document.getElementById('form-content').value.trim(), subject = document.getElementById('form-subject-value').value, dueDate = document.getElementById('form-date').value, target = document.getElementById('form-target')?.value, type = document.getElementById('form-type').value;
@@ -645,6 +592,19 @@
                         try { const newId = id || API.genId(); await setDoc(doc(db, API.paths.tasks(), newId), { ...data, id: newId, status: id ? undefined : 'pending', updatedAt: new Date().toISOString() }, { merge: true }); AdminService.log('TASK_SAVED', { taskId: newId }); UI.notify('儲存成功'); } catch(e) { UI.notify('儲存失敗', 'error'); }
                     }
                     app.nav.switch('home');
+                },
+                edit: (id) => {
+                    const task = state.tasks.find(x => x.id === id); if(!task) return;
+                    app.nav.switch('add');
+                    document.getElementById('form-task-id').value = task.id;
+                    document.getElementById('form-title').value = task.title;
+                    document.getElementById('form-content').value = task.content || '';
+                    document.getElementById('form-date').value = task.dueDate || '';
+                    document.getElementById('form-subject-value').value = task.subject || state.subjects[0];
+                    app.tasks.setFormType(task.type || 'task');
+                    document.getElementById('form-header-title').textContent = '編輯任務';
+                    app.renders.subjectsPills();
+                    document.getElementById('main-scroll-area').scrollTo({top: 0, behavior: 'smooth'});
                 },
                 markComplete: (id, el) => { gsap.to(el, { scale: 0.9, opacity: 0, x: '50%', duration: 0.4, ease: "power2.in", onComplete: async () => { await updateDoc(doc(db, API.paths.tasks(), id), { status: 'completed', completedAt: new Date().toISOString() }); AdminService.log('TASK_COMPLETED', { taskId: id }); }}); },
                 confirmDelete: (id) => { UI.modal.open(`<div class="text-center"><div class="w-16 h-16 bg-red-500/10 rounded-full flex items-center justify-center mx-auto mb-4"><i class="fa-solid fa-trash-can text-red-500 text-3xl"></i></div><h3 class="text-xl font-bold text-white mb-2 tracking-tight">刪除任務？</h3><p class="text-gray-400 text-sm mb-6">此動作無法復原</p><div class="flex gap-3"><button onclick="app.UI.modal.close()" class="flex-1 glass-card py-3.5 font-bold text-white active:scale-95 transition">取消</button><button onclick="app.tasks.doDelete('${id}')" class="flex-1 bg-red-600 hover:bg-red-500 rounded-xl py-3.5 font-bold text-white shadow-lg active:scale-95 transition">確認刪除</button></div></div>`); },
@@ -659,7 +619,7 @@
                         if(slots.length === 0) { tt.textContent = '今日無行程'; tm.textContent = '--:--:--'; return; }
                         let c = null, n = null, nt = now.getHours() * 60 + now.getMinutes() + now.getSeconds()/60;
                         for(let i=0; i<slots.length; i++) { const [sH,sM]=slots[i].start.split(':').map(Number), [eH,eM]=slots[i].end.split(':').map(Number); const s=sH*60+sM, e=eH*60+eM; if(nt>=s && nt<e) { c=slots[i]; c.em=e; } else if(nt<s && !n) { n=slots[i]; n.sm=s; } }
-                        if (c) { tt.textContent = c.subject || c.label; const d = c.em - nt, m = Math.floor(d), s = Math.floor((d-m)*60); tm.textContent = `剩餘 ${m.toString().padStart(2,'0')}:${s.toString().padStart(2,'0')}`; tm.className = `text-[11px] font-mono mt-1 font-bold ${m<5?'text-red-400 animate-pulse':'text-emerald-400'}`; }
+                        if (c) { tt.textContent = c.subject || c.label; const d = c.em - nt, m = Math.floor(d), sec = Math.floor((d-m)*60); tm.textContent = `剩餘 ${m.toString().padStart(2,'0')}:${sec.toString().padStart(2,'0')}`; tm.className = `text-[11px] font-mono mt-1 font-bold ${m<5?'text-red-400 animate-pulse':'text-emerald-400'}`; }
                         else if (n) { tt.textContent = `即將: ${n.subject || n.label}`; tm.textContent = `${n.start} 開始`; tm.className = 'text-[11px] text-gray-400 font-mono mt-1 font-semibold'; }
                         else { tt.textContent = '課堂已結束'; tm.textContent = 'Enjoy!'; tm.className = 'text-[11px] text-brand-400 font-mono mt-1 font-semibold'; }
                     }, 1000);
@@ -696,7 +656,7 @@
                         const c = document.createElement('div'); c.className = `glass-card p-4.5 relative overflow-hidden flex flex-col gap-3 shadow-lg ${done?'opacity-50':''} ${over?'overdue-pulse':''}`; c.id = `task-${t.id}`;
                         const bColor = exam ? 'bg-pink-500/20 text-pink-400 border-pink-500/30' : 'bg-brand-500/20 text-brand-300 border-brand-500/30';
                         const bText = exam ? `🚨 考試: ${t.subject}` : `📝 ${t.subject}`, dStr = t.dueDate ? t.dueDate.replace(/-/g, '/') : '無期限', cHtml = (t.content || '').replace(/\n/g, '<br>');
-                        c.innerHTML = `<div class="flex justify-between items-start"><div class="${bColor} border text-[10px] font-bold px-2.5 py-1 rounded-full">${bText}</div>${!done?`<button class="w-8 h-8 rounded-full bg-red-500/10 text-red-400 active:scale-95" onclick="app.tasks.confirmDelete('${t.id}')"><i class="fa-solid fa-trash text-xs"></i></button>`:''}</div><div class="mt-1"><h3 class="text-[16px] font-bold text-white ${done?'line-through':''}">${t.title}</h3>${cHtml?`<p class="text-[13px] text-gray-400 mt-2.5 font-mono">${cHtml}</p>`:''}</div><div class="mt-2 flex justify-between items-center pt-3 border-t border-white/5"><div class="text-[11px] font-bold ${over?'text-red-400':'text-gray-400'}"><i class="fa-regular fa-calendar"></i> ${dStr} ${over?'<span class="bg-red-500/20 px-1 rounded ml-1">已逾期</span>':''}</div>${!done?`<button class="bg-white/10 px-5 py-2 rounded-full text-[11px] font-bold text-white flex items-center gap-1.5" onclick="app.tasks.markComplete('${t.id}', document.getElementById('task-${t.id}'))"><i class="fa-solid fa-check"></i> 完成</button>`:`<span class="text-[10px] text-emerald-500 font-bold"><i class="fa-solid fa-check-double"></i> 歸檔</span>`}</div>`;
+                        c.innerHTML = `<div class="flex justify-between items-start"><div class="${bColor} border text-[10px] font-bold px-2.5 py-1 rounded-full">${bText}</div>${!done?`<div class="flex gap-2"><button class="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center text-gray-400 hover:text-white active:scale-95 transition" onclick="app.tasks.edit('${t.id}')"><i class="fa-solid fa-pen text-xs"></i></button><button class="w-8 h-8 rounded-full bg-red-500/10 flex items-center justify-center text-red-400 hover:bg-red-500/20 active:scale-95 transition" onclick="app.tasks.confirmDelete('${t.id}')"><i class="fa-solid fa-trash text-xs"></i></button></div>`:''}</div><div class="mt-1"><h3 class="text-[16px] font-bold text-white ${done?'line-through':''}">${t.title}</h3>${cHtml?`<p class="text-[13px] text-gray-400 mt-2.5 font-mono">${cHtml}</p>`:''}</div><div class="mt-2 flex justify-between items-center pt-3 border-t border-white/5"><div class="text-[11px] font-bold ${over?'text-red-400':'text-gray-400'}"><i class="fa-regular fa-calendar"></i> ${dStr} ${over?'<span class="bg-red-500/20 px-1 rounded ml-1">已逾期</span>':''}</div>${!done?`<button class="bg-white/10 px-5 py-2 rounded-full text-[11px] font-bold text-white flex items-center gap-1.5" onclick="app.tasks.markComplete('${t.id}', document.getElementById('task-${t.id}'))"><i class="fa-solid fa-check"></i> 完成</button>`:`<span class="text-[10px] text-emerald-500 font-bold"><i class="fa-solid fa-check-double"></i> 歸檔</span>`}</div>`;
                         if (done) { hist.appendChild(c); hc++; } else { todo.appendChild(c); tc++; }
                     });
                     document.getElementById('todo-empty').style.display = tc===0?'flex':'none'; document.getElementById('history-empty').style.display = hc===0?'flex':'none';
@@ -707,9 +667,18 @@
                 },
                 groups: () => {
                     const l = document.getElementById('settings-groups-list'), t = document.getElementById('form-target');
-                    if(l) l.innerHTML = ''; if(t) t.innerHTML = '<option value="self">私人 (僅自己可見)</option>';
-                    if(state.groups.length === 0 && l) { l.innerHTML = '<div class="text-center py-6 text-xs text-gray-500 font-mono font-bold">NO GROUPS FOUND</div>'; return; }
-                    state.groups.forEach(g => { if(l) l.innerHTML += `<div class="bg-black/50 p-4 rounded-xl border border-white/5 flex justify-between items-center"><div><p class="text-sm font-bold text-white">${g.name} ${g.providerId===state.user.uid?'<span class="bg-pink-500/20 text-pink-400 text-[9px] px-1.5 py-0.5 rounded-full ml-2">Admin</span>':''}</p><p class="text-[10px] text-gray-500 font-mono mt-1.5">代碼: ${g.code} • 成員: ${g.members.length}</p></div><i class="fa-solid fa-users text-gray-400 text-xs"></i></div>`; if (t && state.profile.role==='provider' && g.providerId===state.user.uid) t.innerHTML += `<option value="${g.id}">群組: ${g.name}</option>`; });
+                    if(l) l.innerHTML = ''; 
+                    
+                    if(state.groups.length === 0 && l) { l.innerHTML = '<div class="text-center py-6 text-xs text-gray-500 font-mono font-bold">NO GROUPS FOUND</div>'; }
+                    else {
+                        state.groups.forEach(g => { if(l) l.innerHTML += `<div class="bg-black/50 p-4 rounded-xl border border-white/5 flex justify-between items-center"><div><p class="text-sm font-bold text-white">${g.name} ${g.providerId===state.user.uid?'<span class="bg-pink-500/20 text-pink-400 text-[9px] px-1.5 py-0.5 rounded-full ml-2">Admin</span>':''}</p><p class="text-[10px] text-gray-500 font-mono mt-1.5">代碼: ${g.code} • 成員: ${g.members.length}</p></div><i class="fa-solid fa-users text-gray-400 text-xs"></i></div>`; });
+                    }
+                    
+                    // 獨立處理 Target Select，避免被 return 影響
+                    if(t) {
+                        t.innerHTML = '<option value="self">私人 (僅自己可見)</option>';
+                        state.groups.forEach(g => { if (state.profile.role==='provider' && g.providerId===state.user.uid) t.innerHTML += `<option value="${g.id}">群組: ${g.name}</option>`; });
+                    }
                 }
             }
         };
@@ -718,14 +687,9 @@
 
         // 絕對安全的執行入口
         try {
-            window.moduleExecuted = true; // 告訴監測器模組已成功啟動
+            window.moduleExecuted = true; 
             if (document.readyState === 'loading') { document.addEventListener('DOMContentLoaded', app.init); } else { app.init(); }
-        } catch (error) {
-            console.error("Critical execution error:", error);
-            const loader = document.getElementById('system-loader');
-            if(loader) loader.innerHTML = '<p class="text-red-500 p-4 font-bold">系統遭遇嚴重錯誤，無法初始化</p>';
-        }
-
+        } catch (error) {}
     </script>
 </body>
 </html>

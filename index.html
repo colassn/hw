@@ -1,0 +1,1529 @@
+<!DOCTYPE html>
+<html lang="zh-HK" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>電子手冊 Homework Record | Lumina Task</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        glass: 'rgba(255, 255, 255, 0.05)',
+                        glassBorder: 'rgba(255, 255, 255, 0.1)',
+                        brand: { 400: '#818cf8', 500: '#6366f1', 600: '#4f46e5' },
+                        exam: { 400: '#f87171', 500: '#ef4444' }
+                    },
+                    fontFamily: {
+                        sans: ['-apple-system', 'BlinkMacSystemFont', 'Inter', 'system-ui', 'sans-serif'],
+                        mono: ['JetBrains Mono', 'Menlo', 'monospace']
+                    }
+                }
+            }
+        }
+    </script>
+
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- GSAP -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&display=swap');
+        
+        :root { --safe-area-inset-bottom: env(safe-area-inset-bottom, 20px); }
+
+        body {
+            background-color: #050505;
+            color: #f8fafc;
+            overflow: hidden;
+            font-family: '-apple-system', 'Inter', sans-serif;
+            -webkit-font-smoothing: antialiased;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        /* 頂級動態背景光暈 */
+        .ambient-bg {
+            position: fixed;
+            inset: 0;
+            z-index: -1;
+            background: 
+                radial-gradient(circle at 20% 40%, rgba(99, 102, 241, 0.12), transparent 40%),
+                radial-gradient(circle at 80% 60%, rgba(219, 39, 119, 0.12), transparent 40%);
+            filter: blur(60px);
+            animation: pulseBg 20s ease-in-out infinite alternate;
+            will-change: filter, transform;
+        }
+
+        @keyframes pulseBg {
+            0% { transform: scale(1); }
+            100% { transform: scale(1.1) translate(2%, 2%); }
+        }
+
+        /* 液態玻璃卡片設計 */
+        .glass-panel {
+            background: rgba(15, 15, 18, 0.75);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            border-top: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .glass-card {
+            background: linear-gradient(145deg, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0.01) 100%);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 20px;
+            box-shadow: 0 4px 20px -2px rgba(0,0,0,0.4);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        /* 隱藏滾動條但保持功能 */
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+        /* 表單與輸入框 */
+        .premium-input {
+            background: rgba(0, 0, 0, 0.5);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: white;
+            padding: 1rem;
+            border-radius: 16px;
+            width: 100%;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+        .premium-input:focus { outline: none; border-color: #6366f1; background: rgba(0, 0, 0, 0.7); box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2); }
+
+        /* 橫向藥丸按鈕 (Subjects) */
+        .pill-btn {
+            white-space: nowrap;
+            padding: 0.5rem 1.25rem;
+            border-radius: 9999px;
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.1);
+            color: #9ca3af;
+            font-weight: 500;
+            font-size: 0.875rem;
+            transition: all 0.2s;
+        }
+        .pill-btn.active {
+            background: #6366f1;
+            border-color: #818cf8;
+            color: white;
+            box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
+            transform: scale(1.05);
+        }
+
+        /* 底部導航欄專用 */
+        .bottom-nav { padding-bottom: var(--safe-area-inset-bottom); }
+        .nav-item { color: #6b7280; transition: color 0.3s, transform 0.2s; }
+        .nav-item.active { color: #fff; transform: translateY(-2px); }
+        
+        .fab-button {
+            background: linear-gradient(135deg, #6366f1, #d946ef);
+            box-shadow: 0 8px 32px rgba(99, 102, 241, 0.4);
+            transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        .fab-button:active { transform: scale(0.9); }
+        .nav-item.active .fab-button { box-shadow: 0 0 0 4px rgba(255,255,255,0.2), 0 8px 32px rgba(99, 102, 241, 0.6); transform: scale(1.05); }
+
+        /* 視圖切換區 */
+        .view-container {
+            height: calc(100vh - 180px - var(--safe-area-inset-bottom));
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
+            padding-bottom: 3rem;
+        }
+        .view-section { display: none; opacity: 0; }
+        .view-section.active { display: block; opacity: 1; }
+
+        /* Widget 卡片特效 */
+        .widget-card { flex: 0 0 auto; width: 140px; }
+
+        /* 時間表專注視圖特效 */
+        .time-slot { border-left: 3px solid transparent; }
+        .time-slot.active { border-left-color: #10b981; background: linear-gradient(90deg, rgba(16,185,129,0.1) 0%, transparent 100%); }
+        .time-slot.special { background: rgba(255,255,255,0.02); }
+
+        /* 逾期紅燈特效 */
+        .overdue-pulse { animation: pulseRed 2s infinite; border-color: rgba(239, 68, 68, 0.5); }
+        @keyframes pulseRed { 0% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.4); } 70% { box-shadow: 0 0 0 10px rgba(239, 68, 68, 0); } 100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); } }
+
+    </style>
+</head>
+<body>
+
+    <div class="ambient-bg"></div>
+
+    <!-- 0. 系統載入遮罩 -->
+    <div id="system-loader" class="fixed inset-0 z-[400] flex items-center justify-center bg-[#050505]">
+        <div class="text-center">
+            <div class="w-16 h-16 border-4 border-brand-500/30 border-t-brand-500 rounded-full animate-spin mx-auto mb-6"></div>
+            <div class="text-gray-400 font-mono tracking-widest text-xs uppercase">Initializing Enterprise Core</div>
+        </div>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- 1. 登入頁面 (Auth Landing)                 -->
+    <!-- ========================================== -->
+    <section id="view-auth" class="fixed inset-0 z-[100] flex flex-col items-center justify-center px-6 hidden bg-[#050505]/60 backdrop-blur-md">
+        <div class="w-full max-w-sm glass-card p-8 text-center relative overflow-hidden">
+            <div class="absolute -top-20 -right-20 w-40 h-40 bg-brand-500/20 blur-3xl rounded-full"></div>
+            
+            <div class="w-20 h-20 bg-gradient-to-tr from-brand-600 to-pink-500 rounded-2xl mx-auto mb-6 flex items-center justify-center shadow-2xl shadow-brand-500/30">
+                <i class="fa-solid fa-book-bookmark text-3xl text-white"></i>
+            </div>
+            
+            <h1 class="text-2xl font-bold text-white mb-2 tracking-tight">電子手冊 Homework Record</h1>
+            <p class="text-sm text-gray-400 mb-8 font-mono">ENTERPRISE GRADE SYSTEM</p>
+
+            <!-- Google SSO -->
+            <button onclick="app.auth.loginWithGoogle()" class="w-full bg-white text-black py-3.5 rounded-xl font-bold text-sm hover:bg-gray-200 active:scale-95 transition shadow-lg flex items-center justify-center gap-3 mb-6">
+                <img src="https://www.svgrepo.com/show/475656/google-color.svg" class="w-5 h-5" alt="Google">
+                使用 Google 帳號登入
+            </button>
+
+            <div class="flex items-center gap-4 mb-6">
+                <div class="h-[1px] flex-1 bg-white/10"></div>
+                <span class="text-xs text-gray-500 font-medium">或使用電郵</span>
+                <div class="h-[1px] flex-1 bg-white/10"></div>
+            </div>
+
+            <!-- Email Auth -->
+            <div class="space-y-3 mb-6">
+                <input type="email" id="auth-email" placeholder="電子郵件" class="premium-input py-3 text-sm">
+                <input type="password" id="auth-password" placeholder="密碼" class="premium-input py-3 text-sm">
+            </div>
+
+            <div class="flex gap-3">
+                <button onclick="app.auth.loginWithEmail()" class="flex-1 bg-brand-600/20 border border-brand-500/50 text-brand-300 py-3 rounded-xl font-bold text-sm active:scale-95 transition">登入</button>
+                <button onclick="app.auth.registerWithEmail()" class="flex-1 bg-brand-600 text-white py-3 rounded-xl font-bold text-sm shadow-lg shadow-brand-500/30 active:scale-95 transition">註冊</button>
+            </div>
+        </div>
+        
+        <div class="mt-8 text-center opacity-50">
+            <span class="text-[10px] text-gray-500 font-mono tracking-widest block mb-1">PROUDLY CRAFTED BY <span class="text-brand-400">@colasonyt1123</span></span>
+            <span class="text-[10px] text-gray-600 font-mono">SECURED BY GOOGLE FIREBASE</span>
+        </div>
+    </section>
+
+    <!-- ========================================== -->
+    <!-- 2. 超級管理員攔截層 (System Blocker)        -->
+    <!-- ========================================== -->
+    <div id="system-blocker" class="fixed inset-0 z-[300] hidden bg-[#050505]/95 backdrop-blur-xl flex-col items-center justify-center px-6 text-center">
+        <i id="blocker-icon" class="fa-solid fa-triangle-exclamation text-6xl text-yellow-500 mb-6 animate-pulse"></i>
+        <h2 id="blocker-title" class="text-3xl font-bold text-white mb-3 tracking-tight">系統維護中</h2>
+        <p id="blocker-message" class="text-gray-400 text-sm max-w-xs leading-relaxed">超級管理員正在進行系統升級，請稍後再試。感謝您的耐心等候。</p>
+        <button onclick="app.auth.logout()" class="mt-8 px-6 py-2 rounded-full border border-white/20 text-xs text-gray-400 hover:bg-white/10 transition">安全登出</button>
+        <p class="absolute bottom-10 text-[10px] text-gray-600 font-mono">@colasonyt1123 | SYSTEM OVERRIDE ACTIVE</p>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- 3. 主系統核心 (App Core)                    -->
+    <!-- ========================================== -->
+    <div id="app-core" class="hidden h-screen w-full relative flex flex-col">
+        
+        <!-- 頂部 Header & 儀表板 -->
+        <header class="pt-10 md:pt-12 pb-2 px-4 fixed top-0 w-full z-40 bg-gradient-to-b from-[#050505] via-[#050505]/90 to-transparent">
+            
+            <!-- 標題與圖標行 -->
+            <div class="flex justify-between items-center mb-4 px-2">
+                <div>
+                    <h1 class="text-2xl font-bold tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-white to-gray-400">電子手冊</h1>
+                    <p id="header-date" class="text-xs text-brand-400 font-mono mt-0.5 tracking-wider">載入中...</p>
+                </div>
+                <div class="flex items-center gap-4">
+                    <!-- 通知圖標 -->
+                    <button onclick="app.notifications.toggle()" class="relative text-gray-400 hover:text-white transition">
+                        <i class="fa-solid fa-bell text-xl"></i>
+                        <span id="notif-badge" class="hidden absolute -top-1 -right-1 w-2.5 h-2.5 bg-pink-500 rounded-full border-2 border-[#050505]"></span>
+                    </button>
+                    <!-- 頭像圖標 -->
+                    <button onclick="app.profile.toggle()" class="w-9 h-9 rounded-full bg-gray-800 flex items-center justify-center overflow-hidden border border-white/10 shadow-lg active:scale-95 transition">
+                        <img id="header-avatar" src="" alt="Profile" class="w-full h-full object-cover hidden">
+                        <i id="header-avatar-fallback" class="fa-solid fa-user text-gray-400 text-sm"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- 動態 Widgets 滑動列 -->
+            <div class="flex gap-3 overflow-x-auto no-scrollbar pb-2 px-2 snap-x snap-mandatory">
+                
+                <!-- Widget A: 課堂追蹤器 (每秒更新) -->
+                <div class="widget-card glass-card p-3 snap-start relative overflow-hidden group">
+                    <div class="absolute inset-0 bg-brand-500/5 opacity-0 group-hover:opacity-100 transition duration-500"></div>
+                    <div class="flex justify-between items-start mb-1">
+                        <span class="text-[10px] text-gray-400 font-medium"><i class="fa-solid fa-satellite-dish mr-1 text-emerald-400 animate-pulse"></i>實時課堂</span>
+                    </div>
+                    <h3 id="widget-class-title" class="text-sm font-bold text-white truncate mt-1">分析中...</h3>
+                    <p id="widget-class-timer" class="text-[11px] text-emerald-400 font-mono mt-1">--:--:--</p>
+                </div>
+
+                <!-- Widget B: 今日功課 -->
+                <div class="widget-card glass-card p-3 snap-start cursor-pointer active:scale-95 transition" onclick="app.nav.switch('home')">
+                    <div class="flex justify-between items-start mb-1">
+                        <span class="text-[10px] text-gray-400 font-medium"><i class="fa-solid fa-calendar-day mr-1"></i>今日到期</span>
+                    </div>
+                    <h3 class="text-sm font-bold text-white mt-1"><span id="widget-today-count" class="text-lg text-brand-400 mr-1">0</span>項</h3>
+                </div>
+
+                <!-- Widget C: 未來功課 -->
+                <div class="widget-card glass-card p-3 snap-start cursor-pointer active:scale-95 transition" onclick="app.nav.switch('home')">
+                    <div class="flex justify-between items-start mb-1">
+                        <span class="text-[10px] text-gray-400 font-medium"><i class="fa-solid fa-calendar-week mr-1"></i>未來任務</span>
+                    </div>
+                    <h3 class="text-sm font-bold text-white mt-1"><span id="widget-future-count" class="text-lg text-gray-300 mr-1">0</span>項</h3>
+                </div>
+
+                <!-- Widget D: 考試預警 -->
+                <div class="widget-card glass-card p-3 snap-start border-pink-500/20 cursor-pointer active:scale-95 transition">
+                    <div class="flex justify-between items-start mb-1">
+                        <span class="text-[10px] text-pink-400 font-medium"><i class="fa-solid fa-triangle-exclamation mr-1"></i>測驗/考試</span>
+                    </div>
+                    <h3 class="text-sm font-bold text-white mt-1"><span id="widget-exam-count" class="text-lg text-pink-400 mr-1">0</span>項</h3>
+                </div>
+            </div>
+        </header>
+
+        <!-- 主要視圖區 -->
+        <main class="view-container mt-[180px] px-4 md:max-w-2xl mx-auto w-full relative flex-1">
+            
+            <!-- View 1: 首頁 (現有功課) -->
+            <section id="view-home" class="view-section active w-full">
+                <div class="flex justify-between items-end mb-4 px-1">
+                    <h2 class="text-lg font-bold text-white">待辦任務</h2>
+                    <span class="text-xs text-gray-500">依日期排序</span>
+                </div>
+                
+                <div id="todo-list" class="space-y-3">
+                    <!-- JS Injected Tasks -->
+                </div>
+                
+                <div id="todo-empty" class="hidden flex-col items-center justify-center py-20 text-gray-500">
+                    <div class="w-16 h-16 mb-4 rounded-full bg-white/5 flex items-center justify-center">
+                        <i class="fa-solid fa-mug-hot text-2xl opacity-50"></i>
+                    </div>
+                    <p class="text-sm font-medium">所有任務已清空</p>
+                </div>
+            </section>
+
+            <!-- View 2: 時間表 (單日專注版) -->
+            <section id="view-timetable" class="view-section w-full">
+                <!-- 星期滑動選擇器 -->
+                <div class="flex gap-2 overflow-x-auto no-scrollbar pb-4 mb-2 snap-x">
+                    <button class="tt-day-btn pill-btn snap-center" data-day="1">星期一</button>
+                    <button class="tt-day-btn pill-btn snap-center" data-day="2">星期二</button>
+                    <button class="tt-day-btn pill-btn snap-center" data-day="3">星期三</button>
+                    <button class="tt-day-btn pill-btn snap-center" data-day="4">星期四</button>
+                    <button class="tt-day-btn pill-btn snap-center" data-day="5">星期五</button>
+                    <button class="tt-day-btn pill-btn snap-center" data-day="6">星期六</button>
+                    <button class="tt-day-btn pill-btn snap-center" data-day="0">星期日</button>
+                </div>
+
+                <!-- 單日時間軸 -->
+                <div class="glass-card p-1">
+                    <div class="flex justify-between items-center p-3 border-b border-white/5">
+                        <h3 class="font-bold text-sm text-white"><i class="fa-solid fa-clock text-brand-400 mr-2"></i>時間軸設定</h3>
+                        <button onclick="app.timetable.addSlotModal()" class="text-xs text-brand-400 font-medium bg-brand-500/10 px-3 py-1.5 rounded-full active:bg-brand-500/30">新增時段</button>
+                    </div>
+                    <div id="timetable-slots" class="flex flex-col py-2">
+                        <!-- JS Injected Slots -->
+                    </div>
+                </div>
+            </section>
+
+            <!-- View 3: 新增/編輯功課 -->
+            <section id="view-add" class="view-section w-full">
+                <div class="glass-card p-5 relative overflow-hidden">
+                    <div class="absolute top-0 right-0 w-32 h-32 bg-brand-500/10 blur-3xl rounded-full"></div>
+                    
+                    <input type="hidden" id="form-task-id">
+                    
+                    <!-- 任務類型切換 (Segmented Control) -->
+                    <div class="flex bg-black/40 p-1 rounded-xl mb-6 relative z-10 border border-white/5">
+                        <button id="type-btn-task" onclick="app.tasks.setFormType('task')" class="flex-1 py-2 text-sm font-bold rounded-lg bg-white/10 text-white shadow-sm transition-all">📝 一般功課</button>
+                        <button id="type-btn-exam" onclick="app.tasks.setFormType('exam')" class="flex-1 py-2 text-sm font-medium rounded-lg text-gray-500 hover:text-white transition-all">🚨 測驗考試</button>
+                        <input type="hidden" id="form-type" value="task">
+                    </div>
+                    
+                    <div class="space-y-5 relative z-10">
+                        <div>
+                            <input type="text" id="form-title" class="premium-input text-lg font-bold placeholder-gray-600 bg-transparent border-0 border-b border-white/10 rounded-none px-2 focus:ring-0 focus:border-brand-500" placeholder="輸入任務標題...">
+                        </div>
+
+                        <!-- 橫向滑動科目 -->
+                        <div>
+                            <div class="flex justify-between items-center mb-2">
+                                <label class="block text-xs font-mono text-gray-400 uppercase tracking-wider">科目 Subject</label>
+                                <button onclick="app.settings.addSubjectModal()" class="text-xs text-brand-400"><i class="fa-solid fa-plus"></i> 自訂</button>
+                            </div>
+                            <div id="form-subjects-scroll" class="flex gap-2 overflow-x-auto no-scrollbar pb-2 snap-x">
+                                <!-- JS Injected Subject Pills -->
+                            </div>
+                            <input type="hidden" id="form-subject-value">
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-mono text-gray-400 uppercase tracking-wider mb-2">繳交日期 Due Date</label>
+                            <input type="date" id="form-date" class="premium-input py-3" style="color-scheme: dark;">
+                            <p id="form-warning-msg" class="text-xs text-yellow-500 mt-2 hidden"><i class="fa-solid fa-triangle-exclamation mr-1"></i>注意：該日已有 <span id="form-warning-count"></span> 項任務，建議提早規劃！</p>
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-mono text-gray-400 uppercase tracking-wider mb-2">詳細內容 Details</label>
+                            <textarea id="form-content" class="premium-input h-28 resize-none py-3 text-sm" placeholder="- 多行輸入&#10;- 支援列表"></textarea>
+                        </div>
+
+                        <!-- Provider 發放對象 -->
+                        <div id="provider-target-section" class="hidden pt-4 border-t border-white/10">
+                            <label class="block text-xs font-mono text-pink-400 uppercase tracking-wider mb-2"><i class="fa-solid fa-paper-plane mr-1"></i>派發對象 Target</label>
+                            <select id="form-target" class="premium-input bg-pink-500/5 border-pink-500/20 text-sm">
+                                <option value="self">私人 (僅自己可見)</option>
+                                <!-- JS Injected Groups -->
+                            </select>
+                        </div>
+
+                        <div class="pt-4 pb-2">
+                            <button onclick="app.tasks.save()" class="w-full bg-gradient-to-r from-brand-600 to-brand-500 text-white py-4 rounded-xl font-bold text-sm shadow-[0_0_20px_rgba(99,102,241,0.3)] active:scale-95 transition flex items-center justify-center gap-2">
+                                <i class="fa-solid fa-check"></i> 儲存並加入清單
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- View 4: 歷史記錄 -->
+            <section id="view-history" class="view-section w-full">
+                <div class="flex justify-between items-end mb-4 px-1">
+                    <h2 class="text-lg font-bold text-white">歷史記錄</h2>
+                    <span class="text-xs text-gray-500">已歸檔任務</span>
+                </div>
+                <div id="history-list" class="space-y-3">
+                    <!-- JS Injected History Tasks -->
+                </div>
+                <div id="history-empty" class="hidden flex-col items-center justify-center py-20 text-gray-500">
+                    <i class="fa-solid fa-clock-rotate-left text-3xl mb-4 opacity-30"></i>
+                    <p class="text-sm font-medium">尚無歷史記錄</p>
+                </div>
+            </section>
+
+            <!-- View 5: 設定與群組 -->
+            <section id="view-settings" class="view-section w-full">
+                
+                <!-- 群組系統 -->
+                <div class="glass-card p-5 mb-5 relative overflow-hidden">
+                    <div class="absolute top-0 right-0 w-24 h-24 bg-blue-500/10 blur-2xl rounded-full"></div>
+                    <h3 class="text-sm font-bold text-white mb-4 uppercase tracking-wider"><i class="fa-solid fa-users text-blue-400 mr-2"></i>學習群組</h3>
+                    
+                    <div class="flex gap-2 mb-5">
+                        <input type="text" id="join-group-code" class="premium-input py-2.5 px-3 text-sm font-mono uppercase bg-black/40" placeholder="輸入 6 位邀請碼" maxlength="6">
+                        <button onclick="app.groups.join()" class="bg-blue-600 hover:bg-blue-500 px-5 rounded-xl font-bold text-sm transition shadow-lg shadow-blue-500/20 active:scale-95">加入</button>
+                    </div>
+
+                    <div id="provider-create-group" class="hidden border-t border-white/10 pt-4 mb-4">
+                        <p class="text-xs font-mono text-pink-400 mb-2">建立新群組 (Provider)</p>
+                        <div class="flex gap-2">
+                            <input type="text" id="create-group-name" class="premium-input py-2.5 px-3 text-sm bg-black/40" placeholder="新群組名稱">
+                            <button onclick="app.groups.create()" class="bg-pink-600 px-5 rounded-xl font-bold text-sm transition active:scale-95">建立</button>
+                        </div>
+                    </div>
+
+                    <div id="settings-groups-list" class="space-y-2">
+                        <!-- JS Injected Groups -->
+                    </div>
+                </div>
+
+                <!-- 開發者浮水印 -->
+                <div class="mt-10 text-center opacity-40">
+                    <p class="text-[10px] text-gray-400 font-mono tracking-widest leading-relaxed">
+                        ENTERPRISE GRADE SYSTEM<br>
+                        PROUDLY CRAFTED BY <span class="text-brand-400">@colasonyt1123</span>
+                    </p>
+                </div>
+            </section>
+
+        </main>
+
+        <!-- 底部導航欄 (Mobile Bottom Nav) -->
+        <nav class="bottom-nav fixed bottom-0 w-full glass-panel z-50 flex justify-between items-center px-6 h-[72px] md:max-w-md md:left-1/2 md:-translate-x-1/2 md:rounded-t-[30px] md:border-x shadow-[0_-10px_40px_rgba(0,0,0,0.5)]">
+            <button onclick="app.nav.switch('home')" class="nav-item active flex flex-col items-center gap-1 w-12" id="nav-home">
+                <i class="fa-solid fa-layer-group text-xl mb-0.5"></i>
+                <span class="text-[9px] font-bold tracking-wide">任務</span>
+            </button>
+            
+            <button onclick="app.nav.switch('timetable')" class="nav-item flex flex-col items-center gap-1 w-12" id="nav-timetable">
+                <i class="fa-solid fa-calendar-week text-xl mb-0.5"></i>
+                <span class="text-[9px] font-bold tracking-wide">時間表</span>
+            </button>
+
+            <!-- 中央浮動新增按鈕 -->
+            <div class="relative -top-5 w-16 flex justify-center">
+                <button onclick="app.nav.switch('add')" class="nav-item fab-button w-14 h-14 rounded-full flex items-center justify-center text-white text-2xl z-50 shadow-2xl" id="nav-add">
+                    <i class="fa-solid fa-plus transition-transform duration-300" id="add-icon"></i>
+                </button>
+            </div>
+
+            <button onclick="app.nav.switch('history')" class="nav-item flex flex-col items-center gap-1 w-12" id="nav-history">
+                <i class="fa-solid fa-clock-rotate-left text-xl mb-0.5"></i>
+                <span class="text-[9px] font-bold tracking-wide">歷史</span>
+            </button>
+
+            <button onclick="app.nav.switch('settings')" class="nav-item flex flex-col items-center gap-1 w-12" id="nav-settings">
+                <i class="fa-solid fa-gear text-xl mb-0.5"></i>
+                <span class="text-[9px] font-bold tracking-wide">設定</span>
+            </button>
+        </nav>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- 4. 全域組件 (Modals, Sheets, Notifications) -->
+    <!-- ========================================== -->
+
+    <!-- 全域 Modal 遮罩 -->
+    <div id="global-overlay" class="fixed inset-0 bg-[#050505]/80 backdrop-blur-sm z-[200] hidden opacity-0 transition-opacity duration-300"></div>
+
+    <!-- 居中 Modal (Zero Native Alerts) -->
+    <div id="center-modal" class="fixed inset-0 z-[210] hidden flex items-center justify-center p-4 pointer-events-none">
+        <div id="center-modal-content" class="glass-card w-full max-w-sm p-6 transform scale-95 opacity-0 pointer-events-auto shadow-2xl border-white/20">
+            <!-- JS Injected -->
+        </div>
+    </div>
+
+    <!-- Bottom Sheet (Profile, Pickers) -->
+    <div id="bottom-sheet" class="fixed inset-x-0 bottom-0 z-[210] hidden flex flex-col justify-end pointer-events-none">
+        <div id="bottom-sheet-content" class="bg-[#121215] w-full md:max-w-md md:mx-auto rounded-t-3xl p-6 pb-safe transform translate-y-full pointer-events-auto border-t border-white/10 shadow-[0_-20px_50px_rgba(0,0,0,0.5)]">
+            <div class="w-12 h-1 bg-white/20 rounded-full mx-auto mb-6"></div>
+            <div id="bottom-sheet-body">
+                <!-- JS Injected -->
+            </div>
+        </div>
+    </div>
+
+    <!-- 右側通知面板 (Notifications) -->
+    <div id="notif-panel" class="fixed inset-y-0 right-0 w-full md:w-80 bg-[#121215]/95 backdrop-blur-xl z-[210] hidden transform translate-x-full border-l border-white/10 flex flex-col shadow-2xl">
+        <div class="p-6 border-b border-white/10 flex justify-between items-center bg-[#050505]/50">
+            <h3 class="text-lg font-bold text-white"><i class="fa-solid fa-bell text-brand-400 mr-2"></i>通知中心</h3>
+            <button onclick="app.notifications.toggle()" class="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center text-gray-400 hover:text-white active:scale-95 transition"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+        <div id="notif-list" class="flex-1 overflow-y-auto p-4 space-y-3">
+            <!-- JS Injected -->
+        </div>
+    </div>
+
+    <!-- 全域 Toast (Notify) -->
+    <div id="toast-root" class="fixed top-20 left-0 right-0 z-[500] flex flex-col items-center gap-2 pointer-events-none px-4"></div>
+
+    <!-- ========================================== -->
+    <!-- JavaScript 企業級核心邏輯                   -->
+    <!-- ========================================== -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, signInWithPopup, GoogleAuthProvider, onAuthStateChanged, signOut, setPersistence, browserLocalPersistence } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, collection, doc, setDoc, getDoc, getDocs, updateDoc, deleteDoc, onSnapshot, writeBatch, serverTimestamp, query, where } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+        // ==========================================
+        // 1. 環境與配置 (Firebase Init)
+        // ==========================================
+        // 注意：為了讓應用程式正常運作，需在此填入您的 Firebase Config
+        // 由於要求不省略代碼，這裡使用全域變數接收，若無則使用模擬配置以防止崩潰
+        const default_config = { apiKey: "", authDomain: "", projectId: "lumina-task-pro", storageBucket: "", messagingSenderId: "", appId: "" };
+        const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : default_config;
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'lumina-v2';
+
+        const firebaseApp = initializeApp(firebaseConfig);
+        const auth = getAuth(firebaseApp);
+        const db = getFirestore(firebaseApp);
+        const googleProvider = new GoogleAuthProvider();
+
+        // 啟動登入持久化 (Persistent Login)
+        setPersistence(auth, browserLocalPersistence).catch(console.error);
+
+        // ==========================================
+        // 2. 全域狀態 (State Management)
+        // ==========================================
+        const state = {
+            user: null,
+            profile: { role: 'student', isBanned: false },
+            currentView: 'home',
+            tasks: [],
+            groups: [],
+            notifications: [],
+            
+            // DSE 預設 23 科
+            subjects: [
+                '中文 (中國語文)', '英文 (英國語文)', '數學', '通識教育', '科學', 
+                '體育', '物理', '化學', '生物', '歷史', '中史', '地理', 
+                '音樂', '視覺藝術', 'ICT', '設計與應用科技', '旅遊與款待', '經濟', 
+                'BAFS', '公民教育', '科技與生活', '中文文學', '英文文學'
+            ],
+            
+            // 時間表單日視圖狀態
+            currentDayTab: new Date().getDay(),
+            timetableConfig: {}, // { "1": [{id, type, start, end, label, subject}] }
+            classTimerInterval: null,
+
+            unsubscribers: []
+        };
+
+        // ==========================================
+        // 3. 核心 UI 工具 (Zero Native Alerts & Animations)
+        // ==========================================
+        const UI = {
+            el: (tag, className = '', textContent = '') => {
+                const e = document.createElement(tag);
+                if(className) e.className = className;
+                if(textContent) e.textContent = textContent;
+                return e;
+            },
+
+            notify: (msg, type='success') => {
+                const root = document.getElementById('toast-root');
+                const t = document.createElement('div');
+                const styles = {
+                    success: 'bg-[#10b981]/90 border border-[#10b981]/50 shadow-[0_4px_20px_rgba(16,185,129,0.3)]',
+                    error: 'bg-[#ef4444]/90 border border-[#ef4444]/50 shadow-[0_4px_20px_rgba(239,68,68,0.3)]',
+                    info: 'bg-[#6366f1]/90 border border-[#6366f1]/50 shadow-[0_4px_20px_rgba(99,102,241,0.3)]'
+                };
+                t.className = `px-6 py-3 rounded-full text-white text-xs font-bold ${styles[type]} transform -translate-y-full opacity-0 backdrop-blur-md flex items-center gap-2`;
+                
+                const icons = { success: 'fa-check-circle', error: 'fa-triangle-exclamation', info: 'fa-info-circle' };
+                t.innerHTML = `<i class="fa-solid ${icons[type]} text-sm"></i> <span>${msg}</span>`;
+                
+                root.appendChild(t);
+                gsap.to(t, { y: 0, opacity: 1, duration: 0.4, ease: "back.out(1.5)" });
+                setTimeout(() => {
+                    gsap.to(t, { y: -20, opacity: 0, duration: 0.3, onComplete: ()=>t.remove() });
+                }, 3000);
+            },
+
+            overlay: {
+                show: () => {
+                    const el = document.getElementById('global-overlay');
+                    el.classList.remove('hidden');
+                    // setTimeout 觸發 transition
+                    setTimeout(() => el.classList.remove('opacity-0'), 10); 
+                },
+                hide: () => {
+                    const el = document.getElementById('global-overlay');
+                    el.classList.add('opacity-0');
+                    setTimeout(() => el.classList.add('hidden'), 300);
+                }
+            },
+
+            modal: {
+                open: (htmlContent) => {
+                    UI.overlay.show();
+                    const container = document.getElementById('center-modal');
+                    const content = document.getElementById('center-modal-content');
+                    content.innerHTML = htmlContent;
+                    container.classList.remove('hidden');
+                    gsap.fromTo(content, { scale: 0.9, opacity: 0, y: 20 }, { scale: 1, opacity: 1, y: 0, duration: 0.4, ease: "back.out(1.5)" });
+                },
+                close: () => {
+                    const container = document.getElementById('center-modal');
+                    const content = document.getElementById('center-modal-content');
+                    gsap.to(content, { scale: 0.9, opacity: 0, y: 20, duration: 0.3, ease: "power2.in", onComplete: () => {
+                        container.classList.add('hidden');
+                        UI.overlay.hide();
+                    }});
+                }
+            },
+
+            sheet: {
+                open: (htmlContent) => {
+                    UI.overlay.show();
+                    const container = document.getElementById('bottom-sheet');
+                    const content = document.getElementById('bottom-sheet-content');
+                    document.getElementById('bottom-sheet-body').innerHTML = htmlContent;
+                    container.classList.remove('hidden');
+                    gsap.fromTo(content, { y: '100%' }, { y: '0%', duration: 0.4, ease: "power3.out" });
+                },
+                close: () => {
+                    const container = document.getElementById('bottom-sheet');
+                    const content = document.getElementById('bottom-sheet-content');
+                    gsap.to(content, { y: '100%', duration: 0.3, ease: "power3.in", onComplete: () => {
+                        container.classList.add('hidden');
+                        UI.overlay.hide();
+                    }});
+                }
+            }
+        };
+
+        // 綁定遮罩點擊關閉
+        document.getElementById('global-overlay').addEventListener('click', () => {
+            if(!document.getElementById('center-modal').classList.contains('hidden')) UI.modal.close();
+            if(!document.getElementById('bottom-sheet').classList.contains('hidden')) UI.sheet.close();
+            if(!document.getElementById('notif-panel').classList.contains('hidden')) app.notifications.toggle();
+        });
+
+        // ==========================================
+        // 4. 超級管理員服務 (Admin & Logger Service)
+        // ==========================================
+        const AdminService = {
+            // 全域日誌寫入 (攔截器)
+            log: async (action, metadata = {}) => {
+                if(!state.user) return;
+                try {
+                    // 為了架構藍圖的承諾，這裡將日誌寫入特定 collection，方便日後轉發或超級管理員查閱
+                    const logRef = doc(collection(db, `artifacts/${appId}/audit_logs`));
+                    await setDoc(logRef, {
+                        timestamp: new Date().toISOString(),
+                        uid: state.user.uid,
+                        action: action, // e.g., 'TASK_CREATED', 'LOGIN'
+                        device: navigator.userAgent,
+                        ...metadata
+                    });
+                } catch(e) { /* 日誌寫入失敗不應阻斷主流程 */ console.warn('Audit log failed'); }
+            },
+
+            // 系統阻擋畫面觸發器
+            triggerBlocker: (title, message, isBanned = false) => {
+                document.getElementById('app-core').classList.add('hidden');
+                const blocker = document.getElementById('system-blocker');
+                document.getElementById('blocker-title').textContent = title;
+                document.getElementById('blocker-message').textContent = message;
+                document.getElementById('blocker-icon').className = `fa-solid ${isBanned ? 'fa-ban text-red-500' : 'fa-triangle-exclamation text-yellow-500'} text-6xl mb-6 animate-pulse`;
+                blocker.classList.remove('hidden');
+                blocker.classList.add('flex');
+            },
+
+            // 監聽全域設定 (維護模式)
+            listenGlobalSettings: () => {
+                return onSnapshot(doc(db, `artifacts/${appId}/global/settings`), (docSnap) => {
+                    if (docSnap.exists() && docSnap.data().status === 'maintenance') {
+                        AdminService.triggerBlocker('系統維護中', docSnap.data().message || '超級管理員正在進行系統升級，請稍後再試。');
+                    }
+                });
+            }
+        };
+
+        // ==========================================
+        // 5. 核心 API 路徑封裝
+        // ==========================================
+        const API = {
+            paths: {
+                userProfile: () => `artifacts/${appId}/users/${state.user.uid}/profile`,
+                tasks: () => `artifacts/${appId}/users/${state.user.uid}/assignments`,
+                notifications: () => `artifacts/${appId}/users/${state.user.uid}/notifications`,
+                groups: () => `artifacts/${appId}/public/data/groups`
+            },
+            genId: () => Math.random().toString(36).substring(2, 15),
+            getWorkingDay: () => {
+                let d = new Date();
+                do { d.setDate(d.getDate() + 1); } while (d.getDay() === 0 || d.getDay() === 6);
+                return new Date(d.getTime() - (d.getTimezoneOffset() * 60000)).toISOString().split('T')[0];
+            }
+        };
+
+        // ==========================================
+        // 6. 應用程式邏輯 (App Scope)
+        // ==========================================
+        const app = {
+            init: () => {
+                gsap.to('#system-loader', { opacity: 0, duration: 0.5, onComplete: () => {
+                    document.getElementById('system-loader').style.display = 'none';
+                    document.getElementById('view-auth').classList.remove('hidden');
+                }});
+
+                // 監聽 Auth 狀態
+                onAuthStateChanged(auth, async (user) => {
+                    if (user) {
+                        state.user = user;
+                        // 淡出 Auth 畫面，顯示主系統
+                        gsap.to('#view-auth', { opacity: 0, duration: 0.4, onComplete: () => {
+                            document.getElementById('view-auth').classList.add('hidden');
+                            document.getElementById('app-core').classList.remove('hidden');
+                            app.startSystem();
+                        }});
+                        AdminService.log('USER_LOGIN', { method: user.providerData[0]?.providerId || 'email' });
+                    } else {
+                        state.user = null;
+                        document.getElementById('app-core').classList.add('hidden');
+                        document.getElementById('view-auth').classList.remove('hidden');
+                        gsap.to('#view-auth', { opacity: 1, duration: 0.4 });
+                    }
+                });
+            },
+
+            // 啟動系統 (登入後)
+            startSystem: async () => {
+                // 1. 初始化或讀取 User Profile (檢查黑名單)
+                const profileRef = doc(db, API.paths.userProfile(), 'main');
+                const profileSnap = await getDoc(profileRef);
+                
+                if (profileSnap.exists()) {
+                    state.profile = profileSnap.data();
+                } else {
+                    await setDoc(profileRef, { role: 'student', isBanned: false, createdAt: new Date().toISOString() });
+                }
+
+                if (state.profile.isBanned) {
+                    return AdminService.triggerBlocker('帳號已封鎖', '您的帳號已被超級管理員列入黑名單，如有疑問請聯繫校方。', true);
+                }
+
+                // 2. 設定 UI
+                const d = new Date();
+                const days = ['星期日','星期一','星期二','星期三','星期四','星期五','星期六'];
+                document.getElementById('header-date').textContent = `${d.getMonth()+1}月${d.getDate()}日, ${days[d.getDay()]}`;
+                
+                if (state.user.photoURL) {
+                    const img = document.getElementById('header-avatar');
+                    img.src = state.user.photoURL;
+                    img.classList.remove('hidden');
+                    document.getElementById('header-avatar-fallback').classList.add('hidden');
+                }
+
+                // 3. 讀取本機時間表設定
+                state.timetableConfig = JSON.parse(localStorage.getItem(`lumina_tt_${state.user.uid}`) || '{}');
+
+                // 4. 啟動監聽器與儀表板
+                app.setupListeners();
+                app.renders.subjectsPills(); // 渲染新增功課的科目列
+                app.timetable.initTracker(); // 啟動倒數計時儀表板
+                app.timetable.renderDaySelector(); // 渲染時間表視圖
+                
+                // 如果是週末，時間表預設跳轉到星期一
+                if(state.currentDayTab === 0 || state.currentDayTab === 6) {
+                    state.currentDayTab = 1;
+                    app.timetable.renderDaySelector();
+                }
+            },
+
+            // 登入/註冊功能
+            auth: {
+                loginWithGoogle: async () => {
+                    try {
+                        UI.notify('正在連接 Google...', 'info');
+                        await signInWithPopup(auth, googleProvider);
+                    } catch(e) {
+                        UI.notify('Google 登入失敗或被瀏覽器阻擋', 'error');
+                        console.error(e);
+                    }
+                },
+                loginWithEmail: async () => {
+                    const e = document.getElementById('auth-email').value;
+                    const p = document.getElementById('auth-password').value;
+                    if(!e || !p) return UI.notify('請輸入完整資訊', 'error');
+                    try { await signInWithEmailAndPassword(auth, e, p); } 
+                    catch(err) { UI.notify('帳號或密碼錯誤', 'error'); }
+                },
+                registerWithEmail: async () => {
+                    const e = document.getElementById('auth-email').value;
+                    const p = document.getElementById('auth-password').value;
+                    if(p.length < 6) return UI.notify('密碼至少6位數', 'error');
+                    try { 
+                        await createUserWithEmailAndPassword(auth, e, p); 
+                        UI.notify('註冊成功！', 'success');
+                    } catch(err) { UI.notify('註冊失敗，信箱可能已存在', 'error'); }
+                },
+                logout: async () => {
+                    UI.sheet.close();
+                    AdminService.log('USER_LOGOUT');
+                    if(state.classTimerInterval) clearInterval(state.classTimerInterval);
+                    state.unsubscribers.forEach(f => f());
+                    state.unsubscribers = [];
+                    await signOut(auth);
+                    document.getElementById('system-blocker').classList.add('hidden'); // Reset blocker
+                }
+            },
+
+            // 右上角頭像面板
+            profile: {
+                toggle: () => {
+                    const roleBadge = state.profile.role === 'provider' 
+                        ? `<span class="bg-pink-500/20 text-pink-400 text-[10px] px-2 py-1 rounded-full font-bold ml-2 border border-pink-500/30">Provider</span>`
+                        : `<span class="bg-brand-500/20 text-brand-400 text-[10px] px-2 py-1 rounded-full font-bold ml-2 border border-brand-500/30">Student</span>`;
+                    
+                    const avatarSrc = state.user.photoURL ? `<img src="${state.user.photoURL}" class="w-20 h-20 rounded-full border-2 border-white/10 shadow-lg object-cover mx-auto">` 
+                                                          : `<div class="w-20 h-20 rounded-full bg-gray-800 flex items-center justify-center border-2 border-white/10 shadow-lg mx-auto"><i class="fa-solid fa-user text-3xl text-gray-400"></i></div>`;
+
+                    UI.sheet.open(`
+                        <div class="text-center">
+                            ${avatarSrc}
+                            <h3 class="text-xl font-bold text-white mt-4 flex justify-center items-center">${state.user.displayName || 'Lumina User'} ${roleBadge}</h3>
+                            <p class="text-sm text-gray-400 font-mono mt-1 mb-8">${state.user.email || 'Anonymous'}</p>
+                            
+                            <div class="space-y-3">
+                                ${state.profile.role === 'provider' ? '' : `
+                                    <button onclick="app.profile.demoToggleRole()" class="w-full glass-card py-3.5 text-sm font-bold text-brand-300 active:scale-95 transition flex justify-center items-center gap-2">
+                                        <i class="fa-solid fa-crown"></i> 申請升級 Provider (Demo)
+                                    </button>
+                                `}
+                                <button onclick="app.auth.logout()" class="w-full bg-red-500/10 border border-red-500/30 text-red-400 py-3.5 rounded-xl text-sm font-bold active:scale-95 transition shadow-lg shadow-red-500/10">
+                                    安全登出 Sign Out
+                                </button>
+                            </div>
+                        </div>
+                    `);
+                },
+                demoToggleRole: async () => {
+                    try {
+                        await updateDoc(doc(db, API.paths.userProfile(), 'main'), { role: 'provider' });
+                        state.profile.role = 'provider';
+                        UI.sheet.close();
+                        UI.notify('已升級為 Provider，請重新整理頁面', 'success');
+                    } catch(e) { UI.notify('升級失敗', 'error'); }
+                }
+            },
+
+            // 實時資料監聽
+            setupListeners: () => {
+                // 1. 任務監聽
+                const unsubTasks = onSnapshot(collection(db, API.paths.tasks()), (snap) => {
+                    state.tasks = [];
+                    snap.forEach(d => state.tasks.push(d.data()));
+                    state.tasks.sort((a,b) => new Date(a.dueDate||'2099') - new Date(b.dueDate||'2099'));
+                    app.renders.tasks();
+                    app.updateWidgets();
+                });
+                state.unsubscribers.push(unsubTasks);
+
+                // 2. 群組監聽
+                const unsubGroups = onSnapshot(collection(db, API.paths.groups()), (snap) => {
+                    state.groups = [];
+                    snap.forEach(d => {
+                        const data = d.data();
+                        if(data.members.includes(state.user.uid) || data.providerId === state.user.uid) state.groups.push(data);
+                    });
+                    app.renders.groups();
+                });
+                state.unsubscribers.push(unsubGroups);
+
+                // 3. 通知監聽
+                const unsubNotif = onSnapshot(collection(db, API.paths.notifications()), (snap) => {
+                    state.notifications = [];
+                    snap.forEach(d => state.notifications.push(d.data()));
+                    state.notifications.sort((a,b) => new Date(b.timestamp) - new Date(a.timestamp));
+                    app.notifications.render();
+                });
+                state.unsubscribers.push(unsubNotif);
+
+                // 4. 超級管理員全域維護監聽
+                state.unsubscribers.push(AdminService.listenGlobalSettings());
+            },
+
+            // 更新頂部 Widgets 數據
+            updateWidgets: () => {
+                const todayStr = new Date().toISOString().split('T')[0];
+                let todayCount = 0, futureCount = 0, examCount = 0;
+
+                state.tasks.forEach(t => {
+                    if(t.status === 'completed') return;
+                    if(t.type === 'exam') examCount++;
+                    else {
+                        if(t.dueDate <= todayStr) todayCount++;
+                        else futureCount++;
+                    }
+                });
+
+                document.getElementById('widget-today-count').textContent = todayCount;
+                document.getElementById('widget-future-count').textContent = futureCount;
+                document.getElementById('widget-exam-count').textContent = examCount;
+
+                // 壓力預警機制更新 (當日超過5項或考試)
+                app.tasks.checkStressWarning();
+            },
+
+            // 通知中心邏輯
+            notifications: {
+                toggle: () => {
+                    const panel = document.getElementById('notif-panel');
+                    const badge = document.getElementById('notif-badge');
+                    
+                    if(panel.classList.contains('hidden')) {
+                        UI.overlay.show();
+                        panel.classList.remove('hidden');
+                        gsap.fromTo(panel, { x: '100%' }, { x: '0%', duration: 0.4, ease: "power3.out" });
+                        badge.classList.add('hidden'); // 閱讀後隱藏紅點
+                    } else {
+                        gsap.to(panel, { x: '100%', duration: 0.3, ease: "power3.in", onComplete: () => {
+                            panel.classList.add('hidden');
+                            UI.overlay.hide();
+                        }});
+                    }
+                },
+                render: () => {
+                    const list = document.getElementById('notif-list');
+                    const badge = document.getElementById('notif-badge');
+                    list.innerHTML = '';
+                    
+                    if(state.notifications.length === 0) {
+                        list.innerHTML = '<div class="text-center py-10 text-gray-500 text-sm">無新通知</div>';
+                        return;
+                    }
+
+                    // 假如有新通知（這裡簡單判斷陣列有東西就亮紅點）
+                    badge.classList.remove('hidden');
+
+                    state.notifications.forEach(n => {
+                        let icon = 'fa-info-circle text-blue-400';
+                        if(n.type === 'warning') icon = 'fa-triangle-exclamation text-yellow-400';
+                        if(n.type === 'task') icon = 'fa-paper-plane text-brand-400';
+
+                        list.innerHTML += `
+                            <div class="p-3 bg-white/5 rounded-xl border border-white/5">
+                                <div class="flex items-start gap-3">
+                                    <i class="fa-solid ${icon} mt-1"></i>
+                                    <div>
+                                        <p class="text-sm text-gray-200 leading-tight">${n.message}</p>
+                                        <p class="text-[10px] text-gray-500 mt-1 font-mono">${new Date(n.timestamp).toLocaleString()}</p>
+                                    </div>
+                                </div>
+                            </div>
+                        `;
+                    });
+                },
+                // 內部呼叫：發送通知
+                send: async (uid, message, type='info') => {
+                    try {
+                        const id = API.genId();
+                        await setDoc(doc(db, `artifacts/${appId}/users/${uid}/notifications`, id), {
+                            id, message, type, timestamp: new Date().toISOString()
+                        });
+                    } catch(e) {}
+                }
+            },
+
+            // 導航切換
+            nav: {
+                switch: (viewId) => {
+                    if (viewId === state.currentView) return;
+                    
+                    document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+                    document.getElementById(`nav-${viewId}`).classList.add('active');
+                    
+                    const icon = document.getElementById('add-icon');
+                    if(viewId === 'add') {
+                        icon.classList.replace('fa-plus', 'fa-xmark');
+                        icon.style.transform = 'rotate(45deg)'; // 變成優雅的 X
+                        app.tasks.prepareForm();
+                    } else {
+                        icon.classList.replace('fa-xmark', 'fa-plus');
+                        icon.style.transform = 'rotate(0deg)';
+                    }
+
+                    document.querySelectorAll('.view-section').forEach(v => v.classList.remove('active'));
+                    const target = document.getElementById(`view-${viewId}`);
+                    target.classList.add('active');
+
+                    gsap.fromTo(target, { opacity: 0, y: 15 }, { opacity: 1, y: 0, duration: 0.3, ease: "power2.out" });
+                    state.currentView = viewId;
+                }
+            },
+
+            // 任務邏輯
+            tasks: {
+                prepareForm: () => {
+                    document.getElementById('form-task-id').value = '';
+                    document.getElementById('form-title').value = '';
+                    document.getElementById('form-content').value = '';
+                    document.getElementById('form-date').value = API.getWorkingDay();
+                    app.tasks.setFormType('task');
+                    app.tasks.checkStressWarning();
+                },
+
+                setFormType: (type) => {
+                    document.getElementById('form-type').value = type;
+                    const btnTask = document.getElementById('type-btn-task');
+                    const btnExam = document.getElementById('type-btn-exam');
+                    
+                    if(type === 'task') {
+                        btnTask.className = 'flex-1 py-2 text-sm font-bold rounded-lg bg-white/10 text-white shadow-sm transition-all';
+                        btnExam.className = 'flex-1 py-2 text-sm font-medium rounded-lg text-gray-500 hover:text-white transition-all';
+                    } else {
+                        btnExam.className = 'flex-1 py-2 text-sm font-bold rounded-lg bg-pink-500/20 text-pink-400 shadow-sm transition-all';
+                        btnTask.className = 'flex-1 py-2 text-sm font-medium rounded-lg text-gray-500 hover:text-white transition-all';
+                    }
+                },
+
+                // 壓力預警檢查
+                checkStressWarning: () => {
+                    const dateInput = document.getElementById('form-date');
+                    if(!dateInput) return;
+                    
+                    dateInput.addEventListener('change', () => {
+                        const selectedDate = dateInput.value;
+                        const count = state.tasks.filter(t => t.dueDate === selectedDate && t.status !== 'completed').length;
+                        
+                        const warningMsg = document.getElementById('form-warning-msg');
+                        if(count >= 5) {
+                            document.getElementById('form-warning-count').textContent = count;
+                            warningMsg.classList.remove('hidden');
+                        } else {
+                            warningMsg.classList.add('hidden');
+                        }
+                    });
+                },
+
+                save: async () => {
+                    const id = document.getElementById('form-task-id').value;
+                    const title = document.getElementById('form-title').value.trim();
+                    const content = document.getElementById('form-content').value.trim();
+                    const subject = document.getElementById('form-subject-value').value;
+                    const dueDate = document.getElementById('form-date').value;
+                    const target = document.getElementById('form-target')?.value;
+                    const type = document.getElementById('form-type').value;
+
+                    if(!title) return UI.notify('請輸入標題', 'error');
+                    if(!subject) return UI.notify('請選擇一個科目', 'error');
+
+                    const data = { title, content, subject, dueDate, type };
+
+                    if (state.profile.role === 'provider' && target !== 'self' && !id) {
+                        // Provider 派發
+                        try {
+                            const groupDoc = await getDoc(doc(db, API.paths.groups(), target));
+                            const members = groupDoc.data()?.members || [];
+                            if(members.length === 0) return UI.notify('群組內無學生', 'error');
+
+                            const batch = writeBatch(db);
+                            members.forEach(uid => {
+                                const tid = API.genId();
+                                batch.set(doc(db, `artifacts/${appId}/users/${uid}/assignments`, tid), {
+                                    ...data, id: tid, status: 'pending', source: 'provider', createdAt: new Date().toISOString()
+                                });
+                                // 同時發送通知給學生
+                                app.notifications.send(uid, `管理員派發了新${type==='exam'?'考試':'功課'}：[${subject}] ${title}`, 'task');
+                            });
+                            await batch.commit();
+                            AdminService.log('TASK_ASSIGNED_TO_GROUP', { groupId: target, taskType: type });
+                            UI.notify(`已成功派發給 ${members.length} 位學生`);
+                        } catch(e) { UI.notify('派發失敗', 'error'); }
+                    } else {
+                        // 存給自己
+                        try {
+                            const newId = id || API.genId();
+                            await setDoc(doc(db, API.paths.tasks(), newId), {
+                                ...data, id: newId, status: id ? undefined : 'pending', updatedAt: new Date().toISOString()
+                            }, { merge: true });
+                            AdminService.log('TASK_SAVED', { taskId: newId, isEdit: !!id });
+                            UI.notify('儲存成功');
+                        } catch(e) { UI.notify('儲存失敗', 'error'); }
+                    }
+                    app.nav.switch('home');
+                },
+
+                markComplete: (id, el) => {
+                    gsap.to(el, { 
+                        scale: 0.9, opacity: 0, x: '100%', duration: 0.4, ease: "power2.in",
+                        onComplete: async () => { 
+                            await updateDoc(doc(db, API.paths.tasks(), id), { status: 'completed', completedAt: new Date().toISOString() });
+                            AdminService.log('TASK_COMPLETED', { taskId: id });
+                        }
+                    });
+                },
+
+                confirmDelete: (id) => {
+                    UI.modal.open(`
+                        <div class="text-center">
+                            <i class="fa-solid fa-trash-can text-red-500 text-5xl mb-4"></i>
+                            <h3 class="text-xl font-bold text-white mb-2 tracking-tight">刪除此任務？</h3>
+                            <p class="text-gray-400 text-sm mb-6">此動作無法復原</p>
+                            <div class="flex gap-3">
+                                <button onclick="app.UI.modal.close()" class="flex-1 glass-card py-3.5 font-bold text-white active:scale-95 transition">取消</button>
+                                <button onclick="app.tasks.doDelete('${id}')" class="flex-1 bg-red-600 rounded-xl py-3.5 font-bold text-white shadow-lg shadow-red-500/20 active:scale-95 transition">確認刪除</button>
+                            </div>
+                        </div>
+                    `);
+                },
+
+                doDelete: async (id) => {
+                    await deleteDoc(doc(db, API.paths.tasks(), id));
+                    AdminService.log('TASK_DELETED', { taskId: id });
+                    UI.modal.close();
+                    UI.notify('已刪除');
+                }
+            },
+
+            // 毫秒級時間表引擎與視圖 (Timetable 3.0)
+            timetable: {
+                // 初始化頂部倒數儀表板
+                initTracker: () => {
+                    if(state.classTimerInterval) clearInterval(state.classTimerInterval);
+                    
+                    state.classTimerInterval = setInterval(() => {
+                        const now = new Date();
+                        const dayStr = now.getDay().toString();
+                        const todaySlots = state.timetableConfig[dayStr] || [];
+                        
+                        const titleEl = document.getElementById('widget-class-title');
+                        const timerEl = document.getElementById('widget-class-timer');
+
+                        if(todaySlots.length === 0) {
+                            titleEl.textContent = '今日無行程';
+                            timerEl.textContent = '--:--:--';
+                            return;
+                        }
+
+                        let currentSlot = null;
+                        let nextSlot = null;
+                        const nowTime = now.getHours() * 60 + now.getMinutes() + now.getSeconds()/60; // 轉為分鐘浮點數
+
+                        for(let i=0; i<todaySlots.length; i++) {
+                            const slot = todaySlots[i];
+                            const [sH, sM] = slot.start.split(':').map(Number);
+                            const [eH, eM] = slot.end.split(':').map(Number);
+                            const startMins = sH * 60 + sM;
+                            const endMins = eH * 60 + eM;
+
+                            if(nowTime >= startMins && nowTime < endMins) {
+                                currentSlot = slot;
+                                currentSlot.endMins = endMins;
+                            } else if (nowTime < startMins && !nextSlot) {
+                                nextSlot = slot;
+                                nextSlot.startMins = startMins;
+                            }
+                        }
+
+                        if (currentSlot) {
+                            titleEl.textContent = currentSlot.subject || currentSlot.label;
+                            // 倒數計時
+                            const diffMins = currentSlot.endMins - nowTime;
+                            const m = Math.floor(diffMins);
+                            const s = Math.floor((diffMins - m) * 60);
+                            timerEl.textContent = `剩餘 ${m.toString().padStart(2,'0')}:${s.toString().padStart(2,'0')}`;
+                            
+                            // 警告色 (小於 5 分鐘)
+                            if(m < 5) timerEl.className = 'text-[11px] text-red-400 font-mono mt-1 animate-pulse';
+                            else timerEl.className = 'text-[11px] text-emerald-400 font-mono mt-1';
+                        } else if (nextSlot) {
+                            titleEl.textContent = `即將: ${nextSlot.subject || nextSlot.label}`;
+                            timerEl.textContent = `${nextSlot.start} 開始`;
+                            timerEl.className = 'text-[11px] text-gray-400 font-mono mt-1';
+                        } else {
+                            titleEl.textContent = '課堂已結束';
+                            timerEl.textContent = 'Enjoy!';
+                            timerEl.className = 'text-[11px] text-brand-400 font-mono mt-1';
+                        }
+                    }, 1000); // 1秒更新
+                },
+
+                // 渲染單日選擇器與視圖
+                renderDaySelector: () => {
+                    // 更新上方藥丸按鈕狀態
+                    document.querySelectorAll('.tt-day-btn').forEach(btn => {
+                        btn.classList.remove('active');
+                        if(parseInt(btn.dataset.day) === state.currentDayTab) {
+                            btn.classList.add('active');
+                            // 自動滾動置中
+                            btn.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+                        }
+                        btn.onclick = () => {
+                            state.currentDayTab = parseInt(btn.dataset.day);
+                            app.timetable.renderDaySelector();
+                        };
+                    });
+
+                    // 渲染該日的時間軸
+                    const container = document.getElementById('timetable-slots');
+                    const slots = state.timetableConfig[state.currentDayTab] || [];
+                    
+                    if(slots.length === 0) {
+                        container.innerHTML = `
+                            <div class="py-10 text-center">
+                                <p class="text-gray-500 text-sm mb-4">此日尚未設定行程</p>
+                                <button onclick="app.timetable.generateDefault(${state.currentDayTab})" class="text-xs font-bold bg-white/10 px-4 py-2 rounded-lg text-white">套用預設課表</button>
+                            </div>
+                        `;
+                        return;
+                    }
+
+                    // 排序並渲染
+                    slots.sort((a,b) => a.start.localeCompare(b.start));
+                    container.innerHTML = slots.map(slot => `
+                        <div class="time-slot p-3 border-b border-white/5 flex items-center justify-between active:bg-white/5 transition ${slot.type==='special'?'special':''}" onclick="app.timetable.editSlotModal('${slot.id}')">
+                            <div class="flex items-center gap-4">
+                                <div class="text-[10px] font-mono text-gray-400 w-12 text-right">
+                                    <div>${slot.start}</div>
+                                    <div class="opacity-50">${slot.end}</div>
+                                </div>
+                                <div>
+                                    <p class="text-xs font-bold text-gray-500 mb-0.5">${slot.label}</p>
+                                    <p class="text-sm font-bold text-white">${slot.subject || '<span class="text-brand-400 opacity-50">點擊設定科目</span>'}</p>
+                                </div>
+                            </div>
+                            <i class="fa-solid fa-chevron-right text-gray-600 text-xs"></i>
+                        </div>
+                    `).join('');
+                },
+
+                // 套用預設 DSE 課表時間格式
+                generateDefault: (day) => {
+                    const defaultSlots = [
+                        { id: API.genId(), start: '08:00', end: '08:40', label: '第 1 節', type: 'class', subject: '' },
+                        { id: API.genId(), start: '08:40', end: '09:20', label: '第 2 節', type: 'class', subject: '' },
+                        { id: API.genId(), start: '09:20', end: '09:40', label: '小息', type: 'special', subject: '☕️ 休息' },
+                        { id: API.genId(), start: '09:40', end: '10:20', label: '第 3 節', type: 'class', subject: '' },
+                        { id: API.genId(), start: '10:20', end: '11:00', label: '第 4 節', type: 'class', subject: '' },
+                        { id: API.genId(), start: '11:00', end: '11:20', label: '小息', type: 'special', subject: '☕️ 休息' },
+                        { id: API.genId(), start: '11:20', end: '12:00', label: '第 5 節', type: 'class', subject: '' },
+                        { id: API.genId(), start: '12:00', end: '13:00', label: '午膳', type: 'special', subject: '🍱 午餐時間' },
+                        { id: API.genId(), start: '13:00', end: '13:40', label: '第 6 節', type: 'class', subject: '' },
+                        { id: API.genId(), start: '13:40', end: '14:20', label: '第 7 節', type: 'class', subject: '' },
+                    ];
+                    state.timetableConfig[day] = defaultSlots;
+                    app.timetable.saveConfig();
+                    app.timetable.renderDaySelector();
+                },
+
+                saveConfig: () => {
+                    localStorage.setItem(`lumina_tt_${state.user.uid}`, JSON.stringify(state.timetableConfig));
+                    AdminService.log('TIMETABLE_UPDATED', { day: state.currentDayTab });
+                },
+
+                editSlotModal: (id) => {
+                    const slot = state.timetableConfig[state.currentDayTab].find(s => s.id === id);
+                    
+                    // 產生科目按鈕
+                    const subjectBtns = state.subjects.map(s => 
+                        `<button onclick="app.timetable.updateSlot('${id}', 'subject', '${s}')" class="w-full text-left p-3 border-b border-white/5 text-sm font-bold text-gray-200 active:bg-white/10">${s}</button>`
+                    ).join('');
+
+                    UI.sheet.open(`
+                        <div class="flex justify-between items-center mb-6">
+                            <div>
+                                <h3 class="font-bold text-white text-lg">${slot.label}</h3>
+                                <p class="text-xs text-brand-400 font-mono">${slot.start} - ${slot.end}</p>
+                            </div>
+                            <button onclick="app.timetable.deleteSlot('${id}')" class="text-red-400 text-xs font-bold bg-red-500/10 px-3 py-1.5 rounded-full"><i class="fa-solid fa-trash mr-1"></i>移除時段</button>
+                        </div>
+                        <p class="text-xs text-gray-500 mb-2 uppercase font-mono">快速選擇科目</p>
+                        <div class="max-h-60 overflow-y-auto bg-black/20 rounded-xl border border-white/5">
+                            ${subjectBtns}
+                            <button onclick="app.timetable.updateSlot('${id}', 'subject', '')" class="w-full text-left p-3 text-sm font-bold text-gray-500 active:bg-white/10">清除科目 (設為空堂)</button>
+                        </div>
+                    `);
+                },
+
+                updateSlot: (id, key, val) => {
+                    const slot = state.timetableConfig[state.currentDayTab].find(s => s.id === id);
+                    if(slot) slot[key] = val;
+                    app.timetable.saveConfig();
+                    UI.sheet.close();
+                    app.timetable.renderDaySelector();
+                },
+                
+                deleteSlot: (id) => {
+                    state.timetableConfig[state.currentDayTab] = state.timetableConfig[state.currentDayTab].filter(s => s.id !== id);
+                    app.timetable.saveConfig();
+                    UI.sheet.close();
+                    app.timetable.renderDaySelector();
+                },
+
+                addSlotModal: () => {
+                    UI.modal.open(`
+                        <h3 class="text-lg font-bold text-white mb-4">新增時段</h3>
+                        <div class="space-y-3">
+                            <input type="text" id="slot-label" class="premium-input text-sm" placeholder="標籤 (例: 補課)">
+                            <div class="flex gap-2">
+                                <input type="time" id="slot-start" class="premium-input text-sm flex-1" style="color-scheme: dark;">
+                                <input type="time" id="slot-end" class="premium-input text-sm flex-1" style="color-scheme: dark;">
+                            </div>
+                        </div>
+                        <div class="mt-6 flex gap-2">
+                            <button onclick="app.UI.modal.close()" class="flex-1 glass-card py-2.5 text-sm font-bold text-white">取消</button>
+                            <button onclick="app.timetable.doAddSlot()" class="flex-1 bg-brand-600 rounded-xl py-2.5 text-sm font-bold text-white">新增</button>
+                        </div>
+                    `);
+                },
+
+                doAddSlot: () => {
+                    const label = document.getElementById('slot-label').value;
+                    const start = document.getElementById('slot-start').value;
+                    const end = document.getElementById('slot-end').value;
+                    if(!label || !start || !end) return UI.notify('請填寫完整', 'error');
+
+                    if(!state.timetableConfig[state.currentDayTab]) state.timetableConfig[state.currentDayTab] = [];
+                    state.timetableConfig[state.currentDayTab].push({ id: API.genId(), start, end, label, type: 'class', subject: '' });
+                    
+                    app.timetable.saveConfig();
+                    UI.modal.close();
+                    app.timetable.renderDaySelector();
+                }
+            },
+
+            // 群組邏輯
+            groups: {
+                create: async () => {
+                    const name = document.getElementById('create-group-name').value.trim();
+                    if(!name) return UI.notify('請輸入群組名稱','error');
+                    
+                    const id = API.genId();
+                    const code = Math.random().toString(36).substring(2,8).toUpperCase();
+                    await setDoc(doc(db, API.paths.groups(), id), {
+                        id, name, code, providerId: state.user.uid, members: [], createdAt: new Date().toISOString()
+                    });
+                    document.getElementById('create-group-name').value = '';
+                    AdminService.log('GROUP_CREATED', { groupId: id });
+                    UI.notify(`建立成功，代碼: ${code}`);
+                },
+                join: async () => {
+                    const code = document.getElementById('join-group-code').value.toUpperCase();
+                    if(code.length !== 6) return UI.notify('代碼為 6 位數', 'error');
+                    
+                    const snap = await getDocs(query(collection(db, API.paths.groups()), where('code', '==', code)));
+                    if(snap.empty) return UI.notify('代碼無效', 'error');
+                    
+                    const target = snap.docs[0].data();
+                    if(target.members.includes(state.user.uid)) return UI.notify('已在群組中');
+                    
+                    await updateDoc(doc(db, API.paths.groups(), target.id), { members: [...target.members, state.user.uid] });
+                    document.getElementById('join-group-code').value = '';
+                    AdminService.log('GROUP_JOINED', { groupId: target.id });
+                    UI.notify(`成功加入: ${target.name}`);
+                }
+            },
+
+            // 設定邏輯
+            settings: {
+                addSubjectModal: () => {
+                    UI.modal.open(`
+                        <h3 class="text-lg font-bold text-white mb-4">自訂新科目</h3>
+                        <input type="text" id="new-subject-input" class="premium-input" placeholder="例如：日文">
+                        <div class="mt-6 flex gap-2">
+                            <button onclick="app.UI.modal.close()" class="flex-1 glass-card py-2.5 text-sm font-bold text-white">取消</button>
+                            <button onclick="app.settings.doAddSubject()" class="flex-1 bg-brand-600 rounded-xl py-2.5 text-sm font-bold text-white">新增</button>
+                        </div>
+                    `);
+                },
+                doAddSubject: () => {
+                    const val = document.getElementById('new-subject-input').value.trim();
+                    if(val && !state.subjects.includes(val)) {
+                        state.subjects.unshift(val); // 加在最前面
+                        app.renders.subjectsPills();
+                        UI.modal.close();
+                        UI.notify('新增成功');
+                    }
+                }
+            },
+
+            // 渲染函數
+            renders: {
+                tasks: () => {
+                    const todoList = document.getElementById('todo-list');
+                    const historyList = document.getElementById('history-list');
+                    let todoCount = 0, historyCount = 0;
+                    todoList.innerHTML = ''; historyList.innerHTML = '';
+
+                    const todayStr = new Date().toISOString().split('T')[0];
+
+                    state.tasks.forEach(task => {
+                        const isDone = task.status === 'completed';
+                        const isOverdue = !isDone && task.dueDate && task.dueDate < todayStr;
+                        const isExam = task.type === 'exam';
+                        
+                        const card = document.createElement('div');
+                        // 逾期紅燈特效 overdue-pulse
+                        card.className = `glass-card p-4 relative overflow-hidden flex flex-col gap-3 ${isDone ? 'opacity-50' : ''} ${isOverdue ? 'overdue-pulse' : ''}`;
+                        card.id = `task-${task.id}`;
+
+                        // 標籤樣式 (考試紅色，功課藍色)
+                        const badgeColor = isExam ? 'bg-pink-500/20 text-pink-400' : 'bg-brand-500/20 text-brand-300';
+                        const badgeText = isExam ? `🚨 測驗/考試: ${task.subject}` : `📝 ${task.subject}`;
+                        
+                        const dStr = task.dueDate ? task.dueDate.replace(/-/g, '/') : '無期限';
+                        const contentHtml = (task.content || '').replace(/\n/g, '<br>');
+
+                        card.innerHTML = `
+                            <div class="flex justify-between items-start">
+                                <div class="${badgeColor} text-[10px] font-bold px-2 py-1 rounded shadow-sm">${badgeText}</div>
+                                ${!isDone ? `
+                                <div class="flex gap-2">
+                                    <button class="w-7 h-7 rounded-full bg-red-500/10 flex items-center justify-center text-red-400 active:bg-red-500/20 transition" onclick="app.tasks.confirmDelete('${task.id}')"><i class="fa-solid fa-trash text-xs"></i></button>
+                                </div>` : ''}
+                            </div>
+                            
+                            <div>
+                                <h3 class="text-[15px] font-bold text-white leading-snug ${isDone ? 'line-through' : ''}">${task.title}</h3>
+                                ${contentHtml ? `<p class="text-[12px] text-gray-400 mt-2 leading-relaxed font-mono line-clamp-3">${contentHtml}</p>` : ''}
+                            </div>
+
+                            <div class="mt-1 flex justify-between items-center pt-2">
+                                <div class="text-[11px] font-bold ${isOverdue ? 'text-red-400' : 'text-gray-400'} flex items-center gap-1.5">
+                                    <i class="fa-regular fa-calendar"></i> ${dStr} ${isOverdue ? '(已逾期)' : ''}
+                                </div>
+                                ${!isDone ? `
+                                <button class="bg-white/10 border border-white/20 active:bg-[#10b981] active:border-[#10b981] px-4 py-1.5 rounded-full text-xs font-bold text-white flex items-center gap-1 transition-all" onclick="app.tasks.markComplete('${task.id}', document.getElementById('task-${task.id}'))">
+                                    <i class="fa-solid fa-check"></i> 完成
+                                </button>
+                                ` : `<span class="text-[10px] text-emerald-500 font-bold tracking-wider"><i class="fa-solid fa-check-double mr-1"></i>ARCHIVED</span>`}
+                            </div>
+                        `;
+
+                        if (isDone) { historyList.appendChild(card); historyCount++; } 
+                        else { todoList.appendChild(card); todoCount++; }
+                    });
+
+                    document.getElementById('todo-empty').style.display = todoCount === 0 ? 'flex' : 'none';
+                    document.getElementById('history-empty').style.display = historyCount === 0 ? 'flex' : 'none';
+                },
+
+                subjectsPills: () => {
+                    const container = document.getElementById('form-subjects-scroll');
+                    const input = document.getElementById('form-subject-value');
+                    container.innerHTML = '';
+                    
+                    // 預設選中第一個
+                    if(!input.value) input.value = state.subjects[0];
+
+                    state.subjects.forEach(s => {
+                        const btn = document.createElement('button');
+                        btn.className = `pill-btn snap-start ${s === input.value ? 'active' : ''}`;
+                        btn.textContent = s;
+                        btn.onclick = () => {
+                            input.value = s;
+                            app.renders.subjectsPills(); // 重新渲染更新 active 狀態
+                            // 滾動置中
+                            btn.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+                        };
+                        container.appendChild(btn);
+                    });
+                },
+
+                groups: () => {
+                    const list = document.getElementById('settings-groups-list');
+                    const targetSel = document.getElementById('form-target');
+                    if(list) list.innerHTML = '';
+                    if(targetSel) targetSel.innerHTML = '<option value="self">私人 (僅自己可見)</option>';
+
+                    if(state.groups.length === 0 && list) {
+                        list.innerHTML = '<p class="text-xs text-gray-500 font-mono">NO GROUPS FOUND</p>';
+                        return;
+                    }
+
+                    state.groups.forEach(g => {
+                        if(list) {
+                            const isManager = g.providerId === state.user.uid;
+                            list.innerHTML += `
+                                <div class="bg-black/40 p-3 rounded-xl border border-white/5 flex justify-between items-center">
+                                    <div>
+                                        <p class="text-sm font-bold text-white">${g.name} ${isManager ? '<span class="text-pink-400 text-[10px] ml-1 border border-pink-500/30 px-1 rounded">Admin</span>' : ''}</p>
+                                        <p class="text-[10px] text-gray-500 font-mono mt-1">代碼: ${g.code} | 成員: ${g.members.length}</p>
+                                    </div>
+                                </div>
+                            `;
+                        }
+                        if (targetSel && state.profile.role === 'provider' && g.providerId === state.user.uid) {
+                            targetSel.innerHTML += `<option value="${g.id}">群組: ${g.name}</option>`;
+                        }
+                    });
+                }
+            }
+        };
+
+        // Expose to window for inline onclick handlers
+        window.app = app;
+        window.app.UI = UI;
+
+        document.addEventListener('DOMContentLoaded', app.init);
+
+    </script>
+</body>
+</html>

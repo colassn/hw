@@ -25,8 +25,7 @@
                             input: 'var(--input)',
                             card: 'var(--card)'
                         },
-                        brand: { 400: '#818cf8', 500: '#6366f1', 600: '#4f46e5' },
-                        exam: { 400: '#f87171', 500: '#ef4444' }
+                        brand: { 400: '#818cf8', 500: '#6366f1', 600: '#4f46e5' }
                     },
                     fontFamily: {
                         sans: ['Inter', 'Noto Sans HK', '-apple-system', 'BlinkMacSystemFont', 'system-ui', 'sans-serif'],
@@ -41,9 +40,7 @@
 
     <!-- FontAwesome & Google Fonts -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;700&family=LXGW+WenKai+TC:wght@400;700&family=Noto+Sans+HK:wght@400;500;700&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&family=LXGW+WenKai+TC:wght@400;700&family=Noto+Sans+HK:wght@400;500;700&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet">
     
     <!-- GSAP Animation Library -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
@@ -51,26 +48,24 @@
     <style>
         :root { 
             --safe-area-inset-bottom: env(safe-area-inset-bottom, 20px);
-            /* 🌟 極簡淺色模式 */
+            /* 🌟 淺色模式 */
             --bg: #f8fafc;
             --text: #0f172a;
             --text-muted: #64748b;
             --border: rgba(0,0,0,0.06);
             --card: #ffffff;
             --input: #f1f5f9;
-            --nav-bg: rgba(248, 250, 252, 0.4);
             --orb-opacity: 0.8;
         }
 
         .dark {
-            /* 🌟 極簡深色模式 */
+            /* 🌟 深色模式 */
             --bg: #030305;
             --text: #f8fafc;
             --text-muted: #9ca3af;
             --border: rgba(255,255,255,0.08);
             --card: #0f111a;
             --input: rgba(255,255,255,0.04);
-            --nav-bg: rgba(3, 3, 5, 0.4);
             --orb-opacity: 0.4;
         }
 
@@ -99,23 +94,15 @@
             100% { transform: translate(0, 0) rotate(360deg) scale(1); }
         }
 
-        /* --- 卡片與輸入框設計 --- */
+        /* --- 卡片與輸入框 --- */
         .glass-card { background: var(--card); border: 1px solid var(--border); border-radius: 20px; box-shadow: 0 10px 40px -10px rgba(0,0,0,0.05); transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
         .dark .glass-card { box-shadow: 0 10px 40px -10px rgba(0,0,0,0.6); border: 1px solid rgba(255,255,255,0.05); }
 
         .premium-input { background: var(--input); border: 1px solid transparent; color: var(--text); padding: 1rem; border-radius: 16px; width: 100%; transition: all 0.3s ease; }
         .premium-input:focus { outline: none; border-color: #6366f1; background: var(--bg); box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.15); }
 
-        .pill-btn { white-space: nowrap; padding: 0.5rem 1.25rem; border-radius: 9999px; background: var(--input); border: 1px solid var(--border); color: var(--text-muted); font-weight: 500; font-size: 0.875rem; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); cursor: pointer; }
-        .pill-btn:hover { background: var(--border); transform: translateY(-2px); color: var(--text); box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
-        .pill-btn.active { background: #6366f1; border-color: #818cf8; color: white; box-shadow: 0 4px 15px rgba(99, 102, 241, 0.4); transform: translateY(-2px) scale(1.05); }
-
         .top-nav-item { cursor: pointer; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
         .top-nav-item:hover:not(.active) { color: var(--text); background: var(--border); }
-
-        .fab-button { background: linear-gradient(135deg, #6366f1, #d946ef); box-shadow: 0 8px 32px rgba(99, 102, 241, 0.4); transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
-        .fab-button:hover { transform: translateY(-4px) scale(1.08); box-shadow: 0 15px 40px rgba(99, 102, 241, 0.6); }
-        .fab-button:active { transform: scale(0.9); }
 
         .view-section { display: none; opacity: 0; }
         .view-section.active { display: block; opacity: 1; }
@@ -190,6 +177,7 @@
     <!-- 3. 主系統核心 -->
     <div id="app-core" class="hidden flex-col h-full w-full relative">
         
+        <!-- 固定在頂部的 Header -->
         <header class="shrink-0 pt-10 md:pt-12 pb-4 flex justify-between items-center px-6 md:max-w-5xl lg:max-w-6xl md:mx-auto w-full z-40 relative">
             <div>
                 <h1 class="text-3xl md:text-4xl font-bold tracking-wide text-theme-text font-literary drop-shadow-sm">電子手冊</h1>
@@ -209,8 +197,10 @@
             </div>
         </header>
 
+        <!-- 整個可滾動區域 -->
         <main id="main-scroll-area" class="flex-1 overflow-y-auto w-full relative z-10 no-scrollbar">
             
+            <!-- 浮空膠囊導航 (Sticky) -->
             <div class="sticky top-0 z-40 py-2 px-4 shrink-0 pointer-events-none transition-colors duration-500">
                 <div class="flex gap-1 p-1.5 bg-white/70 dark:bg-[#030305]/70 backdrop-blur-2xl rounded-2xl border border-theme-border shadow-[0_8px_30px_rgba(0,0,0,0.06)] dark:shadow-[0_8px_30px_rgba(0,0,0,0.5)] overflow-x-auto no-scrollbar max-w-full md:max-w-2xl mx-auto pointer-events-auto">
                     <button onclick="app.nav.switch('home')" id="nav-home" class="top-nav-item flex-1 py-2 px-3 text-[13px] font-bold rounded-xl active bg-theme-card text-brand-600 dark:text-white shadow-sm border border-theme-border whitespace-nowrap flex items-center justify-center gap-1.5">
@@ -231,6 +221,7 @@
                 </div>
             </div>
 
+            <!-- 動態欄 (Widgets) -->
             <div class="grid grid-cols-2 md:grid-cols-4 gap-3 px-6 md:max-w-5xl lg:max-w-6xl md:mx-auto w-full mt-4 mb-6">
                 <div class="glass-card p-4 hover:shadow-md hover:-translate-y-1 transition-all duration-300">
                     <div class="flex justify-between items-center mb-1">
@@ -259,8 +250,10 @@
                 </div>
             </div>
 
+            <!-- 各頁面內容容器 -->
             <div class="px-4 md:px-6 w-full pb-32 md:max-w-5xl lg:max-w-6xl md:mx-auto">
                 
+                <!-- 🏠 HOME 頁面 -->
                 <section id="view-home" class="view-section active w-full">
                     <div id="home-announcements" class="mb-4 space-y-2 md:max-w-3xl md:mx-auto hidden"></div>
 
@@ -289,10 +282,12 @@
                     </div>
                 </section>
 
+                <!-- 🕒 TIMETABLE 頁面 -->
                 <section id="view-timetable" class="view-section w-full">
                     <div class="flex justify-between items-end mb-4 px-2 md:px-0 md:max-w-3xl md:mx-auto">
                         <h2 class="text-xl font-bold text-theme-text tracking-tight">時間表</h2>
                     </div>
+                    <!-- 支援自訂日別 -->
                     <div id="timetable-day-selector" class="flex gap-2 overflow-x-auto no-scrollbar pb-4 mb-2 snap-x md:justify-center md:max-w-3xl md:mx-auto items-center"></div>
                     <div class="glass-card p-3 shadow-md border-theme-border flex flex-col max-h-[70vh] md:max-w-3xl md:mx-auto">
                         <div class="flex justify-between items-center p-2 mb-2 border-b border-theme-border shrink-0">
@@ -308,6 +303,7 @@
                     </div>
                 </section>
 
+                <!-- 📚 HISTORY 頁面 -->
                 <section id="view-history" class="view-section w-full">
                     <div class="flex justify-between items-end mb-5 px-1 md:px-0">
                         <h2 class="text-xl font-bold text-theme-text tracking-tight">歷史記錄</h2>
@@ -320,6 +316,7 @@
                     </div>
                 </section>
 
+                <!-- 👥 GROUPS 頁面 -->
                 <section id="view-groups" class="view-section w-full">
                     <div class="flex justify-between items-end mb-4 px-2 md:px-0 md:max-w-2xl md:mx-auto">
                         <h2 class="text-xl font-bold text-theme-text tracking-tight">群組與連線</h2>
@@ -346,6 +343,7 @@
                     </div>
                 </section>
 
+                <!-- ⚙️ SETTINGS 頁面 -->
                 <section id="view-settings" class="view-section w-full">
                     <div class="flex justify-between items-end mb-4 px-2 md:px-0 md:max-w-2xl md:mx-auto">
                         <h2 class="text-xl font-bold text-theme-text tracking-tight">個人化設定</h2>
@@ -373,6 +371,7 @@
                     </div>
                 </section>
 
+                <!-- ➕ ADD 頁面 (無標題、沉浸式、帶動畫) -->
                 <section id="view-add" class="view-section w-full">
                     <div class="flex items-center mb-6 px-1 md:px-0 md:max-w-4xl md:mx-auto">
                         <button onclick="app.nav.toggleAdd()" class="w-10 h-10 mr-4 rounded-full bg-theme-card flex items-center justify-center text-theme-text hover:bg-theme-input active:scale-95 transition-all border border-theme-border shadow-sm">
@@ -395,6 +394,7 @@
                         </div>
                         
                         <div class="space-y-6 relative z-10">
+                            <!-- 科目卷軸 -->
                             <div class="flex items-center gap-2">
                                 <div id="form-subjects-scroll" class="flex flex-1 gap-2.5 overflow-x-auto no-scrollbar py-1 snap-x items-center"></div>
                                 <button onclick="app.settings.addSubjectModal()" class="w-10 h-10 shrink-0 flex items-center justify-center rounded-xl bg-theme-input text-theme-muted hover:text-brand-500 transition-colors shadow-sm border border-theme-border active:scale-95">
@@ -404,6 +404,7 @@
                             </div>
 
                             <div class="flex flex-col lg:flex-row gap-6">
+                                <!-- 無標題純內容輸入區 -->
                                 <div class="flex-1 flex flex-col gap-4">
                                     <div class="relative flex-1 flex flex-col group">
                                         <textarea id="form-content" class="w-full flex-1 px-6 py-5 bg-theme-input border border-theme-border hover:border-brand-500/50 focus:border-brand-500 focus:bg-theme-card focus:ring-4 focus:ring-brand-500/10 rounded-3xl text-[16px] leading-relaxed text-theme-text placeholder-theme-muted resize-none min-h-[220px] shadow-sm transition-all duration-300 outline-none" placeholder="在此輸入功課詳細內容... (必填)"></textarea>
@@ -429,6 +430,7 @@
                                         <i class="fa-solid fa-chevron-down text-[10px]"></i>
                                     </button>
 
+                                    <!-- 加入清單按鈕 (含 GSAP 處理動畫) -->
                                     <button id="btn-save-task" onclick="app.tasks.save()" class="w-full mt-auto h-16 bg-brand-600 hover:bg-brand-500 text-white rounded-2xl font-bold shadow-[0_8px_25px_rgba(99,102,241,0.3)] hover:-translate-y-1 active:scale-95 transition-all duration-300 flex justify-center items-center gap-2 text-[17px] tracking-wide border border-transparent">
                                         <i class="fa-solid fa-plus"></i> 加入清單
                                     </button>
@@ -496,11 +498,11 @@
     <div id="toast-root" class="fixed top-16 left-0 right-0 z-[500] flex flex-col items-center gap-3 pointer-events-none px-4"></div>
 
     <script type="module">
-        // --- 替換為最新最穩定的 Firebase v11 連線寫法 ---
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
         import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, signInWithPopup, GoogleAuthProvider, onAuthStateChanged, signOut, setPersistence, browserLocalPersistence, updateProfile } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
         import { getFirestore, collection, doc, setDoc, getDoc, updateDoc, deleteDoc, onSnapshot, writeBatch, query, where, getDocs } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
+        // ⚠️ Firebase Config (V11)
         const firebaseConfig = {
             apiKey: "AIzaSyByPLZqByFtsFbCXBaIz53psLcdKoXBouY",
             authDomain: "newhw-daf31.firebaseapp.com",
@@ -518,8 +520,6 @@
             firebaseApp = initializeApp(firebaseConfig);
             import("https://www.gstatic.com/firebasejs/11.6.1/firebase-analytics.js").then((module) => { module.getAnalytics(firebaseApp); }).catch(() => {});
             auth = getAuth(firebaseApp);
-            
-            // 移除舊版易崩潰的 enableIndexedDbPersistence，改用原生 getFirestore，確保最穩定的跨瀏覽器相容性
             db = getFirestore(firebaseApp);
             
             googleProvider = new GoogleAuthProvider();
@@ -550,7 +550,7 @@
                 const root = document.getElementById('toast-root');
                 const t = document.createElement('div');
                 const styles = { success: 'bg-[#10b981]/95 border-[#10b981]/50 text-white', error: 'bg-[#ef4444]/95 border-[#ef4444]/50 text-white', info: 'bg-[#6366f1]/95 border-[#6366f1]/50 text-white', warning: 'bg-orange-500/95 border-orange-500/50 text-white' };
-                t.className = `px-6 py-3.5 rounded-2xl text-[13px] font-bold border ${styles[type]} transform -translate-y-full opacity-0 backdrop-blur-md flex items-center gap-2 w-max shadow-2xl`;
+                t.className = `px-6 py-3.5 rounded-2xl text-[13px] font-bold border backdrop-blur-md flex items-center gap-2 w-max shadow-2xl`;
                 const icons = { success: 'fa-check-circle', error: 'fa-triangle-exclamation', info: 'fa-info-circle', warning: 'fa-fire' };
                 t.innerHTML = `<i class="fa-solid ${icons[type]} text-base"></i> <span>${msg}</span>`;
                 root.appendChild(t);
@@ -675,13 +675,9 @@
                         } else {
                             setDoc(docSnap.ref, { role: 'student', isBanned: false, createdAt: new Date().toISOString() });
                         }
-                    }, (err) => {
-                        console.error('Profile sync error:', err);
-                        if(err.code === 'permission-denied') UI.notify('存取被拒！Firebase 安全規則可能已過期，請更新設定', 'error');
                     }));
                 } catch (e) {
-                    console.warn("DB Rules Error:", e); 
-                    UI.notify('無法連線至資料庫', 'error');
+                    console.warn("DB Rules:", e); UI.notify('請確保 Firebase 規則已設定', 'error');
                 }
 
                 const d = new Date(); const days = ['星期日','星期一','星期二','星期三','星期四','星期五','星期六'];
@@ -778,7 +774,6 @@
                             <div class="space-y-3">
                                 ${state.profile.role === 'provider' ? '' : `<button onclick="app.profile.demoRole()" class="w-full glass-card py-4 text-[15px] font-bold text-brand-500 hover:bg-theme-input hover:-translate-y-1 active:scale-95 transition-all duration-300 flex justify-center items-center gap-2"><i class="fa-solid fa-crown"></i> 申請升級 Provider</button>`}
                                 <button onclick="app.auth.logout()" class="w-full bg-red-500/10 border border-red-500/20 text-red-500 py-4 rounded-xl text-[15px] font-bold hover:bg-red-500/20 hover:-translate-y-1 active:scale-95 transition-all duration-300 shadow-sm">安全登出 Sign Out</button>
-                                <button onclick="app.UI.sheet.close()" class="w-full bg-theme-input border border-theme-border text-theme-text py-4 rounded-xl text-[15px] font-bold hover:bg-theme-border hover:-translate-y-1 active:scale-95 transition-all duration-300 shadow-sm">返回 Return</button>
                             </div>
                         </div>
                     `);
@@ -790,29 +785,22 @@
                     state.unsubscribers.push(onSnapshot(collection(db, API.paths.tasks()), (s) => { 
                         state.tasks = []; s.forEach(d => state.tasks.push(d.data())); 
                         app.renders.tasks(); app.updateWidgets(); 
-                    }, (err) => { 
-                        console.error('Tasks sync error:', err); 
-                        if(err.code === 'permission-denied') UI.notify('Firestore 規則已過期，請至 Firebase 控制台重新發佈', 'error'); 
                     }));
-                    
                     state.unsubscribers.push(onSnapshot(collection(db, API.paths.groups()), (s) => { 
                         state.groups = []; s.forEach(d => { if(d.data().members.includes(state.user.uid) || d.data().providerId === state.user.uid) state.groups.push(d.data()); }); 
                         app.renders.groups(); app.renders.announcements();
-                    }, (err) => console.error('Groups sync error:', err)));
-                    
+                    }));
                     state.unsubscribers.push(onSnapshot(collection(db, API.paths.notifs()), (s) => { 
                         state.notifications = []; s.forEach(d => state.notifications.push(d.data())); 
                         state.notifications.sort((a,b) => new Date(b.timestamp) - new Date(a.timestamp)); 
                         app.notifications.render(); 
-                    }, (err) => console.error('Notifs sync error:', err)));
+                    }));
                     
                     const gRef = doc(db, `artifacts/${internalAppId}/public/data/global_settings`, 'main');
                     state.unsubscribers.push(onSnapshot(gRef, (snap) => {
                         if (snap.exists() && snap.data().status === 'maintenance') AdminService.triggerBlocker('系統維護中', snap.data().message || '超級管理員升級中。');
-                    }, (err) => console.error('Global sync error:', err)));
-                } catch(e) {
-                    console.error("Listeners fail:", e);
-                }
+                    }));
+                } catch(e) {}
             },
             updateWidgets: () => {
                 const today = new Date().toISOString().split('T')[0]; let t=0, f=0, e=0;
@@ -900,7 +888,32 @@
                         localStorage.setItem('lumina_theme', 'dark');
                         UI.notify('已切換為深色模式', 'info');
                     }
-                }
+                },
+                exportCalendar: () => {
+                    if (state.tasks.length === 0) return UI.notify('尚無任務可匯出', 'warning');
+                    
+                    let ics = "BEGIN:VCALENDAR\nVERSION:2.0\nPRODID:-//Lumina Task//EN\n";
+                    state.tasks.forEach(t => {
+                        if (!t.dueDate) return;
+                        const dateStr = t.dueDate.replace(/-/g, '');
+                        // 若無標題，使用內容前20字
+                        const summaryTitle = t.title || (t.content ? t.content.substring(0, 20) + '...' : '任務');
+                        ics += `BEGIN:VEVENT\nDTSTART;VALUE=DATE:${dateStr}\nDTEND;VALUE=DATE:${dateStr}\nSUMMARY:[${t.subject}] ${summaryTitle}\nDESCRIPTION:${(t.content || '').replace(/\n/g, '\\n')}\nSTATUS:${t.status === 'completed' ? 'CONFIRMED' : 'TENTATIVE'}\nEND:VEVENT\n`;
+                    });
+                    ics += "END:VCALENDAR";
+                    
+                    const blob = new Blob([ics], { type: 'text/calendar;charset=utf-8' });
+                    const url = window.URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = `Lumina_Tasks_${new Date().toISOString().split('T')[0]}.ics`;
+                    document.body.appendChild(a);
+                    a.click();
+                    document.body.removeChild(a);
+                    UI.notify('行事曆已成功匯出！', 'success');
+                },
+                addSubjectModal: () => { UI.modal.open(`<h3 class="text-xl font-bold text-theme-text mb-6">新增自訂科目</h3><input type="text" id="new-subject-input" class="premium-input font-bold" placeholder="例如：M2"><div class="mt-8 flex gap-3"><button onclick="app.UI.modal.close()" class="flex-1 glass-card py-3.5 text-sm font-bold text-theme-text hover:-translate-y-1 hover:bg-theme-input active:scale-95 transition-all duration-300">取消</button><button onclick="app.settings.doAddSubject()" class="flex-1 bg-brand-600 hover:bg-brand-500 rounded-xl py-3.5 text-sm font-bold text-white shadow-lg hover:-translate-y-1 hover:shadow-brand-500/40 active:scale-95 transition-all duration-300">新增</button></div>`); },
+                doAddSubject: () => { const v = document.getElementById('new-subject-input').value.trim(); if(v && !state.subjects.includes(v)) { state.subjects.unshift(v); app.renders.subjectsPills(); UI.modal.close(); UI.notify(`已加入 ${v}`); } }
             },
             renders: {
                 announcements: () => {
@@ -983,7 +996,7 @@
                                     </div>
                                     
                                     ${t.title ? `<h3 class="text-[16px] font-bold text-theme-text leading-tight mb-1 tracking-tight font-display ${done?'line-through opacity-50':''}">${escapeHTML(t.title)}</h3>` : ''}
-                                    ${cHtml?`<p class="${t.title ? 'text-[13px] text-theme-muted mt-2' : 'text-[17px] font-bold text-theme-text mt-1'} font-mono line-clamp-4 leading-relaxed ${done&&!t.title?'line-through opacity-50':''}">${cHtml}</p>`:''}
+                                    ${cHtml?`<p class="${t.title ? 'text-[13px] text-theme-muted mt-2' : 'text-[16px] font-bold text-theme-text mt-1'} font-mono line-clamp-4 leading-relaxed ${done&&!t.title?'line-through opacity-50':''}">${cHtml}</p>`:''}
                                     ${imgHtml}
                                     
                                     <div class="mt-4 pt-4 border-t border-theme-border/50 flex justify-between items-center">
@@ -1220,12 +1233,14 @@
                     const isSelf = currentVal === 'self';
                     html += `<button onclick="app.tasks.setTarget('self', '私人任務 (僅自己可見)')" class="w-full text-left p-4 rounded-xl border ${isSelf ? 'bg-pink-500/10 border-pink-500/40 text-pink-600 font-bold shadow-sm' : 'bg-theme-input border-theme-border text-theme-text font-semibold hover:bg-theme-border'} transition-all">私人任務 (僅自己可見)</button>`;
 
-                    state.groups.forEach(g => {
-                        if (g.providerId === state.user.uid) {
-                            const isGroup = currentVal === g.id;
-                            html += `<button onclick="app.tasks.setTarget('${g.id}', decodeURIComponent('${safeStr('群組: ' + g.name)}'))" class="w-full text-left p-4 rounded-xl border ${isGroup ? 'bg-pink-500/10 border-pink-500/40 text-pink-600 font-bold shadow-sm' : 'bg-theme-input border-theme-border text-theme-text font-semibold hover:bg-theme-border'} transition-all">群組: ${escapeHTML(g.name)}</button>`;
-                        }
-                    });
+                    if (state.profile && state.profile.role === 'provider') {
+                        state.groups.forEach(g => {
+                            if (g.providerId === state.user.uid) {
+                                const isGroup = currentVal === g.id;
+                                html += `<button onclick="app.tasks.setTarget('${g.id}', decodeURIComponent('${safeStr('群組: ' + g.name)}'))" class="w-full text-left p-4 rounded-xl border ${isGroup ? 'bg-pink-500/10 border-pink-500/40 text-pink-600 font-bold shadow-sm' : 'bg-theme-input border-theme-border text-theme-text font-semibold hover:bg-theme-border'} transition-all">群組: ${escapeHTML(g.name)}</button>`;
+                            }
+                        });
+                    }
                     
                     html += `</div>`;
                     UI.sheet.open(html);
@@ -1396,6 +1411,299 @@
                 },
                 confirmDelete: (id) => { UI.modal.open(`<div class="text-center"><div class="w-16 h-16 bg-red-500/10 rounded-full flex items-center justify-center mx-auto mb-4"><i class="fa-solid fa-trash-can text-red-500 text-3xl"></i></div><h3 class="text-xl font-bold text-theme-text mb-2 tracking-tight">刪除任務？</h3><p class="text-theme-muted text-sm mb-6">此動作無法復原</p><div class="flex gap-3"><button onclick="app.UI.modal.close()" class="flex-1 glass-card py-3.5 font-bold text-theme-text hover:-translate-y-1 hover:bg-theme-input active:scale-95 transition-all duration-300">取消</button><button onclick="app.tasks.doDelete('${id}')" class="flex-1 bg-red-600 hover:bg-red-500 rounded-xl py-3.5 font-bold text-white shadow-lg hover:-translate-y-1 hover:shadow-red-500/40 active:scale-95 transition-all duration-300">確認刪除</button></div></div>`); },
                 doDelete: async (id) => { try { await deleteDoc(doc(db, API.paths.tasks(), id)); AdminService.log('TASK_DELETED', { taskId: id }); UI.modal.close(); UI.notify('已刪除'); } catch(e) { UI.notify('刪除失敗', 'error'); } }
+            },
+            timetable: {
+                isEditMode: false,
+                changeDay: (dayKey) => {
+                    state.currentDayTab = decodeURIComponent(dayKey);
+                    app.timetable.renderDaySelector();
+                },
+                toggleEditMode: () => {
+                    app.timetable.isEditMode = !app.timetable.isEditMode;
+                    app.timetable.renderDaySelector();
+                },
+                openManageDaysModal: () => {
+                    let html = `<h3 class="text-xl font-bold text-theme-text mb-4">管理課表日別</h3>`;
+                    html += `<p class="text-xs text-theme-muted mb-4">您可以自訂「星期一至五」或「Day 1 - Day 6」等循環日。</p>`;
+                    
+                    html += `<div class="flex gap-2 mb-6">
+                        <input type="text" id="new-day-input" class="premium-input py-2.5 text-sm shadow-sm" placeholder="輸入新日別 (例如: Day A)">
+                        <button onclick="app.timetable.addCustomDay()" class="bg-brand-600 hover:bg-brand-500 text-white px-5 rounded-xl font-bold transition-all shadow-sm active:scale-95"><i class="fa-solid fa-plus"></i></button>
+                    </div>`;
+
+                    html += `<div class="flex flex-col gap-2 max-h-[40vh] overflow-y-auto no-scrollbar">`;
+                    state.customDays.forEach((day, index) => {
+                        html += `<div class="flex justify-between items-center bg-theme-input p-3 rounded-xl border border-theme-border shadow-sm">
+                            <span class="font-bold text-[15px] text-theme-text tracking-wide">${escapeHTML(day)}</span>
+                            <button onclick="app.timetable.deleteCustomDay(${index})" class="text-red-500 hover:text-red-400 w-8 h-8 flex items-center justify-center bg-red-500/10 rounded-full transition-colors"><i class="fa-solid fa-trash text-xs"></i></button>
+                        </div>`;
+                    });
+                    html += `</div>`;
+
+                    UI.sheet.open(html);
+                },
+                addCustomDay: () => {
+                    const input = document.getElementById('new-day-input');
+                    const val = input.value.trim();
+                    if (!val) return;
+                    if (state.customDays.includes(val)) return UI.notify('日別已存在', 'warning');
+                    
+                    state.customDays.push(val);
+                    app.timetable.saveCustomDays();
+                    input.value = '';
+                    app.timetable.openManageDaysModal();
+                    app.timetable.renderDaySelector();
+                },
+                deleteCustomDay: (index) => {
+                    if(state.customDays.length <= 1) return UI.notify('至少需保留一日', 'error');
+                    const deletedDay = state.customDays[index];
+                    state.customDays.splice(index, 1);
+                    if (state.currentDayTab === deletedDay) state.currentDayTab = state.customDays[0];
+                    app.timetable.saveCustomDays();
+                    app.timetable.openManageDaysModal();
+                    app.timetable.renderDaySelector();
+                },
+                saveCustomDays: () => {
+                    try { localStorage.setItem(`lumina_tt_days_${state.user.uid}`, JSON.stringify(state.customDays)); } catch(e){}
+                },
+                initTracker: () => {
+                    if(state.classTimerInterval) clearInterval(state.classTimerInterval);
+                    state.classTimerInterval = setInterval(() => {
+                        let ttMode = 'week';
+                        try { ttMode = localStorage.getItem('lumina_tt_mode') || 'week'; } catch(e){}
+                        let slots = [];
+                        if (ttMode === 'week') {
+                            slots = state.timetableConfig[new Date().getDay().toString()] || [];
+                        } else {
+                            slots = state.timetableConfig[state.currentDayTab] || [];
+                        }
+
+                        const tt = document.getElementById('widget-class-title'), tm = document.getElementById('widget-class-timer');
+                        if(!tt || !tm) return;
+
+                        if(slots.length === 0) { tt.textContent = '今日無行程'; tm.textContent = '--:--:--'; return; }
+                        let c = null, n = null;
+                        const now = new Date();
+                        const nt = now.getHours() * 60 + now.getMinutes() + now.getSeconds()/60;
+                        for(let i=0; i<slots.length; i++) { 
+                            const [sH,sM]=slots[i].start.split(':').map(Number);
+                            const [eH,eM]=slots[i].end.split(':').map(Number); 
+                            const s=sH*60+sM, e=eH*60+eM; 
+                            if(nt>=s && nt<e) { c=slots[i]; c.em=e; } 
+                            else if(nt<s && !n) { n=slots[i]; n.sm=s; } 
+                        }
+                        if (c) { 
+                            tt.textContent = c.subject || c.label; 
+                            const d = c.em - nt, m = Math.floor(d), sec = Math.floor((d-m)*60); 
+                            tm.textContent = `剩餘 ${m.toString().padStart(2,'0')}:${sec.toString().padStart(2,'0')}`; 
+                            tm.className = `text-[11px] font-mono mt-1 font-bold ${m<5?'text-red-500 animate-pulse':'text-emerald-500'}`; 
+                        }
+                        else if (n) { 
+                            tt.textContent = `即將: ${n.subject || n.label}`; tm.textContent = `${n.start} 開始`; tm.className = 'text-[11px] text-theme-muted font-mono mt-1 font-semibold'; 
+                        }
+                        else { tt.textContent = '課堂已結束'; tm.textContent = 'Enjoy!'; tm.className = 'text-[11px] text-brand-500 font-mono mt-1 font-semibold'; }
+                    }, 1000);
+                },
+                renderDaySelector: () => {
+                    const c = document.getElementById('timetable-slots');
+                    const selectorContainer = document.getElementById('timetable-day-selector');
+                    let ttMode = 'week';
+                    try { ttMode = localStorage.getItem('lumina_tt_mode') || 'week'; } catch(e){}
+                    
+                    let dayHtml = '';
+                    if (ttMode === 'week') {
+                        const days = [{k:'1', l:'星期一'},{k:'2', l:'星期二'},{k:'3', l:'星期三'},{k:'4', l:'星期四'},{k:'5', l:'星期五'},{k:'6', l:'星期六'},{k:'0', l:'星期日'}];
+                        dayHtml = days.map(d => `<button class="whitespace-nowrap px-4 py-2.5 rounded-xl font-bold text-[13px] transition-all duration-300 border snap-center ${state.currentDayTab===d.k?'bg-theme-card text-brand-600 shadow-sm border-theme-border scale-105':'bg-theme-input text-theme-muted border-transparent hover:bg-theme-border'}" onclick="app.timetable.changeDay('${d.k}')">${d.l}</button>`).join('');
+                    } else {
+                        dayHtml = state.customDays.map(d => `<button class="whitespace-nowrap px-4 py-2.5 rounded-xl font-bold text-[13px] transition-all duration-300 border snap-center ${state.currentDayTab===d?'bg-theme-card text-brand-600 shadow-sm border-theme-border scale-105':'bg-theme-input text-theme-muted border-transparent hover:bg-theme-border'}" onclick="app.timetable.changeDay('${safeStr(d)}')">${escapeHTML(d)}</button>`).join('');
+                        dayHtml += `<button class="w-10 h-10 shrink-0 flex items-center justify-center rounded-xl bg-theme-input text-theme-muted hover:text-brand-500 transition-colors shadow-sm border border-transparent hover:border-theme-border snap-center" onclick="app.timetable.openManageDaysModal()"><i class="fa-solid fa-gear"></i></button>`;
+                    }
+                    if(selectorContainer) selectorContainer.innerHTML = dayHtml;
+
+                    let slots = state.timetableConfig[state.currentDayTab] || [];
+                    
+                    const btnEdit = document.getElementById('tt-btn-edit');
+                    const btnCopy = document.getElementById('tt-btn-copy');
+                    const btnAdd = document.getElementById('tt-btn-add');
+                    const btnDone = document.getElementById('tt-btn-done');
+                    
+                    if(btnEdit) {
+                        if(app.timetable.isEditMode) {
+                            btnEdit.classList.add('hidden');
+                            btnCopy.classList.remove('hidden'); btnAdd.classList.remove('hidden'); btnDone.classList.remove('hidden');
+                        } else {
+                            btnEdit.classList.remove('hidden');
+                            btnCopy.classList.add('hidden'); btnAdd.classList.add('hidden'); btnDone.classList.add('hidden');
+                        }
+                    }
+
+                    if(slots.length === 0) { 
+                        if (app.timetable.isEditMode) {
+                            if(c) c.innerHTML = `<div class="py-16 text-center flex flex-col items-center justify-center animate-[fadeIn_0.3s_ease-out]"><div class="w-14 h-14 bg-theme-input text-theme-muted rounded-full flex items-center justify-center mb-4 shadow-sm border border-theme-border"><i class="fa-solid fa-calendar-plus text-2xl"></i></div><p class="text-theme-muted text-[15px] font-bold tracking-wide mb-6">此日尚未設定</p><button onclick="app.timetable.generateDefault(decodeURIComponent('${safeStr(state.currentDayTab)}'))" class="px-6 py-2.5 rounded-full bg-brand-500/10 text-brand-600 dark:text-brand-400 font-bold text-[13px] hover:bg-brand-500/20 active:scale-95 transition-all duration-300">套用預設時段</button></div>`; 
+                        } else {
+                            if(c) c.innerHTML = `<div class="py-16 text-center flex flex-col items-center justify-center animate-[fadeIn_0.3s_ease-out]"><div class="w-14 h-14 bg-theme-input text-theme-muted rounded-full flex items-center justify-center mb-4 shadow-sm border border-theme-border"><i class="fa-solid fa-calendar-xmark text-2xl"></i></div><p class="text-theme-muted text-[15px] font-bold tracking-wide mb-6">此日尚未設定</p><button onclick="app.timetable.toggleEditMode()" class="text-xs font-bold text-brand-500 bg-brand-500/10 px-5 py-2.5 rounded-full hover:-translate-y-1 hover:bg-brand-500/20 active:scale-95 transition-all duration-300">開始編輯</button></div>`; 
+                        }
+                        return; 
+                    }
+                    
+                    slots.sort((a,b) => a.start.localeCompare(b.start));
+                    let html = '';
+
+                    if (app.timetable.isEditMode) {
+                        html += `<div class="flex text-[10px] font-bold text-theme-muted mb-2 px-1 uppercase tracking-wider animate-[fadeIn_0.3s_ease-out]">
+                            <div class="w-[75px] shrink-0">時間 Time</div>
+                            <div class="flex-1">標籤與科目 Subject</div>
+                            <div class="w-8 shrink-0 text-center"></div>
+                        </div>`;
+
+                        html += slots.map(s => `
+                            <div class="flex items-center gap-2.5 p-2 mb-2 bg-theme-input border border-theme-border rounded-xl transition-colors hover:border-brand-500/40 focus-within:border-brand-500/80 shadow-sm animate-[fadeIn_0.3s_ease-out]">
+                                <div class="flex flex-col gap-1.5 w-[75px] shrink-0">
+                                    <input type="time" value="${s.start}" onchange="app.timetable.updateSlotInline('${s.id}', 'start', this.value)" class="bg-transparent text-[12px] font-mono font-bold text-theme-text outline-none border-b border-transparent focus:border-brand-500 pb-0.5 dark:[color-scheme:dark]">
+                                    <input type="time" value="${s.end}" onchange="app.timetable.updateSlotInline('${s.id}', 'end', this.value)" class="bg-transparent text-[11px] font-mono text-theme-muted outline-none border-b border-transparent focus:border-brand-500 pb-0.5 dark:[color-scheme:dark]">
+                                </div>
+                                <div class="flex flex-col gap-1.5 flex-1 min-w-0">
+                                    <input type="text" value="${escapeHTML(s.label)}" placeholder="標籤 (例: 第1節)" onchange="app.timetable.updateSlotInline('${s.id}', 'label', this.value)" class="bg-transparent text-[11px] font-bold text-brand-500 outline-none border-b border-transparent focus:border-brand-500 pb-0.5 w-full">
+                                    <button onclick="app.timetable.openSubjectSelectModal('${s.id}')" class="bg-theme-bg border border-theme-border text-[13px] font-bold text-theme-text rounded-lg p-1.5 w-full outline-none hover:border-brand-500 transition-colors font-literary text-left flex justify-between items-center shadow-sm">
+                                        <span class="truncate">${escapeHTML(s.subject) || '-- 空堂 / 休息 --'}</span>
+                                        <i class="fa-solid fa-chevron-down text-[10px] opacity-50 ml-1 shrink-0"></i>
+                                    </button>
+                                </div>
+                                <button onclick="app.timetable.deleteSlot('${s.id}')" class="w-8 h-8 flex items-center justify-center shrink-0 text-theme-muted hover:text-red-500 hover:bg-red-500/10 rounded-full transition-all active:scale-95">
+                                    <i class="fa-solid fa-xmark text-lg"></i>
+                                </button>
+                            </div>
+                        `).join('');
+                    } else {
+                        // 🌟 直向時間軸模式 (Timeline)
+                        html += `<div class="relative pl-6 py-2 mt-2 animate-[fadeIn_0.3s_ease-out]">`;
+                        html += `<div class="absolute left-[13px] top-4 bottom-4 w-[2px] bg-theme-border/50 rounded-full"></div>`;
+                        
+                        slots.forEach((s) => {
+                            const timeFormat = (time) => {
+                                if(!time) return '';
+                                let [h, m] = time.split(':').map(Number);
+                                let ampm = h >= 12 ? '下午' : '上午';
+                                let hh = h % 12; if(hh===0) hh=12;
+                                return `${ampm}${hh.toString().padStart(2,'0')}:${m.toString().padStart(2,'0')}`;
+                            };
+                            const timeStr = `${timeFormat(s.start)} - ${timeFormat(s.end)}`;
+                            
+                            html += `
+                                <div class="relative mb-6 last:mb-2 group">
+                                    <div class="absolute -left-[20px] top-1.5 w-2.5 h-2.5 bg-theme-border group-hover:bg-brand-500 rounded-full ring-4 ring-theme-card transition-colors duration-300"></div>
+                                    <div class="flex flex-col gap-1 pr-2">
+                                        <p class="text-[12px] text-theme-muted font-mono font-bold tracking-wide">${timeStr} <span class="ml-2 opacity-50 font-sans">${escapeHTML(s.label)}</span></p>
+                                        <div class="flex justify-between items-center">
+                                            <h4 class="text-[18px] font-bold text-theme-text font-literary tracking-wide">${escapeHTML(s.subject) || '<span class="opacity-30">空堂 / 休息</span>'}</h4>
+                                            <i class="fa-solid fa-check text-[10px] text-theme-muted opacity-30 group-hover:opacity-100 transition-opacity"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                            `;
+                        });
+                        html += `</div>`;
+                    }
+                    
+                    if(c) c.innerHTML = html;
+                },
+                openSubjectSelectModal: (slotId) => {
+                    const s = state.timetableConfig[state.currentDayTab].find(x => x.id === slotId);
+                    if(!s) return;
+                    const currentVal = s.subject || '';
+                    let html = `<h3 class="text-xl font-bold text-theme-text mb-4">設定科目 <span class="text-brand-500 text-base">(${s.start} - ${s.end})</span></h3><div class="flex flex-wrap gap-2 max-h-[60vh] overflow-y-auto no-scrollbar pb-6">`;
+                    
+                    html += `<button onclick="app.timetable.updateSlotInline('${slotId}', 'subject', ''); UI.sheet.close();" class="whitespace-nowrap px-4 py-2.5 rounded-xl font-bold text-[13px] transition-all duration-300 font-literary tracking-wide border ${currentVal === '' ? 'bg-theme-card text-brand-600 shadow-sm border-theme-border scale-105' : 'bg-theme-input text-theme-muted border-transparent hover:bg-theme-border'}">-- 空堂 / 休息 --</button>`;
+                    state.subjects.forEach(sub => {
+                        html += `<button onclick="app.timetable.updateSlotInline('${slotId}', 'subject', decodeURIComponent('${safeStr(sub)}')); UI.sheet.close();" class="whitespace-nowrap px-4 py-2.5 rounded-xl font-bold text-[13px] transition-all duration-300 font-literary tracking-wide border ${currentVal === sub ? 'bg-theme-card text-brand-600 shadow-sm border-theme-border scale-105' : 'bg-theme-input text-theme-muted border-transparent hover:bg-theme-border'}">${escapeHTML(sub)}</button>`;
+                    });
+                    
+                    html += `</div>`;
+                    UI.sheet.open(html);
+                },
+                updateSlotInline: (id, k, v) => { 
+                    const s = state.timetableConfig[state.currentDayTab].find(x => x.id === id); 
+                    if(s) s[k] = v; 
+                    app.timetable.saveConfig(); 
+                    if (k === 'start' || k === 'end' || k === 'subject') app.timetable.renderDaySelector();
+                },
+                generateDefault: (d) => { state.timetableConfig[d] = [{id:API.genId(),start:'08:00',end:'08:40',label:'第1節',type:'class',subject:''},{id:API.genId(),start:'08:40',end:'09:20',label:'第2節',type:'class',subject:''},{id:API.genId(),start:'09:20',end:'09:40',label:'小息',type:'special',subject:''},{id:API.genId(),start:'09:40',end:'10:20',label:'第3節',type:'class',subject:''},{id:API.genId(),start:'10:20',end:'11:00',label:'第4節',type:'class',subject:''},{id:API.genId(),start:'11:00',end:'11:20',label:'小息',type:'special',subject:''},{id:API.genId(),start:'11:20',end:'12:00',label:'第5節',type:'class',subject:''},{id:API.genId(),start:'12:00',end:'13:00',label:'午膳',type:'special',subject:''},{id:API.genId(),start:'13:00',end:'13:40',label:'第6節',type:'class',subject:''},{id:API.genId(),start:'13:40',end:'14:20',label:'第7節',type:'class',subject:''}]; app.timetable.saveConfig(); app.timetable.renderDaySelector(); },
+                saveConfig: () => { try { localStorage.setItem(`lumina_tt_${state.user.uid}`, JSON.stringify(state.timetableConfig)); } catch(e){} AdminService.log('TIMETABLE_UPDATED'); },
+                deleteSlot: (id) => { state.timetableConfig[state.currentDayTab] = state.timetableConfig[state.currentDayTab].filter(s => s.id !== id); app.timetable.saveConfig(); app.timetable.renderDaySelector(); UI.notify('已移除時段', 'info'); },
+                copyToAllWeekModal: () => {
+                    const currentSlots = state.timetableConfig[state.currentDayTab] || [];
+                    if (currentSlots.length === 0) return UI.notify('請先建立時間軸再進行複製', 'error');
+                    UI.modal.open(`<div class="text-center"><div class="w-16 h-16 bg-emerald-500/10 rounded-full flex items-center justify-center mx-auto mb-4"><i class="fa-solid fa-copy text-emerald-500 text-3xl"></i></div><h3 class="text-xl font-bold text-theme-text mb-2 tracking-tight">套用到所有日別？</h3><p class="text-theme-muted text-sm mb-6">將把今天的「時間軸結構」複製到其他所有的日子<br>(原有的資料將被覆蓋，需重新點擊填寫科目)</p><div class="flex gap-3"><button onclick="app.UI.modal.close()" class="flex-1 glass-card py-3.5 font-bold text-theme-text hover:-translate-y-1 hover:bg-theme-input active:scale-95 transition-all duration-300">取消</button><button onclick="app.timetable.doCopyToAllWeek()" class="flex-1 bg-emerald-600 hover:bg-emerald-500 rounded-xl py-3.5 font-bold text-white shadow-lg hover:-translate-y-1 hover:shadow-emerald-500/40 active:scale-95 transition-all duration-300">確認套用</button></div></div>`);
+                },
+                doCopyToAllWeek: () => {
+                    const currentSlots = state.timetableConfig[state.currentDayTab] || [];
+                    let ttMode = 'week';
+                    try { ttMode = localStorage.getItem('lumina_tt_mode') || 'week'; } catch(e){}
+                    const targetDays = ttMode === 'week' ? ['1','2','3','4','5'] : state.customDays;
+                    
+                    targetDays.forEach(day => {
+                        if (day === state.currentDayTab) return;
+                        state.timetableConfig[day] = currentSlots.map(s => ({ ...s, id: API.genId(), subject: '' }));
+                    });
+                    
+                    app.timetable.saveConfig();
+                    UI.modal.close();
+                    UI.notify('已成功套用時間軸！', 'success');
+                },
+                addSlotDirect: () => { 
+                    const slots = state.timetableConfig[state.currentDayTab] || [];
+                    let defaultStart = '08:00', defaultEnd = '08:40', defaultLabel = `第${slots.length + 1}節`;
+                    if (slots.length > 0) {
+                        const lastSlot = slots.reduce((latest, current) => current.end > latest.end ? current : latest, slots[0]);
+                        defaultStart = lastSlot.end;
+                        const [h, m] = defaultStart.split(':').map(Number);
+                        const d = new Date(); d.setHours(h, m + 40, 0, 0);
+                        defaultEnd = d.toTimeString().substring(0, 5);
+                    }
+                    if(!state.timetableConfig[state.currentDayTab]) state.timetableConfig[state.currentDayTab] = [];
+                    state.timetableConfig[state.currentDayTab].push({ id: API.genId(), start: defaultStart, end: defaultEnd, label: defaultLabel, type: 'class', subject: '' });
+                    app.timetable.saveConfig();
+                    app.timetable.renderDaySelector();
+                    setTimeout(() => { const c = document.getElementById('timetable-slots'); if(c) c.scrollTop = c.scrollHeight; }, 50);
+                }
+            },
+            groups: {
+                create: async () => { 
+                    const n = document.getElementById('create-group-name').value.trim(); 
+                    if(!n) return UI.notify('輸入群組名稱','error'); 
+                    const id = API.genId();
+                    const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+                    let code = '';
+                    for(let i=0; i<6; i++) code += chars.charAt(Math.floor(Math.random() * chars.length));
+                    
+                    await setDoc(doc(db, API.paths.groups(), id), { id, name: n, code, providerId: state.user.uid, members: [], createdAt: new Date().toISOString() }); 
+                    document.getElementById('create-group-name').value = ''; 
+                    AdminService.log('GROUP_CREATED'); 
+                    UI.notify(`建立成功: ${code}`); 
+                },
+                join: async () => { 
+                    const c = document.getElementById('join-group-code').value.toUpperCase(); 
+                    if(c.length!==6) return UI.notify('代碼為 6 位數', 'error'); 
+                    const snap = await getDocs(query(collection(db, API.paths.groups()), where('code', '==', c))); 
+                    if(snap.empty) return UI.notify('代碼無效', 'error'); 
+                    const t = snap.docs[0].data(); 
+                    if(t.members.includes(state.user.uid)) return UI.notify('已在群組中'); 
+                    await updateDoc(doc(db, API.paths.groups(), t.id), { members: [...t.members, state.user.uid] }); 
+                    document.getElementById('join-group-code').value = ''; 
+                    AdminService.log('GROUP_JOINED'); 
+                    UI.notify(`成功加入: ${t.name}`); 
+                },
+                setAnnouncementModal: (groupId, currentMsg) => {
+                    UI.modal.open(`<h3 class="text-xl font-bold text-theme-text mb-2">群組置頂公告</h3><p class="text-xs text-theme-muted mb-6">此公告將顯示在所有學生的首頁最上方</p><textarea id="group-announcement-input" class="premium-input h-32 resize-none py-3 text-sm" placeholder="輸入公告內容... (留空即刪除)">${currentMsg || ''}</textarea><div class="mt-8 flex gap-3"><button onclick="app.UI.modal.close()" class="flex-1 glass-card py-3.5 text-sm font-bold text-theme-text hover:-translate-y-1 active:scale-95 transition-all">取消</button><button onclick="app.groups.saveAnnouncement('${groupId}')" class="flex-1 bg-brand-600 rounded-xl py-3.5 text-sm font-bold text-white shadow-lg hover:-translate-y-1 active:scale-95 transition-all">發佈公告</button></div>`);
+                },
+                saveAnnouncement: async (groupId) => {
+                    const msg = document.getElementById('group-announcement-input').value.trim();
+                    try {
+                        await updateDoc(doc(db, API.paths.groups(), groupId), { announcement: msg, announcementTime: new Date().toISOString() });
+                        UI.modal.close();
+                        UI.notify(msg ? '公告已發佈' : '公告已清除', 'success');
+                    } catch(e) { UI.notify('發佈失敗', 'error'); }
+                }
             }
         };
 

@@ -102,7 +102,7 @@
             box-shadow: 0 10px 40px -10px rgba(0,0,0,0.05); 
             transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); 
         }
-        .dark .glass-card { box-shadow: 0 10px 40px -10px rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.05); }
+        .dark .glass-card { box-shadow: 0 10px 40px -10px rgba(0,0,0,0.6); border: 1px solid rgba(255,255,255,0.05); }
         
         .dynamic-glow-card {
             position: relative;
@@ -164,13 +164,19 @@
         input[type="color"]::-webkit-color-swatch { border: none; border-radius: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.2); }
     </style>
 </head>
-<!-- 🌟 修改為全局滾動，讓 body 直接捲動 -->
 <body class="w-full relative font-sans overflow-x-hidden overflow-y-auto no-scrollbar">
 
     <div class="ambient-bg">
         <div class="orb orb-1"></div>
         <div class="orb orb-2"></div>
         <div class="orb orb-3"></div>
+    </div>
+
+    <!-- 🌟 系統跑馬燈橫幅 (對接後台發佈) -->
+    <div id="global-marquee-banner" class="hidden fixed top-0 left-0 right-0 w-full bg-gradient-to-r from-orange-500 to-yellow-500 text-white font-bold text-[13px] px-6 py-2.5 flex items-center gap-4 shadow-lg z-[100]">
+        <i class="fa-solid fa-bullhorn animate-pulse text-lg drop-shadow-sm"></i>
+        <span class="tracking-widest uppercase shrink-0 bg-black/20 px-2 py-0.5 rounded text-[10px]">最新公告</span>
+        <marquee scrollamount="5" class="flex-1 font-medium tracking-wide drop-shadow-sm" id="global-marquee-text"></marquee>
     </div>
 
     <!-- 0. 系統載入遮罩 -->
@@ -217,19 +223,19 @@
         </div>
     </section>
 
-    <!-- 2. 超級管理員攔截層 -->
-    <div id="system-blocker" class="fixed inset-0 z-[300] hidden bg-theme-bg/95 backdrop-blur-2xl flex-col items-center justify-center px-6 text-center">
+    <!-- 2. 全域攔截層 -->
+    <div id="system-blocker" class="fixed inset-0 z-[300] hidden bg-theme-bg/95 backdrop-blur-2xl flex-col items-center justify-center px-6 text-center transition-opacity duration-500">
         <i id="blocker-icon" class="fa-solid fa-triangle-exclamation text-7xl text-yellow-500 mb-8 animate-pulse drop-shadow-[0_0_20px_rgba(234,179,8,0.5)]"></i>
         <h2 id="blocker-title" class="text-4xl font-black text-theme-text mb-4 tracking-tight font-display">系統維護中</h2>
         <p id="blocker-message" class="text-theme-muted text-[15px] max-w-sm leading-relaxed font-medium">超級管理員正在進行系統升級，請稍後再試。感謝您的耐心等候。</p>
-        <button onclick="app.auth.logout()" class="mt-10 px-8 py-3 rounded-full border border-theme-border text-sm font-bold text-theme-muted hover:bg-theme-input hover:text-theme-text active:scale-95 transition-all shadow-sm">安全登出</button>
+        <button onclick="app.auth.logout()" class="mt-10 px-8 py-3 rounded-full border border-theme-border text-sm font-bold text-theme-muted hover:bg-theme-input hover:text-theme-text active:scale-95 transition-all shadow-sm">登出返回</button>
     </div>
 
     <!-- 3. 主系統核心 -->
     <div id="app-core" class="hidden flex-col min-h-screen w-full relative">
         
-        <!-- 🌟 升級版：極美毛玻璃懸浮標題 (Floating Header) -->
-        <header class="fixed top-4 left-4 right-4 md:max-w-5xl lg:max-w-6xl md:mx-auto z-50 bg-theme-bg/70 backdrop-blur-2xl border border-theme-border rounded-3xl px-6 py-4 flex justify-between items-center shadow-[0_10px_40px_rgba(0,0,0,0.1)] dark:shadow-[0_10px_40px_rgba(0,0,0,0.5)]">
+        <!-- 🌟 絕美懸浮標題 (Floating Header) -->
+        <header id="main-header" class="fixed top-4 left-4 right-4 md:max-w-5xl lg:max-w-6xl md:mx-auto z-50 bg-theme-bg/70 backdrop-blur-2xl border border-theme-border rounded-3xl px-6 py-4 flex justify-between items-center shadow-[0_10px_40px_rgba(0,0,0,0.1)] dark:shadow-[0_10px_40px_rgba(0,0,0,0.5)] transition-all duration-300">
             <div class="flex flex-col">
                 <h1 class="text-2xl md:text-3xl font-black tracking-wide text-theme-text font-literary drop-shadow-sm leading-tight">電子手冊</h1>
                 <p id="header-date" class="text-[10px] md:text-xs text-brand-500 font-mono tracking-widest font-bold uppercase mt-0.5">載入中...</p>
@@ -248,11 +254,11 @@
             </div>
         </header>
 
-        <!-- 🌟 配合懸浮標題，主內容區域加入 padding-top -->
-        <main class="flex-1 w-full relative z-10 pt-28 pb-32">
+        <!-- 主內容區域 -->
+        <main id="main-content-area" class="flex-1 w-full relative z-10 pt-[104px] pb-32">
             
             <!-- 浮空膠囊導航 (Sticky) -->
-            <div class="sticky top-28 z-40 px-4 shrink-0 pointer-events-none transition-all duration-500 mb-6">
+            <div id="main-nav-bar" class="sticky top-[104px] z-40 px-4 shrink-0 pointer-events-none transition-all duration-500 mb-6">
                 <div class="flex gap-1.5 p-1.5 bg-white/70 dark:bg-[#030305]/70 backdrop-blur-xl rounded-2xl border border-theme-border shadow-lg overflow-x-auto no-scrollbar max-w-full md:max-w-2xl mx-auto pointer-events-auto">
                     <button onclick="app.nav.switch('home')" id="nav-home" class="top-nav-item flex-1 py-2.5 px-4 text-[13px] font-bold rounded-xl active bg-theme-card text-brand-600 dark:text-white shadow-sm border border-theme-border whitespace-nowrap flex items-center justify-center gap-2">
                         <i class="fa-solid fa-layer-group"></i> 任務
@@ -339,8 +345,9 @@
                     <div class="flex justify-between items-end mb-4 px-1 md:px-0 md:max-w-3xl md:mx-auto">
                         <h2 class="text-2xl font-black text-theme-text tracking-tight font-display">時間表 <span class="text-brand-500">Timetable</span></h2>
                     </div>
+                    <!-- 支援自訂日別 -->
                     <div id="timetable-day-selector" class="flex gap-2.5 overflow-x-auto no-scrollbar pb-4 mb-4 snap-x md:justify-center md:max-w-3xl md:mx-auto items-center"></div>
-                    <div class="glass-card p-3 shadow-lg border-theme-border flex flex-col max-h-[65vh] md:max-w-3xl md:mx-auto">
+                    <div class="glass-card p-3 shadow-lg border-theme-border flex flex-col md:max-w-3xl md:mx-auto">
                         <div class="flex justify-between items-center p-3 mb-2 border-b border-theme-border shrink-0 bg-theme-input/50 rounded-2xl">
                             <h3 class="font-bold text-[15px] text-theme-text font-literary tracking-wide flex items-center"><i class="fa-solid fa-clock text-brand-500 mr-2"></i> 每日課表</h3>
                             <div class="flex gap-2">
@@ -350,7 +357,7 @@
                                 <button id="tt-btn-done" onclick="app.timetable.toggleEditMode()" class="hidden text-[12px] text-white font-bold bg-brand-500 px-5 py-2 rounded-xl hover:bg-brand-600 active:scale-95 transition-all shadow-[0_4px_15px_rgba(99,102,241,0.4)]"><i class="fa-solid fa-check"></i> 完成</button>
                             </div>
                         </div>
-                        <div id="timetable-slots" class="flex-1 overflow-y-auto no-scrollbar p-2"></div>
+                        <div id="timetable-slots" class="w-full p-2"></div>
                     </div>
                 </section>
 
@@ -374,19 +381,19 @@
                     </div>
                     
                     <div class="glass-card p-8 mb-6 relative overflow-hidden shadow-sm hover:shadow-lg transition-all duration-500 md:max-w-2xl md:mx-auto border-t-4 border-t-blue-500">
-                        <div class="absolute top-0 right-0 w-40 h-40 bg-blue-500/10 blur-3xl rounded-full"></div>
-                        <h3 class="text-lg font-bold text-theme-text mb-6 font-literary tracking-wide flex items-center"><i class="fa-solid fa-users text-blue-500 mr-3 text-xl"></i>加入學習群組</h3>
+                        <div class="absolute top-0 right-0 w-40 h-40 bg-blue-500/10 blur-3xl rounded-full pointer-events-none"></div>
+                        <h3 class="text-lg font-bold text-theme-text mb-6 font-literary tracking-wide flex items-center relative z-10"><i class="fa-solid fa-users text-blue-500 mr-3 text-xl"></i>加入學習群組</h3>
                         
                         <div class="flex gap-3 mb-8 relative z-10">
                             <input type="text" id="join-group-code" class="premium-input py-4 px-5 text-[16px] font-mono font-bold uppercase placeholder-theme-muted transition-colors shadow-inner" placeholder="輸入 6 位邀請碼..." maxlength="6">
-                            <button onclick="app.groups.join()" class="bg-blue-600 hover:bg-blue-500 px-8 rounded-2xl text-white font-bold text-[15px] hover:-translate-y-1 transition-all shadow-[0_5px_20px_rgba(59,130,246,0.4)] active:scale-95 flex items-center gap-2"><i class="fa-solid fa-right-to-bracket"></i> 加入</button>
+                            <button onclick="app.groups.join()" class="bg-blue-600 hover:bg-blue-500 px-8 rounded-2xl text-white font-bold text-[15px] hover:-translate-y-1 transition-all shadow-[0_5px_20px_rgba(59,130,246,0.4)] active:scale-95 flex items-center gap-2 shrink-0"><i class="fa-solid fa-right-to-bracket"></i> 加入</button>
                         </div>
 
                         <div id="provider-create-group" class="hidden border-t border-theme-border pt-8 mb-4 relative z-10">
                             <p class="text-[11px] font-bold text-pink-500 mb-3 uppercase tracking-widest flex items-center gap-2"><i class="fa-solid fa-crown"></i> 建立教學群組 (Provider Only)</p>
                             <div class="flex gap-3">
                                 <input type="text" id="create-group-name" class="premium-input py-4 px-5 text-[16px] font-bold transition-colors shadow-inner" placeholder="為新群組命名...">
-                                <button onclick="app.groups.create()" class="bg-pink-600 hover:bg-pink-500 px-8 rounded-2xl text-white font-bold text-[15px] hover:-translate-y-1 transition-all shadow-[0_5px_20px_rgba(236,72,153,0.4)] active:scale-95 flex items-center gap-2"><i class="fa-solid fa-plus"></i> 建立</button>
+                                <button onclick="app.groups.create()" class="bg-pink-600 hover:bg-pink-500 px-8 rounded-2xl text-white font-bold text-[15px] hover:-translate-y-1 transition-all shadow-[0_5px_20px_rgba(236,72,153,0.4)] active:scale-95 flex items-center gap-2 shrink-0"><i class="fa-solid fa-plus"></i> 建立</button>
                             </div>
                         </div>
 
@@ -468,7 +475,7 @@
                     </div>
                     
                     <div class="glass-card p-6 md:p-10 relative overflow-hidden shadow-lg md:max-w-4xl md:mx-auto border border-theme-border/50">
-                        <div class="absolute top-[-20%] right-[-10%] w-64 h-64 bg-brand-500/10 blur-[80px] rounded-full pointer-events-none"></div>
+                        <div class="absolute top-[-20%] right-[-10%] w-64 h-64 bg-brand-500/10 blur-[80px] rounded-full pointer-events-none z-0"></div>
                         <input type="hidden" id="form-task-id">
                         
                         <!-- 頂級分段切換器 (Task / Exam Toggle) -->
@@ -530,7 +537,7 @@
 
                                     <!-- 加入清單按鈕 (含 GSAP 處理動畫) -->
                                     <button id="btn-save-task" onclick="app.tasks.save()" class="w-full mt-auto h-20 bg-gradient-to-r from-brand-600 to-brand-500 hover:from-brand-500 hover:to-brand-400 text-white rounded-2xl font-black shadow-[0_10px_30px_rgba(99,102,241,0.4)] hover:-translate-y-1 hover:shadow-[0_15px_40px_rgba(99,102,241,0.6)] active:scale-95 transition-all duration-300 flex justify-center items-center gap-3 text-[18px] tracking-wider border border-transparent overflow-hidden relative">
-                                        <div class="absolute inset-0 bg-white/20 transform -skew-x-12 -translate-x-full group-hover:animate-[shine_1.5s_ease-in-out_infinite]"></div>
+                                        <div class="absolute inset-0 bg-white/20 transform -skew-x-12 -translate-x-full hover-shine"></div>
                                         <i class="fa-solid fa-paper-plane text-xl drop-shadow-md"></i> 發佈任務
                                     </button>
                                 </div>
@@ -569,6 +576,7 @@
             </div>
         </main>
 
+        <!-- 懸浮新增按鈕 -->
         <button onclick="app.nav.toggleAdd()" id="global-fab" class="fixed bottom-8 right-6 md:bottom-12 md:right-12 lg:right-16 w-16 h-16 bg-gradient-to-tr from-brand-600 to-pink-500 rounded-full flex items-center justify-center text-white text-2xl shadow-[0_10px_30px_rgba(99,102,241,0.5)] hover:shadow-[0_15px_40px_rgba(99,102,241,0.8)] hover:scale-110 active:scale-90 transition-all duration-500 z-50 overflow-hidden group">
             <div class="absolute inset-0 bg-white/20 transform -translate-y-full group-hover:translate-y-0 transition-transform duration-300 rounded-full"></div>
             <i class="fa-solid fa-plus transition-transform duration-500 relative z-10 drop-shadow-md" id="add-icon"></i>
@@ -633,17 +641,18 @@
 
         // 預設科目與顏色 (全新功能)
         const defaultSubjects = [
-            { name: '中文', color: '#3b82f6' }, // Blue
-            { name: '英文', color: '#ef4444' }, // Red
-            { name: '數學', color: '#f59e0b' }, // Amber
-            { name: '通識教育', color: '#10b981' }, // Emerald
-            { name: '科學', color: '#8b5cf6' }, // Violet
-            { name: '歷史', color: '#ec4899' }, // Pink
-            { name: '地理', color: '#14b8a6' }  // Teal
+            { name: '中文', color: '#3b82f6' }, 
+            { name: '英文', color: '#ef4444' }, 
+            { name: '數學', color: '#f59e0b' }, 
+            { name: '通識教育', color: '#10b981' }, 
+            { name: '科學', color: '#8b5cf6' }, 
+            { name: '歷史', color: '#ec4899' }, 
+            { name: '地理', color: '#14b8a6' }  
         ];
 
         // 顏色轉換工具 (Hex to Rgba for backgrounds)
         const hexToRgba = (hex, alpha) => {
+            if(!hex) return `rgba(99, 102, 241, ${alpha})`; // fallback
             let r = parseInt(hex.slice(1, 3), 16), g = parseInt(hex.slice(3, 5), 16), b = parseInt(hex.slice(5, 7), 16);
             return `rgba(${r}, ${g}, ${b}, ${alpha})`;
         };
@@ -651,7 +660,7 @@
         const state = {
             user: null, profile: { role: 'student', isBanned: false }, currentView: 'home',
             tasks: [], groups: [], notifications: [],
-            subjects: [], // 將會載入物件陣列 {name, color}
+            subjects: [], 
             customDays: [], currentDayTab: '', timetableConfig: {}, classTimerInterval: null, unsubscribers: [],
             tempImageBase64: null,
             filters: { subject: 'all', incompleteOnly: false, sortDesc: false }
@@ -920,7 +929,28 @@
                     
                     const gRef = doc(db, `artifacts/${internalAppId}/public/data/global_settings`, 'main');
                     state.unsubscribers.push(onSnapshot(gRef, (snap) => {
-                        if (snap.exists() && snap.data().status === 'maintenance') AdminService.triggerBlocker('系統維護中', snap.data().message || '超級管理員升級中。');
+                        if (snap.exists()) {
+                            const data = snap.data();
+                            if (data.status === 'maintenance') {
+                                AdminService.triggerBlocker('系統維護中', data.message || '超級管理員升級中。');
+                            }
+                            
+                            // 🌟 全域跑馬燈接收
+                            const marqueeBanner = document.getElementById('global-marquee-banner');
+                            const marqueeText = document.getElementById('global-marquee-text');
+                            const appCore = document.getElementById('app-core');
+                            const header = document.getElementById('main-header');
+                            
+                            if (data.marqueeMsg) {
+                                if(marqueeBanner) marqueeBanner.classList.remove('hidden');
+                                if(marqueeText) marqueeText.textContent = data.marqueeMsg;
+                                // 調整頂部空間以容納跑馬燈
+                                if(header) header.style.top = '48px'; 
+                            } else {
+                                if(marqueeBanner) marqueeBanner.classList.add('hidden');
+                                if(header) header.style.top = '16px';
+                            }
+                        }
                     }));
                 } catch(e) {}
             },
@@ -1012,6 +1042,25 @@
                         UI.notify('已切換為深色模式', 'info');
                     }
                 },
+                initTimetableMode: () => {
+                    let ttMode = 'week';
+                    try { ttMode = localStorage.getItem('lumina_tt_mode') || 'week'; } catch(e){}
+                    const modeText = document.getElementById('setting-tt-mode-text');
+                    if(modeText) modeText.textContent = ttMode === 'week' ? '課表：星期制' : '課表：循環日制';
+                },
+                toggleTimetableMode: () => {
+                    let currentMode = 'week';
+                    try { currentMode = localStorage.getItem('lumina_tt_mode') || 'week'; } catch(e){}
+                    const newMode = currentMode === 'week' ? 'day6' : 'week';
+                    try { localStorage.setItem('lumina_tt_mode', newMode); } catch(e){}
+                    
+                    app.settings.initTimetableMode();
+                    
+                    state.currentDayTab = newMode === 'week' ? '星期一' : (state.customDays[0] || '');
+                    if (state.currentView === 'timetable') app.timetable.renderDaySelector();
+                    
+                    UI.notify(`已切換為 ${newMode === 'week' ? '星期制' : '自訂循環日制'}`, 'success');
+                },
                 exportCalendar: () => {
                     if (state.tasks.length === 0) return UI.notify('尚無任務可匯出', 'warning');
                     
@@ -1019,6 +1068,7 @@
                     state.tasks.forEach(t => {
                         if (!t.dueDate) return;
                         const dateStr = t.dueDate.replace(/-/g, '');
+                        // 若無標題，使用內容前20字
                         const summaryTitle = t.title || (t.content ? t.content.substring(0, 20) + '...' : '任務');
                         ics += `BEGIN:VEVENT\nDTSTART;VALUE=DATE:${dateStr}\nDTEND;VALUE=DATE:${dateStr}\nSUMMARY:[${t.subject}] ${summaryTitle}\nDESCRIPTION:${(t.content || '').replace(/\n/g, '\\n')}\nSTATUS:${t.status === 'completed' ? 'CONFIRMED' : 'TENTATIVE'}\nEND:VEVENT\n`;
                     });
@@ -1042,10 +1092,10 @@
                     state.subjects.forEach((s, index) => {
                         const hex = s.color || '#6366f1';
                         c.innerHTML += `
-                            <div class="flex items-center gap-2 bg-theme-card border border-theme-border rounded-xl pl-3 pr-1 py-1 shadow-sm transition-transform hover:scale-105 duration-300">
-                                <div class="w-3 h-3 rounded-full shadow-inner" style="background-color: ${hex}"></div>
-                                <span class="text-[13px] font-bold text-theme-text font-literary tracking-wide mr-1">${escapeHTML(s.name)}</span>
-                                <button onclick="app.settings.deleteSubject(${index})" class="w-7 h-7 flex items-center justify-center rounded-lg text-theme-muted hover:bg-red-500/10 hover:text-red-500 transition-colors"><i class="fa-solid fa-xmark text-xs"></i></button>
+                            <div class="flex items-center gap-3 bg-theme-card border border-theme-border rounded-xl pl-4 pr-1.5 py-1.5 shadow-sm transition-transform hover:scale-105 duration-300 group">
+                                <div class="w-3 h-3 rounded-full shadow-inner ring-2 ring-theme-bg" style="background-color: ${hex}"></div>
+                                <span class="text-[14px] font-bold text-theme-text font-literary tracking-wide mr-1">${escapeHTML(s.name)}</span>
+                                <button onclick="app.settings.deleteSubject(${index})" class="w-8 h-8 flex items-center justify-center rounded-lg text-theme-muted hover:bg-red-500/10 hover:text-red-500 transition-colors opacity-0 group-hover:opacity-100 focus:opacity-100"><i class="fa-solid fa-xmark text-sm"></i></button>
                             </div>
                         `;
                     });
@@ -1589,7 +1639,6 @@
                     const inp = document.getElementById('form-subject-value');
                     if(inp) {
                         inp.value = task.subject || state.subjects[0].name;
-                        // 若舊科目不在自訂清單內，暫時加入
                         if(!state.subjects.find(s => s.name === inp.value)) { 
                             state.subjects.unshift({ name: inp.value, color: '#6366f1' }); 
                         }
@@ -1759,7 +1808,7 @@
                     dayHtml = useDays.map(d => `<button class="whitespace-nowrap px-5 py-3 rounded-2xl font-bold text-[14px] transition-all duration-300 font-literary tracking-wide border shadow-sm snap-center shrink-0 ${state.currentDayTab===d?'bg-theme-card text-brand-600 border-brand-500/50 scale-105 ring-2 ring-brand-500/20':'bg-theme-input text-theme-muted border-transparent hover:bg-theme-border'}" onclick="app.timetable.changeDay('${safeStr(d)}')">${escapeHTML(d)}</button>`).join('');
                     
                     if (ttMode !== 'week') {
-                        dayHtml += `<button class="w-12 h-12 shrink-0 flex items-center justify-center rounded-2xl bg-theme-input text-theme-muted hover:text-brand-500 transition-colors shadow-sm border border-transparent hover:border-theme-border snap-center" onclick="app.timetable.openManageDaysModal()"><i class="fa-solid fa-gear"></i></button>`;
+                        dayHtml += `<button class="w-12 h-12 shrink-0 flex items-center justify-center rounded-2xl bg-theme-input text-theme-muted hover:text-brand-500 transition-colors shadow-sm border border-transparent hover:border-theme-border snap-center active:scale-95" onclick="app.timetable.openManageDaysModal()"><i class="fa-solid fa-gear"></i></button>`;
                     }
                     if(selectorContainer) selectorContainer.innerHTML = dayHtml;
 
@@ -1832,17 +1881,17 @@
                             };
                             const timeStr = `${timeFormat(s.start)} - ${timeFormat(s.end)}`;
                             
-                            // Get color
                             const subjObj = state.subjects.find(sub => sub.name === s.subject);
                             const hexColor = subjObj ? subjObj.color : '#6366f1';
                             
                             html += `
                                 <div class="relative mb-8 last:mb-2 group tt-slot-anim">
-                                    <div class="absolute -left-[27px] top-1.5 w-4 h-4 rounded-full ring-4 ring-theme-card transition-colors duration-500 z-10" style="background-color: var(--theme-border); group-hover: background-color: ${hexColor}"></div>
+                                    <div class="absolute -left-[27px] top-1.5 w-4 h-4 rounded-full ring-4 ring-theme-card transition-colors duration-500 z-10" style="background-color: var(--border); group-hover: background-color: ${hexColor}"></div>
                                     <div class="flex flex-col gap-1 pr-2">
                                         <p class="text-[12px] text-theme-muted font-mono font-bold tracking-wide flex items-center gap-2">${timeStr} <span class="px-2 py-0.5 bg-theme-input rounded-md text-[10px] font-sans text-brand-500">${escapeHTML(s.label)}</span></p>
                                         <div class="flex justify-between items-center mt-1">
                                             <h4 class="text-[20px] font-black text-theme-text font-literary tracking-wide group-hover:translate-x-1 transition-transform duration-300" style="group-hover: color: ${hexColor}">${escapeHTML(s.subject) || '<span class="opacity-30">空堂 / 休息</span>'}</h4>
+                                            <i class="fa-solid fa-check text-[10px] text-theme-muted opacity-30 group-hover:opacity-100 transition-opacity"></i>
                                         </div>
                                     </div>
                                 </div>
@@ -1850,7 +1899,6 @@
                         });
                         html += `</div>`;
                         
-                        // 動態注入 hover 顏色樣式
                         setTimeout(() => {
                             document.querySelectorAll('.tt-slot-anim').forEach(el => {
                                 const h4 = el.querySelector('h4');
@@ -1898,13 +1946,13 @@
                 copyToAllWeekModal: () => {
                     const currentSlots = state.timetableConfig[state.currentDayTab] || [];
                     if (currentSlots.length === 0) return UI.notify('請先建立時間軸再進行複製', 'error');
-                    UI.modal.open(`<div class="text-center"><div class="w-20 h-20 bg-emerald-500/10 rounded-full flex items-center justify-center mx-auto mb-6 shadow-inner"><i class="fa-solid fa-copy text-emerald-500 text-4xl drop-shadow-md"></i></div><h3 class="text-2xl font-black text-theme-text mb-3 tracking-tight">套用到所有日別？</h3><p class="text-theme-muted text-[15px] mb-8 font-medium">將把今天的「時間軸結構」複製到其他所有的日子<br>(原有的資料將被覆蓋，需重新點擊填寫科目)</p><div class="flex gap-4"><button onclick="app.UI.modal.close()" class="flex-1 glass-card py-4 font-bold text-theme-text hover:-translate-y-1 hover:bg-theme-input active:scale-95 transition-all duration-300 text-[15px]">取消</button><button onclick="app.timetable.doCopyToAllWeek()" class="flex-1 bg-emerald-600 hover:bg-emerald-500 rounded-2xl py-4 font-bold text-white shadow-[0_5px_20px_rgba(16,185,129,0.4)] hover:-translate-y-1 active:scale-95 transition-all duration-300 text-[15px] border border-transparent">確認套用</button></div></div>`);
+                    UI.modal.open(`<div class="text-center"><div class="w-20 h-20 bg-emerald-500/10 rounded-full flex items-center justify-center mx-auto mb-6 shadow-inner"><i class="fa-solid fa-copy text-emerald-500 text-4xl drop-shadow-md"></i></div><h3 class="text-2xl font-black text-theme-text mb-3 tracking-tight">套用到所有日別？</h3><p class="text-[15px] text-theme-muted mb-8 font-medium leading-relaxed">將把今天的「時間軸結構」複製到其他所有的日子<br>(原有的資料將被覆蓋，需重新點擊填寫科目)</p><div class="flex gap-4"><button onclick="app.UI.modal.close()" class="flex-1 glass-card py-4 font-bold text-theme-text hover:-translate-y-1 hover:bg-theme-input active:scale-95 transition-all duration-300 text-[15px]">取消</button><button onclick="app.timetable.doCopyToAllWeek()" class="flex-1 bg-emerald-600 hover:bg-emerald-500 rounded-2xl py-4 font-bold text-white shadow-[0_5px_20px_rgba(16,185,129,0.4)] hover:-translate-y-1 active:scale-95 transition-all duration-300 text-[15px] border border-transparent">確認套用</button></div></div>`);
                 },
                 doCopyToAllWeek: () => {
                     const currentSlots = state.timetableConfig[state.currentDayTab] || [];
                     let ttMode = 'week';
                     try { ttMode = localStorage.getItem('lumina_tt_mode') || 'week'; } catch(e){}
-                    const targetDays = ttMode === 'week' ? ['1','2','3','4','5'] : state.customDays;
+                    const targetDays = ttMode === 'week' ? ['星期一','星期二','星期三','星期四','星期五'] : state.customDays;
                     
                     targetDays.forEach(day => {
                         if (day === state.currentDayTab) return;
@@ -1969,110 +2017,8 @@
                         UI.notify(msg ? '公告已發佈' : '公告已清除', 'success');
                     } catch(e) { UI.notify('發佈失敗', 'error'); }
                 }
-            },
-            settings: {
-                initTheme: () => {
-                    const saved = localStorage.getItem('lumina_theme');
-                    const root = document.getElementById('html-root');
-                    if (saved === 'light') root.classList.remove('dark');
-                    else root.classList.add('dark');
-                },
-                toggleTheme: () => {
-                    const root = document.getElementById('html-root');
-                    if (root.classList.contains('dark')) {
-                        root.classList.remove('dark');
-                        localStorage.setItem('lumina_theme', 'light');
-                        UI.notify('已切換為淺色模式', 'info');
-                    } else {
-                        root.classList.add('dark');
-                        localStorage.setItem('lumina_theme', 'dark');
-                        UI.notify('已切換為深色模式', 'info');
-                    }
-                },
-                initTimetableMode: () => {
-                    let ttMode = 'week';
-                    try { ttMode = localStorage.getItem('lumina_tt_mode') || 'week'; } catch(e){}
-                    const modeText = document.getElementById('setting-tt-mode-text');
-                    if(modeText) modeText.textContent = ttMode === 'week' ? '課表：星期制' : '課表：循環日制';
-                },
-                toggleTimetableMode: () => {
-                    let currentMode = 'week';
-                    try { currentMode = localStorage.getItem('lumina_tt_mode') || 'week'; } catch(e){}
-                    const newMode = currentMode === 'week' ? 'day6' : 'week';
-                    try { localStorage.setItem('lumina_tt_mode', newMode); } catch(e){}
-                    
-                    app.settings.initTimetableMode();
-                    
-                    state.currentDayTab = newMode === 'week' ? '星期一' : (state.customDays[0] || '');
-                    if (state.currentView === 'timetable') app.timetable.renderDaySelector();
-                    
-                    UI.notify(`已切換為 ${newMode === 'week' ? '星期制' : '自訂循環日制'}`, 'success');
-                },
-                exportCalendar: () => {
-                    if (state.tasks.length === 0) return UI.notify('尚無任務可匯出', 'warning');
-                    
-                    let ics = "BEGIN:VCALENDAR\nVERSION:2.0\nPRODID:-//Lumina Task//EN\n";
-                    state.tasks.forEach(t => {
-                        if (!t.dueDate) return;
-                        const dateStr = t.dueDate.replace(/-/g, '');
-                        // 若無標題，使用內容前20字
-                        const summaryTitle = t.title || (t.content ? t.content.substring(0, 20) + '...' : '任務');
-                        ics += `BEGIN:VEVENT\nDTSTART;VALUE=DATE:${dateStr}\nDTEND;VALUE=DATE:${dateStr}\nSUMMARY:[${t.subject}] ${summaryTitle}\nDESCRIPTION:${(t.content || '').replace(/\n/g, '\\n')}\nSTATUS:${t.status === 'completed' ? 'CONFIRMED' : 'TENTATIVE'}\nEND:VEVENT\n`;
-                    });
-                    ics += "END:VCALENDAR";
-                    
-                    const blob = new Blob([ics], { type: 'text/calendar;charset=utf-8' });
-                    const url = window.URL.createObjectURL(blob);
-                    const a = document.createElement('a');
-                    a.href = url;
-                    a.download = `Lumina_Tasks_${new Date().toISOString().split('T')[0]}.ics`;
-                    document.body.appendChild(a);
-                    a.click();
-                    document.body.removeChild(a);
-                    UI.notify('行事曆已成功匯出！', 'success');
-                },
-                renderSubjects: () => {
-                    const c = document.getElementById('settings-subjects-list');
-                    if(!c) return;
-                    c.innerHTML = '';
-                    state.subjects.forEach((s, index) => {
-                        const hex = s.color || '#6366f1';
-                        c.innerHTML += `
-                            <div class="flex items-center gap-3 bg-theme-card border border-theme-border rounded-xl pl-4 pr-1.5 py-1.5 shadow-sm transition-transform hover:scale-105 duration-300 group">
-                                <div class="w-3 h-3 rounded-full shadow-inner ring-2 ring-theme-bg" style="background-color: ${hex}"></div>
-                                <span class="text-[14px] font-bold text-theme-text font-literary tracking-wide mr-1">${escapeHTML(s.name)}</span>
-                                <button onclick="app.settings.deleteSubject(${index})" class="w-8 h-8 flex items-center justify-center rounded-lg text-theme-muted hover:bg-red-500/10 hover:text-red-500 transition-colors opacity-0 group-hover:opacity-100 focus:opacity-100"><i class="fa-solid fa-xmark text-sm"></i></button>
-                            </div>
-                        `;
-                    });
-                },
-                addSubject: () => { 
-                    const n = document.getElementById('new-subj-name').value.trim(); 
-                    const c = document.getElementById('new-subj-color').value;
-                    if(!n) return UI.notify('請輸入科目名稱', 'warning');
-                    if(state.subjects.find(s => s.name === n)) return UI.notify('科目已存在', 'warning');
-                    
-                    state.subjects.push({ name: n, color: c });
-                    app.settings.saveSubjects();
-                    document.getElementById('new-subj-name').value = '';
-                    app.settings.renderSubjects();
-                    app.renders.subjectsPills(); 
-                    UI.notify(`已加入 ${n}`); 
-                },
-                deleteSubject: (index) => {
-                    if(state.subjects.length <= 1) return UI.notify('至少需保留一個科目', 'error');
-                    state.subjects.splice(index, 1);
-                    app.settings.saveSubjects();
-                    app.settings.renderSubjects();
-                    app.renders.subjectsPills();
-                },
-                saveSubjects: () => {
-                    try { localStorage.setItem(`lumina_subj_${state.user.uid}`, JSON.stringify(state.subjects)); } catch(e){}
-                }
             }
         };
-
-        app.tasks.populateFilterSubjects = () => {};
 
         window.app = app; window.app.UI = UI;
 

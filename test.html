@@ -270,15 +270,15 @@
                     <h2 class="text-xl font-bold text-theme-text tracking-tight">待辦任務</h2>
                 </div>
 
-                <!-- 🌟 全新作業過濾器 (Smart Task Filters) -->
+                <!-- 🌟 全新作業過濾器 (Smart Task Filters - Custom Dropdown Models) -->
                 <div class="flex gap-2 mb-6 px-2 md:px-0 overflow-x-auto no-scrollbar md:max-w-3xl md:mx-auto">
-                    <select id="filter-subject" onchange="app.tasks.applyFilters()" class="bg-theme-input text-theme-text text-[11px] font-bold px-3 py-2 rounded-full border border-theme-border outline-none focus:border-brand-500 transition-colors shrink-0">
-                        <option value="all">所有科目</option>
-                    </select>
-                    <button id="filter-incomplete" onclick="app.tasks.toggleIncompleteFilter()" class="bg-theme-input text-theme-muted text-[11px] font-bold px-3 py-2 rounded-full border border-theme-border whitespace-nowrap transition-colors flex items-center gap-1.5 shrink-0 active:scale-95">
+                    <button id="filter-subject-btn" onclick="app.tasks.openFilterSubjectModal()" class="bg-theme-input text-theme-text text-[11px] font-bold px-3 py-2 rounded-full border border-theme-border outline-none focus:border-brand-500 transition-colors flex items-center gap-1.5 shrink-0 hover:-translate-y-0.5 active:scale-95 shadow-sm">
+                        <span id="filter-subject-text">所有科目</span> <i class="fa-solid fa-chevron-down text-[9px] opacity-70"></i>
+                    </button>
+                    <button id="filter-incomplete" onclick="app.tasks.toggleIncompleteFilter()" class="bg-theme-input text-theme-muted text-[11px] font-bold px-3 py-2 rounded-full border border-theme-border whitespace-nowrap transition-colors flex items-center gap-1.5 shrink-0 hover:-translate-y-0.5 active:scale-95 shadow-sm">
                         <i class="fa-solid fa-circle-check"></i> <span>僅未完成</span>
                     </button>
-                    <button id="filter-sort" onclick="app.tasks.toggleSortFilter()" class="bg-theme-input text-brand-500 text-[11px] font-bold px-3 py-2 rounded-full border border-theme-border whitespace-nowrap transition-colors flex items-center gap-1.5 shrink-0 active:scale-95">
+                    <button id="filter-sort" onclick="app.tasks.toggleSortFilter()" class="bg-theme-input text-brand-500 text-[11px] font-bold px-3 py-2 rounded-full border border-theme-border whitespace-nowrap transition-colors flex items-center gap-1.5 shrink-0 hover:-translate-y-0.5 active:scale-95 shadow-sm">
                         <i class="fa-solid fa-arrow-down-short-wide"></i> <span>繳交日期</span>
                     </button>
                 </div>
@@ -331,7 +331,7 @@
 
             <section id="view-add" class="view-section w-full">
                 <div class="flex items-center mb-6 px-2 md:px-0 md:max-w-2xl md:mx-auto">
-                    <button onclick="app.nav.switch('home')" class="w-8 h-8 mr-3 rounded-full bg-theme-input flex items-center justify-center text-theme-text hover:bg-theme-border active:scale-95 transition-all border border-theme-border">
+                    <button onclick="app.nav.switch('home')" class="w-8 h-8 mr-3 rounded-full bg-theme-input flex items-center justify-center text-theme-text hover:bg-theme-border active:scale-95 transition-all border border-theme-border shadow-sm">
                         <i class="fa-solid fa-arrow-left text-sm"></i>
                     </button>
                     <h2 id="form-header-title" class="text-xl font-bold text-theme-text tracking-tight">新增任務</h2>
@@ -352,7 +352,7 @@
                             <input type="text" id="form-title" class="w-full bg-transparent border-0 border-b-2 border-theme-border px-2 py-2 text-xl font-bold text-theme-text placeholder-theme-muted focus:ring-0 focus:border-brand-500 transition-colors" placeholder="輸入任務標題...">
                         </div>
 
-                        <div class="bg-theme-input p-4 rounded-2xl border border-theme-border hover:border-gray-300 dark:hover:border-white/20 transition-colors">
+                        <div class="bg-theme-input p-4 rounded-2xl border border-theme-border hover:border-gray-300 dark:hover:border-white/20 transition-colors shadow-sm">
                             <div class="flex justify-between items-center mb-3">
                                 <label class="block text-xs font-mono font-bold text-brand-500 uppercase tracking-wider">科目 Subject</label>
                                 <button onclick="app.settings.addSubjectModal()" class="text-xs text-brand-500 hover:text-brand-600 hover:scale-105 transition-all"><i class="fa-solid fa-plus"></i> 自訂</button>
@@ -364,22 +364,23 @@
                         <div class="grid grid-cols-2 gap-4">
                             <div class="col-span-2 md:col-span-1">
                                 <label class="block text-xs font-mono font-bold text-theme-muted uppercase tracking-wider mb-2">繳交日期 Due Date</label>
-                                <input type="date" id="form-date" class="premium-input py-3 font-semibold dark:[color-scheme:dark]">
+                                <input type="date" id="form-date" class="premium-input py-3 font-semibold dark:[color-scheme:dark] shadow-sm">
                             </div>
+                            <!-- 🌟 全新浮空 Modal 選擇器 (取代原生的 select) -->
                             <div class="col-span-2 md:col-span-1">
                                 <label class="block text-xs font-mono font-bold text-theme-muted uppercase tracking-wider mb-2"><i class="fa-solid fa-repeat mr-1"></i>自動重複 Repeat</label>
-                                <select id="form-repeat" class="premium-input py-3 text-sm font-semibold text-theme-text bg-theme-input">
-                                    <option value="none">不重複</option>
-                                    <option value="daily">每天 (連續5天)</option>
-                                    <option value="weekly">每週 (連續4週)</option>
-                                </select>
+                                <input type="hidden" id="form-repeat" value="none">
+                                <button type="button" onclick="app.tasks.openRepeatModal()" class="premium-input py-3 text-sm font-semibold text-left flex justify-between items-center bg-theme-input hover:border-theme-muted transition-colors shadow-sm">
+                                    <span id="form-repeat-text">不重複</span> <i class="fa-solid fa-chevron-down opacity-50 text-[10px]"></i>
+                                </button>
                             </div>
                             
                             <div class="col-span-2" id="provider-target-section">
                                 <label class="block text-xs font-mono font-bold text-pink-500 uppercase tracking-wider mb-2"><i class="fa-solid fa-paper-plane mr-1"></i>發放對象 Target</label>
-                                <select id="form-target" class="premium-input bg-pink-500/10 border-pink-500/30 text-sm font-semibold text-theme-text focus:border-pink-500 transition-colors">
-                                    <option value="self">私人 (僅自己可見)</option>
-                                </select>
+                                <input type="hidden" id="form-target" value="self">
+                                <button type="button" onclick="app.tasks.openTargetModal()" class="premium-input bg-pink-500/10 border-pink-500/30 text-sm font-semibold text-theme-text hover:border-pink-500/60 transition-colors shadow-sm text-left flex justify-between items-center">
+                                    <span id="form-target-text">私人 (僅自己可見)</span> <i class="fa-solid fa-chevron-down opacity-50 text-[10px] text-pink-500"></i>
+                                </button>
                             </div>
                         </div>
                         
@@ -397,7 +398,7 @@
                                 </button>
                             </div>
                             <img id="form-image-preview" class="hidden w-full h-40 object-cover rounded-xl mb-3 border border-theme-border shadow-sm">
-                            <textarea id="form-content" class="premium-input h-32 resize-none py-3 text-sm leading-relaxed transition-all duration-300 focus:h-48" placeholder="- 支援多行輸入&#10;- 可以記錄書本頁數"></textarea>
+                            <textarea id="form-content" class="premium-input h-32 resize-none py-3 text-sm leading-relaxed transition-all duration-300 focus:h-48 shadow-sm" placeholder="- 支援多行輸入&#10;- 可以記錄書本頁數"></textarea>
                         </div>
 
                         <div class="pt-2 pb-4">
@@ -431,14 +432,14 @@
                     <h3 class="text-sm font-bold text-theme-text mb-5 uppercase tracking-wider font-mono"><i class="fa-solid fa-users text-blue-500 mr-2"></i>學習群組連線</h3>
                     
                     <div class="flex gap-3 mb-6 relative z-10">
-                        <input type="text" id="join-group-code" class="premium-input py-3 px-4 text-sm font-mono font-bold uppercase placeholder-theme-muted hover:border-gray-400 dark:hover:border-white/20 transition-colors" placeholder="輸入 6 位邀請碼" maxlength="6">
+                        <input type="text" id="join-group-code" class="premium-input py-3 px-4 text-sm font-mono font-bold uppercase placeholder-theme-muted hover:border-gray-400 dark:hover:border-white/20 transition-colors shadow-sm" placeholder="輸入 6 位邀請碼" maxlength="6">
                         <button onclick="app.groups.join()" class="bg-blue-600 hover:bg-blue-500 px-6 rounded-xl text-white font-bold text-sm hover:-translate-y-1 transition-all shadow-lg shadow-blue-500/30 hover:shadow-blue-500/50 active:scale-95">加入</button>
                     </div>
 
                     <div id="provider-create-group" class="hidden border-t border-theme-border pt-5 mb-5 relative z-10">
                         <p class="text-xs font-mono font-bold text-pink-500 mb-3 uppercase tracking-wider">建立教學群組 (Provider)</p>
                         <div class="flex gap-3">
-                            <input type="text" id="create-group-name" class="premium-input py-3 px-4 text-sm font-bold hover:border-gray-400 dark:hover:border-white/20 transition-colors" placeholder="新群組名稱...">
+                            <input type="text" id="create-group-name" class="premium-input py-3 px-4 text-sm font-bold hover:border-gray-400 dark:hover:border-white/20 transition-colors shadow-sm" placeholder="新群組名稱...">
                             <button onclick="app.groups.create()" class="bg-pink-600 hover:bg-pink-500 px-6 rounded-xl text-white font-bold text-sm hover:-translate-y-1 transition-all shadow-lg shadow-pink-500/30 hover:shadow-pink-500/50 active:scale-95">建立</button>
                         </div>
                     </div>
@@ -447,7 +448,7 @@
                 </div>
 
                 <div class="mt-12 mb-8 text-center opacity-30 hover:opacity-100 transition duration-500 cursor-default md:max-w-2xl md:mx-auto">
-                    <div class="w-10 h-10 border border-theme-border rounded-full flex items-center justify-center mx-auto mb-3 hover:bg-theme-input transition-colors">
+                    <div class="w-10 h-10 border border-theme-border rounded-full flex items-center justify-center mx-auto mb-3 hover:bg-theme-input transition-colors shadow-sm">
                         <i class="fa-solid fa-code text-theme-text"></i>
                     </div>
                     <p class="text-[10px] text-theme-muted font-mono tracking-widest leading-loose font-bold">
@@ -470,8 +471,9 @@
     <div id="center-modal" class="fixed inset-0 z-[210] hidden flex items-center justify-center p-6 pointer-events-none">
         <div id="center-modal-content" class="glass-card w-full max-w-sm p-6 md:p-8 transform scale-95 opacity-0 pointer-events-auto shadow-2xl border-theme-border"></div>
     </div>
+    <!-- Bottom Sheet (浮空 Modal 基礎) -->
     <div id="bottom-sheet" class="fixed inset-x-0 bottom-0 z-[210] hidden flex flex-col justify-end pointer-events-none">
-        <div id="bottom-sheet-content" class="glass-card bg-theme-bg w-full md:max-w-md md:mx-auto rounded-b-none rounded-t-3xl p-6 pb-safe transform translate-y-full pointer-events-auto border-t border-theme-border shadow-[0_-20px_60px_rgba(0,0,0,0.3)] dark:shadow-[0_-20px_60px_rgba(0,0,0,0.8)] flex flex-col max-h-[85vh]">
+        <div id="bottom-sheet-content" class="glass-card bg-theme-bg w-full md:max-w-md md:mx-auto rounded-b-none md:rounded-b-3xl rounded-t-3xl p-6 pb-safe transform translate-y-full pointer-events-auto border md:border-b-theme-border md:mb-6 border-t-theme-border shadow-[0_-20px_60px_rgba(0,0,0,0.3)] dark:shadow-[0_-20px_60px_rgba(0,0,0,0.8)] flex flex-col max-h-[85vh]">
             <div class="w-12 h-1.5 bg-gray-300 dark:bg-white/20 rounded-full mx-auto mb-6 shrink-0"></div>
             <div id="bottom-sheet-body" class="flex-1 overflow-y-auto no-scrollbar"></div>
         </div>
@@ -807,8 +809,21 @@
                 }
             },
             tasks: {
-                applyFilters: () => {
-                    state.filters.subject = document.getElementById('filter-subject').value;
+                // 🌟 新增：浮空 Modal 篩選科目邏輯
+                openFilterSubjectModal: () => {
+                    const currentVal = state.filters.subject;
+                    let html = `<h3 class="text-xl font-bold text-theme-text mb-4">選擇篩選科目</h3><div class="flex flex-wrap gap-2 max-h-[60vh] overflow-y-auto no-scrollbar">`;
+                    html += `<button onclick="app.tasks.setFilterSubject('all')" class="pill-btn ${currentVal === 'all' ? 'active' : ''}">所有科目</button>`;
+                    state.subjects.forEach(s => {
+                        html += `<button onclick="app.tasks.setFilterSubject('${s}')" class="pill-btn ${currentVal === s ? 'active' : ''} font-literary">${s}</button>`;
+                    });
+                    html += `</div>`;
+                    UI.sheet.open(html);
+                },
+                setFilterSubject: (val) => {
+                    state.filters.subject = val;
+                    document.getElementById('filter-subject-text').textContent = val === 'all' ? '所有科目' : val;
+                    UI.sheet.close();
                     app.renders.tasks();
                 },
                 toggleIncompleteFilter: () => {
@@ -841,7 +856,8 @@
                     document.getElementById('form-title').value = ''; 
                     document.getElementById('form-content').value = ''; 
                     document.getElementById('form-date').value = API.getWorkingDay(); 
-                    document.getElementById('form-repeat').value = 'none';
+                    app.tasks.setRepeat('none', '不重複');
+                    app.tasks.setTarget('self', '私人 (僅自己可見)');
                     app.tasks.setFormType('task'); 
                     app.tasks.checkStress(); 
                     document.getElementById('form-header-title').textContent = '新增任務';
@@ -854,7 +870,7 @@
                     document.getElementById('form-type').value = type; 
                     const bt = document.getElementById('type-btn-task'), be = document.getElementById('type-btn-exam'); 
                     if(type === 'task') { 
-                        bt.className = 'flex-1 py-2.5 text-sm font-bold rounded-lg bg-theme-text text-theme-bg shadow-sm transition-all'; 
+                        bt.className = 'flex-1 py-2.5 text-sm font-bold rounded-lg bg-white dark:bg-white/10 text-brand-600 dark:text-white shadow-md transition-all'; 
                         be.className = 'flex-1 py-2.5 text-sm font-semibold rounded-lg text-theme-muted hover:text-theme-text transition-all'; 
                     } else { 
                         be.className = 'flex-1 py-2.5 text-sm font-bold rounded-lg bg-pink-500 text-white shadow-md transition-all'; 
@@ -891,6 +907,51 @@
                         img.src = event.target.result;
                     };
                     reader.readAsDataURL(file);
+                },
+                // 🌟 新增：浮空 Modal 自動重複邏輯
+                openRepeatModal: () => {
+                    const currentVal = document.getElementById('form-repeat').value;
+                    const options = [
+                        {val: 'none', label: '不重複'},
+                        {val: 'daily', label: '每天 (連續5天)'},
+                        {val: 'weekly', label: '每週 (連續4週)'}
+                    ];
+                    let html = `<h3 class="text-xl font-bold text-theme-text mb-4">自動重複設定</h3><div class="flex flex-col gap-2">`;
+                    options.forEach(o => {
+                        const isActive = currentVal === o.val;
+                        html += `<button onclick="app.tasks.setRepeat('${o.val}', '${o.label}')" class="w-full text-left p-4 rounded-xl border ${isActive ? 'bg-brand-500/20 border-brand-500/50 text-brand-500 font-bold shadow-sm' : 'bg-theme-input border-theme-border text-theme-text font-semibold hover:bg-theme-border'} transition-all">${o.label}</button>`;
+                    });
+                    html += `</div>`;
+                    UI.sheet.open(html);
+                },
+                setRepeat: (val, label) => {
+                    document.getElementById('form-repeat').value = val;
+                    document.getElementById('form-repeat-text').textContent = label;
+                    UI.sheet.close();
+                },
+                // 🌟 新增：浮空 Modal 發放對象邏輯
+                openTargetModal: () => {
+                    const currentVal = document.getElementById('form-target').value;
+                    let html = `<h3 class="text-xl font-bold text-theme-text mb-4">選擇發放對象</h3><div class="flex flex-col gap-2 max-h-[60vh] overflow-y-auto no-scrollbar">`;
+                    
+                    const isSelf = currentVal === 'self';
+                    html += `<button onclick="app.tasks.setTarget('self', '私人 (僅自己可見)')" class="w-full text-left p-4 rounded-xl border ${isSelf ? 'bg-pink-500/20 border-pink-500/50 text-pink-500 font-bold shadow-sm' : 'bg-theme-input border-theme-border text-theme-text font-semibold hover:bg-theme-border'} transition-all">私人 (僅自己可見)</button>`;
+
+                    if (state.profile.role === 'provider') {
+                        state.groups.forEach(g => {
+                            if (g.providerId === state.user.uid) {
+                                const isGroup = currentVal === g.id;
+                                html += `<button onclick="app.tasks.setTarget('${g.id}', '群組: ${escapeHTML(g.name)}')" class="w-full text-left p-4 rounded-xl border ${isGroup ? 'bg-pink-500/20 border-pink-500/50 text-pink-500 font-bold shadow-sm' : 'bg-theme-input border-theme-border text-theme-text font-semibold hover:bg-theme-border'} transition-all">群組: ${escapeHTML(g.name)}</button>`;
+                            }
+                        });
+                    }
+                    html += `</div>`;
+                    UI.sheet.open(html);
+                },
+                setTarget: (val, label) => {
+                    document.getElementById('form-target').value = val;
+                    document.getElementById('form-target-text').textContent = label;
+                    UI.sheet.close();
                 },
                 save: async () => {
                     const id = document.getElementById('form-task-id').value, title = document.getElementById('form-title').value.trim(), content = document.getElementById('form-content').value.trim(), subject = document.getElementById('form-subject-value').value, dueDate = document.getElementById('form-date').value, target = document.getElementById('form-target')?.value, type = document.getElementById('form-type').value, repeat = document.getElementById('form-repeat').value;
@@ -946,7 +1007,7 @@
                     document.getElementById('form-content').value = task.content || '';
                     document.getElementById('form-date').value = task.dueDate || '';
                     document.getElementById('form-subject-value').value = task.subject || state.subjects[0];
-                    document.getElementById('form-repeat').value = 'none';
+                    app.tasks.setRepeat('none', '不重複');
                     app.tasks.setFormType(task.type || 'task');
                     document.getElementById('form-header-title').textContent = '編輯任務';
                     
@@ -960,11 +1021,9 @@
                 },
                 markComplete: (id, el) => { 
                     gsap.to(el, { scale: 0.9, opacity: 0, x: '50%', duration: 0.4, ease: "power2.in", onComplete: async () => { 
-                        // 標記完成
                         await updateDoc(doc(db, API.paths.tasks(), id), { status: 'completed', completedAt: new Date().toISOString() }); 
                         AdminService.log('TASK_COMPLETED', { taskId: id }); 
                         
-                        // 🌟 若為群組任務，寫入進度追蹤 (Provider 可以看到)
                         const t = state.tasks.find(x => x.id === id);
                         if (t && t.groupId && t.originalTaskId) {
                             try {
@@ -988,13 +1047,11 @@
                 initTracker: () => {
                     if(state.classTimerInterval) clearInterval(state.classTimerInterval);
                     state.classTimerInterval = setInterval(() => {
-                        // Support Day 1-6 Tracker (Assume today is currentDayTab for display)
                         const ttMode = localStorage.getItem('lumina_tt_mode') || 'week';
                         let slots = [];
                         if (ttMode === 'week') {
                             slots = state.timetableConfig[new Date().getDay().toString()] || [];
                         } else {
-                            // If Day mode, just show the selected Day's schedule tracking
                             slots = state.timetableConfig[state.currentDayTab] || [];
                         }
 
@@ -1007,17 +1064,9 @@
                             const d = c.em - nt, m = Math.floor(d), sec = Math.floor((d-m)*60); 
                             tm.textContent = `剩餘 ${m.toString().padStart(2,'0')}:${sec.toString().padStart(2,'0')}`; 
                             tm.className = `text-[11px] font-mono mt-1 font-bold ${m<5?'text-red-500 animate-pulse':'text-emerald-500'}`; 
-                            // Web Push warning for class starting/ending
-                            if(m === 0 && sec === 0 && Notification.permission === "granted") {
-                                new Notification("Lumina 提示", { body: `「${c.subject || c.label}」已結束！`});
-                            }
                         }
                         else if (n) { 
                             tt.textContent = `即將: ${n.subject || n.label}`; tm.textContent = `${n.start} 開始`; tm.className = 'text-[11px] text-theme-muted font-mono mt-1 font-semibold'; 
-                            const d = n.sm - nt;
-                            if(Math.floor(d) === 5 && Math.floor((d - 5)*60) === 0 && Notification.permission === "granted") {
-                                new Notification("Lumina 提示", { body: `「${n.subject || n.label}」將於 5 分鐘後開始！`});
-                            }
                         }
                         else { tt.textContent = '課堂已結束'; tm.textContent = 'Enjoy!'; tm.className = 'text-[11px] text-brand-500 font-mono mt-1 font-semibold'; }
                     }, 1000);
@@ -1027,7 +1076,6 @@
                     const selectorContainer = document.getElementById('timetable-day-selector');
                     const ttMode = localStorage.getItem('lumina_tt_mode') || 'week';
                     
-                    // 🌟 渲染日別選擇器 (Week vs Day 1-6)
                     let dayHtml = '';
                     if (ttMode === 'week') {
                         const days = [{k:'1', l:'星期一'},{k:'2', l:'星期二'},{k:'3', l:'星期三'},{k:'4', l:'星期四'},{k:'5', l:'星期五'},{k:'6', l:'星期六'},{k:'0', l:'星期日'}];
@@ -1082,10 +1130,11 @@
                                 </div>
                                 <div class="flex flex-col gap-1.5 flex-1 min-w-0">
                                     <input type="text" value="${s.label}" placeholder="標籤 (例: 第1節)" onchange="app.timetable.updateSlotInline('${s.id}', 'label', this.value)" class="bg-transparent text-[11px] font-bold text-brand-500 outline-none border-b border-transparent focus:border-brand-500 pb-0.5 w-full">
-                                    <select onchange="app.timetable.updateSlotInline('${s.id}', 'subject', this.value)" class="bg-theme-bg border border-theme-border text-[13px] font-bold text-theme-text rounded-lg p-1.5 w-full outline-none focus:border-brand-500 font-literary">
-                                        <option value="">-- 空堂 / 休息 --</option>
-                                        ${state.subjects.map(sub => `<option value="${sub}" ${s.subject === sub ? 'selected' : ''}>${sub}</option>`).join('')}
-                                    </select>
+                                    <!-- 🌟 升級：浮空 Modal 選擇科目 -->
+                                    <button onclick="app.timetable.openSubjectSelectModal('${s.id}')" class="bg-theme-bg border border-theme-border text-[13px] font-bold text-theme-text rounded-lg p-1.5 w-full outline-none hover:border-brand-500 transition-colors font-literary text-left flex justify-between items-center shadow-sm">
+                                        <span class="truncate">${s.subject || '-- 空堂 / 休息 --'}</span>
+                                        <i class="fa-solid fa-chevron-down text-[10px] opacity-50 ml-1 shrink-0"></i>
+                                    </button>
                                 </div>
                                 <button onclick="app.timetable.deleteSlot('${s.id}')" class="w-8 h-8 flex items-center justify-center shrink-0 text-theme-muted hover:text-red-500 hover:bg-red-500/10 rounded-full transition-all active:scale-95">
                                     <i class="fa-solid fa-xmark text-lg"></i>
@@ -1111,11 +1160,26 @@
                     
                     c.innerHTML = html;
                 },
+                // 🌟 新增：浮空 Modal 編輯科目邏輯
+                openSubjectSelectModal: (slotId) => {
+                    const s = state.timetableConfig[state.currentDayTab].find(x => x.id === slotId);
+                    if(!s) return;
+                    const currentVal = s.subject || '';
+                    let html = `<h3 class="text-xl font-bold text-theme-text mb-4">設定科目 <span class="text-brand-500 text-base">(${s.start} - ${s.end})</span></h3><div class="flex flex-wrap gap-2 max-h-[60vh] overflow-y-auto no-scrollbar">`;
+                    
+                    html += `<button onclick="app.timetable.updateSlotInline('${slotId}', 'subject', ''); UI.sheet.close();" class="pill-btn ${currentVal === '' ? 'active' : ''}">-- 空堂 / 休息 --</button>`;
+                    state.subjects.forEach(sub => {
+                        html += `<button onclick="app.timetable.updateSlotInline('${slotId}', 'subject', '${sub}'); UI.sheet.close();" class="pill-btn ${currentVal === sub ? 'active' : ''} font-literary">${sub}</button>`;
+                    });
+                    
+                    html += `</div>`;
+                    UI.sheet.open(html);
+                },
                 updateSlotInline: (id, k, v) => { 
                     const s = state.timetableConfig[state.currentDayTab].find(x => x.id === id); 
                     if(s) s[k] = v; 
                     app.timetable.saveConfig(); 
-                    if (k === 'start' || k === 'end') app.timetable.renderDaySelector();
+                    if (k === 'start' || k === 'end' || k === 'subject') app.timetable.renderDaySelector();
                 },
                 generateDefault: (d) => { state.timetableConfig[d] = [{id:API.genId(),start:'08:00',end:'08:40',label:'第1節',type:'class',subject:''},{id:API.genId(),start:'08:40',end:'09:20',label:'第2節',type:'class',subject:''},{id:API.genId(),start:'09:20',end:'09:40',label:'小息',type:'special',subject:''},{id:API.genId(),start:'09:40',end:'10:20',label:'第3節',type:'class',subject:''},{id:API.genId(),start:'10:20',end:'11:00',label:'第4節',type:'class',subject:''},{id:API.genId(),start:'11:00',end:'11:20',label:'小息',type:'special',subject:''},{id:API.genId(),start:'11:20',end:'12:00',label:'第5節',type:'class',subject:''},{id:API.genId(),start:'12:00',end:'13:00',label:'午膳',type:'special',subject:''},{id:API.genId(),start:'13:00',end:'13:40',label:'第6節',type:'class',subject:''},{id:API.genId(),start:'13:40',end:'14:20',label:'第7節',type:'class',subject:''}]; app.timetable.saveConfig(); app.timetable.renderDaySelector(); },
                 saveConfig: () => { localStorage.setItem(`lumina_tt_${state.user.uid}`, JSON.stringify(state.timetableConfig)); AdminService.log('TIMETABLE_UPDATED'); },
@@ -1335,7 +1399,8 @@
                         const bText = exam ? `🚨 考試: ${escapeHTML(t.subject)}` : `📝 ${escapeHTML(t.subject)}`, dStr = t.dueDate ? t.dueDate.replace(/-/g, '/') : '無期限';
                         
                         const cHtml = escapeHTML(t.content || '').replace(/\n/g, '<br>');
-                        
+                        const imgHtml = t.attachment ? `<div class="mt-3 overflow-hidden rounded-xl border border-theme-border cursor-pointer hover:opacity-80 transition" onclick="window.open('${t.attachment}', '_blank')"><img src="${t.attachment}" class="w-full h-32 object-cover"></div>` : '';
+
                         // 進度追蹤按鈕 (僅限 Provider)
                         const trackBtn = (state.profile.role === 'provider' && t.groupId && t.originalTaskId && !done) ? `<button class="bg-blue-500/10 text-blue-500 border border-blue-500/20 px-3 py-2 rounded-full text-[10px] font-bold flex items-center gap-1.5 hover:bg-blue-500 hover:text-white transition-all active:scale-95" onclick="app.groups.checkProgress('${t.groupId}', '${t.originalTaskId}', '${escapeHTML(t.title)}')"><i class="fa-solid fa-chart-bar"></i> 查看進度</button>` : '';
 
@@ -1347,6 +1412,7 @@
                             <div class="mt-1">
                                 <h3 class="text-[16px] font-bold text-theme-text ${done?'line-through opacity-70':''}">${escapeHTML(t.title)}</h3>
                                 ${cHtml?`<p class="text-[13px] text-theme-muted mt-2.5 font-mono">${cHtml}</p>`:''}
+                                ${imgHtml}
                             </div>
                             <div class="mt-2 flex justify-between items-center pt-3 border-t border-theme-border">
                                 <div class="text-[11px] font-bold ${over?'text-red-500':'text-theme-muted'}"><i class="fa-regular fa-calendar"></i> ${dStr} ${over?'<span class="bg-red-500/20 px-1 rounded ml-1">已逾期</span>':''}</div>
@@ -1389,13 +1455,10 @@
 
         // 為過濾器建立輔助函式
         app.tasks.populateFilterSubjects = () => {
-            const sel = document.getElementById('filter-subject');
-            if(!sel) return;
-            const currentVal = state.filters.subject;
-            sel.innerHTML = '<option value="all">所有科目</option>';
-            state.subjects.forEach(s => {
-                sel.innerHTML += `<option value="${s}" ${s === currentVal ? 'selected' : ''}>${s}</option>`;
-            });
+            const sel = document.getElementById('filter-subject-text');
+            if(sel) {
+                // Not using select anymore, logic is handled by Modal
+            }
         };
 
         window.app = app; window.app.UI = UI;

@@ -1,27 +1,21 @@
 <!DOCTYPE html>
-<html lang="zh-HK" class="dark">
+<html lang="zh-HK">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lumina Control Center | 企業級管理後台</title>
+    <title>Lumina Control Center | 寶藍級管理後台</title>
     
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
-            darkMode: 'class',
             theme: {
                 extend: {
                     colors: {
-                        slate: {
-                            850: '#151e2e',
-                            900: '#0f172a',
-                            950: '#020617',
-                        },
-                        brand: { 400: '#60a5fa', 500: '#3b82f6', 600: '#2563eb' },
+                        brand: { 400: '#60a5fa', 500: '#3b82f6', 600: '#2563eb', 900: '#1e3a8a' },
+                        royal: { 400: '#818cf8', 500: '#6366f1', 600: '#4f46e5', 800: '#3730a3', 900: '#312e81' },
                         danger: { 400: '#f87171', 500: '#ef4444', 600: '#dc2626' },
-                        success: { 400: '#34d399', 500: '#10b981', 600: '#059669' },
-                        warning: { 400: '#fbbf24', 500: '#f59e0b', 600: '#d97706' }
+                        success: { 400: '#34d399', 500: '#10b981', 600: '#059669' }
                     },
                     fontFamily: {
                         sans: ['Inter', 'system-ui', '-apple-system', 'sans-serif'],
@@ -40,186 +34,199 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
     
     <style>
+        /* 🌊 寶藍色流動漸層背景 */
         body { 
-            background-color: theme('colors.slate.950'); 
-            color: theme('colors.slate.300'); 
+            background: linear-gradient(-45deg, #020617, #1e3a8a, #0f172a, #312e81);
+            background-size: 400% 400%;
+            animation: flowingBG 15s ease infinite;
+            color: #f8fafc; 
             font-family: 'Inter', sans-serif; 
             overflow: hidden; 
         }
         
-        /* 柔和的深空網格背景，降低視覺疲勞 */
-        .ambient-bg {
-            position: fixed; inset: 0; z-index: -1;
-            background-size: 60px 60px;
-            background-image: 
-                linear-gradient(to right, rgba(255,255,255,0.02) 1px, transparent 1px),
-                linear-gradient(to bottom, rgba(255,255,255,0.02) 1px, transparent 1px);
-            mask-image: radial-gradient(circle at center, black, transparent 80%);
-            -webkit-mask-image: radial-gradient(circle at center, black, transparent 80%);
+        @keyframes flowingBG {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
         }
 
-        /* 企業級卡片設計 - 純粹深色模式 */
+        /* 背景網格點綴 */
+        .ambient-bg {
+            position: fixed; inset: 0; z-index: -1;
+            background-size: 50px 50px;
+            background-image: 
+                radial-gradient(circle at center, rgba(255,255,255,0.05) 1px, transparent 1px);
+        }
+
+        /* 💎 頂級毛玻璃卡片設計 (Glassmorphism) */
         .admin-card {
-            background: rgba(15, 23, 42, 0.6);
-            backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
-            border: 1px solid rgba(255, 255, 255, 0.05);
-            border-radius: 16px;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.2), 0 2px 4px -1px rgba(0, 0, 0, 0.1);
+            background: rgba(15, 23, 42, 0.4);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(99, 102, 241, 0.2);
+            border-radius: 20px;
+            box-shadow: 0 10px 40px -10px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255,255,255,0.1);
             transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .admin-card:hover {
+            border-color: rgba(99, 102, 241, 0.4);
+            box-shadow: 0 15px 50px -10px rgba(30, 58, 138, 0.5), inset 0 1px 0 rgba(255,255,255,0.2);
         }
         
         .admin-input {
-            background: rgba(2, 6, 23, 0.5);
-            border: 1px solid rgba(255, 255, 255, 0.1);
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(99, 102, 241, 0.2);
             color: #f8fafc;
             transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
         .admin-input:focus {
-            border-color: theme('colors.brand.500');
-            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
-            background: rgba(15, 23, 42, 0.8);
+            border-color: theme('colors.brand.400');
+            box-shadow: 0 0 15px rgba(59, 130, 246, 0.3);
+            background: rgba(15, 23, 42, 0.6);
             outline: none;
         }
 
         /* 側邊欄導航項目 */
         .nav-item {
-            color: theme('colors.slate.400');
+            color: #94a3b8;
             border-radius: 12px;
             transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             position: relative;
         }
-        .nav-item:hover { background: rgba(255, 255, 255, 0.05); color: theme('colors.slate.200'); transform: translateX(4px); }
+        .nav-item:hover { background: rgba(99, 102, 241, 0.1); color: white; transform: translateX(5px); }
         .nav-item.active {
-            background: rgba(59, 130, 246, 0.15);
+            background: linear-gradient(90deg, rgba(59, 130, 246, 0.2), transparent);
             color: theme('colors.brand.400');
-            font-weight: 600;
-        }
-        .nav-item.active::before {
-            content: ''; position: absolute; left: -8px; top: 15%; bottom: 15%; width: 4px;
-            background: theme('colors.brand.500'); border-radius: 0 4px 4px 0;
-            box-shadow: 0 0 10px rgba(59, 130, 246, 0.5);
+            font-weight: 700;
+            border-left: 4px solid theme('colors.brand.400');
+            border-radius: 0 12px 12px 0;
+            box-shadow: inset 10px 0 20px -10px rgba(59, 130, 246, 0.5);
         }
         
-        /* 表格設計 */
+        /* 表格設計 (優雅的發光分隔線) */
         .admin-table th {
-            background: rgba(2, 6, 23, 0.8);
-            color: theme('colors.slate.400');
+            background: rgba(2, 6, 23, 0.5);
+            color: #94a3b8;
             font-size: 0.75rem;
             text-transform: uppercase;
-            letter-spacing: 0.05em;
-            font-weight: 600;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            letter-spacing: 0.08em;
+            font-weight: 700;
+            border-bottom: 1px solid rgba(99, 102, 241, 0.3);
         }
-        .admin-table tr { border-bottom: 1px solid rgba(255, 255, 255, 0.03); transition: all 0.2s ease; }
-        .admin-table tr:hover { background: rgba(255, 255, 255, 0.03); transform: scale(1.005); }
+        .admin-table tr { border-bottom: 1px solid rgba(255, 255, 255, 0.05); transition: all 0.2s ease; }
+        .admin-table tr:hover { background: rgba(99, 102, 241, 0.05); transform: scale(1.002); }
         .admin-table td { padding: 1rem 1.5rem; vertical-align: middle; }
 
         /* 優雅的滾動條 */
         ::-webkit-scrollbar { width: 6px; height: 6px; }
         ::-webkit-scrollbar-track { background: transparent; }
-        ::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.1); border-radius: 10px; }
-        ::-webkit-scrollbar-thumb:hover { background: rgba(255, 255, 255, 0.2); }
+        ::-webkit-scrollbar-thumb { background: rgba(99, 102, 241, 0.3); border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: rgba(99, 102, 241, 0.6); }
         .no-scrollbar::-webkit-scrollbar { display: none; }
 
         /* 標籤 (Badges) */
-        .badge { padding: 0.25rem 0.5rem; border-radius: 6px; font-size: 0.7rem; font-weight: 700; letter-spacing: 0.02em; text-transform: uppercase; }
-        .badge-brand { background: rgba(59, 130, 246, 0.15); color: theme('colors.brand.400'); border: 1px solid rgba(59, 130, 246, 0.3); }
-        .badge-success { background: rgba(16, 185, 129, 0.15); color: theme('colors.success.400'); border: 1px solid rgba(16, 185, 129, 0.3); }
-        .badge-danger { background: rgba(239, 68, 68, 0.15); color: theme('colors.danger.400'); border: 1px solid rgba(239, 68, 68, 0.3); }
-        .badge-neutral { background: rgba(148, 163, 184, 0.15); color: theme('colors.slate.400'); border: 1px solid rgba(148, 163, 184, 0.3); }
+        .badge { padding: 0.35rem 0.6rem; border-radius: 8px; font-size: 0.7rem; font-weight: 800; letter-spacing: 0.05em; text-transform: uppercase; }
+        .badge-brand { background: rgba(59, 130, 246, 0.2); color: theme('colors.brand.400'); border: 1px solid rgba(59, 130, 246, 0.4); }
+        .badge-success { background: rgba(16, 185, 129, 0.2); color: theme('colors.success.400'); border: 1px solid rgba(16, 185, 129, 0.4); }
+        .badge-danger { background: rgba(239, 68, 68, 0.2); color: theme('colors.danger.400'); border: 1px solid rgba(239, 68, 68, 0.4); }
+        .badge-neutral { background: rgba(148, 163, 184, 0.2); color: #cbd5e1; border: 1px solid rgba(148, 163, 184, 0.4); }
 
         /* iOS Style Toggle Switch */
-        .toggle-switch { position: relative; display: inline-block; width: 48px; height: 26px; flex-shrink: 0; }
+        .toggle-switch { position: relative; display: inline-block; width: 52px; height: 28px; flex-shrink: 0; }
         .toggle-switch input { opacity: 0; width: 0; height: 0; }
         .slider {
             position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0;
-            background-color: rgba(255,255,255,0.1); transition: .3s cubic-bezier(0.4, 0, 0.2, 1); border-radius: 34px; border: 1px solid rgba(255,255,255,0.05);
+            background-color: rgba(255,255,255,0.1); transition: .4s cubic-bezier(0.4, 0, 0.2, 1); border-radius: 34px; border: 1px solid rgba(255,255,255,0.05);
         }
         .slider:before {
-            position: absolute; content: ""; height: 20px; width: 20px; left: 2px; bottom: 2px;
-            background-color: white; transition: .3s cubic-bezier(0.4, 0, 0.2, 1); border-radius: 50%; box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+            position: absolute; content: ""; height: 20px; width: 20px; left: 3px; bottom: 3px;
+            background-color: white; transition: .4s cubic-bezier(0.4, 0, 0.2, 1); border-radius: 50%; box-shadow: 0 2px 5px rgba(0,0,0,0.3);
         }
-        input:checked + .slider { background-color: theme('colors.danger.500'); border-color: theme('colors.danger.400'); box-shadow: 0 0 10px rgba(239, 68, 68, 0.3); }
-        input:checked + .slider:before { transform: translateX(22px); }
-        input:disabled + .slider { opacity: 0.5; cursor: not-allowed; }
+        input:checked + .slider { background-color: theme('colors.danger.500'); border-color: theme('colors.danger.400'); box-shadow: 0 0 15px rgba(239, 68, 68, 0.4); }
+        input:checked + .slider:before { transform: translateX(24px); }
 
         .view-section { display: none; opacity: 0; }
         .view-section.active { display: block; opacity: 1; }
         
         /* Pulse Animation for Status Dot */
         @keyframes pulse-soft {
-            0% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.4); }
-            70% { box-shadow: 0 0 0 6px rgba(16, 185, 129, 0); }
+            0% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.6); }
+            70% { box-shadow: 0 0 0 8px rgba(16, 185, 129, 0); }
             100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
         }
-        .status-dot { width: 8px; height: 8px; background-color: theme('colors.success.500'); border-radius: 50%; display: inline-block; animation: pulse-soft 2s infinite; }
+        .status-dot { width: 10px; height: 10px; background-color: theme('colors.success.400'); border-radius: 50%; display: inline-block; animation: pulse-soft 2s infinite; }
+        
+        /* Progress Bar Animation */
+        .progress-bar-fill { transition: width 1s cubic-bezier(0.4, 0, 0.2, 1); }
     </style>
 </head>
 <body class="flex h-screen">
 
     <div class="ambient-bg"></div>
-    
-    <!-- 柔和的背景光暈 -->
-    <div class="absolute top-[-10%] left-[-10%] w-[40vw] h-[40vw] bg-brand-600/10 blur-[120px] rounded-full pointer-events-none"></div>
-    <div class="absolute bottom-[-10%] right-[-10%] w-[30vw] h-[30vw] bg-indigo-600/10 blur-[120px] rounded-full pointer-events-none"></div>
 
     <!-- Auth Guard (登入畫面) -->
-    <div id="admin-login" class="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/90 backdrop-blur-xl transition-opacity duration-500">
+    <div id="admin-login" class="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/80 backdrop-blur-2xl transition-opacity duration-500">
         <div class="admin-card p-10 max-w-sm w-full text-center relative overflow-hidden">
-            <div class="w-20 h-20 bg-gradient-to-tr from-slate-800 to-slate-700 rounded-2xl mx-auto mb-6 flex items-center justify-center border border-slate-600 shadow-lg transition-transform hover:scale-110 duration-300">
-                <i class="fa-solid fa-server text-3xl text-brand-400"></i>
+            <div class="absolute top-0 right-0 w-32 h-32 bg-brand-500/20 blur-3xl rounded-full pointer-events-none"></div>
+            
+            <div class="w-24 h-24 bg-gradient-to-tr from-brand-600 to-royal-500 rounded-3xl mx-auto mb-8 flex items-center justify-center border border-brand-400/50 shadow-[0_0_30px_rgba(59,130,246,0.4)] transition-transform hover:scale-110 duration-300 hover:rotate-3">
+                <i class="fa-solid fa-bolt text-4xl text-white"></i>
             </div>
-            <h1 class="text-2xl font-bold text-white mb-2 tracking-tight">System Center</h1>
-            <p class="text-xs text-slate-400 mb-8 font-mono">SECURE ADMIN AUTHENTICATION</p>
-            <button onclick="adminApp.auth.login()" class="w-full bg-white text-slate-900 hover:bg-slate-200 font-bold py-3.5 rounded-xl shadow-lg hover:shadow-xl hover:-translate-y-1 active:scale-95 transition-all flex justify-center items-center gap-3">
+            
+            <h1 class="text-3xl font-black text-white mb-2 tracking-tight">Lumina <span class="text-brand-400">Admin</span></h1>
+            <p class="text-xs text-slate-400 mb-10 font-mono tracking-widest">AUTHORIZED ACCESS ONLY</p>
+            
+            <button onclick="adminApp.auth.login()" class="w-full bg-white text-brand-900 hover:bg-slate-100 font-bold py-4 rounded-xl shadow-xl hover:shadow-brand-500/30 hover:-translate-y-1 active:scale-95 transition-all flex justify-center items-center gap-3 text-[15px]">
                 <img src="https://www.svgrepo.com/show/475656/google-color.svg" class="w-5 h-5" alt="Google">
-                超級管理員登入
+                使用管理員帳號登入
             </button>
         </div>
     </div>
 
     <!-- Sidebar -->
-    <aside class="w-64 bg-slate-900/60 backdrop-blur-xl border-r border-slate-800 flex flex-col shrink-0 z-30 hidden md:flex relative">
-        <div class="h-20 flex items-center px-6 border-b border-slate-800">
-            <div class="w-8 h-8 bg-brand-500 rounded-lg flex items-center justify-center mr-3 shadow-lg shadow-brand-500/20 hover:scale-110 transition-transform">
-                <i class="fa-solid fa-layer-group text-white text-sm"></i>
+    <aside class="w-64 bg-slate-900/40 backdrop-blur-xl border-r border-brand-500/20 flex flex-col shrink-0 z-30 hidden md:flex relative shadow-2xl">
+        <div class="h-20 flex items-center px-6 border-b border-brand-500/20 bg-slate-900/40">
+            <div class="w-10 h-10 bg-gradient-to-tr from-brand-500 to-royal-500 rounded-xl flex items-center justify-center mr-3 shadow-lg shadow-brand-500/30">
+                <i class="fa-solid fa-bolt text-white text-lg"></i>
             </div>
             <div>
-                <h1 class="font-bold text-base text-white tracking-wide leading-tight">LUMINA</h1>
-                <span class="text-[10px] text-slate-400 font-mono tracking-widest font-medium">CONTROL PANEL</span>
+                <h1 class="font-black text-lg text-white tracking-widest leading-none">LUMINA</h1>
+                <span class="text-[10px] text-brand-400 font-mono tracking-widest font-bold">GOD MODE</span>
             </div>
         </div>
         
-        <div class="px-6 py-4 flex items-center gap-2 border-b border-slate-800/50">
+        <div class="px-6 py-4 flex items-center gap-3 border-b border-brand-500/10 bg-brand-500/5">
             <span class="status-dot"></span>
-            <span class="text-xs font-mono text-slate-400">System Online</span>
+            <span class="text-xs font-mono font-bold text-brand-300 tracking-wide">SYSTEM SECURE</span>
         </div>
 
-        <nav class="flex-1 px-4 space-y-1 mt-4">
-            <button onclick="adminApp.nav.switch('dashboard')" id="nav-dashboard" class="nav-item active w-full flex items-center px-4 py-3 text-sm">
-                <i class="fa-solid fa-chart-pie w-6 text-center opacity-70"></i> 儀表板 Overview
+        <nav class="flex-1 px-4 space-y-2 mt-6">
+            <button onclick="adminApp.nav.switch('dashboard')" id="nav-dashboard" class="nav-item active w-full flex items-center px-4 py-3.5 text-sm">
+                <i class="fa-solid fa-chart-pie w-8 text-center opacity-80"></i> 總覽儀表板
             </button>
-            <button onclick="adminApp.nav.switch('users')" id="nav-users" class="nav-item w-full flex items-center px-4 py-3 text-sm">
-                <i class="fa-solid fa-user-shield w-6 text-center opacity-70"></i> 用戶管理 Users
+            <button onclick="adminApp.nav.switch('users')" id="nav-users" class="nav-item w-full flex items-center px-4 py-3.5 text-sm">
+                <i class="fa-solid fa-users w-8 text-center opacity-80"></i> 用戶與權限
             </button>
-            <button onclick="adminApp.nav.switch('settings')" id="nav-settings" class="nav-item w-full flex items-center px-4 py-3 text-sm">
-                <i class="fa-solid fa-sliders w-6 text-center opacity-70"></i> 全域設定 Settings
+            <button onclick="adminApp.nav.switch('settings')" id="nav-settings" class="nav-item w-full flex items-center px-4 py-3.5 text-sm">
+                <i class="fa-solid fa-sliders w-8 text-center opacity-80"></i> 全域設定
             </button>
-            <button onclick="adminApp.nav.switch('logs')" id="nav-logs" class="nav-item w-full flex items-center px-4 py-3 text-sm">
-                <i class="fa-solid fa-list-check w-6 text-center opacity-70"></i> 系統日誌 Audit Logs
+            <button onclick="adminApp.nav.switch('logs')" id="nav-logs" class="nav-item w-full flex items-center px-4 py-3.5 text-sm">
+                <i class="fa-solid fa-database w-8 text-center opacity-80"></i> 系統日誌
             </button>
         </nav>
         
-        <div class="p-4 border-t border-slate-800 bg-slate-900/30">
-            <div class="flex items-center gap-3 mb-4">
-                <img id="admin-avatar" src="" class="w-9 h-9 rounded-full border border-slate-700 hidden object-cover shadow-sm">
+        <div class="p-5 border-t border-brand-500/20 bg-slate-900/60">
+            <div class="flex items-center gap-3 mb-5">
+                <div class="w-10 h-10 rounded-full border-2 border-brand-400 flex items-center justify-center bg-brand-900 overflow-hidden shadow-[0_0_15px_rgba(96,165,250,0.4)]">
+                    <img id="admin-avatar" src="" class="w-full h-full object-cover hidden">
+                    <i id="admin-avatar-fallback" class="fa-solid fa-user-astronaut text-brand-400"></i>
+                </div>
                 <div class="flex-1 overflow-hidden">
-                    <p id="admin-name" class="text-[13px] font-bold text-slate-200 truncate">Loading...</p>
-                    <p class="text-[10px] text-slate-500 font-mono truncate" id="admin-email">...</p>
+                    <p id="admin-name" class="text-[14px] font-bold text-white truncate tracking-wide">Loading...</p>
+                    <p class="text-[10px] text-brand-400 font-mono truncate" id="admin-email">...</p>
                 </div>
             </div>
-            <button onclick="adminApp.auth.logout()" class="w-full py-2.5 bg-slate-800 hover:bg-danger-500/20 hover:text-danger-400 text-slate-300 rounded-lg text-xs font-bold transition-all border border-slate-700 hover:border-danger-500/50 active:scale-95 flex justify-center items-center gap-2">
+            <button onclick="adminApp.auth.logout()" class="w-full py-3 bg-danger-500/10 hover:bg-danger-500 hover:text-white text-danger-400 rounded-xl text-xs font-bold transition-all border border-danger-500/30 hover:border-transparent active:scale-95 flex justify-center items-center gap-2 shadow-sm">
                 <i class="fa-solid fa-right-from-bracket"></i> 安全登出
             </button>
         </div>
@@ -228,102 +235,119 @@
     <!-- Main Content -->
     <main class="flex-1 flex flex-col relative z-20 overflow-hidden hidden bg-transparent" id="main-app">
         
-        <!-- Topbar (Mobile Nav & Header) -->
-        <header class="h-20 flex items-center justify-between px-6 md:px-8 border-b border-slate-800/80 bg-slate-900/50 backdrop-blur-xl shrink-0">
+        <!-- Topbar -->
+        <header class="h-20 flex items-center justify-between px-6 md:px-10 border-b border-brand-500/20 bg-slate-900/40 backdrop-blur-xl shrink-0 shadow-sm">
             <div class="flex items-center gap-4">
-                <button onclick="document.querySelector('aside').classList.toggle('hidden')" class="text-slate-400 hover:text-white md:hidden transition-colors hover:scale-110 active:scale-95">
-                    <i class="fa-solid fa-bars text-lg"></i>
+                <button onclick="document.querySelector('aside').classList.toggle('hidden')" class="text-brand-400 hover:text-white md:hidden transition-colors hover:scale-110 active:scale-95">
+                    <i class="fa-solid fa-bars text-xl"></i>
                 </button>
-                <h2 id="page-title" class="font-bold text-slate-200 text-xl tracking-tight hidden md:block">儀表板 Overview</h2>
+                <h2 id="page-title" class="font-black text-white text-2xl tracking-tight hidden md:block drop-shadow-md">總覽儀表板</h2>
             </div>
             <div class="flex items-center gap-4">
-                <span class="text-xs text-slate-400 font-mono bg-slate-800/80 px-4 py-2 rounded-lg border border-slate-700 flex items-center gap-2 shadow-sm">
-                    <i class="fa-regular fa-clock text-brand-400"></i> <span id="current-time">00:00:00</span>
+                <span class="text-xs text-brand-300 font-mono bg-brand-900/50 px-4 py-2 rounded-xl border border-brand-500/30 flex items-center gap-2 shadow-inner">
+                    <i class="fa-regular fa-clock"></i> <span id="current-time" class="font-bold tracking-widest">00:00:00</span>
                 </span>
             </div>
         </header>
 
-        <div class="flex-1 overflow-y-auto p-4 md:p-8 relative no-scrollbar" id="scroll-container">
+        <div class="flex-1 overflow-y-auto p-4 md:p-8 md:px-10 relative no-scrollbar" id="scroll-container">
             
             <!-- 📊 Dashboard View -->
-            <section id="view-dashboard" class="view-section active w-full max-w-6xl mx-auto space-y-6">
+            <section id="view-dashboard" class="view-section active w-full max-w-7xl mx-auto space-y-8">
                 
-                <!-- Metrics Grid -->
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
-                    <div class="admin-card p-5 border-t-4 border-t-brand-500 hover:-translate-y-1 hover:shadow-brand-500/10 cursor-default">
-                        <div class="flex justify-between items-start mb-2">
-                            <p class="text-xs font-bold text-slate-400 uppercase tracking-wider">總註冊用戶</p>
-                            <div class="w-8 h-8 rounded-lg bg-brand-500/10 flex items-center justify-center"><i class="fa-solid fa-users text-brand-400"></i></div>
-                        </div>
-                        <div class="flex items-end gap-2">
-                            <h3 class="text-3xl font-bold text-white font-mono" id="stat-users">0</h3>
-                            <span class="text-xs text-success-400 font-bold mb-1"><i class="fa-solid fa-arrow-trend-up"></i> Total</span>
-                        </div>
-                    </div>
+                <!-- 🌟 全新 Firebase 配額監控儀表板 -->
+                <div class="admin-card p-6 md:p-8 bg-gradient-to-br from-slate-900/80 to-brand-900/30 relative overflow-hidden">
+                    <div class="absolute top-0 right-0 p-8 opacity-10 pointer-events-none"><i class="fa-brands fa-google text-9xl"></i></div>
+                    <h3 class="text-lg font-bold text-white mb-6 flex items-center gap-3"><i class="fa-solid fa-fire text-amber-500 text-xl"></i> Firebase 每日免費配額監測 (估算)</h3>
                     
-                    <div class="admin-card p-5 border-t-4 border-t-indigo-500 hover:-translate-y-1 hover:shadow-indigo-500/10 cursor-default">
-                        <div class="flex justify-between items-start mb-2">
-                            <p class="text-xs font-bold text-slate-400 uppercase tracking-wider">活躍學習群組</p>
-                            <div class="w-8 h-8 rounded-lg bg-indigo-500/10 flex items-center justify-center"><i class="fa-solid fa-layer-group text-indigo-400"></i></div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-8 relative z-10">
+                        <!-- Writes -->
+                        <div class="bg-slate-900/50 p-5 rounded-2xl border border-slate-700/50">
+                            <div class="flex justify-between items-end mb-3">
+                                <div>
+                                    <p class="text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-1">文檔寫入 Document Writes</p>
+                                    <p class="text-2xl font-mono font-bold text-white"><span id="quota-writes" class="text-brand-400">0</span> <span class="text-sm text-slate-500">/ 20,000</span></p>
+                                </div>
+                                <i class="fa-solid fa-pen-nib text-slate-500 text-xl"></i>
+                            </div>
+                            <div class="w-full bg-slate-800 rounded-full h-2.5 overflow-hidden border border-slate-700/50">
+                                <div id="bar-writes" class="bg-gradient-to-r from-brand-600 to-brand-400 h-2.5 rounded-full progress-bar-fill shadow-[0_0_10px_rgba(96,165,250,0.5)]" style="width: 0%"></div>
+                            </div>
                         </div>
-                        <div class="flex items-end gap-2">
-                            <h3 class="text-3xl font-bold text-white font-mono" id="stat-groups">0</h3>
-                        </div>
-                    </div>
-                    
-                    <div class="admin-card p-5 border-t-4 border-t-emerald-500 hover:-translate-y-1 hover:shadow-emerald-500/10 cursor-default">
-                        <div class="flex justify-between items-start mb-2">
-                            <p class="text-xs font-bold text-slate-400 uppercase tracking-wider">今日操作請求</p>
-                            <div class="w-8 h-8 rounded-lg bg-emerald-500/10 flex items-center justify-center"><i class="fa-solid fa-bolt text-emerald-400"></i></div>
-                        </div>
-                        <div class="flex items-end gap-2">
-                            <h3 class="text-3xl font-bold text-white font-mono" id="stat-logs">0</h3>
-                            <span class="text-xs text-slate-500 font-bold mb-1">24h</span>
-                        </div>
-                    </div>
-
-                    <div class="admin-card p-5 border-t-4 border-t-amber-500 hover:-translate-y-1 hover:shadow-amber-500/10 cursor-default">
-                        <div class="flex justify-between items-start mb-2">
-                            <p class="text-xs font-bold text-slate-400 uppercase tracking-wider">系統健康度</p>
-                            <div class="w-8 h-8 rounded-lg bg-amber-500/10 flex items-center justify-center"><i class="fa-solid fa-heart-pulse text-amber-400"></i></div>
-                        </div>
-                        <div class="flex items-end gap-2">
-                            <h3 class="text-3xl font-bold text-white font-mono">99<span class="text-xl text-slate-500">%</span></h3>
-                            <span class="text-xs text-success-400 font-bold mb-1">Good</span>
+                        
+                        <!-- Reads -->
+                        <div class="bg-slate-900/50 p-5 rounded-2xl border border-slate-700/50">
+                            <div class="flex justify-between items-end mb-3">
+                                <div>
+                                    <p class="text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-1">文檔讀取 Document Reads</p>
+                                    <p class="text-2xl font-mono font-bold text-white"><span id="quota-reads" class="text-success-400">0</span> <span class="text-sm text-slate-500">/ 50,000</span></p>
+                                </div>
+                                <i class="fa-solid fa-book-open text-slate-500 text-xl"></i>
+                            </div>
+                            <div class="w-full bg-slate-800 rounded-full h-2.5 overflow-hidden border border-slate-700/50">
+                                <div id="bar-reads" class="bg-gradient-to-r from-success-600 to-success-400 h-2.5 rounded-full progress-bar-fill shadow-[0_0_10px_rgba(52,211,153,0.5)]" style="width: 0%"></div>
+                            </div>
                         </div>
                     </div>
                 </div>
 
-                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                    <!-- Recent Activity -->
-                    <div class="admin-card p-0 col-span-1 lg:col-span-2 overflow-hidden flex flex-col h-[400px]">
-                        <div class="p-5 border-b border-slate-800 flex justify-between items-center bg-slate-900/60">
-                            <h3 class="text-sm font-bold text-slate-200"><i class="fa-solid fa-radar mr-2 text-brand-400"></i>實時活動串流 (Live Feed)</h3>
-                            <span class="text-[10px] bg-brand-500/20 text-brand-400 px-2 py-1 rounded-full font-mono font-bold border border-brand-500/30">Auto-sync</span>
+                <!-- Metrics Grid -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <div class="admin-card p-6 border-b-4 border-b-brand-500 hover:-translate-y-2 hover:shadow-[0_15px_30px_rgba(59,130,246,0.2)] cursor-default">
+                        <div class="flex justify-between items-start mb-4">
+                            <p class="text-sm font-bold text-slate-400 tracking-wide">總註冊用戶</p>
+                            <div class="w-10 h-10 rounded-xl bg-brand-500/20 flex items-center justify-center"><i class="fa-solid fa-users text-brand-400 text-lg"></i></div>
                         </div>
-                        <div id="recent-logs" class="p-4 space-y-2 overflow-y-auto no-scrollbar flex-1 bg-slate-900/20">
+                        <h3 class="text-4xl font-black text-white font-mono" id="stat-users">0</h3>
+                    </div>
+                    
+                    <div class="admin-card p-6 border-b-4 border-b-royal-500 hover:-translate-y-2 hover:shadow-[0_15px_30px_rgba(99,102,241,0.2)] cursor-default">
+                        <div class="flex justify-between items-start mb-4">
+                            <p class="text-sm font-bold text-slate-400 tracking-wide">活躍學習群組</p>
+                            <div class="w-10 h-10 rounded-xl bg-royal-500/20 flex items-center justify-center"><i class="fa-solid fa-layer-group text-royal-400 text-lg"></i></div>
+                        </div>
+                        <h3 class="text-4xl font-black text-white font-mono" id="stat-groups">0</h3>
+                    </div>
+                    
+                    <div class="admin-card p-6 border-b-4 border-b-success-500 hover:-translate-y-2 hover:shadow-[0_15px_30px_rgba(16,185,129,0.2)] cursor-default">
+                        <div class="flex justify-between items-start mb-4">
+                            <p class="text-sm font-bold text-slate-400 tracking-wide">今日操作次數</p>
+                            <div class="w-10 h-10 rounded-xl bg-success-500/20 flex items-center justify-center"><i class="fa-solid fa-bolt text-success-400 text-lg"></i></div>
+                        </div>
+                        <h3 class="text-4xl font-black text-white font-mono" id="stat-logs">0</h3>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                    <!-- Recent Activity -->
+                    <div class="admin-card p-0 col-span-1 lg:col-span-2 overflow-hidden flex flex-col h-[450px]">
+                        <div class="p-5 md:p-6 border-b border-brand-500/20 flex justify-between items-center bg-slate-900/60">
+                            <h3 class="text-base font-bold text-white tracking-wide"><i class="fa-solid fa-radar mr-2 text-brand-400"></i>實時活動串流 (Live Feed)</h3>
+                            <span class="text-[10px] bg-brand-500/20 text-brand-400 px-3 py-1.5 rounded-md font-mono font-bold border border-brand-500/30 flex items-center gap-2"><span class="w-1.5 h-1.5 bg-brand-400 rounded-full animate-pulse"></span> SYNCING</span>
+                        </div>
+                        <div id="recent-logs" class="p-4 md:p-6 space-y-3 overflow-y-auto no-scrollbar flex-1 bg-slate-900/30">
                             <div class="flex flex-col items-center justify-center h-full text-slate-500">
-                                <i class="fa-solid fa-circle-notch fa-spin text-2xl mb-3"></i>
-                                <span class="text-xs font-mono">Listening for events...</span>
+                                <i class="fa-solid fa-circle-notch fa-spin text-3xl mb-4 text-brand-500/50"></i>
+                                <span class="text-xs font-mono font-bold tracking-widest">Listening for events...</span>
                             </div>
                         </div>
                     </div>
 
                     <!-- Quick Actions -->
-                    <div class="admin-card p-6 h-[400px] flex flex-col">
-                        <h3 class="text-sm font-bold text-slate-200 mb-4 border-b border-slate-800 pb-3">快速操作 (Quick Actions)</h3>
-                        <div class="space-y-3 flex-1">
-                            <button onclick="adminApp.nav.switch('users')" class="w-full bg-slate-800/40 hover:bg-slate-800 text-left p-4 rounded-xl border border-slate-700/50 hover:border-slate-600 transition-all active:scale-95 group flex items-center gap-4">
-                                <div class="w-10 h-10 rounded-lg bg-brand-500/10 flex items-center justify-center text-brand-400 group-hover:scale-110 transition-transform"><i class="fa-solid fa-user-plus"></i></div>
-                                <div><p class="text-sm font-bold text-slate-200">審核新用戶</p><p class="text-xs text-slate-500 mt-0.5">前往用戶列表管理權限</p></div>
+                    <div class="admin-card p-6 md:p-8 h-[450px] flex flex-col bg-slate-900/40">
+                        <h3 class="text-base font-bold text-white mb-6 border-b border-slate-700/50 pb-4 tracking-wide"><i class="fa-solid fa-bolt text-amber-400 mr-2"></i>快速操作 (Actions)</h3>
+                        <div class="space-y-4 flex-1">
+                            <button onclick="adminApp.nav.switch('users')" class="w-full bg-slate-800/60 hover:bg-brand-900/40 text-left p-5 rounded-2xl border border-slate-700/50 hover:border-brand-500/50 transition-all active:scale-95 group flex items-center gap-5 shadow-sm hover:shadow-brand-500/10">
+                                <div class="w-12 h-12 rounded-xl bg-brand-500/10 flex items-center justify-center text-brand-400 group-hover:scale-110 group-hover:bg-brand-500 group-hover:text-white transition-all shadow-inner"><i class="fa-solid fa-user-plus text-lg"></i></div>
+                                <div><p class="text-[15px] font-bold text-slate-100">管理用戶權限</p><p class="text-xs text-slate-400 mt-1 font-medium">查閱與設定全站使用者</p></div>
                             </button>
-                            <button onclick="adminApp.nav.switch('settings')" class="w-full bg-slate-800/40 hover:bg-slate-800 text-left p-4 rounded-xl border border-slate-700/50 hover:border-slate-600 transition-all active:scale-95 group flex items-center gap-4">
-                                <div class="w-10 h-10 rounded-lg bg-danger-500/10 flex items-center justify-center text-danger-400 group-hover:scale-110 transition-transform"><i class="fa-solid fa-triangle-exclamation"></i></div>
-                                <div><p class="text-sm font-bold text-slate-200">緊急系統維護</p><p class="text-xs text-slate-500 mt-0.5">一鍵鎖定全站連線</p></div>
+                            <button onclick="adminApp.nav.switch('settings')" class="w-full bg-slate-800/60 hover:bg-danger-900/40 text-left p-5 rounded-2xl border border-slate-700/50 hover:border-danger-500/50 transition-all active:scale-95 group flex items-center gap-5 shadow-sm hover:shadow-danger-500/10">
+                                <div class="w-12 h-12 rounded-xl bg-danger-500/10 flex items-center justify-center text-danger-400 group-hover:scale-110 group-hover:bg-danger-500 group-hover:text-white transition-all shadow-inner"><i class="fa-solid fa-triangle-exclamation text-lg"></i></div>
+                                <div><p class="text-[15px] font-bold text-slate-100">緊急系統維護</p><p class="text-xs text-slate-400 mt-1 font-medium">一鍵鎖定全站連線</p></div>
                             </button>
-                            <button onclick="adminApp.logs.exportCSV()" class="w-full bg-slate-800/40 hover:bg-slate-800 text-left p-4 rounded-xl border border-slate-700/50 hover:border-slate-600 transition-all active:scale-95 group flex items-center gap-4">
-                                <div class="w-10 h-10 rounded-lg bg-success-500/10 flex items-center justify-center text-success-400 group-hover:scale-110 transition-transform"><i class="fa-solid fa-file-csv"></i></div>
-                                <div><p class="text-sm font-bold text-slate-200">下載資料備份</p><p class="text-xs text-slate-500 mt-0.5">匯出近期系統操作日誌</p></div>
+                            <button onclick="adminApp.logs.exportCSV()" class="w-full bg-slate-800/60 hover:bg-success-900/40 text-left p-5 rounded-2xl border border-slate-700/50 hover:border-success-500/50 transition-all active:scale-95 group flex items-center gap-5 shadow-sm hover:shadow-success-500/10">
+                                <div class="w-12 h-12 rounded-xl bg-success-500/10 flex items-center justify-center text-success-400 group-hover:scale-110 group-hover:bg-success-500 group-hover:text-white transition-all shadow-inner"><i class="fa-solid fa-file-csv text-lg"></i></div>
+                                <div><p class="text-[15px] font-bold text-slate-100">下載資料備份</p><p class="text-xs text-slate-400 mt-1 font-medium">匯出操作日誌 (CSV)</p></div>
                             </button>
                         </div>
                     </div>
@@ -331,36 +355,36 @@
             </section>
 
             <!-- 👥 Users Management View -->
-            <section id="view-users" class="view-section w-full max-w-6xl mx-auto space-y-6">
-                <div class="flex flex-col md:flex-row justify-between items-start md:items-end gap-4 mb-2">
+            <section id="view-users" class="view-section w-full max-w-7xl mx-auto space-y-6">
+                <div class="flex flex-col md:flex-row justify-between items-start md:items-end gap-5 mb-4">
                     <div>
-                        <h2 class="text-2xl font-bold text-white tracking-tight">用戶與權限管理</h2>
-                        <p class="text-sm text-slate-400 mt-1">升級管理員、封鎖違規帳號或查閱用戶詳情。</p>
+                        <h2 class="text-3xl font-black text-white tracking-tight drop-shadow-md">用戶管理 <span class="text-brand-400">Users</span></h2>
+                        <p class="text-sm text-slate-400 mt-2 font-medium">升級管理員、封鎖違規帳號或查閱詳細資訊。</p>
                     </div>
-                    <div class="flex gap-2 w-full md:w-auto">
-                        <div class="relative flex-1 md:w-64">
-                            <i class="fa-solid fa-search absolute left-3 top-1/2 -translate-y-1/2 text-slate-500 text-xs"></i>
-                            <input type="text" id="user-search" onkeyup="adminApp.renders.usersTable()" placeholder="搜尋 User ID..." class="admin-input pl-8 py-2 text-sm rounded-lg w-full">
+                    <div class="flex gap-3 w-full md:w-auto">
+                        <div class="relative flex-1 md:w-72">
+                            <i class="fa-solid fa-search absolute left-4 top-1/2 -translate-y-1/2 text-slate-500 text-sm"></i>
+                            <input type="text" id="user-search" onkeyup="adminApp.renders.usersTable()" placeholder="搜尋 名稱 或 Email..." class="admin-input pl-10 py-3 text-sm rounded-xl w-full shadow-inner">
                         </div>
-                        <button onclick="adminApp.data.loadUsers()" class="px-4 py-2 bg-slate-800 hover:bg-brand-600 rounded-lg text-sm font-bold border border-slate-700 hover:border-transparent transition-colors text-slate-300 hover:text-white flex items-center shrink-0 active:scale-95"><i class="fa-solid fa-rotate-right mr-2 text-xs"></i> 整理</button>
+                        <button onclick="adminApp.data.loadUsers()" class="px-5 py-3 bg-brand-600 hover:bg-brand-500 rounded-xl text-sm font-bold transition-all text-white flex items-center shrink-0 active:scale-95 shadow-lg shadow-brand-500/30 border border-transparent"><i class="fa-solid fa-rotate-right mr-2 text-xs"></i> 重整</button>
                     </div>
                 </div>
 
                 <div class="admin-card overflow-hidden">
-                    <div class="overflow-x-auto min-h-[400px]">
+                    <div class="overflow-x-auto min-h-[500px]">
                         <table class="w-full text-left admin-table">
-                            <thead class="sticky top-0 bg-slate-900/90 backdrop-blur-md z-10 shadow-sm">
+                            <thead class="sticky top-0 bg-slate-900/95 backdrop-blur-xl z-10 shadow-sm">
                                 <tr>
-                                    <th class="px-6 py-4 w-12"></th>
-                                    <th class="px-6 py-4">User ID / Email</th>
-                                    <th class="px-6 py-4">角色權限</th>
-                                    <th class="px-6 py-4">狀態</th>
-                                    <th class="px-6 py-4">註冊時間</th>
-                                    <th class="px-6 py-4 text-right">管理操作</th>
+                                    <th class="px-6 py-5 w-16 text-center"><i class="fa-solid fa-user"></i></th>
+                                    <th class="px-6 py-5">用戶資訊 (Name / Email)</th>
+                                    <th class="px-6 py-5">角色權限</th>
+                                    <th class="px-6 py-5">帳號狀態</th>
+                                    <th class="px-6 py-5">註冊時間</th>
+                                    <th class="px-6 py-5 text-right">管理操作</th>
                                 </tr>
                             </thead>
                             <tbody id="users-table-body" class="text-sm bg-slate-900/30">
-                                <tr><td colspan="6" class="text-center py-12 text-slate-500"><i class="fa-solid fa-circle-notch fa-spin text-2xl mb-3"></i><br><span class="text-xs font-mono">載入用戶資料中...</span></td></tr>
+                                <tr><td colspan="6" class="text-center py-16 text-slate-500"><i class="fa-solid fa-circle-notch fa-spin text-3xl mb-4 text-brand-500/50"></i><br><span class="text-xs font-mono font-bold tracking-widest">載入用戶資料中...</span></td></tr>
                             </tbody>
                         </table>
                     </div>
@@ -368,69 +392,70 @@
             </section>
 
             <!-- ⚙️ Settings View -->
-            <section id="view-settings" class="view-section w-full max-w-6xl mx-auto space-y-6">
-                <div>
-                    <h2 class="text-2xl font-bold text-white tracking-tight">系統全域設定</h2>
-                    <p class="text-sm text-slate-400 mt-1">控制整個應用程式的狀態與安全級別。</p>
+            <section id="view-settings" class="view-section w-full max-w-7xl mx-auto space-y-6">
+                <div class="mb-8">
+                    <h2 class="text-3xl font-black text-white tracking-tight drop-shadow-md">全域設定 <span class="text-brand-400">Settings</span></h2>
+                    <p class="text-sm text-slate-400 mt-2 font-medium">控制整個系統的安全級別與維護狀態。</p>
                 </div>
                 
-                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
                     <!-- Maintenance Control -->
-                    <div class="admin-card p-6 border-t-4 border-t-danger-500 relative overflow-hidden group">
-                        <div class="absolute -right-6 -bottom-6 opacity-5 group-hover:opacity-10 transition-opacity"><i class="fa-solid fa-power-off text-[150px] text-danger-500"></i></div>
+                    <div class="admin-card p-8 border-t-4 border-t-danger-500 relative overflow-hidden group hover:shadow-[0_10px_40px_rgba(239,68,68,0.15)] transition-all">
+                        <div class="absolute -right-6 -bottom-6 opacity-5 group-hover:opacity-10 group-hover:scale-110 transition-all duration-500"><i class="fa-solid fa-power-off text-[180px] text-danger-500"></i></div>
                         <div class="relative z-10">
-                            <h3 class="text-lg font-bold text-white mb-2 flex items-center gap-2"><i class="fa-solid fa-lock text-danger-400"></i> 全站維護模式 (Lockdown)</h3>
-                            <p class="text-sm text-slate-400 mb-6 leading-relaxed">開啟後，所有前台學生與老師將被強制登出並鎖定在攔截畫面，適用於重大更新或遭受攻擊時使用。</p>
+                            <h3 class="text-xl font-bold text-white mb-2 flex items-center gap-3"><i class="fa-solid fa-lock text-danger-400"></i> 全站維護模式 (Lockdown)</h3>
+                            <p class="text-sm text-slate-400 mb-8 leading-relaxed font-medium">開啟後，所有前台學生與老師將被強制登出並鎖定在攔截畫面。適用於系統重大更新或遭受攻擊時。</p>
                             
-                            <div class="flex items-center justify-between bg-slate-900/80 p-4 rounded-xl border border-slate-700 mb-5 shadow-inner">
+                            <div class="flex items-center justify-between bg-slate-900/80 p-5 rounded-2xl border border-slate-700/50 mb-6 shadow-inner">
                                 <div>
-                                    <span class="font-bold text-slate-200 block">啟動維護攔截</span>
-                                    <span class="text-[11px] text-danger-400 font-mono mt-0.5" id="maint-status-text">Currently ACTIVE</span>
+                                    <span class="font-bold text-slate-200 block text-[15px]">啟動維護攔截</span>
+                                    <span class="text-[11px] text-danger-400 font-mono mt-1 font-bold tracking-wider" id="maint-status-text">Currently ACTIVE</span>
                                 </div>
-                                <label class="toggle-switch">
+                                <label class="toggle-switch scale-110 origin-right">
                                     <input type="checkbox" id="sys-maint-toggle" onchange="adminApp.settings.updateMaintenance()">
                                     <span class="slider"></span>
                                 </label>
                             </div>
 
-                            <div class="space-y-2">
-                                <label class="text-[11px] font-bold text-slate-500 uppercase tracking-wider pl-1">維護畫面公告訊息</label>
-                                <textarea id="sys-maint-msg" class="admin-input p-4 text-sm resize-none h-24 rounded-xl" placeholder="輸入要顯示給使用者的維護原因... (例如：系統升級中，預計 14:00 恢復)"></textarea>
-                                <button onclick="adminApp.settings.updateMaintenance()" class="w-full bg-slate-800 hover:bg-slate-700 text-white font-bold py-3.5 rounded-xl border border-slate-700 transition-colors shadow-sm mt-2 active:scale-95">💾 儲存並發佈設定</button>
+                            <div class="space-y-3">
+                                <label class="text-xs font-bold text-slate-400 uppercase tracking-widest pl-1">維護畫面公告訊息</label>
+                                <textarea id="sys-maint-msg" class="admin-input p-5 text-[15px] resize-none h-32 rounded-2xl shadow-inner font-medium" placeholder="輸入要顯示給使用者的維護原因... (例如：系統升級中，預計 14:00 恢復)"></textarea>
+                                <button onclick="adminApp.settings.updateMaintenance()" class="w-full bg-brand-600 hover:bg-brand-500 text-white font-bold py-4 rounded-2xl border border-transparent transition-all shadow-[0_5px_20px_rgba(37,99,235,0.4)] mt-4 active:scale-95 flex justify-center items-center gap-2"><i class="fa-solid fa-cloud-arrow-up"></i> 儲存並強制發佈</button>
                             </div>
                         </div>
                     </div>
 
-                    <!-- Security Policies (Placeholders for future) -->
-                    <div class="admin-card p-6 border-t-4 border-t-slate-700">
-                        <h3 class="text-lg font-bold text-white mb-2 flex items-center gap-2"><i class="fa-solid fa-shield-halved text-brand-400"></i> 註冊與安全策略</h3>
-                        <p class="text-sm text-slate-400 mb-6 leading-relaxed">管理新用戶註冊限制與功能白名單 (即將於 v2.0 實裝)。</p>
+                    <!-- Security Policies -->
+                    <div class="admin-card p-8 border-t-4 border-t-slate-700 relative overflow-hidden">
+                        <div class="absolute -right-6 -bottom-6 opacity-[0.03]"><i class="fa-solid fa-shield-halved text-[180px] text-white"></i></div>
+                        <h3 class="text-xl font-bold text-white mb-2 flex items-center gap-3 relative z-10"><i class="fa-solid fa-shield-halved text-slate-400"></i> 註冊與安全策略</h3>
+                        <p class="text-sm text-slate-400 mb-8 leading-relaxed font-medium relative z-10">進階存取控制 (即將於 v2.0 實裝，目前鎖定)。</p>
                         
-                        <div class="space-y-3 opacity-50 cursor-not-allowed">
-                            <div class="flex items-center justify-between bg-slate-900/50 p-4 rounded-xl border border-slate-800/50">
+                        <div class="space-y-4 opacity-50 cursor-not-allowed relative z-10">
+                            <div class="flex items-center justify-between bg-slate-900/50 p-5 rounded-2xl border border-slate-800/80">
                                 <div>
-                                    <span class="font-bold text-slate-300 block text-sm">允許新用戶註冊</span>
-                                    <span class="text-[11px] text-slate-500">關閉後登入頁面將隱藏註冊選項</span>
+                                    <span class="font-bold text-slate-300 block text-[15px]">允許新用戶註冊</span>
+                                    <span class="text-xs text-slate-500 mt-1">關閉後登入頁面將隱藏註冊選項</span>
                                 </div>
                                 <label class="toggle-switch">
                                     <input type="checkbox" checked disabled>
                                     <span class="slider"></span>
                                 </label>
                             </div>
-                            <div class="flex items-center justify-between bg-slate-900/50 p-4 rounded-xl border border-slate-800/50">
+                            <div class="flex items-center justify-between bg-slate-900/50 p-5 rounded-2xl border border-slate-800/80">
                                 <div>
-                                    <span class="font-bold text-slate-300 block text-sm">強制電郵網域白名單</span>
-                                    <span class="text-[11px] text-slate-500">僅允許特定學校網域 (如 @school.edu.hk) 註冊</span>
+                                    <span class="font-bold text-slate-300 block text-[15px]">強制電郵網域白名單</span>
+                                    <span class="text-xs text-slate-500 mt-1">僅允許特定學校網域註冊</span>
                                 </div>
                                 <label class="toggle-switch">
                                     <input type="checkbox" disabled>
                                     <span class="slider"></span>
                                 </label>
                             </div>
-                            <div class="flex items-center justify-between bg-slate-900/50 p-4 rounded-xl border border-slate-800/50">
+                            <div class="flex items-center justify-between bg-slate-900/50 p-5 rounded-2xl border border-slate-800/80">
                                 <div>
-                                    <span class="font-bold text-slate-300 block text-sm">家長監督模式強制啟用</span>
-                                    <span class="text-[11px] text-slate-500">學生必須綁定家長帳號才可解鎖完整功能</span>
+                                    <span class="font-bold text-slate-300 block text-[15px]">家長監督模式強制啟用</span>
+                                    <span class="text-xs text-slate-500 mt-1">學生必須綁定家長帳號才可使用</span>
                                 </div>
                                 <label class="toggle-switch">
                                     <input type="checkbox" disabled>
@@ -443,34 +468,34 @@
             </section>
 
             <!-- 📝 Logs View -->
-            <section id="view-logs" class="view-section w-full max-w-6xl mx-auto space-y-6">
-                <div class="flex flex-col md:flex-row justify-between items-start md:items-end gap-4 mb-2">
+            <section id="view-logs" class="view-section w-full max-w-7xl mx-auto space-y-6">
+                <div class="flex flex-col md:flex-row justify-between items-start md:items-end gap-5 mb-4">
                     <div>
-                        <h2 class="text-2xl font-bold text-white tracking-tight">系統操作日誌 (Audit Logs)</h2>
-                        <p class="text-sm text-slate-400 mt-1">不可竄改的全局資料庫寫入與操作紀錄。</p>
+                        <h2 class="text-3xl font-black text-white tracking-tight drop-shadow-md">系統操作日誌 <span class="text-brand-400">Audit Logs</span></h2>
+                        <p class="text-sm text-slate-400 mt-2 font-medium">全站不可竄改的操作紀錄，用於問題追蹤與稽核。</p>
                     </div>
-                    <div class="flex gap-2 w-full md:w-auto">
-                        <div class="relative flex-1 md:w-64">
-                            <i class="fa-solid fa-filter absolute left-3 top-1/2 -translate-y-1/2 text-slate-500 text-xs"></i>
-                            <input type="text" id="log-search" onkeyup="adminApp.renders.logsTable()" placeholder="篩選 Action 或 User ID..." class="admin-input pl-8 py-2 text-sm rounded-lg w-full">
+                    <div class="flex gap-3 w-full md:w-auto">
+                        <div class="relative flex-1 md:w-72">
+                            <i class="fa-solid fa-filter absolute left-4 top-1/2 -translate-y-1/2 text-slate-500 text-sm"></i>
+                            <input type="text" id="log-search" onkeyup="adminApp.renders.logsTable()" placeholder="篩選 Action 或 User..." class="admin-input pl-10 py-3 text-sm rounded-xl w-full shadow-inner">
                         </div>
-                        <button onclick="adminApp.logs.exportCSV()" class="px-4 py-2 bg-success-500/10 hover:bg-success-500 text-success-500 hover:text-white rounded-lg text-sm font-bold border border-success-500/30 transition-colors flex items-center shrink-0 active:scale-95"><i class="fa-solid fa-download mr-2 text-xs"></i> 匯出 CSV</button>
+                        <button onclick="adminApp.logs.exportCSV()" class="px-5 py-3 bg-success-600 hover:bg-success-500 rounded-xl text-sm font-bold transition-all text-white flex items-center shrink-0 active:scale-95 shadow-lg shadow-success-500/30 border border-transparent"><i class="fa-solid fa-download mr-2 text-xs"></i> 匯出 CSV</button>
                     </div>
                 </div>
 
                 <div class="admin-card overflow-hidden">
                     <div class="overflow-x-auto h-[600px] overflow-y-auto no-scrollbar relative">
                         <table class="w-full text-left admin-table font-mono text-[13px]">
-                            <thead class="sticky top-0 bg-slate-900/95 backdrop-blur-xl z-10 shadow-sm">
+                            <thead class="sticky top-0 bg-slate-900/95 backdrop-blur-xl z-10 shadow-sm border-b-2 border-brand-500/20">
                                 <tr>
-                                    <th class="px-6 py-4">時間 (Timestamp)</th>
-                                    <th class="px-6 py-4">使用者 (User ID)</th>
-                                    <th class="px-6 py-4">動作 (Action)</th>
-                                    <th class="px-6 py-4">附加數據 (Meta)</th>
+                                    <th class="px-6 py-5 w-[180px]">時間 (Timestamp)</th>
+                                    <th class="px-6 py-5 w-[250px]">操作者 (User)</th>
+                                    <th class="px-6 py-5 w-[150px]">動作 (Action)</th>
+                                    <th class="px-6 py-5">附加數據 (Meta Data)</th>
                                 </tr>
                             </thead>
                             <tbody id="logs-table-body" class="text-slate-300 bg-slate-900/30">
-                                <tr><td colspan="4" class="text-center py-12 text-slate-500"><i class="fa-solid fa-circle-notch fa-spin text-2xl mb-3"></i><br>載入日誌中...</td></tr>
+                                <tr><td colspan="4" class="text-center py-16 text-slate-500"><i class="fa-solid fa-circle-notch fa-spin text-3xl mb-4 text-brand-500/50"></i><br><span class="text-xs font-mono font-bold tracking-widest">載入日誌中...</span></td></tr>
                             </tbody>
                         </table>
                     </div>
@@ -480,22 +505,22 @@
         </div>
     </main>
 
-    <!-- Global Modal (For User Details etc.) -->
-    <div id="admin-modal" class="fixed inset-0 z-[200] hidden flex items-center justify-center bg-slate-950/80 backdrop-blur-md px-4 opacity-0 transition-all duration-300">
-        <div id="admin-modal-content" class="admin-card w-full max-w-md p-0 transform scale-95 opacity-0 transition-all duration-400 overflow-hidden flex flex-col max-h-[90vh]">
+    <!-- Global Modal (User Details / Confirmations) -->
+    <div id="admin-modal" class="fixed inset-0 z-[200] hidden flex items-center justify-center bg-slate-950/80 backdrop-blur-xl px-4 opacity-0 transition-all duration-300">
+        <div id="admin-modal-content" class="admin-card w-full max-w-md p-0 transform scale-95 opacity-0 transition-all duration-400 overflow-hidden flex flex-col max-h-[90vh] shadow-[0_20px_60px_rgba(0,0,0,0.6)] border-brand-500/30">
             <!-- Content Injected via JS -->
         </div>
     </div>
 
     <!-- Toast Notifications -->
-    <div id="toast-root" class="fixed top-10 right-10 md:top-10 md:bottom-auto md:right-10 z-[500] flex flex-col gap-3 pointer-events-none"></div>
+    <div id="toast-root" class="fixed top-20 left-1/2 -translate-x-1/2 z-[500] flex flex-col gap-3 pointer-events-none"></div>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
         import { getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
         import { getFirestore, collection, doc, setDoc, getDoc, updateDoc, onSnapshot, getDocs, collectionGroup } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
-        // ⚠️ 必須與主程式完全相同的 Firebase Config
+        // ⚠️ Firebase Config
         const firebaseConfig = {
             apiKey: "AIzaSyByPLZqByFtsFbCXBaIz53psLcdKoXBouY",
             authDomain: "newhw-daf31.firebaseapp.com",
@@ -519,28 +544,43 @@
 
         const state = {
             user: null,
-            users: [],
+            users: [], // Array of { uid, role, isBanned, createdAt }
+            usersMap: {}, // Map of uid -> { name, email, photo } for quick lookup
             logs: [],
             groupsCount: 0,
             currentView: 'dashboard'
+        };
+
+        const escapeHTML = (str) => {
+            return (str || '').toString().replace(/[&<>'"]/g, 
+                tag => ({'&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;'}[tag])
+            );
+        };
+
+        // 智能獲取用戶顯示名稱
+        const getUserDisplayInfo = (uid) => {
+            const mapped = state.usersMap[uid];
+            if (mapped && mapped.name) return { name: mapped.name, email: mapped.email || '', photo: mapped.photo || '' };
+            if (mapped && mapped.email) return { name: mapped.email.split('@')[0], email: mapped.email, photo: '' };
+            return { name: `User-${uid.substring(0,5).toUpperCase()}`, email: 'N/A', photo: '' };
         };
 
         const UI = {
             notify: (msg, type='success') => {
                 const root = document.getElementById('toast-root');
                 const t = document.createElement('div');
-                const bg = type === 'success' ? 'bg-success-500/20 border-success-500/40 text-success-400' : 
-                           type === 'warning' ? 'bg-warning-500/20 border-warning-500/40 text-warning-400' :
-                           'bg-danger-500/20 border-danger-500/40 text-danger-400';
-                t.className = `px-5 py-3.5 rounded-xl text-[13px] font-bold border backdrop-blur-xl shadow-2xl flex items-center gap-3 ${bg}`;
-                t.innerHTML = `<i class="fa-solid ${type==='success'?'fa-circle-check':type==='warning'?'fa-triangle-exclamation':'fa-circle-xmark'} text-base"></i> <span>${msg}</span>`;
+                const bg = type === 'success' ? 'bg-success-600 border-success-400 text-white' : 
+                           type === 'warning' ? 'bg-warning-600 border-warning-400 text-white' :
+                           'bg-danger-600 border-danger-400 text-white';
+                t.className = `px-6 py-4 rounded-2xl text-[14px] font-bold border backdrop-blur-xl shadow-[0_10px_40px_rgba(0,0,0,0.5)] flex items-center gap-3 ${bg}`;
+                t.innerHTML = `<i class="fa-solid ${type==='success'?'fa-circle-check':type==='warning'?'fa-triangle-exclamation':'fa-circle-xmark'} text-lg"></i> <span>${msg}</span>`;
                 root.appendChild(t);
                 
                 if (typeof gsap !== 'undefined') {
-                    gsap.fromTo(t, { x: 50, opacity: 0 }, { x: 0, opacity: 1, duration: 0.4, ease: "back.out(1.5)" });
-                    setTimeout(() => gsap.to(t, { opacity: 0, x: 50, duration: 0.3, ease: "power2.in", onComplete: ()=>t.remove() }), 3000);
+                    gsap.fromTo(t, { y: -50, opacity: 0, scale: 0.9 }, { y: 0, opacity: 1, scale: 1, duration: 0.5, ease: "back.out(1.5)" });
+                    setTimeout(() => gsap.to(t, { opacity: 0, y: -50, scale: 0.9, duration: 0.4, ease: "power2.in", onComplete: ()=>t.remove() }), 3500);
                 } else {
-                    setTimeout(() => t.remove(), 3000);
+                    setTimeout(() => t.remove(), 3500);
                 }
             },
             modal: {
@@ -566,7 +606,6 @@
 
         const adminApp = {
             init: () => {
-                // Update Clock
                 setInterval(() => {
                     const d = new Date();
                     const timeEl = document.getElementById('current-time');
@@ -582,17 +621,16 @@
                         // 🔒 嚴格審核白名單
                         if (user.email !== SUPER_ADMIN_EMAIL) {
                             await signOut(auth);
-                            UI.notify(`權限不足：此系統只限 ${SUPER_ADMIN_EMAIL} 進入。`, 'error');
+                            UI.notify(`存取拒絕：此系統只限 ${SUPER_ADMIN_EMAIL} 進入。`, 'error');
                             
-                            // 退回登入頁，並加入錯誤視覺回饋
                             loginView.classList.remove('hidden');
                             mainView.classList.add('hidden');
                             sidebar.classList.add('hidden');
-                            gsap.fromTo(loginView.querySelector('.admin-card'), { x: -10 }, { x: 10, duration: 0.1, yoyo: true, repeat: 3 });
+                            if(typeof gsap !== 'undefined') gsap.fromTo(loginView.querySelector('.admin-card'), { x: -15 }, { x: 15, duration: 0.08, yoyo: true, repeat: 5 });
                             return;
                         }
 
-                        // 審核通過
+                        // 通過
                         state.user = user;
                         loginView.classList.add('opacity-0');
                         setTimeout(() => {
@@ -606,6 +644,7 @@
                         if(user.photoURL) {
                             document.getElementById('admin-avatar').src = user.photoURL;
                             document.getElementById('admin-avatar').classList.remove('hidden');
+                            document.getElementById('admin-avatar-fallback').classList.add('hidden');
                         }
                         
                         adminApp.data.initListeners();
@@ -621,7 +660,7 @@
             auth: {
                 login: async () => {
                     try { 
-                        UI.notify('驗證中...', 'warning');
+                        UI.notify('驗證身分中...', 'warning');
                         await signInWithPopup(auth, googleProvider); 
                     } 
                     catch(e) { UI.notify('登入取消或失敗', 'error'); }
@@ -638,19 +677,16 @@
                     document.querySelectorAll('.nav-item').forEach(el => {
                         el.classList.remove('active');
                         el.querySelector('i').classList.remove('opacity-100');
-                        el.querySelector('i').classList.add('opacity-70');
+                        el.querySelector('i').classList.add('opacity-80');
                     });
                     const activeBtn = document.getElementById(`nav-${viewId}`);
                     if(activeBtn) {
                         activeBtn.classList.add('active');
-                        activeBtn.querySelector('i').classList.remove('opacity-70');
+                        activeBtn.querySelector('i').classList.remove('opacity-80');
                         activeBtn.querySelector('i').classList.add('opacity-100');
-                        // 導航按鈕彈跳動畫
-                        gsap.fromTo(activeBtn, { scale: 0.95 }, { scale: 1, duration: 0.4, ease: "back.out(1.5)" });
                     }
                     
-                    // Update Mobile Title
-                    const titles = { 'dashboard': '儀表板 Overview', 'users': '用戶管理 Users', 'settings': '全域設定 Settings', 'logs': '系統日誌 Logs' };
+                    const titles = { 'dashboard': '總覽儀表板', 'users': '用戶管理 Users', 'settings': '全域設定 Settings', 'logs': '系統日誌 Audit Logs' };
                     const pt = document.getElementById('page-title');
                     if(pt) pt.textContent = titles[viewId] || '';
 
@@ -661,13 +697,19 @@
                     const target = document.getElementById(`view-${viewId}`);
                     if(target) {
                         target.classList.add('active');
-                        // 視圖切換動畫
-                        if(typeof gsap !== 'undefined') gsap.fromTo(target, { opacity: 0, y: 15, scale: 0.98 }, { opacity: 1, y: 0, scale: 1, duration: 0.4, ease: "back.out(1.2)" });
+                        if(typeof gsap !== 'undefined') {
+                            gsap.fromTo(target, { opacity: 0, y: 30, scale: 0.98 }, { opacity: 1, y: 0, scale: 1, duration: 0.5, ease: "power3.out" });
+                            
+                            // 觸發內部列表的 staggered 動畫
+                            const staggerItems = target.querySelectorAll('.stagger-item');
+                            if(staggerItems.length > 0) {
+                                gsap.fromTo(staggerItems, { opacity: 0, x: -20 }, { opacity: 1, x: 0, duration: 0.4, stagger: 0.05, ease: "power2.out", delay: 0.1 });
+                            }
+                        }
                     }
                     
                     state.currentView = viewId;
                     
-                    // Close mobile sidebar if open
                     if(window.innerWidth < 768) {
                         document.querySelector('aside').classList.add('hidden');
                     }
@@ -675,7 +717,6 @@
             },
             data: {
                 initListeners: () => {
-                    // Global Settings Listener
                     const settingsRef = doc(db, `artifacts/${internalAppId}/public/data/global_settings`, 'main');
                     onSnapshot(settingsRef, (snap) => {
                         if(snap.exists()) {
@@ -686,14 +727,13 @@
                             if(tgl) tgl.checked = isMaint;
                             if(stText) {
                                 stText.textContent = isMaint ? '🔴 Currently LOCKED' : '🟢 Currently ACTIVE';
-                                stText.className = isMaint ? 'text-[11px] text-danger-400 font-mono mt-0.5 font-bold' : 'text-[11px] text-success-400 font-mono mt-0.5 font-bold';
+                                stText.className = isMaint ? 'text-[11px] text-danger-400 font-mono mt-1 font-bold tracking-wider' : 'text-[11px] text-success-400 font-mono mt-1 font-bold tracking-wider';
                             }
                             const msg = document.getElementById('sys-maint-msg');
                             if(msg) msg.value = data.message || '';
                         }
                     }, (err) => console.error("Settings listener error:", err));
 
-                    // Audit Logs Listener 
                     const logsRef = collection(db, `artifacts/${internalAppId}/public/data/audit_logs`);
                     onSnapshot(logsRef, (snap) => {
                         state.logs = [];
@@ -704,43 +744,47 @@
                         if(state.currentView === 'logs') adminApp.renders.logsTable();
                     }, (err) => console.error("Logs listener error:", err));
 
-                    // Groups Count
                     getDocs(collection(db, `artifacts/${internalAppId}/public/data/groups`)).then(snap => {
                         state.groupsCount = snap.size;
                         const st = document.getElementById('stat-groups');
                         if(st) st.textContent = snap.size;
                     }).catch(e=>{});
 
-                    // Initial Users load
                     adminApp.data.loadUsers();
                 },
                 loadUsers: async () => {
                     try {
                         const tbody = document.getElementById('users-table-body');
-                        if(tbody) tbody.innerHTML = '<tr><td colspan="6" class="text-center py-12 text-brand-500"><i class="fa-solid fa-circle-notch fa-spin text-2xl mb-3"></i><br><span class="text-xs font-mono">Fetching Database...</span></td></tr>';
+                        if(tbody) tbody.innerHTML = '<tr><td colspan="6" class="text-center py-16 text-slate-500"><i class="fa-solid fa-circle-notch fa-spin text-3xl mb-4 text-brand-500/50"></i><br><span class="text-xs font-mono font-bold tracking-widest">Fetching Database...</span></td></tr>';
                         
+                        // 1. Fetch Profiles
                         const profilesSnap = await getDocs(collectionGroup(db, 'profile'));
                         state.users = [];
                         profilesSnap.forEach(docSnap => {
                             if(docSnap.id === 'main') {
                                 const pathParts = docSnap.ref.path.split('/');
                                 const uid = pathParts[3]; 
-                                state.users.push({ uid, ...docSnap.data() });
+                                const data = docSnap.data();
+                                state.users.push({ uid, ...data });
+                                
+                                // Attempt to parse Name from fallback logic if available in future
+                                if(!state.usersMap[uid]) state.usersMap[uid] = { name: data.displayName || '', email: data.email || '' };
                             }
                         });
                         
                         const st = document.getElementById('stat-users');
                         if(st) {
                             st.textContent = state.users.length;
-                            gsap.fromTo(st, { scale: 0.8 }, { scale: 1, duration: 0.5, ease: "elastic.out(1, 0.5)" });
+                            if(typeof gsap !== 'undefined') gsap.fromTo(st, { scale: 0.5, opacity: 0 }, { scale: 1, opacity: 1, duration: 0.6, ease: "elastic.out(1, 0.5)" });
                         }
                         
                         adminApp.renders.usersTable();
-                        UI.notify('用戶名單已同步完成');
+                        adminApp.renders.logsTable(); // Re-render logs to apply new names
+                        UI.notify('用戶名單同步完成');
                     } catch(e) {
                         console.error("Load users error:", e);
                         const tbody = document.getElementById('users-table-body');
-                        if(tbody) tbody.innerHTML = `<tr><td colspan="6" class="text-center py-12"><div class="text-danger-500 mb-2"><i class="fa-solid fa-triangle-exclamation text-3xl"></i></div><p class="font-bold text-white mb-1">讀取失敗</p><p class="text-xs text-slate-500 max-w-sm mx-auto">Firebase 規則可能尚未建立 Collection Group 索引，或權限遭拒。</p></td></tr>`;
+                        if(tbody) tbody.innerHTML = `<tr><td colspan="6" class="text-center py-16"><div class="text-danger-500 mb-4"><i class="fa-solid fa-triangle-exclamation text-4xl"></i></div><p class="font-bold text-white mb-2 text-lg">資料庫讀取失敗</p><p class="text-sm text-slate-400 max-w-sm mx-auto">Firebase 規則可能尚未建立 Collection Group 索引，或您的帳號沒有讀取權限。</p></td></tr>`;
                     }
                 }
             },
@@ -748,41 +792,64 @@
                 dashboardStats: () => {
                     const today = new Date().toISOString().split('T')[0];
                     const todayLogs = state.logs.filter(l => l.timestamp && l.timestamp.startsWith(today)).length;
+                    
                     const st = document.getElementById('stat-logs');
                     if(st && st.textContent !== todayLogs.toString()) {
                         st.textContent = todayLogs;
-                        gsap.fromTo(st, { scale: 0.8, color: '#34d399' }, { scale: 1, color: '#fff', duration: 0.5 });
+                        if(typeof gsap !== 'undefined') gsap.fromTo(st, { scale: 0.8, color: '#34d399' }, { scale: 1, color: '#fff', duration: 0.5 });
+                    }
+
+                    // 🌟 Update Quota Progress Bars
+                    // Estimations: Writes = logs count. Reads = logs * 5 (rough estimate).
+                    const quotaWrites = document.getElementById('quota-writes');
+                    const barWrites = document.getElementById('bar-writes');
+                    if(quotaWrites && barWrites) {
+                        const writesLimit = 20000;
+                        quotaWrites.textContent = todayLogs.toLocaleString();
+                        const pctW = Math.min((todayLogs / writesLimit) * 100, 100);
+                        barWrites.style.width = `${pctW}%`;
+                    }
+
+                    const quotaReads = document.getElementById('quota-reads');
+                    const barReads = document.getElementById('bar-reads');
+                    if(quotaReads && barReads) {
+                        const readsLimit = 50000;
+                        const estReads = todayLogs * 5 + state.users.length * 2;
+                        quotaReads.textContent = estReads.toLocaleString();
+                        const pctR = Math.min((estReads / readsLimit) * 100, 100);
+                        barReads.style.width = `${pctR}%`;
                     }
 
                     const recentContainer = document.getElementById('recent-logs');
                     if(!recentContainer) return;
                     
                     if(state.logs.length === 0) {
-                        recentContainer.innerHTML = '<div class="text-slate-500 text-center py-8 text-xs font-mono">No recent activity detected.</div>';
+                        recentContainer.innerHTML = '<div class="text-slate-500 text-center py-10 text-xs font-mono">No recent activity detected.</div>';
                         return;
                     }
 
                     recentContainer.innerHTML = '';
-                    state.logs.slice(0, 15).forEach(l => {
+                    state.logs.slice(0, 20).forEach(l => {
                         const time = new Date(l.timestamp).toLocaleTimeString('en-US', {hour12:false});
+                        const userInfo = getUserDisplayInfo(l.uid);
                         
                         let badgeClass = 'badge-brand';
-                        let icon = 'fa-bolt';
-                        if(l.action.includes('CREATED') || l.action.includes('SAVED')) { badgeClass = 'badge-success'; icon = 'fa-plus'; }
-                        if(l.action.includes('DELETED')) { badgeClass = 'badge-danger'; icon = 'fa-trash'; }
-                        if(l.action.includes('LOGIN')) { badgeClass = 'badge-neutral'; icon = 'fa-right-to-bracket'; }
+                        let icon = 'fa-bolt text-brand-400';
+                        if(l.action.includes('CREATED') || l.action.includes('SAVED')) { badgeClass = 'badge-success'; icon = 'fa-plus text-success-400'; }
+                        if(l.action.includes('DELETED')) { badgeClass = 'badge-danger'; icon = 'fa-trash text-danger-400'; }
+                        if(l.action.includes('LOGIN')) { badgeClass = 'badge-neutral'; icon = 'fa-right-to-bracket text-slate-400'; }
                         
                         recentContainer.innerHTML += `
-                            <div class="flex items-center gap-3 p-3 hover:bg-slate-800/50 rounded-xl transition-colors border border-transparent hover:border-slate-700/50 group cursor-default">
-                                <div class="w-8 h-8 rounded-lg bg-slate-800 flex items-center justify-center text-slate-400 group-hover:text-white group-hover:scale-110 transition-all shrink-0 border border-slate-700/50 shadow-sm">
-                                    <i class="fa-solid ${icon} text-[10px]"></i>
+                            <div class="flex items-center gap-4 p-3 hover:bg-slate-800/80 rounded-xl transition-all border border-transparent hover:border-slate-700 hover:shadow-md group cursor-default">
+                                <div class="w-9 h-9 rounded-xl bg-slate-900 flex items-center justify-center group-hover:scale-110 transition-transform shrink-0 border border-slate-700/50 shadow-inner">
+                                    <i class="fa-solid ${icon} text-[11px]"></i>
                                 </div>
                                 <div class="flex-1 min-w-0">
-                                    <div class="flex justify-between items-baseline mb-0.5">
+                                    <div class="flex justify-between items-center mb-1">
                                         <span class="badge ${badgeClass}">${l.action}</span>
-                                        <span class="text-[10px] text-slate-500 font-mono">${time}</span>
+                                        <span class="text-[10px] text-slate-500 font-mono tracking-wide">${time}</span>
                                     </div>
-                                    <p class="text-[11px] text-slate-400 truncate font-mono">UID: ${l.uid}</p>
+                                    <p class="text-[12px] text-slate-300 font-bold truncate">${escapeHTML(userInfo.name)}</p>
                                 </div>
                             </div>
                         `;
@@ -794,41 +861,53 @@
                     tbody.innerHTML = '';
                     
                     const term = (document.getElementById('user-search')?.value || '').toLowerCase();
-                    const filtered = state.users.filter(u => u.uid.toLowerCase().includes(term) || (u.role||'').toLowerCase().includes(term));
+                    const filtered = state.users.filter(u => {
+                        const info = getUserDisplayInfo(u.uid);
+                        return u.uid.toLowerCase().includes(term) || 
+                               (u.role||'').toLowerCase().includes(term) ||
+                               info.name.toLowerCase().includes(term) ||
+                               info.email.toLowerCase().includes(term);
+                    });
 
                     if(filtered.length === 0) {
-                        tbody.innerHTML = '<tr><td colspan="6" class="text-center py-12 text-slate-500 text-sm">無符合的用戶資料</td></tr>';
+                        tbody.innerHTML = '<tr><td colspan="6" class="text-center py-16 text-slate-500 text-sm">無符合的用戶資料</td></tr>';
                         return;
                     }
                     
                     filtered.forEach(u => {
                         const isBanned = u.isBanned;
                         const roleColor = u.role === 'provider' ? 'badge-danger' : 'badge-brand';
-                        const statusTag = isBanned ? '<span class="text-danger-400 font-bold flex items-center gap-1.5"><div class="w-1.5 h-1.5 rounded-full bg-danger-500"></div> BANNED</span>' : '<span class="text-success-400 font-bold flex items-center gap-1.5"><div class="w-1.5 h-1.5 rounded-full bg-success-500"></div> ACTIVE</span>';
-                        
+                        const statusTag = isBanned ? '<span class="text-danger-400 font-bold flex items-center gap-2 text-[11px]"><span class="w-2 h-2 rounded-full bg-danger-500 animate-pulse"></span> BANNED</span>' : '<span class="text-success-400 font-bold flex items-center gap-2 text-[11px]"><span class="w-2 h-2 rounded-full bg-success-500"></span> ACTIVE</span>';
                         const dateStr = u.createdAt ? new Date(u.createdAt).toLocaleDateString('zh-HK') : 'Legacy Account';
-                        
-                        const avatarColor = ['bg-blue-500', 'bg-emerald-500', 'bg-amber-500', 'bg-brand-500', 'bg-indigo-500'][Math.floor(u.uid.charCodeAt(0) % 5)];
+                        const info = getUserDisplayInfo(u.uid);
+                        const avatarColor = ['bg-gradient-to-tr from-blue-600 to-blue-400', 'bg-gradient-to-tr from-emerald-600 to-emerald-400', 'bg-gradient-to-tr from-amber-600 to-amber-400', 'bg-gradient-to-tr from-brand-600 to-indigo-500', 'bg-gradient-to-tr from-purple-600 to-purple-400'][Math.floor(u.uid.charCodeAt(0) % 5)];
 
                         tbody.innerHTML += `
-                            <tr>
+                            <tr class="stagger-item">
                                 <td class="px-6 py-4">
-                                    <div class="w-8 h-8 rounded-full ${avatarColor} text-white flex items-center justify-center font-bold text-xs shadow-sm">${u.uid.substring(0,2).toUpperCase()}</div>
+                                    <div class="w-10 h-10 rounded-full ${avatarColor} text-white flex items-center justify-center font-bold text-[13px] shadow-lg border border-white/10">${info.name.substring(0,2).toUpperCase()}</div>
                                 </td>
-                                <td class="px-6 py-4 font-mono text-[12px] text-slate-300 font-medium">${u.uid}</td>
+                                <td class="px-6 py-4">
+                                    <p class="font-bold text-[14px] text-white mb-0.5 tracking-wide">${escapeHTML(info.name)}</p>
+                                    <p class="text-[11px] text-slate-500 font-mono tracking-widest">${u.uid.substring(0,10)}...</p>
+                                </td>
                                 <td class="px-6 py-4"><span class="badge ${roleColor}">${u.role || 'student'}</span></td>
-                                <td class="px-6 py-4 text-[11px]">${statusTag}</td>
-                                <td class="px-6 py-4 text-[12px] text-slate-500 font-mono">${dateStr}</td>
+                                <td class="px-6 py-4">${statusTag}</td>
+                                <td class="px-6 py-4 text-[12px] text-slate-400 font-mono">${dateStr}</td>
                                 <td class="px-6 py-4 text-right">
                                     <div class="flex items-center justify-end gap-2">
-                                        <button onclick="adminApp.users.showDetails('${u.uid}')" class="w-8 h-8 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 transition-all border border-slate-700 hover:border-slate-500 active:scale-90 flex items-center justify-center shadow-sm" title="查看詳情"><i class="fa-solid fa-id-card text-xs"></i></button>
-                                        <button onclick="adminApp.users.toggleRole('${u.uid}', '${u.role}')" class="w-8 h-8 rounded-lg bg-slate-800 hover:bg-brand-500/20 text-brand-400 transition-all border border-slate-700 hover:border-brand-500/50 active:scale-90 flex items-center justify-center shadow-sm" title="切換權限"><i class="fa-solid fa-crown text-xs"></i></button>
-                                        <button onclick="adminApp.users.toggleBan('${u.uid}', ${isBanned})" class="w-8 h-8 rounded-lg bg-slate-800 hover:bg-danger-500/20 ${isBanned?'text-success-400':'text-danger-400'} transition-all border border-slate-700 hover:border-danger-500/50 active:scale-90 flex items-center justify-center shadow-sm" title="${isBanned?'解除封鎖':'封鎖帳號'}"><i class="fa-solid ${isBanned?'fa-unlock':'fa-ban'} text-xs"></i></button>
+                                        <button onclick="adminApp.users.showDetails('${u.uid}')" class="w-9 h-9 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 transition-all border border-slate-700 hover:border-slate-500 active:scale-90 flex items-center justify-center shadow-sm" title="查看詳情"><i class="fa-solid fa-id-card text-sm"></i></button>
+                                        <button onclick="adminApp.users.toggleRole('${u.uid}', '${u.role}')" class="w-9 h-9 rounded-xl bg-slate-800 hover:bg-brand-500/20 text-brand-400 transition-all border border-slate-700 hover:border-brand-500/50 active:scale-90 flex items-center justify-center shadow-sm" title="切換權限"><i class="fa-solid fa-crown text-sm"></i></button>
+                                        <button onclick="adminApp.users.toggleBan('${u.uid}', ${isBanned})" class="w-9 h-9 rounded-xl bg-slate-800 hover:bg-danger-500/20 ${isBanned?'text-success-400':'text-danger-400'} transition-all border border-slate-700 hover:border-danger-500/50 active:scale-90 flex items-center justify-center shadow-sm" title="${isBanned?'解除封鎖':'封鎖帳號'}"><i class="fa-solid ${isBanned?'fa-unlock':'fa-ban'} text-sm"></i></button>
                                     </div>
                                 </td>
                             </tr>
                         `;
                     });
+                    
+                    if(typeof gsap !== 'undefined') {
+                        gsap.fromTo(".stagger-item", { opacity: 0, x: -20 }, { opacity: 1, x: 0, duration: 0.4, stagger: 0.03, ease: "power2.out" });
+                    }
                 },
                 logsTable: () => {
                     const tbody = document.getElementById('logs-table-body');
@@ -836,14 +915,20 @@
                     tbody.innerHTML = '';
                     
                     const term = (document.getElementById('log-search')?.value || '').toLowerCase();
-                    const filtered = state.logs.filter(l => l.uid.toLowerCase().includes(term) || l.action.toLowerCase().includes(term));
+                    const filtered = state.logs.filter(l => {
+                        const info = getUserDisplayInfo(l.uid);
+                        return l.uid.toLowerCase().includes(term) || 
+                               l.action.toLowerCase().includes(term) ||
+                               info.name.toLowerCase().includes(term);
+                    });
                     
                     if(filtered.length === 0) {
-                        tbody.innerHTML = '<tr><td colspan="4" class="text-center py-12 text-slate-500 text-sm">無符合記錄</td></tr>';
+                        tbody.innerHTML = '<tr><td colspan="4" class="text-center py-16 text-slate-500 text-sm">無符合記錄</td></tr>';
                         return;
                     }
 
                     filtered.forEach(l => {
+                        const info = getUserDisplayInfo(l.uid);
                         const metaStr = l.device ? `Device: ${l.device.substring(0,20)}...` : (l.groupId ? `Group: ${l.groupId}` : (l.taskId ? `Task: ${l.taskId}` : ''));
                         
                         let badgeClass = 'text-brand-400';
@@ -851,14 +936,23 @@
                         if(l.action.includes('DELETED')) badgeClass = 'text-danger-400';
 
                         tbody.innerHTML += `
-                            <tr>
-                                <td class="px-6 py-4 text-slate-500">${new Date(l.timestamp).toLocaleString('en-US', {hour12:false})}</td>
-                                <td class="px-6 py-4 text-slate-300">${l.uid}</td>
+                            <tr class="stagger-item hover:bg-slate-800/50 transition-colors">
+                                <td class="px-6 py-4 text-slate-400 tracking-wider">${new Date(l.timestamp).toLocaleString('en-US', {hour12:false})}</td>
+                                <td class="px-6 py-4">
+                                    <div class="flex items-center gap-3">
+                                        <div class="w-6 h-6 rounded-full bg-slate-800 border border-slate-700 text-[9px] font-bold flex items-center justify-center text-slate-300 shrink-0">${info.name.substring(0,2).toUpperCase()}</div>
+                                        <span class="text-white font-sans font-bold text-[14px] truncate max-w-[150px]">${escapeHTML(info.name)}</span>
+                                    </div>
+                                </td>
                                 <td class="px-6 py-4 font-bold ${badgeClass}">${l.action}</td>
-                                <td class="px-6 py-4 text-slate-500 truncate max-w-xs text-[11px]">${metaStr}</td>
+                                <td class="px-6 py-4 text-slate-500 truncate max-w-[200px] text-[12px] bg-slate-900/50 rounded-lg m-2 border border-slate-800/50 p-2 inline-block">${metaStr || 'N/A'}</td>
                             </tr>
                         `;
                     });
+                    
+                    if(typeof gsap !== 'undefined') {
+                        gsap.fromTo(".stagger-item", { opacity: 0, y: 10 }, { opacity: 1, y: 0, duration: 0.3, stagger: 0.02, ease: "power1.out" });
+                    }
                 }
             },
             users: {
@@ -866,47 +960,54 @@
                     const u = state.users.find(x => x.uid === uid);
                     if(!u) return;
                     
+                    const info = getUserDisplayInfo(uid);
                     const isBanned = u.isBanned;
                     const roleColor = u.role === 'provider' ? 'text-danger-400' : 'text-brand-400';
                     const dateStr = u.createdAt ? new Date(u.createdAt).toLocaleString() : 'N/A';
 
                     UI.modal.open(`
-                        <div class="flex justify-between items-center p-5 border-b border-slate-800 bg-slate-900/80 backdrop-blur-md">
-                            <h3 class="font-bold text-white flex items-center gap-2"><i class="fa-solid fa-id-badge text-brand-400"></i> 用戶詳細資訊</h3>
-                            <button onclick="adminApp.UI.modal.close()" class="w-8 h-8 rounded-full bg-slate-800 text-slate-400 hover:text-white flex items-center justify-center transition-colors active:scale-90 border border-slate-700 hover:border-slate-500"><i class="fa-solid fa-xmark"></i></button>
+                        <div class="flex justify-between items-center p-6 border-b border-slate-800 bg-slate-900/90 backdrop-blur-xl">
+                            <h3 class="font-black text-white text-lg flex items-center gap-3 tracking-wide"><i class="fa-solid fa-id-badge text-brand-500"></i> 帳戶防護與詳情</h3>
+                            <button onclick="adminApp.UI.modal.close()" class="w-8 h-8 rounded-full bg-slate-800 text-slate-400 hover:bg-danger-500 hover:text-white flex items-center justify-center transition-all active:scale-90 border border-slate-700 hover:border-transparent"><i class="fa-solid fa-xmark"></i></button>
                         </div>
-                        <div class="p-6 space-y-5 bg-slate-900/50">
-                            <div class="flex justify-center mb-2">
-                                <div class="w-20 h-20 rounded-full bg-slate-800 flex items-center justify-center text-2xl font-bold text-slate-400 shadow-inner border border-slate-700 hover:scale-110 transition-transform">
-                                    ${uid.substring(0,2).toUpperCase()}
+                        <div class="p-8 space-y-6 bg-slate-900/40 relative">
+                            <div class="absolute top-0 right-0 w-32 h-32 bg-brand-500/10 blur-3xl rounded-full pointer-events-none"></div>
+                            
+                            <div class="flex justify-center mb-4">
+                                <div class="w-24 h-24 rounded-full bg-gradient-to-tr from-slate-800 to-slate-700 flex items-center justify-center text-3xl font-bold text-white shadow-2xl border-2 border-slate-600 hover:scale-110 transition-transform duration-500">
+                                    ${info.name.substring(0,2).toUpperCase()}
                                 </div>
                             </div>
                             
-                            <div class="space-y-3 bg-slate-900 p-4 rounded-xl border border-slate-800 shadow-inner">
-                                <div class="flex justify-between items-center border-b border-slate-800/50 pb-2">
-                                    <span class="text-xs font-bold text-slate-500 uppercase tracking-wider">User ID</span>
-                                    <span class="text-sm font-mono text-slate-300 font-medium">${uid}</span>
+                            <div class="space-y-3 bg-slate-950/50 p-5 rounded-2xl border border-slate-800 shadow-inner backdrop-blur-sm">
+                                <div class="flex justify-between items-center border-b border-slate-800/80 pb-3">
+                                    <span class="text-[11px] font-bold text-slate-500 uppercase tracking-widest">Display Name</span>
+                                    <span class="text-[15px] font-bold text-white tracking-wide">${escapeHTML(info.name)}</span>
                                 </div>
-                                <div class="flex justify-between items-center border-b border-slate-800/50 pb-2">
-                                    <span class="text-xs font-bold text-slate-500 uppercase tracking-wider">Current Role</span>
-                                    <span class="text-xs font-bold uppercase ${roleColor} bg-slate-800 px-2 py-1 rounded border border-slate-700 shadow-sm">${u.role || 'student'}</span>
+                                <div class="flex justify-between items-center border-b border-slate-800/80 pb-3 pt-1">
+                                    <span class="text-[11px] font-bold text-slate-500 uppercase tracking-widest">User ID</span>
+                                    <span class="text-[12px] font-mono text-brand-300 font-medium bg-brand-900/30 px-2 py-1 rounded border border-brand-500/20">${uid}</span>
                                 </div>
-                                <div class="flex justify-between items-center border-b border-slate-800/50 pb-2">
-                                    <span class="text-xs font-bold text-slate-500 uppercase tracking-wider">Account Status</span>
-                                    <span class="text-xs font-bold ${isBanned?'text-danger-400':'text-success-400'}">${isBanned?'🔴 BANNED':'🟢 ACTIVE'}</span>
+                                <div class="flex justify-between items-center border-b border-slate-800/80 pb-3 pt-1">
+                                    <span class="text-[11px] font-bold text-slate-500 uppercase tracking-widest">Current Role</span>
+                                    <span class="text-xs font-black uppercase ${roleColor} bg-slate-800 px-3 py-1 rounded-md border border-slate-700 shadow-sm">${u.role || 'student'}</span>
                                 </div>
-                                <div class="flex justify-between items-center">
-                                    <span class="text-xs font-bold text-slate-500 uppercase tracking-wider">Created At</span>
-                                    <span class="text-xs font-mono text-slate-400">${dateStr}</span>
+                                <div class="flex justify-between items-center border-b border-slate-800/80 pb-3 pt-1">
+                                    <span class="text-[11px] font-bold text-slate-500 uppercase tracking-widest">Account Status</span>
+                                    <span class="text-xs font-bold flex items-center gap-2 ${isBanned?'text-danger-400':'text-success-400'}"><span class="w-2 h-2 rounded-full ${isBanned?'bg-danger-500 animate-pulse':'bg-success-500'}"></span> ${isBanned?'BANNED':'ACTIVE'}</span>
+                                </div>
+                                <div class="flex justify-between items-center pt-1">
+                                    <span class="text-[11px] font-bold text-slate-500 uppercase tracking-widest">Created At</span>
+                                    <span class="text-[12px] font-mono text-slate-400">${dateStr}</span>
                                 </div>
                             </div>
                             
-                            <div class="grid grid-cols-2 gap-3 pt-2">
-                                <button onclick="adminApp.users.toggleRole('${uid}', '${u.role}')" class="py-3 bg-slate-800 hover:bg-brand-600 text-white rounded-xl text-xs font-bold transition-all border border-slate-700 hover:border-transparent flex justify-center items-center gap-2 active:scale-95 shadow-sm">
-                                    <i class="fa-solid fa-crown"></i> 切換身份
+                            <div class="grid grid-cols-2 gap-4 pt-4">
+                                <button onclick="adminApp.users.toggleRole('${uid}', '${u.role}')" class="py-4 bg-slate-800 hover:bg-brand-600 text-white rounded-2xl text-[13px] font-bold transition-all border border-slate-700 hover:border-transparent flex justify-center items-center gap-2 active:scale-95 shadow-md">
+                                    <i class="fa-solid fa-crown"></i> 切換身分權限
                                 </button>
-                                <button onclick="adminApp.users.toggleBan('${uid}', ${isBanned})" class="py-3 bg-slate-800 hover:bg-danger-600 text-white rounded-xl text-xs font-bold transition-all border border-slate-700 hover:border-transparent flex justify-center items-center gap-2 active:scale-95 shadow-sm">
-                                    <i class="fa-solid ${isBanned?'fa-unlock':'fa-ban'}"></i> ${isBanned?'解除封鎖':'強制封鎖'}
+                                <button onclick="adminApp.users.toggleBan('${uid}', ${isBanned})" class="py-4 bg-slate-800 hover:bg-danger-600 text-white rounded-2xl text-[13px] font-bold transition-all border border-slate-700 hover:border-transparent flex justify-center items-center gap-2 active:scale-95 shadow-md">
+                                    <i class="fa-solid ${isBanned?'fa-unlock':'fa-ban'}"></i> ${isBanned?'解除強制封鎖':'強制封鎖帳號'}
                                 </button>
                             </div>
                         </div>
@@ -914,15 +1015,16 @@
                 },
                 toggleRole: (uid, currentRole) => {
                     const newRole = currentRole === 'provider' ? 'student' : 'provider';
+                    const info = getUserDisplayInfo(uid);
                     UI.modal.open(`
-                        <div class="p-8 text-center relative bg-slate-900/80">
-                            <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-brand-400 to-indigo-500"></div>
-                            <i class="fa-solid fa-user-gear text-5xl text-brand-500 mb-5 drop-shadow-lg"></i>
-                            <h3 class="text-xl font-bold text-white mb-2">變更用戶權限</h3>
-                            <p class="text-sm text-slate-400 mb-8 leading-relaxed">確定將用戶 <span class="font-mono text-slate-300 bg-slate-800 px-2 py-0.5 rounded border border-slate-700 shadow-inner">${uid.substring(0,8)}...</span> 的身分設定為 <span class="text-brand-400 font-bold uppercase">${newRole}</span> 嗎？</p>
-                            <div class="flex gap-3">
-                                <button onclick="adminApp.UI.modal.close()" class="flex-1 py-3 bg-slate-800 text-white rounded-xl font-bold hover:bg-slate-700 border border-slate-700 transition-colors active:scale-95 shadow-sm">取消</button>
-                                <button onclick="adminApp.users.doUpdate('${uid}', {role: '${newRole}'})" class="flex-1 py-3 bg-brand-600 text-white rounded-xl font-bold hover:bg-brand-500 transition-colors shadow-lg shadow-brand-500/30 active:scale-95 border border-transparent">確認更改</button>
+                        <div class="p-10 text-center relative bg-slate-900/90 backdrop-blur-xl">
+                            <div class="absolute top-0 left-0 w-full h-1.5 bg-gradient-to-r from-brand-400 to-indigo-500"></div>
+                            <i class="fa-solid fa-user-gear text-6xl text-brand-500 mb-6 drop-shadow-[0_0_15px_rgba(59,130,246,0.5)]"></i>
+                            <h3 class="text-2xl font-black text-white mb-3">變更權限級別</h3>
+                            <p class="text-[15px] text-slate-400 mb-10 leading-relaxed font-medium">確定將用戶 <span class="font-bold text-white bg-slate-800 px-2 py-1 rounded-md border border-slate-700">${escapeHTML(info.name)}</span><br>的身分設定為 <span class="text-brand-400 font-black uppercase text-lg ml-1">${newRole}</span> 嗎？</p>
+                            <div class="flex gap-4">
+                                <button onclick="adminApp.UI.modal.close()" class="flex-1 py-4 bg-slate-800 text-white rounded-2xl font-bold hover:bg-slate-700 border border-slate-700 transition-colors active:scale-95 shadow-sm text-[15px]">取消返回</button>
+                                <button onclick="adminApp.users.doUpdate('${uid}', {role: '${newRole}'})" class="flex-1 py-4 bg-brand-600 text-white rounded-2xl font-bold hover:bg-brand-500 transition-colors shadow-[0_5px_20px_rgba(37,99,235,0.4)] active:scale-95 border border-transparent text-[15px]">確認執行</button>
                             </div>
                         </div>
                     `);
@@ -930,15 +1032,16 @@
                 toggleBan: (uid, isBanned) => {
                     const action = isBanned ? '解除封鎖' : '封鎖';
                     const color = isBanned ? 'success' : 'danger';
+                    const info = getUserDisplayInfo(uid);
                     UI.modal.open(`
-                        <div class="p-8 text-center relative bg-slate-900/80">
-                            <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-${color}-400 to-${color}-600"></div>
-                            <i class="fa-solid ${isBanned?'fa-unlock text-success-500':'fa-user-lock text-danger-500'} text-5xl mb-5 drop-shadow-lg"></i>
-                            <h3 class="text-xl font-bold text-white mb-2">確認${action}帳號？</h3>
-                            <p class="text-sm text-slate-400 mb-8 leading-relaxed">用戶 <span class="font-mono text-slate-300 bg-slate-800 px-2 py-0.5 rounded border border-slate-700 shadow-inner">${uid.substring(0,8)}...</span> 將會被立即變更系統存取權限。</p>
-                            <div class="flex gap-3">
-                                <button onclick="adminApp.UI.modal.close()" class="flex-1 py-3 bg-slate-800 text-white rounded-xl font-bold hover:bg-slate-700 border border-slate-700 transition-colors active:scale-95 shadow-sm">取消</button>
-                                <button onclick="adminApp.users.doUpdate('${uid}', {isBanned: ${!isBanned}})" class="flex-1 py-3 bg-${color}-600 text-white rounded-xl font-bold hover:bg-${color}-500 transition-colors shadow-lg shadow-${color}-500/30 active:scale-95 border border-transparent">確認${action}</button>
+                        <div class="p-10 text-center relative bg-slate-900/90 backdrop-blur-xl">
+                            <div class="absolute top-0 left-0 w-full h-1.5 bg-gradient-to-r from-${color}-400 to-${color}-600"></div>
+                            <i class="fa-solid ${isBanned?'fa-unlock text-success-500':'fa-user-lock text-danger-500'} text-6xl mb-6 drop-shadow-[0_0_15px_rgba(${isBanned?'16,185,129':'239,68,68'},0.5)]"></i>
+                            <h3 class="text-2xl font-black text-white mb-3">確認${action}帳號？</h3>
+                            <p class="text-[15px] text-slate-400 mb-10 leading-relaxed font-medium">用戶 <span class="font-bold text-white bg-slate-800 px-2 py-1 rounded-md border border-slate-700">${escapeHTML(info.name)}</span><br>將會被立即變更系統存取狀態。</p>
+                            <div class="flex gap-4">
+                                <button onclick="adminApp.UI.modal.close()" class="flex-1 py-4 bg-slate-800 text-white rounded-2xl font-bold hover:bg-slate-700 border border-slate-700 transition-colors active:scale-95 shadow-sm text-[15px]">取消返回</button>
+                                <button onclick="adminApp.users.doUpdate('${uid}', {isBanned: ${!isBanned}})" class="flex-1 py-4 bg-${color}-600 text-white rounded-2xl font-bold hover:bg-${color}-500 transition-colors shadow-[0_5px_20px_rgba(${isBanned?'16,185,129':'239,68,68'},0.4)] active:scale-95 border border-transparent text-[15px]">強硬${action}</button>
                             </div>
                         </div>
                     `);
@@ -947,10 +1050,10 @@
                     try {
                         UI.modal.close();
                         await updateDoc(doc(db, `artifacts/${internalAppId}/users/${uid}/profile`, 'main'), data);
-                        UI.notify('資料庫更新成功', 'success');
+                        UI.notify('權限資料庫更新成功', 'success');
                         adminApp.data.loadUsers(); 
                     } catch(e) {
-                        UI.notify('更新失敗，請檢查權限', 'error');
+                        UI.notify('更新失敗，請檢查網路狀態', 'error');
                         console.error(e);
                     }
                 }
@@ -967,7 +1070,7 @@
                     try {
                         const originalBtnText = event.target.tagName === 'BUTTON' ? event.target.innerHTML : null;
                         if (originalBtnText) {
-                            event.target.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> 發佈中...';
+                            event.target.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> 發佈防護網中...';
                             event.target.classList.add('opacity-80', 'pointer-events-none');
                         }
                         
@@ -979,21 +1082,21 @@
                         
                         if (originalBtnText) {
                             setTimeout(() => { 
-                                event.target.innerHTML = '<i class="fa-solid fa-check"></i> 已發佈'; 
-                                event.target.classList.replace('bg-slate-800', 'bg-success-600'); 
+                                event.target.innerHTML = '<i class="fa-solid fa-check"></i> 狀態已覆寫'; 
+                                event.target.classList.replace('bg-brand-600', 'bg-success-600'); 
                             }, 300);
                             setTimeout(() => { 
                                 event.target.innerHTML = originalBtnText; 
-                                event.target.classList.replace('bg-success-600', 'bg-slate-800'); 
+                                event.target.classList.replace('bg-success-600', 'bg-brand-600'); 
                                 event.target.classList.remove('opacity-80', 'pointer-events-none');
                             }, 2000);
                         }
                         
-                        UI.notify(`系統已切換為 ${isMaint ? '維護模式' : '正常運作'}`, isMaint ? 'warning' : 'success');
+                        UI.notify(`系統防護已切換為 ${isMaint ? '維護模式' : '正常運作'}`, isMaint ? 'warning' : 'success');
                     } catch (e) {
-                        UI.notify('發佈失敗，請檢查連線', 'error');
+                        UI.notify('發佈失敗，請聯絡開發人員', 'error');
                         if (event.target.tagName === 'BUTTON') {
-                            event.target.innerHTML = '💾 儲存並發佈設定';
+                            event.target.innerHTML = '<i class="fa-solid fa-cloud-arrow-up"></i> 儲存並強制發佈';
                             event.target.classList.remove('opacity-80', 'pointer-events-none');
                         }
                     }
@@ -1001,30 +1104,32 @@
             },
             logs: {
                 exportCSV: () => {
-                    if (state.logs.length === 0) return UI.notify('尚無日誌可匯出', 'warning');
+                    if (state.logs.length === 0) return UI.notify('尚無日誌可供匯出', 'warning');
                     
                     try {
-                        let csvContent = "Timestamp,UserID,Action,MetaData\n";
+                        let csvContent = "Timestamp,User,Action,MetaData\n";
                         
                         state.logs.forEach(l => {
                             const time = new Date(l.timestamp).toISOString();
+                            const info = getUserDisplayInfo(l.uid);
+                            const userDisplay = `${info.name} (${l.uid})`;
                             const meta = (l.device || l.groupId || l.taskId || '').replace(/"/g, '""');
-                            csvContent += `"${time}","${l.uid}","${l.action}","${meta}"\n`;
+                            csvContent += `"${time}","${userDisplay}","${l.action}","${meta}"\n`;
                         });
                         
                         const blob = new Blob(["\uFEFF" + csvContent], { type: 'text/csv;charset=utf-8;' }); 
                         const url = URL.createObjectURL(blob);
                         const link = document.createElement("a");
                         link.setAttribute("href", url);
-                        link.setAttribute("download", `Lumina_AuditLogs_${new Date().toISOString().split('T')[0]}.csv`);
+                        link.setAttribute("download", `Lumina_Security_Logs_${new Date().toISOString().split('T')[0]}.csv`);
                         document.body.appendChild(link);
                         link.click();
                         document.body.removeChild(link);
                         
-                        UI.notify('CSV 匯出成功', 'success');
+                        UI.notify('資料包 (CSV) 建立並下載成功', 'success');
                     } catch(e) {
                         console.error("Export fail", e);
-                        UI.notify('檔案建立失敗', 'error');
+                        UI.notify('資料包建立失敗', 'error');
                     }
                 }
             }

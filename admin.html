@@ -174,7 +174,7 @@
         </div>
     </div>
     
-    <!-- 被封鎖攔截畫面 (給管理員的最後保險，避免誤鎖自己) -->
+    <!-- 被封鎖攔截畫面 -->
     <div id="admin-blocker" class="fixed inset-0 z-[300] hidden bg-slate-950/95 backdrop-blur-2xl flex-col items-center justify-center px-6 text-center">
         <i class="fa-solid fa-ban text-7xl text-danger-500 mb-8 animate-pulse drop-shadow-[0_0_20px_rgba(239,68,68,0.5)]"></i>
         <h2 class="text-4xl font-black text-white mb-4 tracking-tight font-display">帳號已停權</h2>
@@ -208,7 +208,7 @@
                     <i class="fa-solid fa-users w-8 text-center opacity-80"></i> 用戶與權限
                 </button>
                 <button onclick="adminApp.nav.switch('settings')" id="nav-settings" class="nav-item w-full flex items-center px-4 py-3.5 text-sm">
-                    <i class="fa-solid fa-sliders w-8 text-center opacity-80"></i> 全域設定與維護
+                    <i class="fa-solid fa-sliders w-8 text-center opacity-80"></i> 全域功能與維護
                 </button>
                 <button onclick="adminApp.nav.switch('logs')" id="nav-logs" class="nav-item w-full flex items-center px-4 py-3.5 text-sm">
                     <i class="fa-solid fa-database w-8 text-center opacity-80"></i> 系統操作日誌
@@ -232,10 +232,9 @@
             </div>
         </aside>
 
-        <!-- Main Workspace -->
-        <main class="flex-1 flex flex-col relative z-20 overflow-hidden bg-transparent">
+        <!-- Main Content -->
+        <main class="flex-1 flex flex-col relative z-20 overflow-hidden bg-transparent" id="main-app">
             
-            <!-- Topbar -->
             <header class="h-20 flex items-center justify-between px-6 md:px-10 border-b border-brand-500/20 bg-slate-900/40 backdrop-blur-xl shrink-0 shadow-sm">
                 <div class="flex items-center gap-4">
                     <button onclick="document.querySelector('aside').classList.toggle('hidden')" class="text-brand-400 hover:text-white md:hidden transition-colors hover:scale-110 active:scale-95">
@@ -255,7 +254,6 @@
                 <!-- 📊 Dashboard View -->
                 <section id="view-dashboard" class="view-section active w-full max-w-7xl mx-auto space-y-8">
                     
-                    <!-- Firebase 配額監控儀表板 -->
                     <div class="admin-card p-6 md:p-8 bg-gradient-to-br from-slate-900/80 to-brand-900/30 relative overflow-hidden">
                         <div class="absolute top-0 right-0 p-8 opacity-10 pointer-events-none"><i class="fa-brands fa-google text-9xl"></i></div>
                         <h3 class="text-lg font-bold text-white mb-6 flex items-center gap-3"><i class="fa-solid fa-fire text-warning-500 text-xl"></i> Firebase 每日免費配額監測 (估算)</h3>
@@ -291,7 +289,6 @@
                         </div>
                     </div>
 
-                    <!-- Metrics Grid -->
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                         <div class="admin-card p-6 border-b-4 border-b-brand-500 hover:-translate-y-2 hover:shadow-[0_15px_30px_rgba(59,130,246,0.2)] cursor-default transition-all duration-300">
                             <div class="flex justify-between items-start mb-4">
@@ -315,6 +312,39 @@
                                 <div class="w-10 h-10 rounded-xl bg-success-500/20 flex items-center justify-center"><i class="fa-solid fa-bolt text-success-400 text-lg"></i></div>
                             </div>
                             <h3 class="text-4xl font-black text-white font-mono" id="stat-logs">0</h3>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                        <div class="admin-card p-0 col-span-1 lg:col-span-2 overflow-hidden flex flex-col h-[450px]">
+                            <div class="p-5 md:p-6 border-b border-brand-500/20 flex justify-between items-center bg-slate-900/60">
+                                <h3 class="text-base font-bold text-white tracking-wide"><i class="fa-solid fa-radar mr-2 text-brand-400"></i>實時活動串流 (Live Feed)</h3>
+                                <span class="text-[10px] bg-brand-500/20 text-brand-400 px-3 py-1.5 rounded-md font-mono font-bold border border-brand-500/30 flex items-center gap-2"><span class="w-1.5 h-1.5 bg-brand-400 rounded-full animate-pulse"></span> SYNCING</span>
+                            </div>
+                            <div id="recent-logs" class="p-4 md:p-6 space-y-3 overflow-y-auto no-scrollbar flex-1 bg-slate-900/30">
+                                <div class="flex flex-col items-center justify-center h-full text-slate-500">
+                                    <i class="fa-solid fa-circle-notch fa-spin text-3xl mb-4 text-brand-500/50"></i>
+                                    <span class="text-xs font-mono font-bold tracking-widest">Listening for events...</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="admin-card p-6 md:p-8 h-[450px] flex flex-col bg-slate-900/40">
+                            <h3 class="text-base font-bold text-white mb-6 border-b border-slate-700/50 pb-4 tracking-wide"><i class="fa-solid fa-bolt text-warning-400 mr-2"></i>快速操作 (Actions)</h3>
+                            <div class="space-y-4 flex-1">
+                                <button onclick="adminApp.nav.switch('users')" class="w-full bg-slate-800/60 hover:bg-brand-900/40 text-left p-5 rounded-2xl border border-slate-700/50 hover:border-brand-500/50 transition-all active:scale-95 group flex items-center gap-5 shadow-sm hover:shadow-brand-500/10">
+                                    <div class="w-12 h-12 rounded-xl bg-brand-500/10 flex items-center justify-center text-brand-400 group-hover:scale-110 group-hover:bg-brand-500 group-hover:text-white transition-all shadow-inner"><i class="fa-solid fa-user-plus text-lg"></i></div>
+                                    <div><p class="text-[15px] font-bold text-slate-100">管理用戶權限</p><p class="text-xs text-slate-400 mt-1 font-medium">查閱與設定全站使用者</p></div>
+                                </button>
+                                <button onclick="adminApp.nav.switch('settings')" class="w-full bg-slate-800/60 hover:bg-danger-900/40 text-left p-5 rounded-2xl border border-slate-700/50 hover:border-danger-500/50 transition-all active:scale-95 group flex items-center gap-5 shadow-sm hover:shadow-danger-500/10">
+                                    <div class="w-12 h-12 rounded-xl bg-danger-500/10 flex items-center justify-center text-danger-400 group-hover:scale-110 group-hover:bg-danger-500 group-hover:text-white transition-all shadow-inner"><i class="fa-solid fa-triangle-exclamation text-lg"></i></div>
+                                    <div><p class="text-[15px] font-bold text-slate-100">緊急系統維護</p><p class="text-xs text-slate-400 mt-1 font-medium">切換網站維護狀態</p></div>
+                                </button>
+                                <button onclick="adminApp.logs.exportCSV()" class="w-full bg-slate-800/60 hover:bg-success-900/40 text-left p-5 rounded-2xl border border-slate-700/50 hover:border-success-500/50 transition-all active:scale-95 group flex items-center gap-5 shadow-sm hover:shadow-success-500/10">
+                                    <div class="w-12 h-12 rounded-xl bg-success-500/10 flex items-center justify-center text-success-400 group-hover:scale-110 group-hover:bg-success-500 group-hover:text-white transition-all shadow-inner"><i class="fa-solid fa-file-csv text-lg"></i></div>
+                                    <div><p class="text-[15px] font-bold text-slate-100">下載資料備份</p><p class="text-xs text-slate-400 mt-1 font-medium">匯出操作日誌 (CSV)</p></div>
+                                </button>
+                            </div>
                         </div>
                     </div>
                 </section>
@@ -383,10 +413,9 @@
                     <div class="admin-card p-8 md:p-10 border-t-4 border-t-brand-500 relative overflow-hidden group hover:shadow-[0_15px_50px_rgba(59,130,246,0.15)] transition-all mb-8">
                         <div class="absolute -right-10 -bottom-10 opacity-5 group-hover:opacity-10 group-hover:scale-110 transition-all duration-700"><i class="fa-solid fa-power-off text-[250px] text-brand-500"></i></div>
                         <div class="relative z-10">
-                            <h3 class="text-2xl font-black text-white mb-2 flex items-center gap-3 tracking-tight"><i class="fa-solid fa-server text-brand-400"></i> 系統維護模式 (Maintenance Control)</h3>
+                            <h3 class="text-2xl font-black text-white mb-2 flex items-center gap-3 tracking-tight"><i class="fa-solid fa-server text-brand-400"></i> 系統狀態控制 (Status Control)</h3>
                             <p class="text-[15px] text-slate-400 mb-8 leading-relaxed font-medium max-w-3xl">切換網站的運作狀態。進入維護狀態時，所有前台學生與老師將被鎖定在攔截畫面，此功能不會影響超級管理員本身的操作。</p>
                             
-                            <!-- 三段式按鈕 -->
                             <div class="grid grid-cols-1 md:grid-cols-3 gap-5 mb-10">
                                 <button id="maint-btn-active" onclick="adminApp.settings.setMaintState('active')" class="maint-state-btn active flex flex-col items-center justify-center p-8 rounded-3xl bg-slate-800/50 text-slate-400 hover:bg-slate-800 transition-all relative overflow-hidden group/btn border border-slate-700">
                                     <i class="fa-solid fa-circle-check text-4xl mb-4 group-hover/btn:scale-110 transition-transform"></i>
@@ -407,26 +436,26 @@
                             <input type="hidden" id="current-maint-state" value="active">
 
                             <div class="bg-slate-900/60 p-6 md:p-8 rounded-3xl border border-slate-800 shadow-inner">
-                                <h4 class="text-[15px] font-bold text-slate-300 mb-6 tracking-wide flex items-center gap-2"><i class="fa-solid fa-pen-to-square text-brand-500"></i> 維護畫面自定義內容 <span class="text-xs text-slate-500 font-normal ml-2">(選填)</span></h4>
+                                <h4 class="text-[15px] font-bold text-slate-300 mb-6 tracking-wide flex items-center gap-2"><i class="fa-solid fa-pen-to-square text-brand-500"></i> 維護畫面自定義內容 <span class="text-xs text-slate-500 font-normal ml-2">(非正常運作時顯示)</span></h4>
                                 
                                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
                                     <div>
                                         <label class="block text-[11px] font-bold text-slate-500 uppercase tracking-widest mb-2 pl-1">維護標題</label>
-                                        <input type="text" id="maint-title" class="admin-input p-4 text-[15px] rounded-2xl shadow-inner font-medium" placeholder="例如：數據發生錯誤">
+                                        <input type="text" id="maint-title" class="admin-input p-4 text-[15px] rounded-2xl shadow-inner font-medium" placeholder="例如：系統維護中">
                                     </div>
                                     <div>
                                         <label class="block text-[11px] font-bold text-slate-500 uppercase tracking-widest mb-2 pl-1">預計恢復時間</label>
-                                        <input type="text" id="maint-time" class="admin-input p-4 text-[15px] rounded-2xl shadow-inner font-medium" placeholder="例如：4月16日">
+                                        <input type="text" id="maint-time" class="admin-input p-4 text-[15px] rounded-2xl shadow-inner font-medium" placeholder="例如：預計今日 14:00 恢復">
                                     </div>
                                 </div>
 
-                                <div class="space-y-3 mb-8">
-                                    <label class="block text-[11px] font-bold text-slate-500 uppercase tracking-widest mb-2 pl-1">維護詳細訊息 (支援換行)</label>
-                                    <textarea id="maint-msg" class="admin-input p-5 text-[15px] resize-none h-28 rounded-2xl shadow-inner font-medium" placeholder="例如：如需查看功課，請聯絡管理員"></textarea>
+                                <div class="space-y-3">
+                                    <label class="block text-[11px] font-bold text-slate-500 uppercase tracking-widest mb-2 pl-1">詳細說明 (支援換行)</label>
+                                    <textarea id="maint-msg" class="admin-input p-5 text-[15px] resize-none h-28 rounded-2xl shadow-inner font-medium" placeholder="例如：系統正在進行大更新，造成不便敬請見諒..."></textarea>
                                 </div>
 
-                                <div class="flex justify-end pt-2">
-                                    <button id="btn-save-maint" onclick="adminApp.settings.saveMaintenance()" class="w-full md:w-auto bg-brand-600 hover:bg-brand-500 text-white font-bold py-4 px-12 rounded-2xl border border-transparent transition-all shadow-[0_8px_25px_rgba(37,99,235,0.5)] active:scale-95 flex justify-center items-center gap-3 text-[16px] tracking-wide"><i class="fa-solid fa-cloud-arrow-up text-xl"></i> 儲存並發佈狀態</button>
+                                <div class="flex justify-end mt-8 border-t border-slate-800/80 pt-6">
+                                    <button id="btn-save-maint" onclick="adminApp.settings.updateMaintenance()" class="w-full md:w-auto bg-brand-600 hover:bg-brand-500 text-white font-bold py-4 px-10 rounded-2xl border border-transparent transition-all shadow-[0_5px_20px_rgba(37,99,235,0.4)] active:scale-95 flex justify-center items-center gap-2"><i class="fa-solid fa-cloud-arrow-up"></i> 儲存並發佈狀態</button>
                                 </div>
                             </div>
                         </div>
@@ -485,20 +514,19 @@
 
     </div>
 
-    <!-- Global Modal (User Details / Confirmations) -->
+    <!-- Global Modal -->
     <div id="admin-modal" class="fixed inset-0 z-[200] hidden flex items-center justify-center bg-slate-950/80 backdrop-blur-xl px-4 opacity-0 transition-all duration-300">
         <div id="admin-modal-content" class="admin-card w-full max-w-2xl p-0 transform scale-95 opacity-0 transition-all duration-400 overflow-hidden flex flex-col max-h-[90vh] shadow-[0_20px_60px_rgba(0,0,0,0.6)] border-brand-500/30">
             <!-- Content Injected via JS -->
         </div>
     </div>
 
-    <!-- Toast Notifications -->
     <div id="toast-root" class="fixed top-20 left-1/2 -translate-x-1/2 z-[500] flex flex-col gap-3 pointer-events-none"></div>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
         import { getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-        import { getFirestore, collection, doc, setDoc, getDoc, updateDoc, deleteDoc, onSnapshot, getDocs, collectionGroup, writeBatch } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+        import { getFirestore, collection, doc, setDoc, getDoc, updateDoc, onSnapshot, getDocs, collectionGroup, writeBatch } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
         // ⚠️ Firebase Config
         const firebaseConfig = {
@@ -529,7 +557,7 @@
             logs: [],
             groupsCount: 0,
             currentView: 'dashboard',
-            renderTimeoutId: null // 用於防抖動渲染
+            renderTimeoutId: null 
         };
 
         const escapeHTML = (str) => {
@@ -566,11 +594,10 @@
                 if (mapped.photo) photo = mapped.photo;
             }
 
-            // 從最新的 Logs 運算在線狀態
             let onlineStatus = { text: '從未上線', color: 'text-slate-500', dot: 'bg-slate-600' };
             const userLogs = state.logs.filter(l => l.uid === uid);
             if(userLogs.length > 0) {
-                const lastTime = new Date(userLogs[0].timestamp); // Logs 已經是 desc 排序
+                const lastTime = new Date(userLogs[0].timestamp);
                 const diffMin = (new Date() - lastTime) / 60000;
                 
                 if(diffMin < 15) onlineStatus = { text: '在線中', color: 'text-success-400', dot: 'bg-success-500 animate-pulse shadow-[0_0_8px_rgba(16,185,129,0.8)]' };
@@ -636,7 +663,6 @@
                     const blocker = document.getElementById('admin-blocker');
 
                     if (user) {
-                        // 🔒 嚴格白名單
                         if (user.email !== SUPER_ADMIN_EMAIL) {
                             await signOut(auth);
                             UI.notify(`存取拒絕：此系統只限 ${SUPER_ADMIN_EMAIL} 進入。`, 'error');
@@ -706,7 +732,7 @@
                         if(typeof gsap !== 'undefined') gsap.fromTo(activeBtn, { scale: 0.95 }, { scale: 1, duration: 0.4, ease: "back.out(1.5)" });
                     }
                     
-                    const titles = { 'dashboard': '總覽儀表板', 'users': '用戶管理 Users', 'settings': '全域設定與維護', 'logs': '系統日誌 Audit Logs' };
+                    const titles = { 'dashboard': '總覽儀表板', 'users': '用戶管理 Users', 'settings': '全域功能與維護', 'logs': '系統日誌 Audit Logs' };
                     const pt = document.getElementById('page-title');
                     if(pt) pt.textContent = titles[viewId] || '';
 
@@ -731,7 +757,6 @@
             },
             data: {
                 initListeners: () => {
-                    // 自我封鎖保護監聽
                     onSnapshot(doc(db, `artifacts/${internalAppId}/users/${state.user.uid}/profile`, 'main'), (docSnap) => {
                         if (docSnap.exists() && docSnap.data().isBanned) {
                             document.getElementById('main-app').classList.add('hidden');
@@ -747,7 +772,6 @@
                         }
                     });
 
-                    // Global Settings
                     const settingsRef = doc(db, `artifacts/${internalAppId}/public/data/global_settings`, 'main');
                     onSnapshot(settingsRef, (snap) => {
                         if(snap.exists()) {
@@ -755,8 +779,6 @@
                             
                             const maintState = data.status || 'active';
                             adminApp.settings.setMaintState(maintState, false);
-                            const tgl = document.getElementById('sys-maint-toggle');
-                            if(tgl) tgl.checked = maintState !== 'active';
                             
                             const titleInp = document.getElementById('maint-title');
                             const timeInp = document.getElementById('maint-time');
@@ -778,7 +800,6 @@
                         }
                     }, (err) => console.error("Settings listener error:", err));
 
-                    // Logs (防抖動更新，保護效能)
                     const logsRef = collection(db, `artifacts/${internalAppId}/public/data/audit_logs`);
                     onSnapshot(logsRef, (snap) => {
                         state.logs = [];
@@ -789,7 +810,7 @@
                         state.renderTimeoutId = setTimeout(() => {
                             adminApp.renders.dashboardStats();
                             if(state.currentView === 'logs') adminApp.renders.logsTable();
-                            if(state.currentView === 'users') adminApp.renders.usersTable(); // update online status
+                            if(state.currentView === 'users') adminApp.renders.usersTable();
                         }, 500);
                     }, (err) => console.error("Logs listener error:", err));
 
@@ -804,7 +825,7 @@
                 loadUsers: async () => {
                     try {
                         const tbody = document.getElementById('users-table-body');
-                        if(tbody) tbody.innerHTML = '<tr><td colspan="5" class="text-center py-16 text-slate-500"><i class="fa-solid fa-circle-notch fa-spin text-3xl mb-4 text-brand-500/50"></i><br><span class="text-xs font-mono font-bold tracking-widest">Fetching Database...</span></td></tr>';
+                        if(tbody) tbody.innerHTML = '<tr><td colspan="6" class="text-center py-16 text-slate-500"><i class="fa-solid fa-circle-notch fa-spin text-3xl mb-4 text-brand-500/50"></i><br><span class="text-xs font-mono font-bold tracking-widest">Fetching Database...</span></td></tr>';
                         
                         const profilesSnap = await getDocs(collectionGroup(db, 'profile'));
                         state.users = [];
@@ -815,11 +836,10 @@
                                 const data = docSnap.data();
                                 state.users.push({ uid, ...data });
                                 
-                                if(!state.usersMap[uid]) state.usersMap[uid] = { name: data.displayName || '', email: data.email || '' };
+                                if(!state.usersMap[uid]) state.usersMap[uid] = { name: data.displayName || '', email: data.email || '', photo: data.photoURL || '' };
                             }
                         });
                         
-                        // 🌟 Fallback: 如果 collectionGroup 失敗，從 Logs 撈取 User ID
                         if(state.users.length === 0 && state.logs.length > 0) {
                             const uids = [...new Set(state.logs.map(l => l.uid))];
                             uids.forEach(uid => { state.users.push({uid, role: 'student', isBanned: false}); });
@@ -836,8 +856,6 @@
                         UI.notify('用戶名單同步完成');
                     } catch(e) {
                         console.error("Load users error:", e);
-                        
-                        // Fallback logic
                         if(state.logs.length > 0) {
                             const uids = [...new Set(state.logs.map(l => l.uid))];
                             state.users = uids.map(uid => ({uid, role: 'student', isBanned: false}));
@@ -845,7 +863,7 @@
                             UI.notify('已透過日誌重建用戶清單', 'warning');
                         } else {
                             const tbody = document.getElementById('users-table-body');
-                            if(tbody) tbody.innerHTML = `<tr><td colspan="5" class="text-center py-16"><div class="text-danger-500 mb-4"><i class="fa-solid fa-triangle-exclamation text-4xl"></i></div><p class="font-bold text-white mb-2 text-lg">資料庫讀取失敗</p><p class="text-sm text-slate-400 max-w-sm mx-auto">Firebase 規則可能尚未建立 Collection Group 索引。</p></td></tr>`;
+                            if(tbody) tbody.innerHTML = `<tr><td colspan="6" class="text-center py-16"><div class="text-danger-500 mb-4"><i class="fa-solid fa-triangle-exclamation text-4xl"></i></div><p class="font-bold text-white mb-2 text-lg">資料庫讀取失敗</p><p class="text-sm text-slate-400 max-w-sm mx-auto">Firebase 規則可能尚未建立 Collection Group 索引。</p></td></tr>`;
                         }
                     }
                 }
@@ -861,7 +879,6 @@
                         if(typeof gsap !== 'undefined') gsap.fromTo(st, { scale: 0.8, color: '#34d399' }, { scale: 1, color: '#fff', duration: 0.5 });
                     }
 
-                    // Quota Progress Bars
                     const quotaWrites = document.getElementById('quota-writes');
                     const barWrites = document.getElementById('bar-writes');
                     if(quotaWrites && barWrites) {
@@ -891,7 +908,7 @@
 
                     recentContainer.innerHTML = '';
                     state.logs.slice(0, 20).forEach(l => {
-                        const time = new Date(l.timestamp).toLocaleTimeString('en-US', {hour12:false});
+                        const time = new Date(l.timestamp).toLocaleTimeString('zh-HK', {hour12:false});
                         const userInfo = getUserDisplayInfo(l.uid);
                         const cnAction = getActionText(l.action);
                         
@@ -902,11 +919,11 @@
                         if(l.action.includes('LOGIN')) { badgeClass = 'badge-neutral'; icon = 'fa-right-to-bracket text-slate-400'; }
                         if(l.action.includes('COMPLETED')) { badgeClass = 'badge-brand'; icon = 'fa-check text-brand-400'; }
                         
+                        let avatarHtml = userInfo.photo ? `<img src="${userInfo.photo}" class="w-9 h-9 rounded-xl object-cover border border-slate-700/50 shadow-inner">` : `<div class="w-9 h-9 rounded-xl bg-slate-900 flex items-center justify-center group-hover:scale-110 transition-transform shrink-0 border border-slate-700/50 shadow-inner"><i class="fa-solid ${icon} text-[11px]"></i></div>`;
+
                         recentContainer.innerHTML += `
                             <div class="flex items-center gap-4 p-3 hover:bg-slate-800/80 rounded-xl transition-all border border-transparent hover:border-slate-700 hover:shadow-md group cursor-default">
-                                <div class="w-9 h-9 rounded-xl bg-slate-900 flex items-center justify-center group-hover:scale-110 transition-transform shrink-0 border border-slate-700/50 shadow-inner">
-                                    <i class="fa-solid ${icon} text-[11px]"></i>
-                                </div>
+                                ${avatarHtml}
                                 <div class="flex-1 min-w-0">
                                     <div class="flex justify-between items-baseline mb-0.5">
                                         <span class="badge ${badgeClass}">${cnAction}</span>
@@ -932,7 +949,7 @@
                     });
 
                     if(filtered.length === 0) {
-                        tbody.innerHTML = '<tr><td colspan="5" class="text-center py-16 text-slate-500 text-sm">無符合的用戶資料</td></tr>';
+                        tbody.innerHTML = '<tr><td colspan="6" class="text-center py-16 text-slate-500 text-sm">無符合的用戶資料</td></tr>';
                         return;
                     }
                     
@@ -951,10 +968,12 @@
                             statusHtml = `<span class="${info.onlineStatus.color} font-bold flex items-center gap-2 text-[12px]"><span class="w-2.5 h-2.5 rounded-full ${info.onlineStatus.dot}"></span> ${info.onlineStatus.text}</span>`;
                         }
 
+                        let avatarHtml = info.photo ? `<img src="${info.photo}" class="w-11 h-11 rounded-full object-cover shadow-lg border-2 border-white/10" alt="Avatar">` : `<div class="w-11 h-11 rounded-full ${avatarColor} text-white flex items-center justify-center font-bold text-[14px] shadow-lg border-2 border-white/10">${info.name.substring(0,2).toUpperCase()}</div>`;
+
                         html += `
                             <tr>
                                 <td class="px-6 py-4">
-                                    <div class="w-11 h-11 rounded-full ${avatarColor} text-white flex items-center justify-center font-bold text-[14px] shadow-lg border-2 border-white/10">${info.name.substring(0,2).toUpperCase()}</div>
+                                    ${avatarHtml}
                                 </td>
                                 <td class="px-6 py-4">
                                     <p class="font-bold text-[15px] text-white mb-1 tracking-wide">${escapeHTML(info.name)}</p>
@@ -1010,12 +1029,14 @@
                         if(l.action.includes('DELETED')) badgeClass = 'text-danger-400';
                         if(l.action.includes('COMPLETED')) badgeClass = 'text-brand-400';
 
+                        let avatarHtml = info.photo ? `<img src="${info.photo}" class="w-8 h-8 rounded-full object-cover border border-slate-700 shrink-0">` : `<div class="w-8 h-8 rounded-full bg-slate-800 border border-slate-700 text-[10px] font-bold flex items-center justify-center text-slate-300 shrink-0">${info.name.substring(0,2).toUpperCase()}</div>`;
+
                         html += `
                             <tr class="hover:bg-slate-800/50 transition-colors">
                                 <td class="px-6 py-4 text-slate-400 tracking-wider text-[12px]">${new Date(l.timestamp).toLocaleString('zh-HK', {hour12:false})}</td>
                                 <td class="px-6 py-4">
                                     <div class="flex items-center gap-3">
-                                        <div class="w-8 h-8 rounded-full bg-slate-800 border border-slate-700 text-[10px] font-bold flex items-center justify-center text-slate-300 shrink-0">${info.name.substring(0,2).toUpperCase()}</div>
+                                        ${avatarHtml}
                                         <div class="flex flex-col">
                                             <span class="text-white font-sans font-bold text-[14px] truncate max-w-[150px]">${escapeHTML(info.name)}</span>
                                             <span class="text-[10px] text-slate-500 font-mono">${l.uid.substring(0,8)}</span>
@@ -1053,6 +1074,8 @@
                         statusHtml = `<span class="${info.onlineStatus.color} font-bold flex items-center gap-2"><span class="w-2.5 h-2.5 rounded-full ${info.onlineStatus.dot}"></span> ${info.onlineStatus.text}</span>`;
                     }
 
+                    let bigAvatarHtml = info.photo ? `<img src="${info.photo}" class="w-28 h-28 rounded-full object-cover shadow-2xl border-[3px] border-slate-600 hover:scale-105 transition-transform duration-500">` : `<div class="w-28 h-28 rounded-full bg-gradient-to-tr from-slate-800 to-slate-700 flex items-center justify-center text-4xl font-black text-white shadow-2xl border-[3px] border-slate-600 hover:scale-105 transition-transform duration-500">${info.name.substring(0,2).toUpperCase()}</div>`;
+
                     UI.modal.open(`
                         <div class="flex justify-between items-center p-6 border-b border-slate-800 bg-slate-900/90 backdrop-blur-xl">
                             <h3 class="font-black text-white text-xl flex items-center gap-3 tracking-wide"><i class="fa-solid fa-id-badge text-brand-500"></i> 帳戶防護與詳情</h3>
@@ -1062,9 +1085,7 @@
                             <div class="absolute top-0 right-0 w-40 h-40 bg-brand-500/10 blur-[60px] rounded-full pointer-events-none"></div>
                             
                             <div class="flex justify-center mb-6 relative z-10">
-                                <div class="w-28 h-28 rounded-full bg-gradient-to-tr from-slate-800 to-slate-700 flex items-center justify-center text-4xl font-black text-white shadow-2xl border-[3px] border-slate-600 hover:scale-105 transition-transform duration-500">
-                                    ${info.name.substring(0,2).toUpperCase()}
-                                </div>
+                                ${bigAvatarHtml}
                             </div>
                             
                             <div class="space-y-4 bg-slate-950/60 p-6 rounded-3xl border border-slate-800 shadow-inner backdrop-blur-md relative z-10">
@@ -1099,7 +1120,7 @@
                                     <i class="fa-solid fa-crown"></i> 變更身分權限
                                 </button>
                                 <button onclick="adminApp.users.toggleBan('${uid}', ${isBanned})" class="py-4 bg-slate-800 hover:bg-danger-600 text-white rounded-2xl text-[14px] font-bold transition-all border border-slate-700 hover:border-transparent flex justify-center items-center gap-2 active:scale-95 shadow-md">
-                                    <i class="fa-solid ${isBanned?'fa-unlock':'fa-ban'}"></i> ${isBanned?'解除封鎖狀態':'強制封鎖帳號'}
+                                    <i class="fa-solid ${isBanned?'fa-unlock':'fa-ban'}"></i> ${isBanned?'解除強制封鎖':'強制封鎖帳號'}
                                 </button>
                             </div>
                         </div>
@@ -1241,7 +1262,6 @@
                         }
                     }
                 },
-                // 🌟 新增：一鍵清理舊日誌功能 (解放 Firebase 效能)
                 clearOldLogs: async () => {
                     const sevenDaysAgo = new Date();
                     sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
@@ -1273,7 +1293,6 @@
                     const oldLogs = state.logs.filter(l => new Date(l.timestamp) < sevenDaysAgo);
                     
                     try {
-                        // Firebase Batch limit is 500. We will process in chunks of 500
                         const chunks = [];
                         for(let i=0; i<oldLogs.length; i+=500) {
                             chunks.push(oldLogs.slice(i, i+500));

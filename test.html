@@ -464,8 +464,8 @@
 
     </div>
 
-    <!-- 4. 全域組件 (修正遮罩淺色模式的顏色，避免「全黑」錯覺) -->
-    <div id="global-overlay" class="fixed inset-0 bg-black/20 dark:bg-black/60 backdrop-blur-sm z-[200] hidden opacity-0 transition-opacity duration-300"></div>
+    <!-- 4. 全域組件 (加入 onclick 事件，允許點擊背景關閉) -->
+    <div id="global-overlay" onclick="if(app.UI) { app.UI.sheet.close(); app.UI.modal.close(); }" class="fixed inset-0 bg-black/20 dark:bg-black/60 backdrop-blur-sm z-[200] hidden opacity-0 transition-opacity duration-300"></div>
     <div id="center-modal" class="fixed inset-0 z-[210] hidden flex items-center justify-center p-6 pointer-events-none">
         <div id="center-modal-content" class="glass-card w-full max-w-sm p-6 md:p-8 transform scale-95 opacity-0 pointer-events-auto shadow-2xl border-theme-border"></div>
     </div>
@@ -724,14 +724,19 @@
                     const src = state.user.photoURL ? `<img src="${state.user.photoURL}" class="w-24 h-24 rounded-full border-2 border-theme-border shadow-2xl object-cover mx-auto hover:scale-105 transition-transform duration-300">` : `<div class="w-24 h-24 rounded-full bg-theme-input flex items-center justify-center border-2 border-theme-border shadow-2xl mx-auto"><i class="fa-solid fa-user text-4xl text-theme-muted"></i></div>`;
 
                     UI.sheet.open(`
-                        <div class="text-center">
+                        <div class="relative text-center">
+                            <!-- 右上角關閉 (X) 按鈕 -->
+                            <button onclick="app.UI.sheet.close()" class="absolute -top-2 right-0 w-8 h-8 rounded-full bg-theme-input flex items-center justify-center text-theme-muted hover:text-theme-text border border-theme-border active:scale-95 transition-all z-10"><i class="fa-solid fa-xmark"></i></button>
+                            
                             <div class="relative inline-block">${src}</div>
                             <h3 class="text-xl font-bold text-theme-text mt-5 flex justify-center items-center font-literary tracking-wide">${state.user.displayName || 'Lumina User'} ${rb}</h3>
                             <p class="text-sm text-theme-muted font-mono mt-1 mb-6">${state.user.email || 'Anonymous'}</p>
                             
                             <div class="space-y-3">
                                 ${state.profile.role === 'provider' ? '' : `<button onclick="app.profile.demoRole()" class="w-full glass-card py-4 text-sm font-bold text-brand-500 hover:bg-theme-input hover:-translate-y-1 active:scale-95 transition-all duration-300 flex justify-center items-center gap-2"><i class="fa-solid fa-crown"></i> 申請升級 Provider</button>`}
-                                <button onclick="app.auth.logout()" class="w-full bg-red-500/10 border border-red-500/30 text-red-500 py-4 rounded-xl text-sm font-bold hover:bg-red-500/20 hover:-translate-y-1 active:scale-95 transition-all duration-300 shadow-lg">安全登出 Sign Out</button>
+                                <button onclick="app.auth.logout()" class="w-full bg-red-500/10 border border-red-500/30 text-red-500 py-4 rounded-xl text-sm font-bold hover:bg-red-500/20 hover:-translate-y-1 active:scale-95 transition-all duration-300 shadow-sm">安全登出 Sign Out</button>
+                                <!-- 下方大大的返回按鈕 -->
+                                <button onclick="app.UI.sheet.close()" class="w-full bg-theme-input border border-theme-border text-theme-text py-4 rounded-xl text-sm font-bold hover:bg-theme-border hover:-translate-y-1 active:scale-95 transition-all duration-300 shadow-sm">返回 Return</button>
                             </div>
                         </div>
                     `);

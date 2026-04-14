@@ -237,9 +237,9 @@
             </div>
         </header>
 
-        <!-- 頂部膠囊導航 (Sticky Segmented Control) -->
-        <div class="sticky top-0 z-40 py-3 px-4 border-b border-theme-border shrink-0 transition-colors duration-500" style="background: var(--nav-bg); backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px);">
-            <div class="flex gap-1.5 p-1.5 bg-theme-input rounded-2xl border border-theme-border shadow-inner overflow-x-auto no-scrollbar md:max-w-2xl md:mx-auto transition-colors duration-500">
+        <!-- 頂部膠囊導航 (Sticky Floating Segmented Control) -->
+        <div class="sticky top-0 z-40 py-3 px-4 shrink-0 pointer-events-none">
+            <div class="flex gap-1.5 p-1.5 bg-white/60 dark:bg-[#030305]/60 backdrop-blur-2xl rounded-2xl border border-theme-border shadow-[0_8px_30px_rgba(0,0,0,0.12)] dark:shadow-[0_8px_30px_rgba(0,0,0,0.5)] overflow-x-auto no-scrollbar md:max-w-2xl md:mx-auto transition-colors duration-500 pointer-events-auto">
                 <button onclick="app.nav.switch('home')" id="nav-home" class="top-nav-item flex-1 py-2 px-4 text-[13px] font-bold rounded-xl active bg-white dark:bg-white/10 text-brand-600 dark:text-white shadow-md whitespace-nowrap flex items-center justify-center gap-1.5">
                     <i class="fa-solid fa-layer-group"></i> 任務
                 </button>

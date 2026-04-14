@@ -48,25 +48,25 @@
     <style>
         :root { 
             --safe-area-inset-bottom: env(safe-area-inset-bottom, 20px);
-            /* 🌟 淺色模式 */
+            /* 🌟 淺色模式極致純淨 */
             --bg: #f8fafc;
             --text: #0f172a;
             --text-muted: #64748b;
             --border: rgba(0,0,0,0.06);
             --card: #ffffff;
             --input: #f1f5f9;
-            --orb-opacity: 0.8;
+            --orb-opacity: 0.6;
         }
 
         .dark {
-            /* 🌟 深色模式 */
+            /* 🌟 深色模式高級石板灰 */
             --bg: #050505;
             --text: #f8fafc;
             --text-muted: #9ca3af;
             --border: rgba(255,255,255,0.08);
             --card: #0a0a0c;
             --input: rgba(255,255,255,0.04);
-            --orb-opacity: 0.4;
+            --orb-opacity: 0.3;
         }
 
         body {
@@ -75,7 +75,9 @@
             -webkit-font-smoothing: antialiased;
             -webkit-tap-highlight-color: transparent;
             transition: background-color 0.5s ease, color 0.5s ease;
+            /* 全域解鎖滾動 */
             overflow-x: hidden;
+            overflow-y: auto;
         }
 
         h1, h2, h3, h4, .font-display { font-family: 'Plus Jakarta Sans', 'Noto Sans HK', sans-serif; }
@@ -94,7 +96,7 @@
             100% { transform: translate(0, 0) rotate(360deg) scale(1); }
         }
 
-        /* --- 動態科目色彩卡片 --- */
+        /* --- 💎 全新黃金比例卡片設計 --- */
         .glass-card { 
             background: var(--card); 
             border: 1px solid var(--border); 
@@ -102,26 +104,32 @@
             box-shadow: 0 10px 40px -10px rgba(0,0,0,0.05); 
             transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); 
         }
-        .dark .glass-card { box-shadow: 0 10px 40px -10px rgba(0,0,0,0.6); border: 1px solid rgba(255,255,255,0.05); }
+        .dark .glass-card { box-shadow: 0 10px 40px -10px rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.05); }
         
-        .dynamic-glow-card {
+        /* 🌈 科目專屬動態光暈背景 */
+        .task-card-anim {
             position: relative;
-            z-index: 1;
             overflow: hidden;
+            z-index: 1;
         }
-        .dynamic-glow-card::before {
+        .task-card-anim::before {
             content: '';
             position: absolute;
             inset: 0;
-            background: radial-gradient(circle at 100% 0%, var(--card-glow, #6366f1), transparent 60%);
-            opacity: 0.15;
+            background: radial-gradient(circle at 100% 0%, var(--subj-color-soft, transparent), transparent 70%);
+            opacity: 0.4;
             z-index: -1;
             transition: opacity 0.5s ease;
-            animation: breatheGlow 4s alternate infinite ease-in-out;
+            animation: breatheGlow 5s alternate infinite ease-in-out;
+            pointer-events: none;
+        }
+        .task-card-anim:hover::before {
+            opacity: 0.8;
+            transform: scale(1.1);
         }
         @keyframes breatheGlow {
-            0% { opacity: 0.05; transform: scale(1); }
-            100% { opacity: 0.2; transform: scale(1.05); }
+            0% { opacity: 0.3; transform: scale(1) translate(0, 0); }
+            100% { opacity: 0.6; transform: scale(1.05) translate(-2%, 2%); }
         }
 
         /* --- 精緻輸入框 --- */
@@ -138,7 +146,7 @@
         .dark .premium-input { box-shadow: inset 0 2px 4px rgba(0,0,0,0.2); border-color: rgba(255,255,255,0.02); }
         .premium-input:focus { 
             outline: none; 
-            border-color: var(--card-glow, #6366f1); 
+            border-color: #6366f1; 
             background: var(--card); 
             box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.15); 
             transform: translateY(-2px);
@@ -154,17 +162,12 @@
         .no-scrollbar::-webkit-scrollbar { display: none; }
         .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
 
-        /* --- 顏色選擇器隱藏原生樣式 --- */
-        input[type="color"] {
-            -webkit-appearance: none;
-            border: none;
-            padding: 0;
-        }
+        input[type="color"] { -webkit-appearance: none; border: none; padding: 0; }
         input[type="color"]::-webkit-color-swatch-wrapper { padding: 0; }
         input[type="color"]::-webkit-color-swatch { border: none; border-radius: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.2); }
     </style>
 </head>
-<body class="w-full relative font-sans overflow-x-hidden overflow-y-auto no-scrollbar">
+<body class="w-full relative font-sans no-scrollbar">
 
     <div class="ambient-bg">
         <div class="orb orb-1"></div>
@@ -228,14 +231,14 @@
         <i id="blocker-icon" class="fa-solid fa-triangle-exclamation text-7xl text-yellow-500 mb-8 animate-pulse drop-shadow-[0_0_20px_rgba(234,179,8,0.5)]"></i>
         <h2 id="blocker-title" class="text-4xl font-black text-theme-text mb-4 tracking-tight font-display">系統維護中</h2>
         <p id="blocker-message" class="text-theme-muted text-[15px] max-w-sm leading-relaxed font-medium">超級管理員正在進行系統升級，請稍後再試。感謝您的耐心等候。</p>
-        <button onclick="app.auth.logout()" class="mt-10 px-8 py-3 rounded-full border border-theme-border text-sm font-bold text-theme-muted hover:bg-theme-input hover:text-theme-text active:scale-95 transition-all shadow-sm">登出返回</button>
+        <button onclick="app.auth.logout()" class="mt-10 px-8 py-3 rounded-full border border-theme-border text-sm font-bold text-theme-muted hover:bg-theme-input hover:text-theme-text active:scale-95 transition-all shadow-sm">安全登出</button>
     </div>
 
     <!-- 3. 主系統核心 -->
     <div id="app-core" class="hidden flex-col min-h-screen w-full relative">
         
-        <!-- 🌟 絕美懸浮標題 (Floating Header) -->
-        <header id="main-header" class="fixed top-4 left-4 right-4 md:max-w-5xl lg:max-w-6xl md:mx-auto z-50 bg-theme-bg/70 backdrop-blur-2xl border border-theme-border rounded-3xl px-6 py-4 flex justify-between items-center shadow-[0_10px_40px_rgba(0,0,0,0.1)] dark:shadow-[0_10px_40px_rgba(0,0,0,0.5)] transition-all duration-300">
+        <!-- 🌟 絕美懸浮標題 (Floating Glass Island) -->
+        <header id="main-header" class="fixed top-4 left-4 right-4 md:max-w-5xl lg:max-w-6xl md:mx-auto z-50 bg-white/60 dark:bg-[#0a0a0c]/60 backdrop-blur-2xl border border-theme-border rounded-[28px] px-6 py-4 flex justify-between items-center shadow-[0_10px_40px_rgba(0,0,0,0.08)] dark:shadow-[0_10px_40px_rgba(0,0,0,0.5)] transition-all duration-300">
             <div class="flex flex-col">
                 <h1 class="text-2xl md:text-3xl font-black tracking-wide text-theme-text font-literary drop-shadow-sm leading-tight">電子手冊</h1>
                 <p id="header-date" class="text-[10px] md:text-xs text-brand-500 font-mono tracking-widest font-bold uppercase mt-0.5">載入中...</p>
@@ -243,23 +246,23 @@
             <div class="flex items-center gap-3 md:gap-5">
                 <div id="offline-badge" class="hidden bg-yellow-500/10 text-yellow-600 dark:text-yellow-400 text-[10px] font-bold px-3 py-1.5 rounded-full border border-yellow-500/20 flex items-center gap-1 shadow-sm"><i class="fa-solid fa-bolt-slash"></i> 離線</div>
                 
-                <button onclick="app.notifications.toggle()" class="relative w-10 h-10 rounded-full flex items-center justify-center text-theme-muted hover:text-brand-500 hover:bg-theme-input active:scale-90 transition-all duration-300">
-                    <i class="fa-solid fa-bell text-xl"></i>
-                    <span id="notif-badge" class="hidden absolute top-2 right-2 w-2.5 h-2.5 bg-pink-500 rounded-full border-2 border-theme-bg shadow-sm"></span>
+                <button onclick="app.notifications.toggle()" class="relative w-11 h-11 rounded-full flex items-center justify-center text-theme-muted hover:text-brand-500 hover:bg-theme-input active:scale-90 transition-all duration-300">
+                    <i class="fa-solid fa-bell text-[22px]"></i>
+                    <span id="notif-badge" class="hidden absolute top-2 right-2 w-3 h-3 bg-pink-500 rounded-full border-2 border-theme-bg shadow-sm"></span>
                 </button>
-                <button onclick="app.profile.toggle()" class="w-10 h-10 md:w-11 md:h-11 rounded-full bg-theme-input flex items-center justify-center overflow-hidden border-2 border-transparent hover:border-brand-500 shadow-md hover:shadow-brand-500/30 active:scale-90 transition-all duration-300">
+                <button onclick="app.profile.toggle()" class="w-11 h-11 md:w-12 md:h-12 rounded-full bg-theme-input flex items-center justify-center overflow-hidden border-2 border-transparent hover:border-brand-500 shadow-md hover:shadow-brand-500/30 active:scale-90 transition-all duration-300">
                     <img id="header-avatar" src="" alt="Profile" class="w-full h-full object-cover hidden">
-                    <i id="header-avatar-fallback" class="fa-solid fa-user text-theme-muted text-sm"></i>
+                    <i id="header-avatar-fallback" class="fa-solid fa-user text-theme-muted text-[16px]"></i>
                 </button>
             </div>
         </header>
 
-        <!-- 主內容區域 -->
-        <main id="main-content-area" class="flex-1 w-full relative z-10 pt-[104px] pb-32">
+        <!-- 主內容區域 (配合頂部懸浮留出空間) -->
+        <main id="main-content-area" class="flex-1 w-full relative z-10 pt-[110px] pb-32">
             
             <!-- 浮空膠囊導航 (Sticky) -->
             <div id="main-nav-bar" class="sticky top-[104px] z-40 px-4 shrink-0 pointer-events-none transition-all duration-500 mb-6">
-                <div class="flex gap-1.5 p-1.5 bg-white/70 dark:bg-[#030305]/70 backdrop-blur-xl rounded-2xl border border-theme-border shadow-lg overflow-x-auto no-scrollbar max-w-full md:max-w-2xl mx-auto pointer-events-auto">
+                <div class="flex gap-1.5 p-1.5 bg-white/70 dark:bg-[#0a0a0c]/70 backdrop-blur-xl rounded-2xl border border-theme-border shadow-lg overflow-x-auto no-scrollbar max-w-full md:max-w-2xl mx-auto pointer-events-auto">
                     <button onclick="app.nav.switch('home')" id="nav-home" class="top-nav-item flex-1 py-2.5 px-4 text-[13px] font-bold rounded-xl active bg-theme-card text-brand-600 dark:text-white shadow-sm border border-theme-border whitespace-nowrap flex items-center justify-center gap-2">
                         <i class="fa-solid fa-layer-group"></i> 任務
                     </button>
@@ -310,7 +313,7 @@
             <!-- 各頁面內容容器 -->
             <div class="px-4 md:px-6 w-full md:max-w-5xl lg:max-w-6xl md:mx-auto">
                 
-                <!-- 🏠 HOME 頁面 -->
+                <!-- 🏠 HOME 頁面 (套用全新排版卡片) -->
                 <section id="view-home" class="view-section active w-full">
                     <div id="home-announcements" class="mb-6 space-y-3 md:max-w-3xl md:mx-auto hidden"></div>
 
@@ -319,24 +322,26 @@
                     </div>
 
                     <div class="flex gap-2.5 mb-8 px-1 overflow-x-auto no-scrollbar md:max-w-3xl md:mx-auto items-center">
-                        <button id="filter-subject-btn" onclick="app.tasks.openFilterSubjectModal()" class="bg-theme-card text-theme-text text-[12px] font-bold px-4 py-2.5 rounded-full border border-theme-border outline-none transition-all flex items-center gap-2 shrink-0 hover:shadow-md active:scale-95 shadow-sm">
+                        <button id="filter-subject-btn" onclick="app.tasks.openFilterSubjectModal()" class="bg-theme-card text-theme-text text-[13px] font-bold px-5 py-2.5 rounded-full border border-theme-border outline-none transition-all flex items-center gap-2 shrink-0 hover:shadow-md active:scale-95 shadow-sm">
                             <span id="filter-subject-text">所有科目</span> <i class="fa-solid fa-chevron-down text-[10px] opacity-50"></i>
                         </button>
-                        <button id="filter-incomplete" onclick="app.tasks.toggleIncompleteFilter()" class="bg-theme-card text-theme-muted text-[12px] font-bold px-4 py-2.5 rounded-full border border-theme-border whitespace-nowrap transition-all flex items-center gap-2 shrink-0 hover:shadow-md active:scale-95 shadow-sm">
+                        <button id="filter-incomplete" onclick="app.tasks.toggleIncompleteFilter()" class="bg-theme-card text-theme-muted text-[13px] font-bold px-5 py-2.5 rounded-full border border-theme-border whitespace-nowrap transition-all flex items-center gap-2 shrink-0 hover:shadow-md active:scale-95 shadow-sm">
                             <i class="fa-solid fa-circle-check"></i> <span>僅未完成</span>
                         </button>
-                        <button id="filter-sort" onclick="app.tasks.toggleSortFilter()" class="bg-theme-card text-brand-500 text-[12px] font-bold px-4 py-2.5 rounded-full border border-theme-border whitespace-nowrap transition-all flex items-center gap-2 shrink-0 hover:shadow-md active:scale-95 shadow-sm">
+                        <button id="filter-sort" onclick="app.tasks.toggleSortFilter()" class="bg-theme-card text-brand-500 text-[13px] font-bold px-5 py-2.5 rounded-full border border-theme-border whitespace-nowrap transition-all flex items-center gap-2 shrink-0 hover:shadow-md active:scale-95 shadow-sm">
                             <i class="fa-solid fa-arrow-down-short-wide"></i> <span>繳交日期</span>
                         </button>
                     </div>
 
-                    <div id="todo-list" class="grid grid-cols-1 md:grid-cols-2 gap-5"></div>
+                    <!-- 🌟 任務卡片網格 -->
+                    <div id="todo-list" class="grid grid-cols-1 lg:grid-cols-2 gap-6"></div>
+                    
                     <div id="todo-empty" class="hidden flex-col items-center justify-center py-32 text-theme-muted">
-                        <div class="w-20 h-20 mb-5 rounded-3xl glass-card flex items-center justify-center border border-theme-border shadow-lg">
+                        <div class="w-20 h-20 mb-5 rounded-3xl glass-card flex items-center justify-center border border-theme-border shadow-lg hover:scale-110 transition-transform">
                             <i class="fa-solid fa-mug-hot text-3xl opacity-50 text-brand-500"></i>
                         </div>
-                        <p class="text-[15px] font-bold tracking-widest uppercase">Great Job!</p>
-                        <p class="text-xs mt-1 opacity-70 font-mono">所有任務已清空</p>
+                        <p class="text-[16px] font-black tracking-widest uppercase text-theme-text">Great Job!</p>
+                        <p class="text-[13px] mt-2 opacity-70 font-mono">所有任務已清空</p>
                     </div>
                 </section>
 
@@ -348,8 +353,8 @@
                     <!-- 支援自訂日別 -->
                     <div id="timetable-day-selector" class="flex gap-2.5 overflow-x-auto no-scrollbar pb-4 mb-4 snap-x md:justify-center md:max-w-3xl md:mx-auto items-center"></div>
                     <div class="glass-card p-3 shadow-lg border-theme-border flex flex-col md:max-w-3xl md:mx-auto">
-                        <div class="flex justify-between items-center p-3 mb-2 border-b border-theme-border shrink-0 bg-theme-input/50 rounded-2xl">
-                            <h3 class="font-bold text-[15px] text-theme-text font-literary tracking-wide flex items-center"><i class="fa-solid fa-clock text-brand-500 mr-2"></i> 每日課表</h3>
+                        <div class="flex justify-between items-center p-4 mb-2 border-b border-theme-border shrink-0 bg-theme-input/50 rounded-[20px]">
+                            <h3 class="font-bold text-[16px] text-theme-text font-literary tracking-wide flex items-center"><i class="fa-solid fa-clock text-brand-500 mr-2 text-lg"></i> 每日課表</h3>
                             <div class="flex gap-2">
                                 <button id="tt-btn-edit" onclick="app.timetable.toggleEditMode()" class="text-[12px] text-brand-500 font-bold bg-brand-500/10 px-4 py-2 rounded-xl hover:bg-brand-500 hover:text-white active:scale-95 transition-all"><i class="fa-solid fa-pen"></i> 編輯</button>
                                 <button id="tt-btn-copy" onclick="app.timetable.copyToAllWeekModal()" class="hidden text-[12px] text-emerald-500 font-bold bg-emerald-500/10 px-4 py-2 rounded-xl hover:bg-emerald-500 hover:text-white active:scale-95 transition-all"><i class="fa-solid fa-copy"></i> 套用全週</button>
@@ -367,10 +372,10 @@
                         <h2 class="text-2xl font-black text-theme-text tracking-tight font-display">歷史記錄 <span class="text-emerald-500">History</span></h2>
                         <span class="text-xs font-bold text-emerald-500 tracking-wider bg-emerald-500/10 px-3 py-1.5 rounded-lg border border-emerald-500/20">已歸檔任務</span>
                     </div>
-                    <div id="history-list" class="grid grid-cols-1 md:grid-cols-2 gap-5"></div>
+                    <div id="history-list" class="grid grid-cols-1 lg:grid-cols-2 gap-6"></div>
                     <div id="history-empty" class="hidden flex-col items-center justify-center py-32 text-theme-muted">
                         <i class="fa-solid fa-clock-rotate-left text-5xl mb-5 opacity-30 text-emerald-500"></i>
-                        <p class="text-[15px] font-bold tracking-widest uppercase">No History</p>
+                        <p class="text-[16px] font-black tracking-widest uppercase text-theme-text">No History</p>
                     </div>
                 </section>
 
@@ -410,16 +415,16 @@
                     <!-- 基礎設定卡片 -->
                     <div class="grid grid-cols-2 gap-4 mb-6 md:max-w-2xl md:mx-auto">
                         <button onclick="app.settings.toggleTheme()" class="glass-card p-6 flex flex-col items-center justify-center gap-3 hover:-translate-y-1 hover:shadow-lg transition-all active:scale-95 text-theme-text group">
-                            <div class="w-12 h-12 rounded-2xl bg-brand-500/10 flex items-center justify-center group-hover:bg-brand-500 group-hover:text-white transition-colors">
+                            <div class="w-14 h-14 rounded-2xl bg-brand-500/10 flex items-center justify-center group-hover:bg-brand-500 group-hover:text-white transition-colors">
                                 <i class="fa-solid fa-circle-half-stroke text-2xl text-brand-500 group-hover:text-white transition-colors"></i>
                             </div>
-                            <span class="text-[13px] font-bold mt-1">外觀主題切換</span>
+                            <span class="text-[14px] font-bold mt-1">外觀主題切換</span>
                         </button>
                         <button onclick="app.settings.toggleTimetableMode()" class="glass-card p-6 flex flex-col items-center justify-center gap-3 hover:-translate-y-1 hover:shadow-lg transition-all active:scale-95 text-theme-text group">
-                            <div class="w-12 h-12 rounded-2xl bg-blue-500/10 flex items-center justify-center group-hover:bg-blue-500 group-hover:text-white transition-colors">
+                            <div class="w-14 h-14 rounded-2xl bg-blue-500/10 flex items-center justify-center group-hover:bg-blue-500 group-hover:text-white transition-colors">
                                 <i class="fa-solid fa-calendar-days text-2xl text-blue-500 group-hover:text-white transition-colors"></i>
                             </div>
-                            <span class="text-[13px] font-bold mt-1" id="setting-tt-mode-text">課表：星期制</span>
+                            <span class="text-[14px] font-bold mt-1" id="setting-tt-mode-text">課表：星期制</span>
                         </button>
                     </div>
 
@@ -430,13 +435,13 @@
                         <!-- 科目列表展示區 -->
                         <div id="settings-subjects-list" class="flex flex-wrap gap-3 mb-8"></div>
                         
-                        <div class="bg-theme-input/50 p-5 rounded-2xl border border-theme-border">
+                        <div class="bg-theme-input/50 p-5 rounded-2xl border border-theme-border shadow-inner">
                             <p class="text-[11px] font-bold text-theme-muted uppercase tracking-widest mb-3">新增自訂科目</p>
                             <div class="flex gap-3 items-center">
-                                <input type="text" id="new-subj-name" placeholder="科目名稱 (如: 物理)" class="premium-input py-3 px-4 text-[14px] font-bold flex-1 shadow-sm">
-                                <input type="color" id="new-subj-color" value="#6366f1" class="w-12 h-12 rounded-xl cursor-pointer border-0 bg-transparent p-0 shrink-0 hover:scale-105 transition-transform" title="選擇專屬顏色">
-                                <button onclick="app.settings.addSubject()" class="bg-brand-600 hover:bg-brand-500 w-12 h-12 rounded-xl text-white font-bold transition-all shadow-[0_4px_15px_rgba(99,102,241,0.4)] active:scale-90 flex items-center justify-center shrink-0">
-                                    <i class="fa-solid fa-plus text-lg"></i>
+                                <input type="text" id="new-subj-name" placeholder="科目名稱 (如: 物理)" class="premium-input py-3.5 px-5 text-[15px] font-bold flex-1 shadow-sm">
+                                <input type="color" id="new-subj-color" value="#6366f1" class="w-14 h-14 rounded-xl cursor-pointer border-0 bg-transparent p-0 shrink-0 hover:scale-105 transition-transform" title="選擇專屬顏色">
+                                <button onclick="app.settings.addSubject()" class="bg-brand-600 hover:bg-brand-500 w-14 h-14 rounded-xl text-white font-bold transition-all shadow-[0_4px_15px_rgba(99,102,241,0.4)] active:scale-90 flex items-center justify-center shrink-0">
+                                    <i class="fa-solid fa-plus text-xl"></i>
                                 </button>
                             </div>
                         </div>
@@ -445,10 +450,10 @@
                     <!-- 匯出行事曆 -->
                     <div class="md:max-w-2xl md:mx-auto mb-6">
                         <button onclick="app.settings.exportCalendar()" class="w-full glass-card p-6 flex items-center justify-center gap-4 hover:-translate-y-1 hover:shadow-lg transition-all active:scale-95 text-emerald-500 border-emerald-500/30 bg-emerald-500/5 group">
-                            <div class="w-10 h-10 rounded-full bg-emerald-500/20 flex items-center justify-center group-hover:bg-emerald-500 group-hover:text-white transition-colors">
-                                <i class="fa-solid fa-download text-lg"></i>
+                            <div class="w-12 h-12 rounded-full bg-emerald-500/20 flex items-center justify-center group-hover:bg-emerald-500 group-hover:text-white transition-colors">
+                                <i class="fa-solid fa-download text-xl"></i>
                             </div>
-                            <span class="text-[15px] font-bold tracking-wide">匯出所有任務至行事曆 (.ics)</span>
+                            <span class="text-[16px] font-bold tracking-wide">匯出所有任務至行事曆 (.ics)</span>
                         </button>
                     </div>
 
@@ -506,64 +511,66 @@
                                     <div class="relative flex-1 flex flex-col group">
                                         <textarea id="form-content" class="w-full flex-1 px-8 py-6 bg-theme-input/50 border border-theme-border/50 hover:border-brand-500/50 focus:border-brand-500 focus:bg-theme-card focus:ring-4 focus:ring-brand-500/10 rounded-[32px] text-[18px] leading-relaxed text-theme-text placeholder-theme-muted resize-none min-h-[250px] shadow-inner focus:shadow-xl transition-all duration-500 outline-none" placeholder="在此輸入功課詳細內容... (必填)"></textarea>
                                         
-                                        <div class="absolute bottom-5 right-5 flex gap-2">
+                                        <div class="absolute bottom-5 right-5 flex gap-3">
                                             <input type="file" id="form-image" accept="image/*" class="hidden" onchange="app.tasks.handleImageUpload(event)">
                                             <button onclick="document.getElementById('form-image').click()" class="w-12 h-12 rounded-full bg-theme-card text-theme-muted hover:text-brand-500 hover:bg-brand-500/10 flex items-center justify-center backdrop-blur-xl transition-all duration-300 border border-theme-border shadow-md hover:shadow-lg hover:-translate-y-1 active:scale-90 group-focus-within:border-brand-500/50" title="附加圖片">
                                                 <i class="fa-solid fa-camera text-lg"></i>
                                             </button>
                                         </div>
                                     </div>
+                                    <!-- 🌟 特殊獨立圖片展廳設計 -->
                                     <div id="form-image-preview-container" class="hidden relative mt-2 group">
-                                        <img id="form-image-preview" class="w-full h-56 object-cover rounded-[24px] border border-theme-border shadow-md transition-all duration-500">
-                                        <button onclick="app.tasks.removeImage()" class="absolute top-3 right-3 w-8 h-8 bg-black/50 hover:bg-red-500 text-white rounded-full flex items-center justify-center backdrop-blur-md opacity-0 group-hover:opacity-100 transition-all scale-90 group-hover:scale-100"><i class="fa-solid fa-xmark"></i></button>
+                                        <img id="form-image-preview" class="w-full h-56 object-cover rounded-[32px] border border-theme-border shadow-md transition-all duration-500">
+                                        <div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-[32px] pointer-events-none"></div>
+                                        <button onclick="app.tasks.removeImage()" class="absolute top-4 right-4 w-10 h-10 bg-black/50 hover:bg-red-500 text-white rounded-full flex items-center justify-center backdrop-blur-md opacity-0 group-hover:opacity-100 transition-all scale-90 group-hover:scale-100 shadow-lg"><i class="fa-solid fa-xmark text-lg"></i></button>
                                     </div>
                                 </div>
 
                                 <!-- 右側：日期、重複、提交 -->
-                                <div class="w-full lg:w-[300px] flex flex-col gap-5 shrink-0">
+                                <div class="w-full lg:w-[300px] flex flex-col gap-6 shrink-0">
                                     <div class="relative group">
                                         <label class="block text-[11px] font-bold text-theme-muted uppercase tracking-widest mb-2 pl-1">繳交日期 Due Date</label>
-                                        <input type="date" id="form-date" onchange="app.tasks.checkStress()" class="w-full h-16 px-6 bg-theme-input/50 border border-theme-border hover:border-brand-500/50 rounded-2xl text-[17px] font-bold text-theme-text text-center transition-all shadow-sm outline-none focus:border-brand-500 focus:bg-theme-card focus:ring-4 focus:ring-brand-500/10 dark:[color-scheme:dark]">
+                                        <input type="date" id="form-date" onchange="app.tasks.checkStress()" class="w-full h-16 px-6 bg-theme-input/50 border border-theme-border hover:border-brand-500/50 rounded-[20px] text-[17px] font-bold text-theme-text text-center transition-all shadow-sm outline-none focus:border-brand-500 focus:bg-theme-card focus:ring-4 focus:ring-brand-500/10 dark:[color-scheme:dark]">
                                     </div>
                                     
                                     <div class="relative group">
                                         <label class="block text-[11px] font-bold text-theme-muted uppercase tracking-widest mb-2 pl-1">自動重複 Repeat</label>
                                         <input type="hidden" id="form-repeat" value="none">
-                                        <button type="button" onclick="app.tasks.openRepeatModal()" class="w-full h-14 px-6 bg-theme-input/50 border border-theme-border hover:border-brand-500/50 rounded-2xl text-[15px] font-bold text-theme-text flex justify-between items-center transition-all shadow-sm outline-none active:scale-95 focus:border-brand-500 focus:bg-theme-card">
+                                        <button type="button" onclick="app.tasks.openRepeatModal()" class="w-full h-14 px-6 bg-theme-input/50 border border-theme-border hover:border-brand-500/50 rounded-[20px] text-[15px] font-bold text-theme-text flex justify-between items-center transition-all shadow-sm outline-none active:scale-95 focus:border-brand-500 focus:bg-theme-card">
                                             <span class="flex items-center gap-3"><i class="fa-solid fa-repeat text-theme-muted text-sm"></i><span id="form-repeat-text">不重複</span></span>
                                             <i class="fa-solid fa-chevron-down text-[10px] text-theme-muted"></i>
                                         </button>
                                     </div>
 
                                     <!-- 加入清單按鈕 (含 GSAP 處理動畫) -->
-                                    <button id="btn-save-task" onclick="app.tasks.save()" class="w-full mt-auto h-20 bg-gradient-to-r from-brand-600 to-brand-500 hover:from-brand-500 hover:to-brand-400 text-white rounded-2xl font-black shadow-[0_10px_30px_rgba(99,102,241,0.4)] hover:-translate-y-1 hover:shadow-[0_15px_40px_rgba(99,102,241,0.6)] active:scale-95 transition-all duration-300 flex justify-center items-center gap-3 text-[18px] tracking-wider border border-transparent overflow-hidden relative">
-                                        <div class="absolute inset-0 bg-white/20 transform -skew-x-12 -translate-x-full hover-shine"></div>
+                                    <button id="btn-save-task" onclick="app.tasks.save()" class="w-full mt-auto h-20 bg-gradient-to-r from-brand-600 to-brand-500 hover:from-brand-500 hover:to-brand-400 text-white rounded-[24px] font-black shadow-[0_10px_30px_rgba(99,102,241,0.4)] hover:-translate-y-1 hover:shadow-[0_15px_40px_rgba(99,102,241,0.6)] active:scale-95 transition-all duration-300 flex justify-center items-center gap-3 text-[18px] tracking-wider border border-transparent overflow-hidden relative group">
+                                        <div class="absolute inset-0 bg-white/20 transform -skew-x-12 -translate-x-full group-hover:animate-[shine_1.5s_ease-in-out_infinite]"></div>
                                         <i class="fa-solid fa-paper-plane text-xl drop-shadow-md"></i> 發佈任務
                                     </button>
                                 </div>
                             </div>
                             
-                            <div id="form-warning-msg" class="hidden mt-2 bg-yellow-500/10 border border-yellow-500/30 p-4 rounded-2xl flex items-center gap-4 shadow-inner">
-                                <i class="fa-solid fa-triangle-exclamation text-yellow-600 dark:text-yellow-500 text-2xl animate-pulse"></i>
+                            <div id="form-warning-msg" class="hidden mt-2 bg-yellow-500/10 border border-yellow-500/30 p-5 rounded-3xl flex items-center gap-4 shadow-inner">
+                                <i class="fa-solid fa-triangle-exclamation text-yellow-600 dark:text-yellow-500 text-3xl animate-pulse"></i>
                                 <div>
-                                    <p class="text-sm font-bold text-yellow-700 dark:text-yellow-400">注意！任務量警報</p>
-                                    <p class="text-xs text-yellow-700/80 dark:text-yellow-200/80 font-medium mt-1">該日已有 <span id="form-warning-count" class="font-bold text-base px-1"></span> 項任務，建議提早規劃時間。</p>
+                                    <p class="text-[15px] font-bold text-yellow-700 dark:text-yellow-400">注意！任務量警報</p>
+                                    <p class="text-[13px] text-yellow-700/80 dark:text-yellow-200/80 font-medium mt-1">該日已有 <span id="form-warning-count" class="font-black text-lg px-1"></span> 項任務，建議提早規劃時間。</p>
                                 </div>
                             </div>
 
                             <div id="provider-target-section" class="hidden pt-6 border-t border-theme-border/50 mt-4">
-                                <div class="flex items-center justify-between p-5 bg-theme-input/30 border border-theme-border rounded-2xl transition-colors hover:border-pink-500/40 hover:bg-pink-500/5 group cursor-pointer" onclick="document.getElementById('broadcast-toggle').click()">
-                                    <div class="flex items-center gap-4">
-                                        <div class="w-12 h-12 rounded-full bg-pink-500/10 flex items-center justify-center text-pink-500 shadow-inner group-hover:scale-110 transition-transform">
-                                            <i class="fa-solid fa-bullhorn text-lg"></i>
+                                <div class="flex items-center justify-between p-6 bg-theme-input/30 border border-theme-border rounded-[24px] transition-colors hover:border-pink-500/40 hover:bg-pink-500/5 group cursor-pointer shadow-sm" onclick="document.getElementById('broadcast-toggle').click()">
+                                    <div class="flex items-center gap-5">
+                                        <div class="w-14 h-14 rounded-full bg-pink-500/10 flex items-center justify-center text-pink-500 shadow-inner group-hover:scale-110 transition-transform">
+                                            <i class="fa-solid fa-bullhorn text-xl"></i>
                                         </div>
                                         <div>
-                                            <p class="text-[16px] font-bold text-theme-text leading-tight">廣播至學習群組 (Broadcast)</p>
-                                            <p class="text-xs text-theme-muted font-bold mt-1 tracking-wide" id="form-target-text">私人任務 (僅自己可見)</p>
+                                            <p class="text-[16px] font-bold text-theme-text leading-tight tracking-wide">廣播至學習群組 (Broadcast)</p>
+                                            <p class="text-[13px] text-theme-muted font-bold mt-1.5" id="form-target-text">私人任務 (僅自己可見)</p>
                                         </div>
                                     </div>
                                     <input type="hidden" id="form-target" value="self">
-                                    <label class="relative inline-flex items-center cursor-pointer scale-110" onclick="event.stopPropagation()">
+                                    <label class="relative inline-flex items-center cursor-pointer scale-125" onclick="event.stopPropagation()">
                                         <input type="checkbox" id="broadcast-toggle" class="sr-only peer" onchange="app.tasks.handleBroadcastToggle(this)">
                                         <div class="w-12 h-7 bg-gray-300 dark:bg-gray-600 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-6 after:w-6 after:transition-all peer-checked:bg-pink-500 shadow-inner"></div>
                                     </label>
@@ -576,7 +583,6 @@
             </div>
         </main>
 
-        <!-- 懸浮新增按鈕 -->
         <button onclick="app.nav.toggleAdd()" id="global-fab" class="fixed bottom-8 right-6 md:bottom-12 md:right-12 lg:right-16 w-16 h-16 bg-gradient-to-tr from-brand-600 to-pink-500 rounded-full flex items-center justify-center text-white text-2xl shadow-[0_10px_30px_rgba(99,102,241,0.5)] hover:shadow-[0_15px_40px_rgba(99,102,241,0.8)] hover:scale-110 active:scale-90 transition-all duration-500 z-50 overflow-hidden group">
             <div class="absolute inset-0 bg-white/20 transform -translate-y-full group-hover:translate-y-0 transition-transform duration-300 rounded-full"></div>
             <i class="fa-solid fa-plus transition-transform duration-500 relative z-10 drop-shadow-md" id="add-icon"></i>
@@ -588,11 +594,11 @@
     <div id="global-overlay" onclick="if(app.UI) { app.UI.sheet.close(); app.UI.modal.close(); }" class="fixed inset-0 bg-black/20 dark:bg-black/70 backdrop-blur-md z-[200] hidden opacity-0 transition-opacity duration-400 cursor-pointer"></div>
     
     <div id="center-modal" class="fixed inset-0 z-[210] hidden flex items-center justify-center p-6 pointer-events-none">
-        <div id="center-modal-content" class="glass-card w-full max-w-sm p-6 md:p-8 transform scale-95 opacity-0 pointer-events-auto shadow-2xl border-theme-border"></div>
+        <div id="center-modal-content" class="glass-card w-full max-w-sm p-8 transform scale-95 opacity-0 pointer-events-auto shadow-[0_20px_60px_rgba(0,0,0,0.4)] border-theme-border"></div>
     </div>
     
     <div id="bottom-sheet" class="fixed inset-x-0 bottom-0 z-[210] hidden flex flex-col justify-end pointer-events-none">
-        <div id="bottom-sheet-content" class="glass-card bg-theme-bg w-full md:max-w-md md:mx-auto rounded-b-none md:rounded-t-3xl p-6 md:p-8 pb-safe transform translate-y-full pointer-events-auto border md:border-b-theme-border border-t-theme-border shadow-[0_-20px_60px_rgba(0,0,0,0.15)] dark:shadow-[0_-20px_60px_rgba(0,0,0,0.8)] flex flex-col max-h-[85vh]">
+        <div id="bottom-sheet-content" class="glass-card bg-theme-bg w-full md:max-w-md md:mx-auto rounded-b-none md:rounded-t-[32px] p-6 md:p-8 pb-safe transform translate-y-full pointer-events-auto border md:border-b-theme-border border-t-theme-border shadow-[0_-20px_60px_rgba(0,0,0,0.15)] dark:shadow-[0_-20px_60px_rgba(0,0,0,0.8)] flex flex-col max-h-[85vh]">
             <div class="w-16 h-1.5 bg-gray-300 dark:bg-white/20 rounded-full mx-auto mb-8 shrink-0"></div>
             <div id="bottom-sheet-body" class="flex-1 overflow-y-auto no-scrollbar"></div>
         </div>
@@ -613,7 +619,7 @@
         import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, signInWithPopup, GoogleAuthProvider, onAuthStateChanged, signOut, setPersistence, browserLocalPersistence, updateProfile } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
         import { getFirestore, collection, doc, setDoc, getDoc, updateDoc, deleteDoc, onSnapshot, writeBatch, query, where, getDocs } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
-        // ⚠️ Firebase Config (V11)
+        // ⚠️ Firebase Config
         const firebaseConfig = {
             apiKey: "AIzaSyByPLZqByFtsFbCXBaIz53psLcdKoXBouY",
             authDomain: "newhw-daf31.firebaseapp.com",
@@ -639,20 +645,20 @@
             console.error("Firebase 初始化失敗:", error);
         }
 
-        // 預設科目與顏色 (全新功能)
+        // 預設科目與顏色
         const defaultSubjects = [
-            { name: '中文', color: '#3b82f6' }, 
-            { name: '英文', color: '#ef4444' }, 
-            { name: '數學', color: '#f59e0b' }, 
-            { name: '通識教育', color: '#10b981' }, 
-            { name: '科學', color: '#8b5cf6' }, 
-            { name: '歷史', color: '#ec4899' }, 
-            { name: '地理', color: '#14b8a6' }  
+            { name: '中文', color: '#ef4444' }, // Red
+            { name: '英文', color: '#3b82f6' }, // Blue
+            { name: '數學', color: '#f59e0b' }, // Amber
+            { name: '通識教育', color: '#10b981' }, // Emerald
+            { name: '科學', color: '#8b5cf6' }, // Violet
+            { name: '物理', color: '#06b6d4' }, // Teal
+            { name: '歷史', color: '#ec4899' }  // Pink
         ];
 
-        // 顏色轉換工具 (Hex to Rgba for backgrounds)
+        // 顏色轉換工具 (Hex to Rgba)
         const hexToRgba = (hex, alpha) => {
-            if(!hex) return `rgba(99, 102, 241, ${alpha})`; // fallback
+            if(!hex) return `rgba(99, 102, 241, ${alpha})`; 
             let r = parseInt(hex.slice(1, 3), 16), g = parseInt(hex.slice(3, 5), 16), b = parseInt(hex.slice(5, 7), 16);
             return `rgba(${r}, ${g}, ${b}, ${alpha})`;
         };
@@ -671,6 +677,31 @@
             return (str || '').toString().replace(/[&<>'"]/g, 
                 tag => ({'&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;'}[tag])
             );
+        };
+
+        // 🌟 日期格式精準轉換工具
+        const formatDateExact = (dateStr) => {
+            if(!dateStr) return { full: '無期限', diff: '', isOverdue: false, statusClass: 'bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-400' };
+            const d = new Date(dateStr);
+            const days = ['日','一','二','三','四','五','六'];
+            const full = `${d.getFullYear()}-${(d.getMonth()+1).toString().padStart(2,'0')}-${d.getDate().toString().padStart(2,'0')} (星期${days[d.getDay()]})`;
+
+            const today = new Date();
+            today.setHours(0,0,0,0);
+            const target = new Date(dateStr);
+            target.setHours(0,0,0,0);
+            const diffDays = Math.round((target - today) / (1000 * 60 * 60 * 24));
+
+            let diffStr = '';
+            let statusClass = '';
+            let isOverdue = false;
+
+            if(diffDays === 0) { diffStr = '今天到期'; statusClass = 'bg-amber-100 text-amber-700 dark:bg-amber-500/20 dark:text-amber-400 border border-amber-500/30'; }
+            else if(diffDays === 1) { diffStr = '明天到期'; statusClass = 'bg-emerald-100 text-emerald-700 dark:bg-emerald-500/20 dark:text-emerald-400 border border-emerald-500/30'; }
+            else if(diffDays > 1) { diffStr = `${diffDays} 天後`; statusClass = 'bg-emerald-100 text-emerald-700 dark:bg-emerald-500/20 dark:text-emerald-400 border border-emerald-500/30'; }
+            else { diffStr = '已逾期'; isOverdue = true; statusClass = 'bg-red-100 text-red-700 dark:bg-red-500/20 dark:text-red-400 border border-red-500/30'; }
+
+            return { full, diff: diffStr, isOverdue, statusClass };
         };
 
         const UI = {
@@ -729,24 +760,7 @@
                 groups: () => `artifacts/${internalAppId}/public/data/groups`
             },
             genId: () => Math.random().toString(36).substring(2, 15),
-            getWorkingDay: () => { let d = new Date(); do { d.setDate(d.getDate() + 1); } while (d.getDay() === 0 || d.getDay() === 6); return new Date(d.getTime() - (d.getTimezoneOffset() * 60000)).toISOString().split('T')[0]; },
-            formatDateLabel: (dateStr) => {
-                if(!dateStr) return '無期限';
-                const d = new Date(dateStr);
-                const days = ['日','一','二','三','四','五','六'];
-                const diffDays = Math.ceil((d - new Date()) / (1000 * 60 * 60 * 24));
-                let diffStr = '';
-                if(diffDays === 0) diffStr = '今天到期';
-                else if(diffDays === 1) diffStr = '明天到期';
-                else if(diffDays > 1) diffStr = `${diffDays} 天後`;
-                else diffStr = '已逾期';
-                
-                return {
-                    full: `${d.getFullYear()}-${(d.getMonth()+1).toString().padStart(2,'0')}-${d.getDate().toString().padStart(2,'0')} (星期${days[d.getDay()]})`,
-                    diff: diffStr,
-                    isOverdue: diffDays < 0
-                };
-            }
+            getWorkingDay: () => { let d = new Date(); do { d.setDate(d.getDate() + 1); } while (d.getDay() === 0 || d.getDay() === 6); return new Date(d.getTime() - (d.getTimezoneOffset() * 60000)).toISOString().split('T')[0]; }
         };
 
         const app = {
@@ -800,7 +814,7 @@
                             state.profile = docSnap.data();
                             if (state.profile.isBanned) AdminService.triggerBlocker('帳號已停權', '您的帳號已被封鎖，無法存取系統。', true);
                             
-                            // 🌟 核心修復：確保用戶的真實名稱與頭像會更新到資料庫，讓管理員能看見
+                            // 更新最新名字與頭像給後台
                             if (state.profile.displayName !== state.user.displayName || state.profile.photoURL !== state.user.photoURL || state.profile.email !== state.user.email) {
                                 updateDoc(docSnap.ref, {
                                     displayName: state.user.displayName || '',
@@ -809,7 +823,6 @@
                                 }).catch(e=>{});
                             }
                         } else {
-                            // 🌟 新用戶註冊時寫入完整資料
                             setDoc(docSnap.ref, { 
                                 role: 'student', 
                                 isBanned: false, 
@@ -829,7 +842,6 @@
                 
                 if (state.user.photoURL) { document.getElementById('header-avatar').src = state.user.photoURL; document.getElementById('header-avatar').classList.remove('hidden'); document.getElementById('header-avatar-fallback').classList.add('hidden'); }
                 
-                // Load Settings (Timetable & Subjects)
                 try { state.timetableConfig = JSON.parse(localStorage.getItem(`lumina_tt_${state.user.uid}`)) || {}; } catch(e) { state.timetableConfig = {}; }
                 try {
                     const savedDays = JSON.parse(localStorage.getItem(`lumina_tt_days_${state.user.uid}`));
@@ -847,7 +859,6 @@
                 if(state.classTimerInterval) clearInterval(state.classTimerInterval);
                 app.setupListeners(); app.renders.subjectsPills(); app.settings.renderSubjects(); app.timetable.initTracker(); app.timetable.renderDaySelector();
                 
-                // Entry animation for main content
                 if (typeof gsap !== 'undefined') {
                     gsap.fromTo("header", {y: -50, opacity: 0}, {y: 0, opacity: 1, duration: 0.8, ease: "back.out(1.2)", delay: 0.2});
                     gsap.fromTo(".sticky", {y: -20, opacity: 0}, {y: 0, opacity: 1, duration: 0.6, ease: "power2.out", delay: 0.4});
@@ -948,24 +959,39 @@
                     state.unsubscribers.push(onSnapshot(gRef, (snap) => {
                         if (snap.exists()) {
                             const data = snap.data();
-                            if (data.status === 'maintenance') {
-                                AdminService.triggerBlocker('系統維護中', data.message || '超級管理員升級中。');
+                            if (data.status === 'maintenance' || data.status === 'update' || data.status === 'reset') {
+                                AdminService.triggerBlocker(data.maintTitle || '系統維護中', data.message || '超級管理員正在進行升級。', false);
+                            } else {
+                                const blocker = document.getElementById('system-blocker');
+                                const appCore = document.getElementById('app-core');
+                                if (blocker && !blocker.classList.contains('hidden') && state.profile && !state.profile.isBanned) {
+                                    blocker.classList.add('hidden');
+                                    blocker.classList.remove('flex');
+                                    if(appCore) {
+                                        appCore.classList.remove('hidden');
+                                        appCore.classList.add('flex');
+                                    }
+                                }
                             }
                             
                             // 🌟 全域跑馬燈接收
                             const marqueeBanner = document.getElementById('global-marquee-banner');
                             const marqueeText = document.getElementById('global-marquee-text');
-                            const appCore = document.getElementById('app-core');
                             const header = document.getElementById('main-header');
+                            const navBar = document.getElementById('main-nav-bar');
+                            const contentArea = document.getElementById('main-content-area');
                             
                             if (data.marqueeMsg) {
                                 if(marqueeBanner) marqueeBanner.classList.remove('hidden');
                                 if(marqueeText) marqueeText.textContent = data.marqueeMsg;
-                                // 調整頂部空間以容納跑馬燈
                                 if(header) header.style.top = '48px'; 
+                                if(navBar) navBar.style.top = '148px';
+                                if(contentArea) contentArea.style.paddingTop = '154px';
                             } else {
                                 if(marqueeBanner) marqueeBanner.classList.add('hidden');
                                 if(header) header.style.top = '16px';
+                                if(navBar) navBar.style.top = '104px';
+                                if(contentArea) contentArea.style.paddingTop = '110px';
                             }
                         }
                     }));
@@ -980,7 +1006,7 @@
             },
             notifications: {
                 toggle: () => { const p = document.getElementById('notif-panel'), b = document.getElementById('notif-badge'); if(p.classList.contains('hidden')) { UI.overlay.show(); p.classList.remove('hidden'); if(typeof gsap!=='undefined') gsap.fromTo(p, { x: '100%' }, { x: '0%', duration: 0.5, ease: "power3.out" }); b.classList.add('hidden'); } else { if(typeof gsap!=='undefined') gsap.to(p, { x: '100%', duration: 0.4, ease: "power3.in", onComplete: () => { p.classList.add('hidden'); UI.overlay.hide(); }}); else { p.classList.add('hidden'); UI.overlay.hide(); } } },
-                render: () => { const l = document.getElementById('notif-list'), b = document.getElementById('notif-badge'); if(!l) return; l.innerHTML = ''; if(state.notifications.length === 0) { l.innerHTML = '<div class="text-center py-16 text-theme-muted text-sm font-bold"><i class="fa-regular fa-bell-slash text-4xl mb-4 opacity-50"></i><br>無新通知</div>'; return; } if(b) b.classList.remove('hidden'); state.notifications.forEach(n => { let i = n.type==='warning'?'fa-triangle-exclamation text-yellow-500':(n.type==='task'?'fa-paper-plane text-brand-500':'fa-info-circle text-blue-500'); l.innerHTML += `<div class="p-5 bg-theme-input/50 rounded-2xl border border-theme-border shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-300"><div class="flex items-start gap-4"><div class="w-10 h-10 rounded-full bg-theme-card flex items-center justify-center shrink-0 border border-theme-border shadow-sm"><i class="fa-solid ${i} text-lg"></i></div><div><p class="text-[14px] text-theme-text font-bold leading-relaxed">${escapeHTML(n.message)}</p><p class="text-[11px] text-theme-muted mt-2 font-mono font-bold tracking-wide">${new Date(n.timestamp).toLocaleString()}</p></div></div></div>`; }); },
+                render: () => { const l = document.getElementById('notif-list'), b = document.getElementById('notif-badge'); if(!l) return; l.innerHTML = ''; if(state.notifications.length === 0) { l.innerHTML = '<div class="text-center py-16 text-theme-muted text-sm font-bold"><i class="fa-regular fa-bell-slash text-4xl mb-4 opacity-50"></i><br>無新通知</div>'; return; } if(b) b.classList.remove('hidden'); state.notifications.forEach(n => { let i = n.type==='warning'?'fa-triangle-exclamation text-yellow-500':(n.type==='task'?'fa-paper-plane text-brand-500':'fa-info-circle text-blue-500'); l.innerHTML += `<div class="p-5 bg-theme-input/50 rounded-2xl border border-theme-border shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-300"><div class="flex items-start gap-4"><div class="w-10 h-10 rounded-full bg-theme-card flex items-center justify-center shrink-0 border border-theme-border shadow-sm"><i class="fa-solid ${i} text-lg"></i></div><div><p class="text-[14px] text-theme-text font-bold leading-relaxed">${escapeHTML(n.message)}</p><p class="text-[11px] text-theme-muted mt-2 font-mono font-bold tracking-wide">${new Date(n.timestamp).toLocaleString('zh-HK')}</p></div></div></div>`; }); },
                 send: async (uid, m, t='info') => { try { const id = API.genId(); await setDoc(doc(db, `artifacts/${internalAppId}/users/${uid}/notifications`, id), { id, message: m, type: t, timestamp: new Date().toISOString() }); } catch(e) {} }
             },
             nav: {
@@ -1030,11 +1056,9 @@
                     const t = document.getElementById(`view-${vid}`); 
                     if(t) {
                         t.classList.add('active'); 
-                        // 🌟 視圖切換頂級動畫
                         if (typeof gsap !== 'undefined') gsap.fromTo(t, { opacity: 0, y: 30, scale: 0.98 }, { opacity: 1, y: 0, scale: 1, duration: 0.6, ease: "expo.out" }); 
                     }
                     
-                    // Allow body to scroll
                     window.scrollTo({top: 0, behavior: 'smooth'});
                     
                     state.currentView = vid; 
@@ -1085,7 +1109,6 @@
                     state.tasks.forEach(t => {
                         if (!t.dueDate) return;
                         const dateStr = t.dueDate.replace(/-/g, '');
-                        // 若無標題，使用內容前20字
                         const summaryTitle = t.title || (t.content ? t.content.substring(0, 20) + '...' : '任務');
                         ics += `BEGIN:VEVENT\nDTSTART;VALUE=DATE:${dateStr}\nDTEND;VALUE=DATE:${dateStr}\nSUMMARY:[${t.subject}] ${summaryTitle}\nDESCRIPTION:${(t.content || '').replace(/\n/g, '\\n')}\nSTATUS:${t.status === 'completed' ? 'CONFIRMED' : 'TENTATIVE'}\nEND:VEVENT\n`;
                     });
@@ -1101,7 +1124,6 @@
                     document.body.removeChild(a);
                     UI.notify('行事曆已成功匯出！', 'success');
                 },
-                // 🌟 新增：渲染科目與顏色管理介面
                 renderSubjects: () => {
                     const c = document.getElementById('settings-subjects-list');
                     if(!c) return;
@@ -1149,14 +1171,14 @@
                     state.groups.forEach(g => {
                         if (g.announcement) {
                             html += `
-                            <div class="bg-gradient-to-r from-blue-500/20 to-brand-500/10 border border-blue-500/30 p-4 rounded-2xl shadow-sm">
+                            <div class="bg-gradient-to-r from-blue-500/20 to-brand-500/10 border border-blue-500/30 p-5 rounded-3xl shadow-sm">
                                 <div class="flex items-start gap-4">
-                                    <div class="w-10 h-10 rounded-full bg-blue-500/20 flex items-center justify-center shrink-0">
-                                        <i class="fa-solid fa-bullhorn text-blue-500 text-lg"></i>
+                                    <div class="w-12 h-12 rounded-2xl bg-blue-500/20 flex items-center justify-center shrink-0">
+                                        <i class="fa-solid fa-bullhorn text-blue-500 text-xl"></i>
                                     </div>
                                     <div>
-                                        <p class="text-[10px] font-bold text-blue-500 uppercase tracking-widest mb-1">${escapeHTML(g.name)} 公告</p>
-                                        <p class="text-[14px] text-theme-text font-bold leading-relaxed whitespace-pre-wrap">${escapeHTML(g.announcement)}</p>
+                                        <p class="text-[11px] font-bold text-blue-500 uppercase tracking-widest mb-1.5">${escapeHTML(g.name)} 公告</p>
+                                        <p class="text-[15px] text-theme-text font-bold leading-relaxed whitespace-pre-wrap">${escapeHTML(g.announcement)}</p>
                                     </div>
                                 </div>
                             </div>`;
@@ -1169,7 +1191,6 @@
                     const todo = document.getElementById('todo-list'), hist = document.getElementById('history-list'); 
                     if(!todo || !hist) return;
                     let tc=0, hc=0; todo.innerHTML = ''; hist.innerHTML = '';
-                    const today = new Date().toISOString().split('T')[0];
                     
                     let displayTasks = [...state.tasks];
                     
@@ -1184,72 +1205,89 @@
                         return state.filters.sortDesc ? d2.localeCompare(d1) : d1.localeCompare(d2);
                     });
 
-                    // 🌟 卡片渲染 (加入流動色彩與比例排版)
+                    // 🌟 極致黃金比例卡片渲染
                     let newHtmlTodo = '';
                     let newHtmlHist = '';
 
                     displayTasks.forEach(t => {
                         const done = t.status === 'completed', exam = t.type === 'exam';
-                        const dateInfo = API.formatDateLabel(t.dueDate);
+                        const dateInfo = formatDateExact(t.dueDate);
                         
-                        // 取得科目色彩
                         const subjObj = state.subjects.find(s => s.name === t.subject) || { color: '#6366f1' };
                         const hexColor = exam ? '#ec4899' : subjObj.color;
                         
-                        const cStyle = `style="--card-glow: ${hexColor};"`;
-                        const cClass = `glass-card dynamic-glow-card p-6 relative flex flex-col hover:-translate-y-1.5 transition-all duration-500 task-card-anim ${done?'opacity-60':''} ${dateInfo.isOverdue && !done?'ring-2 ring-red-500/50 shadow-[0_0_15px_rgba(239,68,68,0.2)]':''}`; 
+                        const cStyle = `style="--subj-color-soft: ${hexToRgba(hexColor, 1)};"`;
+                        const cClass = `glass-card task-card-anim p-6 relative flex flex-col hover:shadow-lg transition-all duration-300 ${done?'opacity-50 grayscale-[20%]':''} ${dateInfo.isOverdue && !done?'ring-2 ring-red-500/50 shadow-[0_0_15px_rgba(239,68,68,0.1)]':''}`; 
                         
-                        const bColor = exam ? 'bg-pink-500/10 text-pink-600 dark:text-pink-400 border-pink-500/20' : '';
-                        const dynamicBColor = !exam ? `background: ${hexColor}20; color: ${hexColor}; border: 1px solid ${hexColor}40;` : '';
-                        const bText = exam ? '測驗' : escapeHTML(t.subject);
+                        const tagBaseClass = "px-3 py-1 rounded-lg text-[11px] font-bold tracking-widest uppercase border";
                         
-                        const broadcastTag = t.groupId ? `<span class="bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 px-2.5 py-1 rounded-lg text-[10px] font-bold border border-indigo-500/20 shadow-sm ml-2">廣播</span>` : '';
-                        const dateTagColor = dateInfo.isOverdue && !done ? 'bg-red-500/10 text-red-600 dark:text-red-400 border border-red-500/20' : 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20';
+                        let bTagHtml = '';
+                        if (exam) {
+                            bTagHtml = `<span class="${tagBaseClass} bg-pink-500/10 text-pink-600 dark:text-pink-400 border-pink-500/20">測驗</span>`;
+                        } else {
+                            bTagHtml = `<span class="${tagBaseClass}" style="background: ${hexToRgba(hexColor, 0.15)}; color: ${hexColor}; border-color: ${hexToRgba(hexColor, 0.3)};">${escapeHTML(t.subject)}</span>`;
+                        }
+                        
+                        const broadcastTag = t.groupId ? `<span class="${tagBaseClass} bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 border-indigo-500/20 ml-2">廣播</span>` : '';
+                        
+                        const dateTagHtml = !done && dateInfo.diff ? `<span class="${tagBaseClass} ${dateInfo.statusClass}">${dateInfo.diff}</span>` : '';
 
                         const cHtml = escapeHTML(t.content || '').replace(/\n/g, '<br>');
-                        const imgHtml = t.attachment ? `<div class="mt-4 overflow-hidden rounded-2xl border border-theme-border cursor-pointer shadow-sm relative group" onclick="window.open('${t.attachment}', '_blank')"><div class="absolute inset-0 bg-black/30 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center text-white z-10"><i class="fa-solid fa-expand text-3xl drop-shadow-md transform scale-50 group-hover:scale-100 transition-transform duration-300"></i></div><img src="${t.attachment}" class="w-full h-40 object-cover transform group-hover:scale-105 transition-transform duration-500"></div>` : '';
+                        
+                        // 🖼️ 圖片特別版型設計 (Elegant full-width banner)
+                        const imgHtml = t.attachment ? `
+                            <div class="mt-4 relative rounded-2xl overflow-hidden shadow-sm border border-theme-border group/img cursor-pointer bg-theme-input" onclick="window.open('${t.attachment}', '_blank')">
+                                <div class="absolute inset-0 bg-black/40 opacity-0 group-hover/img:opacity-100 transition-opacity duration-300 flex items-center justify-center z-10">
+                                    <i class="fa-solid fa-magnifying-glass-plus text-white text-3xl transform scale-50 group-hover/img:scale-100 transition-transform duration-300"></i>
+                                </div>
+                                <img src="${t.attachment}" class="w-full h-32 object-cover transform group-hover/img:scale-105 transition-transform duration-500">
+                            </div>
+                        ` : '';
+
+                        // ⭕ 完成按鈕邏輯
+                        const checkBtn = !done ? `
+                            <button class="w-7 h-7 rounded-full border-2 border-theme-border hover:border-brand-500 flex items-center justify-center text-transparent hover:text-white transition-all duration-300 group shadow-sm bg-theme-bg/50" onclick="app.tasks.markComplete('${t.id}', this.closest('.task-card-anim'))">
+                                <div class="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity rounded-full bg-brand-500"></div>
+                                <i class="fa-solid fa-check text-[12px] relative z-10 transform scale-50 group-hover:scale-100 transition-transform duration-300"></i>
+                            </button>
+                        ` : `
+                            <div class="w-7 h-7 rounded-full flex items-center justify-center text-white shadow-inner bg-emerald-500">
+                                <i class="fa-solid fa-check text-[12px]"></i>
+                            </div>
+                        `;
 
                         const cardHTML = `
                             <div class="${cClass}" id="task-${t.id}" ${cStyle}>
-                                <div class="flex items-start gap-4 w-full flex-1">
-                                    ${!done ? `
-                                        <button class="w-7 h-7 shrink-0 rounded-full border-2 border-theme-muted hover:border-[${hexColor}] flex items-center justify-center text-transparent hover:text-white transition-all duration-300 mt-1 group overflow-hidden relative shadow-sm" onclick="app.tasks.markComplete('${t.id}', document.getElementById('task-${t.id}'))">
-                                            <div class="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity" style="background-color: ${hexColor}"></div>
-                                            <i class="fa-solid fa-check text-[11px] relative z-10 transform scale-50 group-hover:scale-100 transition-transform duration-300"></i>
-                                        </button>
-                                    ` : `
-                                        <div class="w-7 h-7 shrink-0 rounded-full border-2 border-transparent flex items-center justify-center text-white mt-1 shadow-md" style="background-color: ${hexColor}">
-                                            <i class="fa-solid fa-check text-[11px]"></i>
-                                        </div>
-                                    `}
+                                <div class="flex gap-4 relative z-10">
+                                    <div class="pt-1 shrink-0">${checkBtn}</div>
                                     
-                                    <div class="flex-1 min-w-0 flex flex-col h-full">
-                                        <div class="flex justify-between items-start mb-3">
-                                            <div class="flex items-center flex-wrap">
-                                                <span class="px-2.5 py-1 rounded-lg text-[10px] font-bold tracking-wider shadow-sm ${bColor}" style="${dynamicBColor}">${bText}</span>
+                                    <div class="flex-1 min-w-0 flex flex-col">
+                                        <div class="flex justify-between items-start mb-3 gap-2">
+                                            <div class="flex flex-wrap items-center">
+                                                ${bTagHtml}
                                                 ${broadcastTag}
                                             </div>
-                                            ${!done ? `<span class="${dateTagColor} px-2.5 py-1 rounded-lg text-[10px] font-bold shadow-sm whitespace-nowrap ml-2 tracking-wide">${dateInfo.diff}</span>` : ''}
+                                            ${dateTagHtml}
                                         </div>
                                         
-                                        <div class="flex-1 flex flex-col justify-center">
-                                            ${t.title ? `<h3 class="text-[18px] font-black text-theme-text leading-tight mb-1.5 tracking-tight font-display ${done?'line-through opacity-50':''}">${escapeHTML(t.title)}</h3>` : ''}
-                                            ${cHtml?`<p class="${t.title ? 'text-[14px] text-theme-muted mt-2' : 'text-[18px] font-bold text-theme-text mt-1'} font-mono line-clamp-5 leading-relaxed ${done&&!t.title?'line-through opacity-50':''}">${cHtml}</p>`:''}
-                                        </div>
+                                        ${t.title ? `<h3 class="text-[18px] font-black text-theme-text leading-tight mb-1.5 tracking-tight font-display ${done?'line-through opacity-50':''}">${escapeHTML(t.title)}</h3>` : ''}
+                                        ${cHtml ? `<p class="${t.title ? 'text-[14px] text-theme-muted mt-1' : 'text-[17px] font-bold text-theme-text'} font-mono line-clamp-4 leading-relaxed ${done&&!t.title?'line-through opacity-50':''}">${cHtml}</p>` : ''}
+                                        
                                         ${imgHtml}
-                                    </div>
-                                </div>
-                                <div class="mt-5 pt-4 border-t border-theme-border/50 flex justify-between items-center shrink-0 relative z-10 bg-theme-bg/30 -mx-6 -mb-6 px-6 pb-4 rounded-b-[24px]">
-                                    <div class="text-[12px] font-bold ${dateInfo.isOverdue && !done ?'text-red-500':'text-theme-muted'} flex items-center gap-2 tracking-wide mt-2">
-                                        <i class="fa-regular fa-calendar text-[14px]"></i> ${dateInfo.full}
-                                    </div>
-                                    <div class="flex items-center gap-1 mt-2">
-                                        ${!done ? `
-                                            <button class="w-9 h-9 rounded-full text-theme-muted hover:text-brand-500 hover:bg-brand-500/10 transition-all active:scale-90 flex items-center justify-center" title="編輯" onclick="app.tasks.edit('${t.id}')"><i class="fa-solid fa-pen text-[13px]"></i></button>
-                                            <button class="w-9 h-9 rounded-full text-theme-muted hover:text-red-500 hover:bg-red-500/10 transition-all active:scale-90 flex items-center justify-center" title="刪除" onclick="app.tasks.confirmDelete('${t.id}')"><i class="fa-regular fa-trash-can text-[14px]"></i></button>
-                                        ` : `
-                                            <button class="w-9 h-9 rounded-full text-theme-muted hover:text-red-500 hover:bg-red-500/10 transition-all active:scale-90 flex items-center justify-center" title="刪除" onclick="app.tasks.confirmDelete('${t.id}')"><i class="fa-regular fa-trash-can text-[14px]"></i></button>
-                                        `}
+                                        
+                                        <div class="flex justify-between items-end mt-4 pt-4 border-t border-theme-border/50">
+                                            <div class="text-[12px] font-bold ${dateInfo.isOverdue && !done ?'text-red-500':'text-theme-muted'} flex items-center gap-2 tracking-wide">
+                                                <i class="fa-regular fa-calendar text-[14px]"></i> ${dateInfo.full}
+                                            </div>
+                                            <div class="flex items-center gap-2 shrink-0">
+                                                ${!done ? `
+                                                    <button class="w-8 h-8 rounded-full text-theme-muted hover:text-brand-500 hover:bg-theme-input transition-all active:scale-90 flex items-center justify-center" title="編輯" onclick="app.tasks.edit('${t.id}')"><i class="fa-solid fa-pen text-[13px]"></i></button>
+                                                    <button class="w-8 h-8 rounded-full text-theme-muted hover:text-red-500 hover:bg-red-500/10 transition-all active:scale-90 flex items-center justify-center" title="刪除" onclick="app.tasks.confirmDelete('${t.id}')"><i class="fa-regular fa-trash-can text-[14px]"></i></button>
+                                                ` : `
+                                                    <button class="w-8 h-8 rounded-full text-theme-muted hover:text-red-500 hover:bg-red-500/10 transition-all active:scale-90 flex items-center justify-center" title="刪除" onclick="app.tasks.confirmDelete('${t.id}')"><i class="fa-regular fa-trash-can text-[14px]"></i></button>
+                                                `}
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>`;
@@ -1263,11 +1301,11 @@
                     const elE1 = document.getElementById('todo-empty'); if(elE1) elE1.style.display = tc===0?'flex':'none';
                     const elE2 = document.getElementById('history-empty'); if(elE2) elE2.style.display = hc===0?'flex':'none';
 
-                    // 🌟 骨牌式顯示動畫
+                    // 🌟 骨牌式載入動畫
                     if (typeof gsap !== 'undefined') {
                         gsap.fromTo(".task-card-anim", 
-                            { opacity: 0, y: 40, scale: 0.95 }, 
-                            { opacity: 1, y: 0, scale: 1, duration: 0.6, stagger: 0.05, ease: "back.out(1.2)", clearProps: "all" }
+                            { opacity: 0, y: 30, scale: 0.95 }, 
+                            { opacity: 1, y: 0, scale: 1, duration: 0.5, stagger: 0.05, ease: "back.out(1.2)", clearProps: "all" }
                         );
                     }
                 },
@@ -1284,13 +1322,13 @@
                         const hex = s.color || '#6366f1';
                         const rgbaBg = hexToRgba(hex, 0.15);
                         
-                        b.className = `shrink-0 px-5 py-3 rounded-2xl font-bold text-[14px] transition-all duration-400 font-literary tracking-wider border shadow-sm ${isActive ? 'scale-105' : 'border-transparent hover:bg-theme-border opacity-70 hover:opacity-100'}`; 
+                        b.className = `shrink-0 px-6 py-3.5 rounded-2xl font-bold text-[14px] transition-all duration-400 font-literary tracking-wider border shadow-sm ${isActive ? 'scale-105' : 'border-transparent hover:bg-theme-border opacity-70 hover:opacity-100'}`; 
                         
                         if(isActive) {
                             b.style.backgroundColor = rgbaBg;
                             b.style.borderColor = hex;
                             b.style.color = hex;
-                            b.style.boxShadow = `0 4px 15px ${hexToRgba(hex, 0.3)}`;
+                            b.style.boxShadow = `0 5px 15px ${hexToRgba(hex, 0.3)}`;
                         } else {
                             b.style.backgroundColor = 'var(--input)';
                             b.style.color = 'var(--text-muted)';
@@ -1325,7 +1363,7 @@
                                 if(pc) pc.classList.remove('hidden');
                             }
                             
-                            if(l) l.innerHTML += `<div class="bg-theme-input/50 p-5 rounded-2xl border border-theme-border flex justify-between items-center hover:border-brand-500/30 hover:shadow-md transition-all duration-300 hover:-translate-y-1"><div class="flex-1 min-w-0"><p class="text-[16px] font-black text-theme-text truncate tracking-tight">${escapeHTML(g.name)} ${isAdmin?'<span class="bg-pink-500/10 text-pink-500 text-[10px] px-2 py-1 rounded-lg ml-2 border border-pink-500/20 align-text-bottom tracking-widest">ADMIN</span>':''}</p><p class="text-[12px] text-theme-muted font-mono mt-2 font-bold tracking-wide">代碼: ${g.code} <span class="mx-2 opacity-30">|</span> 成員: ${g.members.length}</p></div>${actionBtn}</div>`; 
+                            if(l) l.innerHTML += `<div class="bg-theme-input/50 p-5 rounded-3xl border border-theme-border flex justify-between items-center hover:border-brand-500/30 hover:shadow-md transition-all duration-300 hover:-translate-y-1"><div class="flex-1 min-w-0"><p class="text-[17px] font-black text-theme-text truncate tracking-tight">${escapeHTML(g.name)} ${isAdmin?'<span class="bg-pink-500/10 text-pink-500 text-[10px] px-2.5 py-1 rounded-lg ml-2 border border-pink-500/20 align-text-bottom tracking-widest">ADMIN</span>':''}</p><p class="text-[12px] text-theme-muted font-mono mt-2 font-bold tracking-wide">代碼: ${g.code} <span class="mx-2 opacity-30">|</span> 成員: ${g.members.length}</p></div>${actionBtn}</div>`; 
                         });
                     }
                 }
@@ -1617,7 +1655,7 @@
                         if (saveBtn) {
                             if(typeof gsap !== 'undefined') gsap.killTweensOf(saveBtn);
                             saveBtn.innerHTML = '<i class="fa-solid fa-check text-2xl"></i> <span class="tracking-widest">SUCCESS!</span>';
-                            saveBtn.className = 'w-full mt-auto h-20 bg-gradient-to-r from-emerald-500 to-emerald-400 text-white rounded-2xl font-black shadow-[0_10px_30px_rgba(16,185,129,0.5)] transition-all duration-300 flex justify-center items-center gap-3 text-[18px] tracking-wider border border-transparent';
+                            saveBtn.className = 'w-full mt-auto h-20 bg-gradient-to-r from-emerald-500 to-emerald-400 text-white rounded-3xl font-black shadow-[0_10px_30px_rgba(16,185,129,0.5)] transition-all duration-300 flex justify-center items-center gap-3 text-[18px] tracking-wider border border-transparent';
                             if(typeof gsap !== 'undefined') gsap.fromTo(saveBtn, { scale: 0.9 }, { scale: 1.05, duration: 0.6, ease: "elastic.out(1, 0.4)" });
                         }
                         
@@ -1626,7 +1664,7 @@
                             setTimeout(() => {
                                 if(saveBtn) {
                                     saveBtn.innerHTML = originalBtnHtml;
-                                    saveBtn.className = 'w-full mt-auto h-20 bg-gradient-to-r from-brand-600 to-brand-500 hover:from-brand-500 hover:to-brand-400 text-white rounded-2xl font-black shadow-[0_10px_30px_rgba(99,102,241,0.4)] hover:-translate-y-1 hover:shadow-[0_15px_40px_rgba(99,102,241,0.6)] active:scale-95 transition-all duration-300 flex justify-center items-center gap-3 text-[18px] tracking-wider border border-transparent overflow-hidden relative group';
+                                    saveBtn.className = 'w-full mt-auto h-20 bg-gradient-to-r from-brand-600 to-brand-500 hover:from-brand-500 hover:to-brand-400 text-white rounded-[24px] font-black shadow-[0_10px_30px_rgba(99,102,241,0.4)] hover:-translate-y-1 hover:shadow-[0_15px_40px_rgba(99,102,241,0.6)] active:scale-95 transition-all duration-300 flex justify-center items-center gap-3 text-[18px] tracking-wider border border-transparent overflow-hidden relative group';
                                 }
                             }, 500);
                         }, 800);
@@ -1636,7 +1674,7 @@
                         if(saveBtn) {
                             if(typeof gsap !== 'undefined') gsap.killTweensOf(saveBtn);
                             saveBtn.innerHTML = originalBtnHtml;
-                            saveBtn.className = 'w-full mt-auto h-20 bg-gradient-to-r from-brand-600 to-brand-500 hover:from-brand-500 hover:to-brand-400 text-white rounded-2xl font-black shadow-[0_10px_30px_rgba(99,102,241,0.4)] hover:-translate-y-1 hover:shadow-[0_15px_40px_rgba(99,102,241,0.6)] active:scale-95 transition-all duration-300 flex justify-center items-center gap-3 text-[18px] tracking-wider border border-transparent overflow-hidden relative group';
+                            saveBtn.className = 'w-full mt-auto h-20 bg-gradient-to-r from-brand-600 to-brand-500 hover:from-brand-500 hover:to-brand-400 text-white rounded-[24px] font-black shadow-[0_10px_30px_rgba(99,102,241,0.4)] hover:-translate-y-1 hover:shadow-[0_15px_40px_rgba(99,102,241,0.6)] active:scale-95 transition-all duration-300 flex justify-center items-center gap-3 text-[18px] tracking-wider border border-transparent overflow-hidden relative group';
                         }
                     }
                 },
@@ -1822,7 +1860,7 @@
                     let dayHtml = '';
                     let useDays = ttMode === 'week' ? ['星期一', '星期二', '星期三', '星期四', '星期五'] : state.customDays;
                     
-                    dayHtml = useDays.map(d => `<button class="whitespace-nowrap px-5 py-3 rounded-2xl font-bold text-[14px] transition-all duration-300 font-literary tracking-wide border shadow-sm snap-center shrink-0 ${state.currentDayTab===d?'bg-theme-card text-brand-600 border-brand-500/50 scale-105 ring-2 ring-brand-500/20':'bg-theme-input text-theme-muted border-transparent hover:bg-theme-border'}" onclick="app.timetable.changeDay('${safeStr(d)}')">${escapeHTML(d)}</button>`).join('');
+                    dayHtml = useDays.map(d => `<button class="whitespace-nowrap px-6 py-3.5 rounded-2xl font-bold text-[14px] transition-all duration-300 font-literary tracking-wide border shadow-sm snap-center shrink-0 ${state.currentDayTab===d?'bg-theme-card text-brand-600 border-brand-500/50 scale-105 ring-2 ring-brand-500/20':'bg-theme-input text-theme-muted border-transparent hover:bg-theme-border opacity-80 hover:opacity-100'}" onclick="app.timetable.changeDay('${safeStr(d)}')">${escapeHTML(d)}</button>`).join('');
                     
                     if (ttMode !== 'week') {
                         dayHtml += `<button class="w-12 h-12 shrink-0 flex items-center justify-center rounded-2xl bg-theme-input text-theme-muted hover:text-brand-500 transition-colors shadow-sm border border-transparent hover:border-theme-border snap-center active:scale-95" onclick="app.timetable.openManageDaysModal()"><i class="fa-solid fa-gear"></i></button>`;
@@ -1884,7 +1922,7 @@
                             </div>
                         `).join('');
                     } else {
-                        // 🌟 唯讀模式：高級直向時間軸 (Vertical Timeline)
+                        // 🌟 唯讀模式：高級直向時間軸
                         html += `<div class="relative pl-8 py-4 mt-2">`;
                         html += `<div class="absolute left-[19px] top-6 bottom-6 w-[2px] bg-theme-border/80 rounded-full"></div>`;
                         
@@ -1903,9 +1941,9 @@
                             
                             html += `
                                 <div class="relative mb-8 last:mb-2 group tt-slot-anim">
-                                    <div class="absolute -left-[27px] top-1.5 w-4 h-4 rounded-full ring-4 ring-theme-card transition-colors duration-500 z-10" style="background-color: var(--border); group-hover: background-color: ${hexColor}"></div>
+                                    <div class="absolute -left-[27px] top-1.5 w-4 h-4 rounded-full ring-4 ring-theme-card transition-colors duration-500 z-10" style="background-color: var(--theme-border); group-hover: background-color: ${hexColor}"></div>
                                     <div class="flex flex-col gap-1 pr-2">
-                                        <p class="text-[12px] text-theme-muted font-mono font-bold tracking-wide flex items-center gap-2">${timeStr} <span class="px-2 py-0.5 bg-theme-input rounded-md text-[10px] font-sans text-brand-500">${escapeHTML(s.label)}</span></p>
+                                        <p class="text-[12px] text-theme-muted font-mono font-bold tracking-wide flex items-center gap-2">${timeStr} <span class="px-2 py-0.5 bg-theme-input rounded-md text-[10px] font-sans text-brand-500 border border-theme-border/50">${escapeHTML(s.label)}</span></p>
                                         <div class="flex justify-between items-center mt-1">
                                             <h4 class="text-[20px] font-black text-theme-text font-literary tracking-wide group-hover:translate-x-1 transition-transform duration-300" style="group-hover: color: ${hexColor}">${escapeHTML(s.subject) || '<span class="opacity-30">空堂 / 休息</span>'}</h4>
                                             <i class="fa-solid fa-check text-[10px] text-theme-muted opacity-30 group-hover:opacity-100 transition-opacity"></i>
@@ -1944,7 +1982,7 @@
                     state.subjects.forEach(sub => {
                         const hex = sub.color || '#6366f1';
                         const isActive = currentVal === sub.name;
-                        const dynamicBg = isActive ? `background: ${hex}20; color: ${hex}; border-color: ${hex}50;` : '';
+                        const dynamicBg = isActive ? `background: ${hexToRgba(hex, 0.15)}; color: ${hex}; border-color: ${hexToRgba(hex, 0.4)};` : '';
                         html += `<button onclick="app.timetable.updateSlotInline('${slotId}', 'subject', decodeURIComponent('${safeStr(sub.name)}')); UI.sheet.close();" class="whitespace-nowrap px-5 py-3 rounded-2xl font-bold text-[14px] transition-all duration-300 font-literary tracking-wide border shadow-sm ${isActive ? 'scale-105 ring-2' : 'bg-theme-input text-theme-muted border-transparent hover:bg-theme-border'}" style="${dynamicBg}">${escapeHTML(sub.name)}</button>`;
                     });
                     

@@ -6,7 +6,7 @@
     <meta name="theme-color" content="#6366f1">
     <title>電子手冊 Homework Record | Lumina Task</title>
     
-    <!-- PWA Manifest (Base64 Encoded for Single File) -->
+    <!-- PWA Manifest -->
     <link rel="manifest" href="data:application/manifest+json;base64,eyAKICAibmFtZSI6ICJIb21ld29yayBSZWNvcmQiLAogICJzaG9ydF9uYW1lIjogIkx1bWluYSIsCiAgInN0YXJ0X3VybCI6ICIuIiwKICAiZGlzcGxheSI6ICJzdGFuZGFsb25lIiwKICAiYmFja2dyb3VuZF9jb2xvciI6ICIjMDMwMzA1IiwKICAidGhlbWVfY29sb3IiOiAiIzYzNjZmMSIsCiAgImljb25zIjogW3sic3JjIjogImh0dHBzOi8vd3d3LnN2Z3JlcG8uY29tL3Nob3cvNDc1NjU2L2dvb2dsZS1jb2xvci5zdmciLCAic2l6ZXMiOiAiMTkyeDE5MiIsICJ0eXBlIjogImltYWdlL3N2Zyt4bWwifV0KfQ==">
 
     <!-- Tailwind CSS -->
@@ -51,14 +51,14 @@
         :root { 
             --safe-area-inset-bottom: env(safe-area-inset-bottom, 20px);
             /* 淺色模式變數 */
-            --bg: #f1f5f9;
+            --bg: #f8fafc;
             --text: #0f172a;
             --text-muted: #64748b;
-            --border: rgba(0,0,0,0.1);
-            --card: rgba(255,255,255,0.8);
-            --input: rgba(0,0,0,0.05);
-            --glass-border: rgba(0,0,0,0.1);
-            --nav-bg: rgba(255, 255, 255, 0.4);
+            --border: rgba(0,0,0,0.06);
+            --card: #ffffff;
+            --input: rgba(0,0,0,0.04);
+            --glass-border: rgba(0,0,0,0.08);
+            --nav-bg: rgba(248, 250, 252, 0.4);
             --orb-opacity: 0.8;
         }
 
@@ -101,14 +101,14 @@
         }
 
         /* --- 卡片與輸入框設計 --- */
-        .glass-card { background: var(--card); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); border: 1px solid var(--glass-border); border-radius: 20px; box-shadow: 0 8px 32px -4px rgba(0,0,0,0.1); transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
+        .glass-card { background: var(--card); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border: 1px solid var(--glass-border); border-radius: 20px; box-shadow: 0 10px 40px -10px rgba(0,0,0,0.05); transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
         .dark .glass-card { box-shadow: 0 8px 32px -4px rgba(0,0,0,0.5); }
 
         .premium-input { background: var(--input); border: 1px solid var(--border); color: var(--text); padding: 1rem; border-radius: 16px; width: 100%; font-size: 1rem; transition: all 0.3s ease; }
         .premium-input:focus { outline: none; border-color: #6366f1; background: var(--input); box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2); }
 
         .pill-btn { white-space: nowrap; padding: 0.5rem 1.25rem; border-radius: 9999px; background: var(--input); border: 1px solid var(--border); color: var(--text-muted); font-weight: 500; font-size: 0.875rem; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); cursor: pointer; }
-        .pill-btn:hover { background: var(--border); transform: translateY(-2px); color: var(--text); box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+        .pill-btn:hover { background: var(--border); transform: translateY(-2px); color: var(--text); box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
         .pill-btn.active { background: #6366f1; border-color: #818cf8; color: white; box-shadow: 0 4px 15px rgba(99, 102, 241, 0.4); transform: translateY(-2px) scale(1.05); }
 
         .top-nav-item { cursor: pointer; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
@@ -144,7 +144,7 @@
         </div>
     </div>
 
-    <!-- 1. 登入頁面 (修復淺色模式下 bg-opacity 的問題) -->
+    <!-- 1. 登入頁面 -->
     <section id="view-auth" class="fixed inset-0 z-[100] flex flex-col items-center justify-center px-6 hidden bg-white/60 dark:bg-[#030305]/60 backdrop-blur-md">
         <div class="w-full max-w-sm glass-card p-8 text-center relative overflow-hidden shadow-2xl border border-theme-border">
             <div class="absolute -top-20 -right-20 w-40 h-40 bg-brand-500/20 blur-3xl rounded-full"></div>
@@ -188,10 +188,10 @@
         <button onclick="app.auth.logout()" class="mt-8 px-6 py-2 rounded-full border border-theme-border text-xs text-theme-muted hover:bg-theme-input transition">安全登出</button>
     </div>
 
-    <!-- 3. 主系統核心 (已重構為全局滾動) -->
+    <!-- 3. 主系統核心 -->
     <div id="app-core" class="hidden flex-col h-full w-full relative">
         
-        <!-- 第一層：上方標題加圖標頭像 (固定在頂部，不隨頁面滾動) -->
+        <!-- 第一層：上方標題加圖標頭像 -->
         <header class="shrink-0 pt-10 md:pt-12 pb-4 flex justify-between items-center px-6 md:max-w-5xl lg:max-w-6xl md:mx-auto w-full z-40 relative">
             <div>
                 <h1 class="text-3xl md:text-4xl font-bold tracking-wide text-theme-text font-literary drop-shadow-sm">電子手冊</h1>
@@ -214,9 +214,8 @@
         <!-- 整個可滾動區域 -->
         <main id="main-scroll-area" class="flex-1 overflow-y-auto w-full relative z-10 no-scrollbar">
             
-            <!-- 浮空膠囊導航 (Sticky: 往下滾動時會自動吸附在螢幕頂端) -->
+            <!-- 浮空膠囊導航 (Sticky) -->
             <div class="sticky top-0 z-40 py-2 px-4 shrink-0 pointer-events-none transition-colors duration-500">
-                <!-- max-w-full on mobile, bounded on tablet/desktop -->
                 <div class="flex gap-1.5 p-1.5 bg-white/60 dark:bg-[#030305]/60 backdrop-blur-2xl rounded-2xl border border-theme-border shadow-[0_8px_30px_rgba(0,0,0,0.12)] dark:shadow-[0_8px_30px_rgba(0,0,0,0.5)] overflow-x-auto no-scrollbar max-w-full md:max-w-lg mx-auto pointer-events-auto">
                     <button onclick="app.nav.switch('home')" id="nav-home" class="top-nav-item flex-1 py-2 px-4 text-[13px] font-bold rounded-xl active bg-white dark:bg-white/10 text-brand-600 dark:text-white shadow-md whitespace-nowrap flex items-center justify-center gap-1.5">
                         <i class="fa-solid fa-layer-group"></i> 任務
@@ -235,7 +234,7 @@
 
             <!-- 第二層：動態欄 (Widgets) -->
             <div class="grid grid-cols-2 md:grid-cols-4 gap-3 px-6 md:max-w-5xl lg:max-w-6xl md:mx-auto w-full mt-3 mb-6">
-                <div class="glass-card p-3.5 shadow-[0_0_15px_rgba(99,102,241,0.15)] hover:shadow-[0_0_25px_rgba(99,102,241,0.3)] transition-all">
+                <div class="glass-card p-3.5 shadow-[0_0_15px_rgba(99,102,241,0.05)] hover:shadow-[0_0_25px_rgba(99,102,241,0.15)] dark:shadow-[0_0_15px_rgba(99,102,241,0.15)] dark:hover:shadow-[0_0_25px_rgba(99,102,241,0.3)] transition-all">
                     <div class="flex justify-between items-center mb-1">
                         <span class="text-[10px] text-theme-muted font-semibold uppercase tracking-wider"><i class="fa-solid fa-satellite-dish mr-1 text-emerald-500 animate-pulse"></i>實時課堂</span>
                     </div>
@@ -254,7 +253,7 @@
                     </div>
                     <h3 class="text-sm font-bold text-theme-text mt-1"><span id="widget-future-count" class="text-xl text-theme-muted mr-1">0</span>項</h3>
                 </div>
-                <div class="glass-card p-3.5 border-pink-500/30 cursor-pointer hover:-translate-y-1 hover:shadow-[0_0_20px_rgba(239,68,68,0.2)] active:scale-95 transition-all duration-300" onclick="app.nav.switch('home')">
+                <div class="glass-card p-3.5 border-pink-500/10 dark:border-pink-500/30 cursor-pointer hover:-translate-y-1 hover:shadow-[0_0_20px_rgba(239,68,68,0.1)] dark:hover:shadow-[0_0_20px_rgba(239,68,68,0.2)] active:scale-95 transition-all duration-300" onclick="app.nav.switch('home')">
                     <div class="flex justify-between items-center mb-1">
                         <span class="text-[10px] text-pink-500 font-semibold uppercase tracking-wider"><i class="fa-solid fa-triangle-exclamation mr-1"></i>測驗/考試</span>
                     </div>
@@ -272,20 +271,20 @@
                         <h2 class="text-xl font-bold text-theme-text tracking-tight">待辦任務</h2>
                     </div>
 
-                    <!-- 🌟 全新作業過濾器 (Smart Task Filters - Custom Dropdown Models) -->
+                    <!-- 作業過濾器 (Smart Task Filters) -->
                     <div class="flex gap-2 mb-6 px-2 md:px-0 overflow-x-auto no-scrollbar md:max-w-3xl md:mx-auto">
-                        <button id="filter-subject-btn" onclick="app.tasks.openFilterSubjectModal()" class="bg-theme-input text-theme-text text-[11px] font-bold px-3 py-2 rounded-full border border-theme-border outline-none focus:border-brand-500 transition-colors flex items-center gap-1.5 shrink-0 hover:-translate-y-0.5 active:scale-95 shadow-sm">
-                            <span id="filter-subject-text">所有科目</span> <i class="fa-solid fa-chevron-down text-[9px] opacity-70"></i>
+                        <button id="filter-subject-btn" onclick="app.tasks.openFilterSubjectModal()" class="bg-theme-input text-theme-text text-[11px] font-bold px-4 py-2.5 rounded-full border border-theme-border outline-none focus:border-brand-500 transition-colors flex items-center gap-2 shrink-0 hover:-translate-y-0.5 active:scale-95 shadow-sm">
+                            <span id="filter-subject-text">所有科目</span> <i class="fa-solid fa-chevron-down text-[9px] opacity-60"></i>
                         </button>
-                        <button id="filter-incomplete" onclick="app.tasks.toggleIncompleteFilter()" class="bg-theme-input text-theme-muted text-[11px] font-bold px-3 py-2 rounded-full border border-theme-border whitespace-nowrap transition-colors flex items-center gap-1.5 shrink-0 hover:-translate-y-0.5 active:scale-95 shadow-sm">
+                        <button id="filter-incomplete" onclick="app.tasks.toggleIncompleteFilter()" class="bg-theme-input text-theme-muted text-[11px] font-bold px-4 py-2.5 rounded-full border border-theme-border whitespace-nowrap transition-colors flex items-center gap-2 shrink-0 hover:-translate-y-0.5 active:scale-95 shadow-sm">
                             <i class="fa-solid fa-circle-check"></i> <span>僅未完成</span>
                         </button>
-                        <button id="filter-sort" onclick="app.tasks.toggleSortFilter()" class="bg-theme-input text-brand-500 text-[11px] font-bold px-3 py-2 rounded-full border border-theme-border whitespace-nowrap transition-colors flex items-center gap-1.5 shrink-0 hover:-translate-y-0.5 active:scale-95 shadow-sm">
+                        <button id="filter-sort" onclick="app.tasks.toggleSortFilter()" class="bg-theme-input text-brand-500 text-[11px] font-bold px-4 py-2.5 rounded-full border border-theme-border whitespace-nowrap transition-colors flex items-center gap-2 shrink-0 hover:-translate-y-0.5 active:scale-95 shadow-sm">
                             <i class="fa-solid fa-arrow-down-short-wide"></i> <span>繳交日期</span>
                         </button>
                     </div>
 
-                    <div id="todo-list" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"></div>
+                    <div id="todo-list" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5"></div>
                     <div id="todo-empty" class="hidden flex-col items-center justify-center py-24 text-theme-muted">
                         <div class="w-16 h-16 mb-4 rounded-full glass-card flex items-center justify-center border border-theme-border">
                             <i class="fa-solid fa-mug-hot text-2xl opacity-50"></i>
@@ -298,9 +297,8 @@
                     <div class="flex justify-between items-end mb-4 px-2 md:px-0 md:max-w-3xl md:mx-auto">
                         <h2 class="text-xl font-bold text-theme-text tracking-tight">時間表</h2>
                     </div>
-                    <!-- 🌟 動態日別選擇器 (Week or Day 1-6) -->
+                    <!-- 動態日別選擇器 (Week or Day 1-6) -->
                     <div id="timetable-day-selector" class="flex gap-2 overflow-x-auto no-scrollbar pb-4 mb-2 snap-x md:justify-center md:max-w-3xl md:mx-auto">
-                        <!-- Javascript will populate this based on Timetable Mode -->
                     </div>
                     <div class="glass-card p-2 shadow-xl border-theme-border flex flex-col max-h-[70vh] md:max-w-3xl md:mx-auto">
                         <div class="flex justify-between items-center p-3 border-b border-theme-border shrink-0">
@@ -321,89 +319,110 @@
                         <h2 class="text-xl font-bold text-theme-text tracking-tight">歷史記錄</h2>
                         <span class="text-xs font-semibold text-emerald-500 tracking-wider">已歸檔任務</span>
                     </div>
-                    <div id="history-list" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"></div>
+                    <div id="history-list" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5"></div>
                     <div id="history-empty" class="hidden flex-col items-center justify-center py-24 text-theme-muted">
                         <i class="fa-solid fa-clock-rotate-left text-4xl mb-4 opacity-30"></i>
                         <p class="text-sm font-bold tracking-wide">尚無歷史記錄</p>
                     </div>
                 </section>
 
+                <!-- 🌟 全新升級：精美排版新增任務頁面 -->
                 <section id="view-add" class="view-section w-full">
-                    <div class="flex items-center mb-6 px-2 md:px-0 md:max-w-2xl md:mx-auto">
-                        <button onclick="app.nav.switch('home')" class="w-8 h-8 mr-3 rounded-full bg-theme-input flex items-center justify-center text-theme-text hover:bg-theme-border active:scale-95 transition-all border border-theme-border shadow-sm">
-                            <i class="fa-solid fa-arrow-left text-sm"></i>
+                    <div class="flex items-center mb-6 px-2 md:px-0 md:max-w-3xl md:mx-auto">
+                        <button onclick="app.nav.switch('home')" class="w-9 h-9 mr-4 rounded-full bg-theme-input flex items-center justify-center text-theme-text hover:bg-theme-border active:scale-95 transition-all border border-theme-border shadow-sm">
+                            <i class="fa-solid fa-arrow-left text-[15px]"></i>
                         </button>
-                        <h2 id="form-header-title" class="text-xl font-bold text-theme-text tracking-tight">新增任務</h2>
+                        <h2 id="form-header-title" class="text-2xl font-bold text-theme-text tracking-tight font-literary">新增任務</h2>
                     </div>
                     
-                    <div class="glass-card p-5 relative overflow-hidden shadow-2xl md:max-w-2xl md:mx-auto">
-                        <div class="absolute top-0 right-0 w-40 h-40 bg-brand-500/10 blur-3xl rounded-full"></div>
+                    <div class="glass-card p-6 md:p-8 relative overflow-hidden shadow-2xl md:max-w-3xl md:mx-auto border border-theme-border/50">
+                        <div class="absolute top-0 right-0 w-48 h-48 bg-brand-500/10 blur-3xl rounded-full"></div>
                         <input type="hidden" id="form-task-id">
                         
-                        <div class="flex bg-theme-input p-1.5 rounded-xl mb-6 relative z-10 border border-theme-border shadow-inner">
-                            <button id="type-btn-task" onclick="app.tasks.setFormType('task')" class="flex-1 py-2.5 text-sm font-bold rounded-lg bg-theme-text text-theme-bg shadow-sm transition-all">📝 一般功課</button>
-                            <button id="type-btn-exam" onclick="app.tasks.setFormType('exam')" class="flex-1 py-2.5 text-sm font-semibold rounded-lg text-theme-muted hover:text-theme-text transition-all">🚨 測驗考試</button>
+                        <!-- 🌟 頂級分段切換器 (Task / Exam Toggle) -->
+                        <div class="flex bg-theme-input p-1.5 rounded-xl mb-6 relative z-10 shadow-inner">
+                            <button id="type-btn-task" onclick="app.tasks.setFormType('task')" class="flex-1 py-3 text-[15px] font-bold rounded-lg bg-theme-bg text-brand-600 dark:text-white shadow-sm transition-all flex justify-center items-center gap-2">
+                                <i class="fa-solid fa-book-open"></i> 新增功課
+                            </button>
+                            <button id="type-btn-exam" onclick="app.tasks.setFormType('exam')" class="flex-1 py-3 text-[15px] font-semibold rounded-lg text-theme-muted hover:text-theme-text transition-all flex justify-center items-center gap-2">
+                                <i class="fa-regular fa-circle-question"></i> 新增測驗
+                            </button>
                             <input type="hidden" id="form-type" value="task">
                         </div>
                         
                         <div class="space-y-6 relative z-10">
-                            <div>
-                                <input type="text" id="form-title" class="w-full bg-transparent border-0 border-b-2 border-theme-border px-2 py-2 text-xl font-bold text-theme-text placeholder-theme-muted focus:ring-0 focus:border-brand-500 transition-colors" placeholder="輸入任務標題...">
-                            </div>
-
-                            <div class="bg-theme-input p-4 rounded-2xl border border-theme-border hover:border-gray-300 dark:hover:border-white/20 transition-colors shadow-sm">
-                                <div class="flex justify-between items-center mb-3">
-                                    <label class="block text-xs font-mono font-bold text-brand-500 uppercase tracking-wider">科目 Subject</label>
-                                    <button onclick="app.settings.addSubjectModal()" class="text-xs text-brand-500 hover:text-brand-600 hover:scale-105 transition-all"><i class="fa-solid fa-plus"></i> 自訂</button>
-                                </div>
-                                <div id="form-subjects-scroll" class="flex gap-2 overflow-x-auto no-scrollbar pb-2 snap-x"></div>
+                            <!-- 🌟 精美科目水平選擇列 -->
+                            <div class="flex items-center gap-2">
+                                <div id="form-subjects-scroll" class="flex flex-1 gap-2 overflow-x-auto no-scrollbar pb-2 snap-x items-center"></div>
+                                <button onclick="app.settings.addSubjectModal()" class="w-10 h-10 shrink-0 mb-2 flex items-center justify-center rounded-lg bg-theme-input text-theme-muted hover:text-brand-500 transition-colors shadow-sm border border-theme-border">
+                                    <i class="fa-solid fa-plus"></i>
+                                </button>
                                 <input type="hidden" id="form-subject-value">
                             </div>
 
-                            <div class="grid grid-cols-2 gap-4">
-                                <div class="col-span-2 md:col-span-1">
-                                    <label class="block text-xs font-mono font-bold text-theme-muted uppercase tracking-wider mb-2">繳交日期 Due Date</label>
-                                    <input type="date" id="form-date" class="premium-input py-3 font-semibold dark:[color-scheme:dark] shadow-sm">
+                            <!-- 🌟 桌面/平板雙欄網格設計 -->
+                            <div class="flex flex-col md:flex-row gap-5">
+                                <!-- 左側：標題與內容 -->
+                                <div class="flex-1 flex flex-col gap-4">
+                                    <input type="text" id="form-title" class="w-full px-5 py-4 bg-theme-input/50 border border-transparent focus:border-brand-500 rounded-xl text-lg font-bold text-theme-text placeholder-theme-muted transition-colors shadow-sm" placeholder="輸入任務標題...">
+                                    
+                                    <div class="relative flex-1 flex flex-col">
+                                        <textarea id="form-content" class="w-full flex-1 px-5 py-4 bg-theme-input/50 border border-transparent focus:border-brand-500 rounded-xl text-base leading-relaxed text-theme-text placeholder-theme-muted resize-none min-h-[140px] transition-colors shadow-sm" placeholder="打返功課內容..."></textarea>
+                                        
+                                        <!-- 文字框內的工具列 -->
+                                        <div class="absolute bottom-3 right-3 flex gap-2">
+                                            <input type="file" id="form-image" accept="image/*" class="hidden" onchange="app.tasks.handleImageUpload(event)">
+                                            <button onclick="document.getElementById('form-image').click()" class="w-9 h-9 rounded-full bg-white/60 dark:bg-black/20 hover:bg-brand-500/20 text-theme-muted hover:text-brand-500 flex items-center justify-center backdrop-blur-md transition-all border border-theme-border/50 shadow-sm" title="附加圖片">
+                                                <i class="fa-solid fa-camera"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <img id="form-image-preview" class="hidden w-full h-40 object-cover rounded-xl border border-theme-border shadow-sm mt-1">
                                 </div>
-                                <!-- 無原生 select：點擊開啟 Bottom Sheet -->
-                                <div class="col-span-2 md:col-span-1">
-                                    <label class="block text-xs font-mono font-bold text-theme-muted uppercase tracking-wider mb-2"><i class="fa-solid fa-repeat mr-1"></i>自動重複 Repeat</label>
+
+                                <!-- 右側：日期、重複、提交 -->
+                                <div class="w-full md:w-[240px] flex flex-col gap-4">
+                                    <div class="relative">
+                                        <input type="date" id="form-date" class="w-full px-5 py-4 bg-theme-input border border-theme-border rounded-xl text-lg font-bold text-theme-text text-center transition-colors shadow-sm dark:[color-scheme:dark]">
+                                    </div>
+                                    
+                                    <!-- 浮空 Modal 重複選擇按鈕 -->
                                     <input type="hidden" id="form-repeat" value="none">
-                                    <button type="button" onclick="app.tasks.openRepeatModal()" class="premium-input py-3 text-sm font-semibold text-left flex justify-between items-center bg-theme-input hover:border-theme-muted transition-colors shadow-sm">
-                                        <span id="form-repeat-text">不重複</span> <i class="fa-solid fa-chevron-down opacity-50 text-[10px]"></i>
+                                    <button type="button" onclick="app.tasks.openRepeatModal()" class="w-full px-5 py-3.5 bg-theme-input/50 border border-transparent hover:border-brand-500 rounded-xl text-sm font-semibold text-theme-muted flex justify-between items-center transition-colors shadow-sm">
+                                        <span><i class="fa-solid fa-repeat mr-2"></i><span id="form-repeat-text">不重複</span></span>
+                                        <i class="fa-solid fa-chevron-down text-[10px]"></i>
                                     </button>
-                                </div>
-                                
-                                <div class="col-span-2" id="provider-target-section">
-                                    <label class="block text-xs font-mono font-bold text-pink-500 uppercase tracking-wider mb-2"><i class="fa-solid fa-paper-plane mr-1"></i>發放對象 Target</label>
-                                    <input type="hidden" id="form-target" value="self">
-                                    <button type="button" onclick="app.tasks.openTargetModal()" class="premium-input bg-pink-500/10 border-pink-500/30 text-sm font-semibold text-theme-text hover:border-pink-500/60 transition-colors shadow-sm text-left flex justify-between items-center">
-                                        <span id="form-target-text">私人 (僅自己可見)</span> <i class="fa-solid fa-chevron-down opacity-50 text-[10px] text-pink-500"></i>
+
+                                    <!-- 超大吸睛提交按鈕 -->
+                                    <button onclick="app.tasks.save()" class="w-full mt-auto py-5 bg-brand-600 hover:bg-brand-500 text-white rounded-xl font-bold shadow-[0_8px_25px_rgba(99,102,241,0.4)] hover:-translate-y-1 active:scale-95 transition-all flex justify-center items-center gap-2 text-[17px] tracking-wide">
+                                        <i class="fa-solid fa-plus"></i> 加入清單
                                     </button>
                                 </div>
                             </div>
                             
-                            <div id="form-warning-msg" class="hidden bg-yellow-500/10 border border-yellow-500/30 p-3 rounded-xl flex items-center gap-3">
+                            <div id="form-warning-msg" class="hidden mt-2 bg-yellow-500/10 border border-yellow-500/30 p-3 rounded-xl flex items-center gap-3">
                                 <i class="fa-solid fa-triangle-exclamation text-yellow-600 dark:text-yellow-500 text-lg"></i>
                                 <p class="text-xs text-yellow-700 dark:text-yellow-200 font-semibold leading-relaxed">該日已有 <span id="form-warning-count" class="text-yellow-600 dark:text-yellow-500 font-bold text-sm"></span> 項任務，建議提早規劃！</p>
                             </div>
 
-                            <div>
-                                <div class="flex justify-between items-center mb-2">
-                                    <label class="block text-xs font-mono font-bold text-theme-muted uppercase tracking-wider">詳細內容 Details</label>
-                                    <input type="file" id="form-image" accept="image/*" class="hidden" onchange="app.tasks.handleImageUpload(event)">
-                                    <button onclick="document.getElementById('form-image').click()" class="text-[10px] font-bold bg-theme-input border border-theme-border text-theme-text px-2.5 py-1.5 rounded-full hover:shadow-md hover:-translate-y-0.5 active:scale-95 transition-all flex items-center gap-1.5">
-                                        <i class="fa-solid fa-camera"></i> 附加圖片
-                                    </button>
+                            <!-- 🌟 全新 Provider 廣播切換開關 -->
+                            <div id="provider-target-section" class="hidden pt-5 border-t border-theme-border mt-2">
+                                <div class="flex items-center justify-between">
+                                    <div class="flex items-center gap-3">
+                                        <div class="w-10 h-10 rounded-full bg-pink-500/10 flex items-center justify-center text-pink-500 shadow-inner">
+                                            <i class="fa-solid fa-bullhorn text-sm"></i>
+                                        </div>
+                                        <div>
+                                            <p class="text-sm font-bold text-theme-text">作為管理員廣播發放</p>
+                                            <p class="text-[11px] text-theme-muted font-bold mt-0.5" id="form-target-text">私人任務 (僅自己可見)</p>
+                                        </div>
+                                    </div>
+                                    <input type="hidden" id="form-target" value="self">
+                                    <label class="relative inline-flex items-center cursor-pointer">
+                                        <input type="checkbox" id="broadcast-toggle" class="sr-only peer" onchange="app.tasks.handleBroadcastToggle(this)">
+                                        <div class="w-12 h-7 bg-theme-border peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-6 after:w-6 after:transition-all peer-checked:bg-pink-500 shadow-inner"></div>
+                                    </label>
                                 </div>
-                                <img id="form-image-preview" class="hidden w-full h-40 object-cover rounded-xl mb-3 border border-theme-border shadow-sm">
-                                <textarea id="form-content" class="premium-input h-32 resize-none py-3 text-sm leading-relaxed transition-all duration-300 focus:h-48 shadow-sm" placeholder="- 支援多行輸入&#10;- 可以記錄書本頁數"></textarea>
-                            </div>
-
-                            <div class="pt-2 pb-4">
-                                <button onclick="app.tasks.save()" class="w-full bg-gradient-to-r from-brand-600 to-brand-500 text-white py-4 rounded-xl font-bold text-sm shadow-[0_10px_30px_rgba(99,102,241,0.4)] hover:-translate-y-1 hover:shadow-[0_15px_40px_rgba(99,102,241,0.7)] active:scale-95 transition-all duration-300 flex items-center justify-center gap-2 group">
-                                    <i class="fa-solid fa-check group-hover:scale-125 transition-transform duration-300"></i> 儲存並加入清單
-                                </button>
                             </div>
                         </div>
                     </div>
@@ -419,7 +438,6 @@
                             <i class="fa-solid fa-circle-half-stroke text-2xl text-brand-500"></i>
                             <span class="text-xs font-bold">外觀主題切換</span>
                         </button>
-                        <!-- 🌟 課表模式切換按鈕 -->
                         <button onclick="app.settings.toggleTimetableMode()" class="glass-card p-4 flex flex-col items-center justify-center gap-2 hover:-translate-y-1 hover:shadow-lg transition-all active:scale-95 text-theme-text">
                             <i class="fa-solid fa-calendar-days text-2xl text-blue-500"></i>
                             <span class="text-xs font-bold" id="setting-tt-mode-text">課表：星期制</span>
@@ -538,8 +556,8 @@
                 if(navigator.vibrate) navigator.vibrate(type==='success'?[50]:[50, 50, 50]);
                 const root = document.getElementById('toast-root');
                 const t = document.createElement('div');
-                const styles = { success: 'bg-[#10b981]/95 border-[#10b981]/50', error: 'bg-[#ef4444]/95 border-[#ef4444]/50', info: 'bg-[#6366f1]/95 border-[#6366f1]/50', warning: 'bg-orange-500/95 border-orange-500/50' };
-                t.className = `px-6 py-3.5 rounded-2xl text-white text-xs font-bold border ${styles[type]} transform -translate-y-full opacity-0 backdrop-blur-md flex items-center gap-2 w-max shadow-2xl`;
+                const styles = { success: 'bg-[#10b981]/95 border-[#10b981]/50 text-white', error: 'bg-[#ef4444]/95 border-[#ef4444]/50 text-white', info: 'bg-[#6366f1]/95 border-[#6366f1]/50 text-white', warning: 'bg-orange-500/95 border-orange-500/50 text-white' };
+                t.className = `px-6 py-3.5 rounded-2xl text-xs font-bold border ${styles[type]} transform -translate-y-full opacity-0 backdrop-blur-md flex items-center gap-2 w-max shadow-2xl`;
                 const icons = { success: 'fa-check-circle', error: 'fa-triangle-exclamation', info: 'fa-info-circle', warning: 'fa-fire' };
                 t.innerHTML = `<i class="fa-solid ${icons[type]} text-base"></i> <span>${msg}</span>`;
                 root.appendChild(t);
@@ -563,7 +581,6 @@
             sheet: {
                 open: (html) => { UI.overlay.show(); document.getElementById('bottom-sheet-body').innerHTML = html; document.getElementById('bottom-sheet').classList.remove('hidden'); if(typeof gsap !== 'undefined') gsap.fromTo(document.getElementById('bottom-sheet-content'), { y: '100%' }, { y: '0%', duration: 0.4, ease: "power3.out" }); },
                 close: () => { 
-                    if(app.pomodoro && app.pomodoro.isRunning) app.pomodoro.stop(); 
                     if(typeof gsap !== 'undefined') gsap.to(document.getElementById('bottom-sheet-content'), { y: '100%', duration: 0.3, ease: "power3.in", onComplete: () => { document.getElementById('bottom-sheet').classList.add('hidden'); UI.overlay.hide(); }}); 
                     else { document.getElementById('bottom-sheet').classList.add('hidden'); UI.overlay.hide(); } 
                 }
@@ -730,7 +747,6 @@
 
                     UI.sheet.open(`
                         <div class="relative text-center">
-                            <!-- 返回/關閉圖示 -->
                             <button onclick="app.UI.sheet.close()" class="absolute -top-2 right-0 w-8 h-8 rounded-full bg-theme-input flex items-center justify-center text-theme-muted hover:text-theme-text border border-theme-border active:scale-95 transition-all z-10"><i class="fa-solid fa-xmark"></i></button>
                             
                             <div class="relative inline-block">${src}</div>
@@ -740,7 +756,6 @@
                             <div class="space-y-3">
                                 ${state.profile.role === 'provider' ? '' : `<button onclick="app.profile.demoRole()" class="w-full glass-card py-4 text-sm font-bold text-brand-500 hover:bg-theme-input hover:-translate-y-1 active:scale-95 transition-all duration-300 flex justify-center items-center gap-2"><i class="fa-solid fa-crown"></i> 申請升級 Provider</button>`}
                                 <button onclick="app.auth.logout()" class="w-full bg-red-500/10 border border-red-500/30 text-red-500 py-4 rounded-xl text-sm font-bold hover:bg-red-500/20 hover:-translate-y-1 active:scale-95 transition-all duration-300 shadow-sm">安全登出 Sign Out</button>
-                                <!-- 下方大型返回按鈕 -->
                                 <button onclick="app.UI.sheet.close()" class="w-full bg-theme-input border border-theme-border text-theme-text py-4 rounded-xl text-sm font-bold hover:bg-theme-border hover:-translate-y-1 active:scale-95 transition-all duration-300 shadow-sm">返回 Return</button>
                             </div>
                         </div>
@@ -771,61 +786,6 @@
                 state.tasks.forEach(task => { if(task.status === 'completed') return; if(task.type === 'exam') e++; else { if(task.dueDate && task.dueDate <= today) t++; else f++; } });
                 document.getElementById('widget-today-count').textContent = t; document.getElementById('widget-future-count').textContent = f; document.getElementById('widget-exam-count').textContent = e;
                 app.tasks.checkStress();
-            },
-            pomodoro: {
-                interval: null, timeLeft: 1500, isRunning: false, currentTaskId: null,
-                open: (taskId, title) => {
-                    app.pomodoro.currentTaskId = taskId;
-                    app.pomodoro.timeLeft = 1500; 
-                    app.pomodoro.isRunning = false;
-                    clearInterval(app.pomodoro.interval);
-                    
-                    UI.sheet.open(`
-                        <div class="text-center py-6">
-                            <h3 class="text-lg font-bold text-theme-text mb-2"><i class="fa-solid fa-stopwatch mr-2 text-brand-500"></i>專注模式</h3>
-                            <p class="text-sm text-theme-muted mb-8 truncate max-w-xs mx-auto">${escapeHTML(title)}</p>
-                            
-                            <div class="w-56 h-56 mx-auto border-[10px] border-brand-500/20 rounded-full flex items-center justify-center mb-8 relative shadow-[0_0_40px_rgba(99,102,241,0.15)] bg-theme-input">
-                                <div id="pomo-timer-text" class="text-6xl font-mono font-bold text-brand-500">25:00</div>
-                            </div>
-                            
-                            <div class="flex justify-center gap-4">
-                                <button onclick="app.pomodoro.toggle()" id="pomo-btn-toggle" class="bg-brand-600 text-white px-8 py-3.5 rounded-full font-bold shadow-lg hover:-translate-y-1 hover:shadow-brand-500/50 active:scale-95 transition-all">開始專注</button>
-                                <button onclick="app.pomodoro.stop()" class="bg-red-500/10 text-red-500 border border-red-500/20 px-6 py-3.5 rounded-full font-bold hover:bg-red-500/20 hover:-translate-y-1 active:scale-95 transition-all">放棄</button>
-                            </div>
-                            <p class="text-xs text-theme-muted mt-6"><i class="fa-solid fa-circle-info mr-1"></i> 請保持螢幕開啟以確保計時準確</p>
-                        </div>
-                    `);
-                },
-                toggle: () => {
-                    const btn = document.getElementById('pomo-btn-toggle');
-                    if(app.pomodoro.isRunning) {
-                        app.pomodoro.isRunning = false; clearInterval(app.pomodoro.interval);
-                        btn.textContent = '繼續專注'; btn.className = 'bg-emerald-600 text-white px-8 py-3.5 rounded-full font-bold shadow-lg hover:-translate-y-1 hover:shadow-emerald-500/50 active:scale-95 transition-all';
-                    } else {
-                        app.pomodoro.isRunning = true;
-                        btn.textContent = '暫停'; btn.className = 'bg-yellow-500 text-white px-8 py-3.5 rounded-full font-bold shadow-lg hover:-translate-y-1 hover:shadow-yellow-500/50 active:scale-95 transition-all';
-                        app.pomodoro.interval = setInterval(() => {
-                            app.pomodoro.timeLeft--;
-                            app.pomodoro.updateUI();
-                            if(app.pomodoro.timeLeft <= 0) {
-                                clearInterval(app.pomodoro.interval); app.pomodoro.isRunning = false;
-                                UI.notify('🎉 番茄鐘專注完成！', 'success');
-                                if(navigator.vibrate) navigator.vibrate([200, 100, 200, 100, 500]);
-                                btn.textContent = '完成'; 
-                                btn.className = 'bg-brand-600 text-white px-8 py-3.5 rounded-full font-bold shadow-lg hover:-translate-y-1 transition-all';
-                                btn.onclick = UI.sheet.close;
-                            }
-                        }, 1000);
-                    }
-                },
-                updateUI: () => {
-                    const m = Math.floor(app.pomodoro.timeLeft / 60).toString().padStart(2, '0');
-                    const s = (app.pomodoro.timeLeft % 60).toString().padStart(2, '0');
-                    const el = document.getElementById('pomo-timer-text');
-                    if(el) el.textContent = `${m}:${s}`;
-                },
-                stop: () => { clearInterval(app.pomodoro.interval); app.pomodoro.isRunning = false; UI.sheet.close(); }
             },
             notifications: {
                 toggle: () => { const p = document.getElementById('notif-panel'), b = document.getElementById('notif-badge'); if(p.classList.contains('hidden')) { UI.overlay.show(); p.classList.remove('hidden'); gsap.fromTo(p, { x: '100%' }, { x: '0%', duration: 0.4, ease: "power3.out" }); b.classList.add('hidden'); } else { gsap.to(p, { x: '100%', duration: 0.3, ease: "power3.in", onComplete: () => { p.classList.add('hidden'); UI.overlay.hide(); }}); } },
@@ -920,7 +880,7 @@
                     document.getElementById('form-content').value = ''; 
                     document.getElementById('form-date').value = API.getWorkingDay(); 
                     app.tasks.setRepeat('none', '不重複');
-                    app.tasks.setTarget('self', '私人 (僅自己可見)');
+                    app.tasks.setTarget('self', '私人任務 (僅自己可見)');
                     app.tasks.setFormType('task'); 
                     app.tasks.checkStress(); 
                     document.getElementById('form-header-title').textContent = '新增任務';
@@ -932,12 +892,17 @@
                 setFormType: (type) => { 
                     document.getElementById('form-type').value = type; 
                     const bt = document.getElementById('type-btn-task'), be = document.getElementById('type-btn-exam'); 
+                    
+                    const activeClass = 'flex-1 py-3 text-[15px] font-bold rounded-lg bg-theme-bg text-brand-600 dark:text-white shadow-sm transition-all flex justify-center items-center gap-2';
+                    const inactiveClass = 'flex-1 py-3 text-[15px] font-semibold rounded-lg text-theme-muted hover:text-theme-text transition-all flex justify-center items-center gap-2';
+                    const activeClassExam = 'flex-1 py-3 text-[15px] font-bold rounded-lg bg-pink-500 text-white shadow-sm transition-all flex justify-center items-center gap-2';
+                    
                     if(type === 'task') { 
-                        bt.className = 'flex-1 py-2.5 text-sm font-bold rounded-lg bg-white dark:bg-white/10 text-brand-600 dark:text-white shadow-md transition-all'; 
-                        be.className = 'flex-1 py-2.5 text-sm font-semibold rounded-lg text-theme-muted hover:text-theme-text transition-all'; 
+                        bt.className = activeClass; 
+                        be.className = inactiveClass; 
                     } else { 
-                        be.className = 'flex-1 py-2.5 text-sm font-bold rounded-lg bg-pink-500 text-white shadow-md transition-all'; 
-                        bt.className = 'flex-1 py-2.5 text-sm font-semibold rounded-lg text-theme-muted hover:text-theme-text transition-all'; 
+                        be.className = activeClassExam; 
+                        bt.className = inactiveClass; 
                     } 
                 },
                 checkStress: () => { const di = document.getElementById('form-date'); if(!di) return; const check = () => { const c = state.tasks.filter(t => t.dueDate === di.value && t.status !== 'completed').length; const w = document.getElementById('form-warning-msg'); if(c >= 5) { document.getElementById('form-warning-count').textContent = c; w.classList.remove('hidden'); } else { w.classList.add('hidden'); } }; di.addEventListener('change', check); check(); },
@@ -991,12 +956,24 @@
                     document.getElementById('form-repeat-text').textContent = label;
                     UI.sheet.close();
                 },
+                handleBroadcastToggle: (checkbox) => {
+                    if(checkbox.checked) {
+                        if(state.groups.length === 0) {
+                            UI.notify('您目前沒有管理任何群組', 'error');
+                            checkbox.checked = false;
+                            return;
+                        }
+                        app.tasks.openTargetModal();
+                    } else {
+                        app.tasks.setTarget('self', '私人任務 (僅自己可見)');
+                    }
+                },
                 openTargetModal: () => {
                     const currentVal = document.getElementById('form-target').value;
                     let html = `<h3 class="text-xl font-bold text-theme-text mb-4">選擇發放對象</h3><div class="flex flex-col gap-2 max-h-[60vh] overflow-y-auto no-scrollbar">`;
                     
                     const isSelf = currentVal === 'self';
-                    html += `<button onclick="app.tasks.setTarget('self', '私人 (僅自己可見)')" class="w-full text-left p-4 rounded-xl border ${isSelf ? 'bg-pink-500/20 border-pink-500/50 text-pink-500 font-bold shadow-sm' : 'bg-theme-input border-theme-border text-theme-text font-semibold hover:bg-theme-border'} transition-all">私人 (僅自己可見)</button>`;
+                    html += `<button onclick="app.tasks.setTarget('self', '私人任務 (僅自己可見)')" class="w-full text-left p-4 rounded-xl border ${isSelf ? 'bg-pink-500/20 border-pink-500/50 text-pink-500 font-bold shadow-sm' : 'bg-theme-input border-theme-border text-theme-text font-semibold hover:bg-theme-border'} transition-all">私人任務 (僅自己可見)</button>`;
 
                     if (state.profile.role === 'provider') {
                         state.groups.forEach(g => {
@@ -1011,7 +988,9 @@
                 },
                 setTarget: (val, label) => {
                     document.getElementById('form-target').value = val;
-                    document.getElementById('form-target-text').textContent = label;
+                    document.getElementById('form-target-text').textContent = val === 'self' ? '私人任務 (僅自己可見)' : label;
+                    const toggle = document.getElementById('broadcast-toggle');
+                    if(toggle) toggle.checked = val !== 'self';
                     UI.sheet.close();
                 },
                 save: async () => {
@@ -1069,6 +1048,17 @@
                     document.getElementById('form-date').value = task.dueDate || '';
                     document.getElementById('form-subject-value').value = task.subject || state.subjects[0];
                     app.tasks.setRepeat('none', '不重複');
+                    
+                    if(task.groupId) {
+                        app.tasks.setTarget(task.groupId, '群組任務 (已派發無法更改)');
+                        document.getElementById('broadcast-toggle').checked = true;
+                        document.getElementById('broadcast-toggle').disabled = true;
+                    } else {
+                        app.tasks.setTarget('self', '私人任務 (僅自己可見)');
+                        document.getElementById('broadcast-toggle').checked = false;
+                        document.getElementById('broadcast-toggle').disabled = false;
+                    }
+                    
                     app.tasks.setFormType(task.type || 'task');
                     document.getElementById('form-header-title').textContent = '編輯任務';
                     
@@ -1188,7 +1178,7 @@
                         </div>`;
 
                         html += slots.map(s => `
-                            <div class="flex items-center gap-2.5 p-2 mb-2 bg-theme-input/50 border border-theme-border rounded-xl transition-colors hover:border-brand-500/40 focus-within:border-brand-500/80 focus-within:bg-theme-bg shadow-sm animate-[fadeIn_0.3s_ease-out]">
+                            <div class="flex items-center gap-2.5 p-2 mb-2 bg-theme-input border border-theme-border rounded-xl transition-colors hover:border-brand-500/40 focus-within:border-brand-500/80 shadow-sm animate-[fadeIn_0.3s_ease-out]">
                                 <div class="flex flex-col gap-1.5 w-[75px] shrink-0">
                                     <input type="time" value="${s.start}" onchange="app.timetable.updateSlotInline('${s.id}', 'start', this.value)" class="bg-transparent text-[12px] font-mono font-bold text-theme-text outline-none border-b border-transparent focus:border-brand-500 pb-0.5 dark:[color-scheme:dark]">
                                     <input type="time" value="${s.end}" onchange="app.timetable.updateSlotInline('${s.id}', 'end', this.value)" class="bg-transparent text-[11px] font-mono text-theme-muted outline-none border-b border-transparent focus:border-brand-500 pb-0.5 dark:[color-scheme:dark]">
@@ -1208,8 +1198,8 @@
                     } else {
                         html += `<div class="mt-2 flex flex-col gap-2 px-1 animate-[fadeIn_0.3s_ease-out]">`;
                         html += slots.map(s => `
-                            <div class="flex items-center gap-3 p-3 bg-theme-input/30 border border-theme-border rounded-xl hover:bg-theme-input/60 transition-colors">
-                                <div class="flex flex-col text-right w-[50px] shrink-0 border-r border-theme-border/50 pr-3">
+                            <div class="flex items-center gap-3 p-3 bg-theme-input/30 border border-theme-border rounded-xl hover:bg-gray-200/50 dark:hover:bg-white/10 transition-colors shadow-sm">
+                                <div class="flex flex-col text-right w-[50px] shrink-0 border-r border-theme-border pr-3">
                                     <span class="text-[13px] font-mono font-bold text-theme-text">${s.start}</span>
                                     <span class="text-[10px] font-mono text-theme-muted mt-0.5">${s.end}</span>
                                 </div>
@@ -1382,7 +1372,6 @@
                     
                     app.settings.initTimetableMode();
                     
-                    // Reset day tab to safe default
                     state.currentDayTab = newMode === 'week' ? '1' : 'd1';
                     if (state.currentView === 'timetable') app.timetable.renderDaySelector();
                     
@@ -1410,7 +1399,7 @@
                     UI.notify('行事曆已成功匯出！', 'success');
                 },
                 addSubjectModal: () => { UI.modal.open(`<h3 class="text-xl font-bold text-theme-text mb-6">新增自訂科目</h3><input type="text" id="new-subject-input" class="premium-input font-bold" placeholder="例如：M2"><div class="mt-8 flex gap-3"><button onclick="app.UI.modal.close()" class="flex-1 glass-card py-3.5 text-sm font-bold text-theme-text hover:-translate-y-1 hover:bg-theme-input active:scale-95 transition-all duration-300">取消</button><button onclick="app.settings.doAddSubject()" class="flex-1 bg-brand-600 hover:bg-brand-500 rounded-xl py-3.5 text-sm font-bold text-white shadow-lg hover:-translate-y-1 hover:shadow-brand-500/40 active:scale-95 transition-all duration-300">新增</button></div>`); },
-                doAddSubject: () => { const v = document.getElementById('new-subject-input').value.trim(); if(v && !state.subjects.includes(v)) { state.subjects.unshift(v); app.renders.subjectsPills(); app.tasks.populateFilterSubjects(); UI.modal.close(); UI.notify(`已加入 ${v}`); } }
+                doAddSubject: () => { const v = document.getElementById('new-subject-input').value.trim(); if(v && !state.subjects.includes(v)) { state.subjects.unshift(v); app.renders.subjectsPills(); UI.modal.close(); UI.notify(`已加入 ${v}`); } }
             },
             renders: {
                 announcements: () => {
@@ -1487,10 +1476,13 @@
                     const c = document.getElementById('form-subjects-scroll'), inp = document.getElementById('form-subject-value'); c.innerHTML = ''; if(!inp.value) inp.value = state.subjects[0];
                     state.subjects.forEach(s => { const b = document.createElement('button'); b.className = `pill-btn snap-start font-literary tracking-wide ${s===inp.value?'active':''}`; b.textContent = s; b.onclick = () => { inp.value = s; app.renders.subjectsPills(); b.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' }); }; c.appendChild(b); });
                     
-                    app.tasks.populateFilterSubjects();
+                    const sel = document.getElementById('filter-subject-text');
+                    if(sel && state.filters.subject !== 'all' && !state.subjects.includes(state.filters.subject)) {
+                        app.tasks.setFilterSubject('all');
+                    }
                 },
                 groups: () => {
-                    const l = document.getElementById('settings-groups-list'), t = document.getElementById('form-target');
+                    const l = document.getElementById('settings-groups-list');
                     if(l) l.innerHTML = ''; 
                     
                     if(state.groups.length === 0 && l) { l.innerHTML = '<div class="text-center py-6 text-xs text-theme-muted font-mono font-bold">尚無群組</div>'; }
@@ -1501,19 +1493,7 @@
                             if(l) l.innerHTML += `<div class="bg-theme-input p-4 rounded-xl border border-theme-border flex justify-between items-center hover:border-brand-500/30 transition-colors"><div class="flex-1 min-w-0"><p class="text-sm font-bold text-theme-text truncate">${escapeHTML(g.name)} ${isAdmin?'<span class="bg-pink-500/20 text-pink-500 text-[9px] px-1.5 py-0.5 rounded-full ml-2 border border-pink-500/30 align-text-bottom">Admin</span>':''}</p><p class="text-[10px] text-theme-muted font-mono mt-1.5">代碼: ${g.code} • 成員: ${g.members.length}</p></div>${actionBtn}</div>`; 
                         });
                     }
-                    
-                    if(t) {
-                        t.innerHTML = '<option value="self">私人 (僅自己可見)</option>';
-                        state.groups.forEach(g => { if (state.profile.role==='provider' && g.providerId===state.user.uid) t.innerHTML += `<option value="${g.id}">群組: ${escapeHTML(g.name)}</option>`; });
-                    }
                 }
-            }
-        };
-
-        app.tasks.populateFilterSubjects = () => {
-            const sel = document.getElementById('filter-subject-text');
-            if(sel) {
-                // Modal logic handled above
             }
         };
 

@@ -191,29 +191,29 @@
     <!-- 3. 主系統核心 (已重構為全局滾動) -->
     <div id="app-core" class="hidden flex-col h-full w-full relative">
         
+        <!-- 第一層：上方標題加圖標頭像 (固定在頂部，不隨頁面滾動) -->
+        <header class="shrink-0 pt-10 md:pt-12 pb-4 flex justify-between items-center px-6 md:max-w-5xl lg:max-w-6xl md:mx-auto w-full z-40 relative">
+            <div>
+                <h1 class="text-3xl md:text-4xl font-bold tracking-wide text-theme-text font-literary drop-shadow-sm">電子手冊</h1>
+                <p id="header-date" class="text-xs text-brand-500 font-mono mt-1 tracking-wider font-semibold">載入中...</p>
+            </div>
+            <div class="flex items-center gap-4">
+                <div id="offline-badge" class="hidden bg-yellow-500/20 text-yellow-600 dark:text-yellow-400 text-[10px] font-bold px-2 py-1 rounded-full border border-yellow-500/30 flex items-center gap-1"><i class="fa-solid fa-bolt-slash"></i> 離線</div>
+                
+                <button onclick="app.notifications.toggle()" class="relative text-theme-muted hover:text-theme-text hover:scale-110 active:scale-95 transition-all duration-300">
+                    <i class="fa-solid fa-bell text-xl md:text-2xl"></i>
+                    <span id="notif-badge" class="hidden absolute -top-1 -right-1 w-2.5 h-2.5 md:w-3 md:h-3 bg-pink-500 rounded-full border-2 border-theme-bg"></span>
+                </button>
+                <button onclick="app.profile.toggle()" class="w-9 h-9 md:w-10 md:h-10 rounded-full bg-theme-input flex items-center justify-center overflow-hidden border border-theme-border shadow-lg hover:shadow-brand-500/50 hover:scale-105 active:scale-95 transition-all duration-300">
+                    <img id="header-avatar" src="" alt="Profile" class="w-full h-full object-cover hidden">
+                    <i id="header-avatar-fallback" class="fa-solid fa-user text-theme-muted text-sm"></i>
+                </button>
+            </div>
+        </header>
+
         <!-- 整個可滾動區域 -->
         <main id="main-scroll-area" class="flex-1 overflow-y-auto w-full relative z-10 no-scrollbar">
             
-            <!-- 第一層：上方標題加圖標頭像 -->
-            <div class="pt-10 md:pt-12 pb-4 flex justify-between items-center px-6 md:max-w-5xl lg:max-w-6xl md:mx-auto w-full">
-                <div>
-                    <h1 class="text-3xl md:text-4xl font-bold tracking-wide text-theme-text font-literary drop-shadow-sm">電子手冊</h1>
-                    <p id="header-date" class="text-xs text-brand-500 font-mono mt-1 tracking-wider font-semibold">載入中...</p>
-                </div>
-                <div class="flex items-center gap-4">
-                    <div id="offline-badge" class="hidden bg-yellow-500/20 text-yellow-600 dark:text-yellow-400 text-[10px] font-bold px-2 py-1 rounded-full border border-yellow-500/30 flex items-center gap-1"><i class="fa-solid fa-bolt-slash"></i> 離線</div>
-                    
-                    <button onclick="app.notifications.toggle()" class="relative text-theme-muted hover:text-theme-text hover:scale-110 active:scale-95 transition-all duration-300">
-                        <i class="fa-solid fa-bell text-xl md:text-2xl"></i>
-                        <span id="notif-badge" class="hidden absolute -top-1 -right-1 w-2.5 h-2.5 md:w-3 md:h-3 bg-pink-500 rounded-full border-2 border-theme-bg"></span>
-                    </button>
-                    <button onclick="app.profile.toggle()" class="w-9 h-9 md:w-10 md:h-10 rounded-full bg-theme-input flex items-center justify-center overflow-hidden border border-theme-border shadow-lg hover:shadow-brand-500/50 hover:scale-105 active:scale-95 transition-all duration-300">
-                        <img id="header-avatar" src="" alt="Profile" class="w-full h-full object-cover hidden">
-                        <i id="header-avatar-fallback" class="fa-solid fa-user text-theme-muted text-sm"></i>
-                    </button>
-                </div>
-            </div>
-
             <!-- 浮空膠囊導航 (Sticky: 往下滾動時會自動吸附在螢幕頂端) -->
             <div class="sticky top-0 z-40 py-2 px-4 shrink-0 pointer-events-none transition-colors duration-500">
                 <!-- max-w-full on mobile, bounded on tablet/desktop -->

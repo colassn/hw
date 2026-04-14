@@ -191,7 +191,8 @@
     <!-- 3. 主系統核心 -->
     <div id="app-core" class="hidden flex-col h-full w-full relative">
         <header class="shrink-0 pt-10 md:pt-12 pb-4 z-40 bg-transparent">
-            <div class="flex justify-between items-center mb-6 px-6">
+            <!-- iPad/Desktop Responsive Wrapper: md:max-w-5xl lg:max-w-6xl -->
+            <div class="flex justify-between items-center mb-6 px-6 md:max-w-5xl lg:max-w-6xl md:mx-auto w-full">
                 <div>
                     <h1 class="text-3xl md:text-4xl font-bold tracking-wide text-theme-text font-literary drop-shadow-sm">電子手冊</h1>
                     <p id="header-date" class="text-xs text-brand-500 font-mono mt-1 tracking-wider font-semibold">載入中...</p>
@@ -208,7 +209,8 @@
                 </div>
             </div>
 
-            <div class="grid grid-cols-2 md:grid-cols-4 gap-3 px-6 md:max-w-4xl md:mx-auto">
+            <!-- iPad/Desktop Responsive Wrapper -->
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-3 px-6 md:max-w-5xl lg:max-w-6xl md:mx-auto w-full">
                 <div class="glass-card p-3.5 shadow-[0_0_15px_rgba(99,102,241,0.15)] hover:shadow-[0_0_25px_rgba(99,102,241,0.3)] transition-all">
                     <div class="flex justify-between items-center mb-1">
                         <span class="text-[10px] text-theme-muted font-semibold uppercase tracking-wider"><i class="fa-solid fa-satellite-dish mr-1 text-emerald-500 animate-pulse"></i>實時課堂</span>
@@ -239,7 +241,8 @@
 
         <!-- 頂部膠囊導航 (Sticky Floating Segmented Control) -->
         <div class="sticky top-0 z-40 py-3 px-4 shrink-0 pointer-events-none">
-            <div class="flex gap-1.5 p-1.5 bg-white/60 dark:bg-[#030305]/60 backdrop-blur-2xl rounded-2xl border border-theme-border shadow-[0_8px_30px_rgba(0,0,0,0.12)] dark:shadow-[0_8px_30px_rgba(0,0,0,0.5)] overflow-x-auto no-scrollbar md:max-w-2xl md:mx-auto transition-colors duration-500 pointer-events-auto">
+            <!-- max-w-full on mobile, bounded on tablet/desktop -->
+            <div class="flex gap-1.5 p-1.5 bg-white/60 dark:bg-[#030305]/60 backdrop-blur-2xl rounded-2xl border border-theme-border shadow-[0_8px_30px_rgba(0,0,0,0.12)] dark:shadow-[0_8px_30px_rgba(0,0,0,0.5)] overflow-x-auto no-scrollbar max-w-full md:max-w-lg mx-auto transition-colors duration-500 pointer-events-auto">
                 <button onclick="app.nav.switch('home')" id="nav-home" class="top-nav-item flex-1 py-2 px-4 text-[13px] font-bold rounded-xl active bg-white dark:bg-white/10 text-brand-600 dark:text-white shadow-md whitespace-nowrap flex items-center justify-center gap-1.5">
                     <i class="fa-solid fa-layer-group"></i> 任務
                 </button>
@@ -255,14 +258,15 @@
             </div>
         </div>
 
-        <main id="main-scroll-area" class="flex-1 overflow-y-auto pt-6 pb-32 px-4 md:px-0 md:max-w-2xl md:mx-auto w-full relative z-10 no-scrollbar">
+        <main id="main-scroll-area" class="flex-1 overflow-y-auto pt-6 pb-32 px-4 md:px-6 md:max-w-5xl lg:max-w-6xl md:mx-auto w-full relative z-10 no-scrollbar">
             
             <section id="view-home" class="view-section active w-full">
-                <div class="flex justify-between items-end mb-4 px-2">
+                <div class="flex justify-between items-end mb-4 px-2 md:px-0">
                     <h2 class="text-xl font-bold text-theme-text tracking-tight">待辦任務</h2>
                     <span class="text-xs font-semibold text-brand-500 tracking-wider">依日期排序</span>
                 </div>
-                <div id="todo-list" class="space-y-3"></div>
+                <!-- CSS Grid: 1 col on mobile, 2 on tablet, 3 on desktop -->
+                <div id="todo-list" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"></div>
                 <div id="todo-empty" class="hidden flex-col items-center justify-center py-24 text-theme-muted">
                     <div class="w-16 h-16 mb-4 rounded-full glass-card flex items-center justify-center border border-theme-border">
                         <i class="fa-solid fa-mug-hot text-2xl opacity-50"></i>
@@ -272,10 +276,10 @@
             </section>
 
             <section id="view-timetable" class="view-section w-full">
-                <div class="flex justify-between items-end mb-4 px-2">
+                <div class="flex justify-between items-end mb-4 px-2 md:px-0 md:max-w-3xl md:mx-auto">
                     <h2 class="text-xl font-bold text-theme-text tracking-tight">時間表</h2>
                 </div>
-                <div class="flex gap-2 overflow-x-auto no-scrollbar pb-4 mb-2 snap-x">
+                <div class="flex gap-2 overflow-x-auto no-scrollbar pb-4 mb-2 snap-x md:justify-center md:max-w-3xl md:mx-auto">
                     <button class="tt-day-btn pill-btn snap-center" data-day="1">星期一</button>
                     <button class="tt-day-btn pill-btn snap-center" data-day="2">星期二</button>
                     <button class="tt-day-btn pill-btn snap-center" data-day="3">星期三</button>
@@ -284,7 +288,7 @@
                     <button class="tt-day-btn pill-btn snap-center" data-day="6">星期六</button>
                     <button class="tt-day-btn pill-btn snap-center" data-day="0">星期日</button>
                 </div>
-                <div class="glass-card p-2 shadow-xl border-theme-border flex flex-col max-h-[70vh]">
+                <div class="glass-card p-2 shadow-xl border-theme-border flex flex-col max-h-[70vh] md:max-w-3xl md:mx-auto">
                     <div class="flex justify-between items-center p-3 border-b border-theme-border shrink-0">
                         <h3 class="font-bold text-sm text-theme-text"><i class="fa-solid fa-clock text-brand-500 mr-2"></i>每日課表</h3>
                         <div class="flex gap-2">
@@ -302,11 +306,11 @@
             </section>
 
             <section id="view-history" class="view-section w-full">
-                <div class="flex justify-between items-end mb-4 px-2">
+                <div class="flex justify-between items-end mb-4 px-2 md:px-0">
                     <h2 class="text-xl font-bold text-theme-text tracking-tight">歷史記錄</h2>
                     <span class="text-xs font-semibold text-emerald-500 tracking-wider">已歸檔任務</span>
                 </div>
-                <div id="history-list" class="space-y-3"></div>
+                <div id="history-list" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"></div>
                 <div id="history-empty" class="hidden flex-col items-center justify-center py-24 text-theme-muted">
                     <i class="fa-solid fa-clock-rotate-left text-4xl mb-4 opacity-30"></i>
                     <p class="text-sm font-bold tracking-wide">尚無歷史記錄</p>
@@ -314,19 +318,19 @@
             </section>
 
             <section id="view-add" class="view-section w-full">
-                <div class="flex items-center mb-6 px-2">
+                <div class="flex items-center mb-6 px-2 md:px-0 md:max-w-2xl md:mx-auto">
                     <button onclick="app.nav.switch('home')" class="w-8 h-8 mr-3 rounded-full bg-theme-input flex items-center justify-center text-theme-text hover:bg-theme-border active:scale-95 transition-all border border-theme-border">
                         <i class="fa-solid fa-arrow-left text-sm"></i>
                     </button>
                     <h2 id="form-header-title" class="text-xl font-bold text-theme-text tracking-tight">新增任務</h2>
                 </div>
                 
-                <div class="glass-card p-5 relative overflow-hidden shadow-2xl">
+                <div class="glass-card p-5 relative overflow-hidden shadow-2xl md:max-w-2xl md:mx-auto">
                     <div class="absolute top-0 right-0 w-40 h-40 bg-brand-500/10 blur-3xl rounded-full"></div>
                     <input type="hidden" id="form-task-id">
                     
                     <div class="flex bg-theme-input p-1.5 rounded-xl mb-6 relative z-10 border border-theme-border shadow-inner">
-                        <button id="type-btn-task" onclick="app.tasks.setFormType('task')" class="flex-1 py-2.5 text-sm font-bold rounded-lg bg-white dark:bg-white/10 text-brand-600 dark:text-white shadow-md transition-all">📝 一般功課</button>
+                        <button id="type-btn-task" onclick="app.tasks.setFormType('task')" class="flex-1 py-2.5 text-sm font-bold rounded-lg bg-theme-text text-theme-bg shadow-sm transition-all">📝 一般功課</button>
                         <button id="type-btn-exam" onclick="app.tasks.setFormType('exam')" class="flex-1 py-2.5 text-sm font-semibold rounded-lg text-theme-muted hover:text-theme-text transition-all">🚨 測驗考試</button>
                         <input type="hidden" id="form-type" value="task">
                     </div>
@@ -394,11 +398,11 @@
             </section>
 
             <section id="view-settings" class="view-section w-full">
-                <div class="flex justify-between items-end mb-4 px-2">
+                <div class="flex justify-between items-end mb-4 px-2 md:px-0 md:max-w-2xl md:mx-auto">
                     <h2 class="text-xl font-bold text-theme-text tracking-tight">系統與群組</h2>
                 </div>
                 
-                <div class="grid grid-cols-2 gap-3 mb-6">
+                <div class="grid grid-cols-2 gap-3 mb-6 md:max-w-2xl md:mx-auto">
                     <button onclick="app.settings.toggleTheme()" class="glass-card p-4 flex flex-col items-center justify-center gap-2 hover:-translate-y-1 hover:shadow-lg transition-all active:scale-95 text-theme-text">
                         <i class="fa-solid fa-circle-half-stroke text-2xl text-brand-500"></i>
                         <span class="text-xs font-bold">外觀主題切換</span>
@@ -409,7 +413,7 @@
                     </button>
                 </div>
 
-                <div class="glass-card p-6 mb-6 relative overflow-hidden shadow-xl hover:shadow-[0_15px_40px_rgba(0,0,0,0.1)] dark:hover:shadow-[0_15px_40px_rgba(0,0,0,0.6)] transition-all duration-500">
+                <div class="glass-card p-6 mb-6 relative overflow-hidden shadow-xl hover:shadow-[0_15px_40px_rgba(0,0,0,0.1)] dark:hover:shadow-[0_15px_40px_rgba(0,0,0,0.6)] transition-all duration-500 md:max-w-2xl md:mx-auto">
                     <div class="absolute top-0 right-0 w-32 h-32 bg-blue-500/10 blur-3xl rounded-full"></div>
                     <h3 class="text-sm font-bold text-theme-text mb-5 uppercase tracking-wider font-mono"><i class="fa-solid fa-users text-blue-500 mr-2"></i>學習群組連線</h3>
                     
@@ -429,7 +433,7 @@
                     <div id="settings-groups-list" class="space-y-3 relative z-10"></div>
                 </div>
 
-                <div class="mt-12 mb-8 text-center opacity-30 hover:opacity-100 transition duration-500 cursor-default">
+                <div class="mt-12 mb-8 text-center opacity-30 hover:opacity-100 transition duration-500 cursor-default md:max-w-2xl md:mx-auto">
                     <div class="w-10 h-10 border border-theme-border rounded-full flex items-center justify-center mx-auto mb-3 hover:bg-theme-input transition-colors">
                         <i class="fa-solid fa-code text-theme-text"></i>
                     </div>
@@ -441,8 +445,8 @@
             </section>
         </main>
 
-        <!-- 全域右下角懸浮新增按鈕 (Global FAB) -->
-        <button onclick="app.nav.switch('add')" id="global-fab" class="fixed bottom-8 right-6 w-14 h-14 bg-gradient-to-tr from-brand-600 to-pink-500 rounded-full flex items-center justify-center text-white text-2xl shadow-[0_10px_30px_rgba(99,102,241,0.5)] hover:shadow-[0_15px_40px_rgba(99,102,241,0.8)] hover:scale-110 active:scale-95 transition-all duration-400 z-50">
+        <!-- 全域右下角懸浮新增按鈕 (Global FAB) - iPad position adjusted -->
+        <button onclick="app.nav.switch('add')" id="global-fab" class="fixed bottom-8 right-6 md:bottom-12 md:right-12 lg:right-16 w-14 h-14 bg-gradient-to-tr from-brand-600 to-pink-500 rounded-full flex items-center justify-center text-white text-2xl shadow-[0_10px_30px_rgba(99,102,241,0.5)] hover:shadow-[0_15px_40px_rgba(99,102,241,0.8)] hover:scale-110 active:scale-95 transition-all duration-400 z-50">
             <i class="fa-solid fa-plus transition-transform duration-400" id="add-icon"></i>
         </button>
 
@@ -666,7 +670,6 @@
                     if(p.length<6) return UI.notify('密碼至少6位', 'error'); 
                     try { 
                         const userCredential = await createUserWithEmailAndPassword(auth, e, p); 
-                        // 將輸入的姓名更新到 Firebase Auth Profile 中
                         await updateProfile(userCredential.user, { displayName: n });
                         state.user = userCredential.user; 
                         UI.notify('註冊成功', 'success'); 
@@ -966,7 +969,6 @@
                     const c = document.getElementById('timetable-slots');
                     let slots = state.timetableConfig[state.currentDayTab] || [];
                     
-                    // 控制頂部按鈕顯示與隱藏
                     const btnEdit = document.getElementById('tt-btn-edit');
                     const btnCopy = document.getElementById('tt-btn-copy');
                     const btnAdd = document.getElementById('tt-btn-add');
@@ -982,7 +984,6 @@
                         }
                     }
 
-                    // 空白狀態 (Empty State)
                     if(slots.length === 0) { 
                         if (app.timetable.isEditMode) {
                             c.innerHTML = `<div class="py-12 text-center animate-[fadeIn_0.3s_ease-out]"><div class="w-12 h-12 bg-theme-input rounded-full flex items-center justify-center mx-auto mb-3"><i class="fa-solid fa-calendar-plus text-theme-muted text-xl"></i></div><p class="text-theme-muted text-sm mb-4 font-bold tracking-wide">此日尚未設定</p><button onclick="app.timetable.generateDefault(${state.currentDayTab})" class="text-xs font-bold bg-brand-500 px-5 py-2.5 rounded-full text-white shadow-lg hover:-translate-y-1 hover:shadow-brand-500/40 active:scale-95 transition-all duration-300">套用預設時段</button></div>`; 
@@ -996,7 +997,6 @@
                     let html = '';
 
                     if (app.timetable.isEditMode) {
-                        // ✏️ 編輯模式 (Editable Grid)
                         html += `<div class="flex text-[10px] font-bold text-theme-muted mb-2 px-1 uppercase tracking-wider animate-[fadeIn_0.3s_ease-out]">
                             <div class="w-[75px] shrink-0">時間 Time</div>
                             <div class="flex-1">標籤與科目 Subject</div>
@@ -1022,7 +1022,6 @@
                             </div>
                         `).join('');
                     } else {
-                        // 👀 唯讀模式 (Read-only Clean View)
                         html += `<div class="mt-2 flex flex-col gap-2 px-1 animate-[fadeIn_0.3s_ease-out]">`;
                         html += slots.map(s => `
                             <div class="flex items-center gap-3 p-3 bg-theme-input/30 border border-theme-border rounded-xl hover:bg-theme-input/60 transition-colors">
@@ -1045,7 +1044,6 @@
                     const s = state.timetableConfig[state.currentDayTab].find(x => x.id === id); 
                     if(s) s[k] = v; 
                     app.timetable.saveConfig(); 
-                    // 若改的是時間才重新渲染，避免改變下拉選單時失去焦點
                     if (k === 'start' || k === 'end') app.timetable.renderDaySelector();
                 },
                 generateDefault: (d) => { state.timetableConfig[d] = [{id:API.genId(),start:'08:00',end:'08:40',label:'第1節',type:'class',subject:''},{id:API.genId(),start:'08:40',end:'09:20',label:'第2節',type:'class',subject:''},{id:API.genId(),start:'09:20',end:'09:40',label:'小息',type:'special',subject:''},{id:API.genId(),start:'09:40',end:'10:20',label:'第3節',type:'class',subject:''},{id:API.genId(),start:'10:20',end:'11:00',label:'第4節',type:'class',subject:''},{id:API.genId(),start:'11:00',end:'11:20',label:'小息',type:'special',subject:''},{id:API.genId(),start:'11:20',end:'12:00',label:'第5節',type:'class',subject:''},{id:API.genId(),start:'12:00',end:'13:00',label:'午膳',type:'special',subject:''},{id:API.genId(),start:'13:00',end:'13:40',label:'第6節',type:'class',subject:''},{id:API.genId(),start:'13:40',end:'14:20',label:'第7節',type:'class',subject:''}]; app.timetable.saveConfig(); app.timetable.renderDaySelector(); },

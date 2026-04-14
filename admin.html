@@ -15,7 +15,8 @@
                         brand: { 400: '#60a5fa', 500: '#3b82f6', 600: '#2563eb', 900: '#1e3a8a' },
                         royal: { 400: '#818cf8', 500: '#6366f1', 600: '#4f46e5', 800: '#3730a3', 900: '#312e81' },
                         danger: { 400: '#f87171', 500: '#ef4444', 600: '#dc2626' },
-                        success: { 400: '#34d399', 500: '#10b981', 600: '#059669' }
+                        success: { 400: '#34d399', 500: '#10b981', 600: '#059669' },
+                        warning: { 400: '#fbbf24', 500: '#f59e0b', 600: '#d97706' }
                     },
                     fontFamily: {
                         sans: ['Inter', 'system-ui', '-apple-system', 'sans-serif'],
@@ -103,7 +104,7 @@
             box-shadow: inset 10px 0 20px -10px rgba(59, 130, 246, 0.5);
         }
         
-        /* 表格設計 (優雅的發光分隔線) */
+        /* 表格設計 */
         .admin-table th {
             background: rgba(2, 6, 23, 0.5);
             color: #94a3b8;
@@ -113,8 +114,8 @@
             font-weight: 700;
             border-bottom: 1px solid rgba(99, 102, 241, 0.3);
         }
-        .admin-table tr { border-bottom: 1px solid rgba(255, 255, 255, 0.05); transition: all 0.2s ease; }
-        .admin-table tr:hover { background: rgba(99, 102, 241, 0.05); transform: scale(1.002); }
+        .admin-table tr { border-bottom: 1px solid rgba(255, 255, 255, 0.05); transition: all 0.15s ease; }
+        .admin-table tr:hover { background: rgba(99, 102, 241, 0.1); }
         .admin-table td { padding: 1rem 1.5rem; vertical-align: middle; }
 
         /* 優雅的滾動條 */
@@ -156,13 +157,15 @@
         }
         .status-dot { width: 10px; height: 10px; background-color: theme('colors.success.400'); border-radius: 50%; display: inline-block; animation: pulse-soft 2s infinite; }
         
-        /* Progress Bar Animation */
         .progress-bar-fill { transition: width 1s cubic-bezier(0.4, 0, 0.2, 1); }
     </style>
 </head>
 <body class="flex h-screen">
 
     <div class="ambient-bg"></div>
+    
+    <div class="absolute top-[-10%] left-[-10%] w-[40vw] h-[40vw] bg-brand-600/10 blur-[120px] rounded-full pointer-events-none"></div>
+    <div class="absolute bottom-[-10%] right-[-10%] w-[30vw] h-[30vw] bg-indigo-600/10 blur-[120px] rounded-full pointer-events-none"></div>
 
     <!-- Auth Guard (登入畫面) -->
     <div id="admin-login" class="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/80 backdrop-blur-2xl transition-opacity duration-500">
@@ -255,14 +258,14 @@
             <!-- 📊 Dashboard View -->
             <section id="view-dashboard" class="view-section active w-full max-w-7xl mx-auto space-y-8">
                 
-                <!-- 🌟 全新 Firebase 配額監控儀表板 -->
+                <!-- Firebase 配額監控儀表板 -->
                 <div class="admin-card p-6 md:p-8 bg-gradient-to-br from-slate-900/80 to-brand-900/30 relative overflow-hidden">
                     <div class="absolute top-0 right-0 p-8 opacity-10 pointer-events-none"><i class="fa-brands fa-google text-9xl"></i></div>
-                    <h3 class="text-lg font-bold text-white mb-6 flex items-center gap-3"><i class="fa-solid fa-fire text-amber-500 text-xl"></i> Firebase 每日免費配額監測 (估算)</h3>
+                    <h3 class="text-lg font-bold text-white mb-6 flex items-center gap-3"><i class="fa-solid fa-fire text-warning-500 text-xl"></i> Firebase 每日免費配額監測 (估算)</h3>
                     
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-8 relative z-10">
                         <!-- Writes -->
-                        <div class="bg-slate-900/50 p-5 rounded-2xl border border-slate-700/50">
+                        <div class="bg-slate-900/50 p-5 rounded-2xl border border-brand-500/20">
                             <div class="flex justify-between items-end mb-3">
                                 <div>
                                     <p class="text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-1">文檔寫入 Document Writes</p>
@@ -276,7 +279,7 @@
                         </div>
                         
                         <!-- Reads -->
-                        <div class="bg-slate-900/50 p-5 rounded-2xl border border-slate-700/50">
+                        <div class="bg-slate-900/50 p-5 rounded-2xl border border-success-500/20">
                             <div class="flex justify-between items-end mb-3">
                                 <div>
                                     <p class="text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-1">文檔讀取 Document Reads</p>
@@ -335,7 +338,7 @@
 
                     <!-- Quick Actions -->
                     <div class="admin-card p-6 md:p-8 h-[450px] flex flex-col bg-slate-900/40">
-                        <h3 class="text-base font-bold text-white mb-6 border-b border-slate-700/50 pb-4 tracking-wide"><i class="fa-solid fa-bolt text-amber-400 mr-2"></i>快速操作 (Actions)</h3>
+                        <h3 class="text-base font-bold text-white mb-6 border-b border-brand-500/20 pb-4 tracking-wide"><i class="fa-solid fa-bolt text-warning-400 mr-2"></i>快速操作 (Actions)</h3>
                         <div class="space-y-4 flex-1">
                             <button onclick="adminApp.nav.switch('users')" class="w-full bg-slate-800/60 hover:bg-brand-900/40 text-left p-5 rounded-2xl border border-slate-700/50 hover:border-brand-500/50 transition-all active:scale-95 group flex items-center gap-5 shadow-sm hover:shadow-brand-500/10">
                                 <div class="w-12 h-12 rounded-xl bg-brand-500/10 flex items-center justify-center text-brand-400 group-hover:scale-110 group-hover:bg-brand-500 group-hover:text-white transition-all shadow-inner"><i class="fa-solid fa-user-plus text-lg"></i></div>
@@ -373,7 +376,7 @@
                 <div class="admin-card overflow-hidden">
                     <div class="overflow-x-auto min-h-[500px]">
                         <table class="w-full text-left admin-table">
-                            <thead class="sticky top-0 bg-slate-900/95 backdrop-blur-xl z-10 shadow-sm">
+                            <thead class="sticky top-0 bg-slate-900/95 backdrop-blur-xl z-10 shadow-sm border-b border-brand-500/30">
                                 <tr>
                                     <th class="px-6 py-5 w-16 text-center"><i class="fa-solid fa-user"></i></th>
                                     <th class="px-6 py-5">用戶資訊 (Name / Email)</th>
@@ -426,9 +429,9 @@
                     </div>
 
                     <!-- Security Policies -->
-                    <div class="admin-card p-8 border-t-4 border-t-slate-700 relative overflow-hidden">
+                    <div class="admin-card p-8 border-t-4 border-t-brand-500 relative overflow-hidden">
                         <div class="absolute -right-6 -bottom-6 opacity-[0.03]"><i class="fa-solid fa-shield-halved text-[180px] text-white"></i></div>
-                        <h3 class="text-xl font-bold text-white mb-2 flex items-center gap-3 relative z-10"><i class="fa-solid fa-shield-halved text-slate-400"></i> 註冊與安全策略</h3>
+                        <h3 class="text-xl font-bold text-white mb-2 flex items-center gap-3 relative z-10"><i class="fa-solid fa-shield-halved text-brand-400"></i> 註冊與安全策略</h3>
                         <p class="text-sm text-slate-400 mb-8 leading-relaxed font-medium relative z-10">進階存取控制 (即將於 v2.0 實裝，目前鎖定)。</p>
                         
                         <div class="space-y-4 opacity-50 cursor-not-allowed relative z-10">
@@ -472,7 +475,7 @@
                 <div class="flex flex-col md:flex-row justify-between items-start md:items-end gap-5 mb-4">
                     <div>
                         <h2 class="text-3xl font-black text-white tracking-tight drop-shadow-md">系統操作日誌 <span class="text-brand-400">Audit Logs</span></h2>
-                        <p class="text-sm text-slate-400 mt-2 font-medium">全站不可竄改的操作紀錄，用於問題追蹤與稽核。</p>
+                        <p class="text-sm text-slate-400 mt-2 font-medium">全站不可竄改的操作紀錄，用於問題追蹤與稽核 (僅顯示最新 100 筆)。</p>
                     </div>
                     <div class="flex gap-3 w-full md:w-auto">
                         <div class="relative flex-1 md:w-72">
@@ -486,7 +489,7 @@
                 <div class="admin-card overflow-hidden">
                     <div class="overflow-x-auto h-[600px] overflow-y-auto no-scrollbar relative">
                         <table class="w-full text-left admin-table font-mono text-[13px]">
-                            <thead class="sticky top-0 bg-slate-900/95 backdrop-blur-xl z-10 shadow-sm border-b-2 border-brand-500/20">
+                            <thead class="sticky top-0 bg-slate-900/95 backdrop-blur-xl z-10 shadow-sm border-b border-brand-500/30">
                                 <tr>
                                     <th class="px-6 py-5 w-[180px]">時間 (Timestamp)</th>
                                     <th class="px-6 py-5 w-[250px]">操作者 (User)</th>
@@ -494,7 +497,7 @@
                                     <th class="px-6 py-5">附加數據 (Meta Data)</th>
                                 </tr>
                             </thead>
-                            <tbody id="logs-table-body" class="text-slate-300 bg-slate-900/30">
+                            <tbody id="logs-table-body" class="text-slate-300 bg-slate-900/30 transition-opacity duration-300">
                                 <tr><td colspan="4" class="text-center py-16 text-slate-500"><i class="fa-solid fa-circle-notch fa-spin text-3xl mb-4 text-brand-500/50"></i><br><span class="text-xs font-mono font-bold tracking-widest">載入日誌中...</span></td></tr>
                             </tbody>
                         </table>
@@ -544,8 +547,8 @@
 
         const state = {
             user: null,
-            users: [], // Array of { uid, role, isBanned, createdAt }
-            usersMap: {}, // Map of uid -> { name, email, photo } for quick lookup
+            users: [], 
+            usersMap: {}, 
             logs: [],
             groupsCount: 0,
             currentView: 'dashboard'
@@ -684,6 +687,7 @@
                         activeBtn.classList.add('active');
                         activeBtn.querySelector('i').classList.remove('opacity-80');
                         activeBtn.querySelector('i').classList.add('opacity-100');
+                        if(typeof gsap !== 'undefined') gsap.fromTo(activeBtn, { scale: 0.95 }, { scale: 1, duration: 0.4, ease: "back.out(1.5)" });
                     }
                     
                     const titles = { 'dashboard': '總覽儀表板', 'users': '用戶管理 Users', 'settings': '全域設定 Settings', 'logs': '系統日誌 Audit Logs' };
@@ -699,12 +703,6 @@
                         target.classList.add('active');
                         if(typeof gsap !== 'undefined') {
                             gsap.fromTo(target, { opacity: 0, y: 30, scale: 0.98 }, { opacity: 1, y: 0, scale: 1, duration: 0.5, ease: "power3.out" });
-                            
-                            // 觸發內部列表的 staggered 動畫
-                            const staggerItems = target.querySelectorAll('.stagger-item');
-                            if(staggerItems.length > 0) {
-                                gsap.fromTo(staggerItems, { opacity: 0, x: -20 }, { opacity: 1, x: 0, duration: 0.4, stagger: 0.05, ease: "power2.out", delay: 0.1 });
-                            }
                         }
                     }
                     
@@ -757,7 +755,6 @@
                         const tbody = document.getElementById('users-table-body');
                         if(tbody) tbody.innerHTML = '<tr><td colspan="6" class="text-center py-16 text-slate-500"><i class="fa-solid fa-circle-notch fa-spin text-3xl mb-4 text-brand-500/50"></i><br><span class="text-xs font-mono font-bold tracking-widest">Fetching Database...</span></td></tr>';
                         
-                        // 1. Fetch Profiles
                         const profilesSnap = await getDocs(collectionGroup(db, 'profile'));
                         state.users = [];
                         profilesSnap.forEach(docSnap => {
@@ -767,7 +764,6 @@
                                 const data = docSnap.data();
                                 state.users.push({ uid, ...data });
                                 
-                                // Attempt to parse Name from fallback logic if available in future
                                 if(!state.usersMap[uid]) state.usersMap[uid] = { name: data.displayName || '', email: data.email || '' };
                             }
                         });
@@ -779,7 +775,7 @@
                         }
                         
                         adminApp.renders.usersTable();
-                        adminApp.renders.logsTable(); // Re-render logs to apply new names
+                        adminApp.renders.logsTable(); 
                         UI.notify('用戶名單同步完成');
                     } catch(e) {
                         console.error("Load users error:", e);
@@ -799,8 +795,7 @@
                         if(typeof gsap !== 'undefined') gsap.fromTo(st, { scale: 0.8, color: '#34d399' }, { scale: 1, color: '#fff', duration: 0.5 });
                     }
 
-                    // 🌟 Update Quota Progress Bars
-                    // Estimations: Writes = logs count. Reads = logs * 5 (rough estimate).
+                    // 🌟 Quota Progress Bars
                     const quotaWrites = document.getElementById('quota-writes');
                     const barWrites = document.getElementById('bar-writes');
                     if(quotaWrites && barWrites) {
@@ -828,6 +823,7 @@
                         return;
                     }
 
+                    // 限制渲染 DOM 數量以維持效能
                     recentContainer.innerHTML = '';
                     state.logs.slice(0, 20).forEach(l => {
                         const time = new Date(l.timestamp).toLocaleTimeString('en-US', {hour12:false});
@@ -858,7 +854,6 @@
                 usersTable: () => {
                     const tbody = document.getElementById('users-table-body');
                     if(!tbody) return;
-                    tbody.innerHTML = '';
                     
                     const term = (document.getElementById('user-search')?.value || '').toLowerCase();
                     const filtered = state.users.filter(u => {
@@ -874,7 +869,9 @@
                         return;
                     }
                     
-                    filtered.forEach(u => {
+                    // 🚀 效能優化：限制只渲染前 100 筆，並使用整體淡入取代逐行 GSAP Stagger
+                    let html = '';
+                    filtered.slice(0, 100).forEach(u => {
                         const isBanned = u.isBanned;
                         const roleColor = u.role === 'provider' ? 'badge-danger' : 'badge-brand';
                         const statusTag = isBanned ? '<span class="text-danger-400 font-bold flex items-center gap-2 text-[11px]"><span class="w-2 h-2 rounded-full bg-danger-500 animate-pulse"></span> BANNED</span>' : '<span class="text-success-400 font-bold flex items-center gap-2 text-[11px]"><span class="w-2 h-2 rounded-full bg-success-500"></span> ACTIVE</span>';
@@ -882,8 +879,8 @@
                         const info = getUserDisplayInfo(u.uid);
                         const avatarColor = ['bg-gradient-to-tr from-blue-600 to-blue-400', 'bg-gradient-to-tr from-emerald-600 to-emerald-400', 'bg-gradient-to-tr from-amber-600 to-amber-400', 'bg-gradient-to-tr from-brand-600 to-indigo-500', 'bg-gradient-to-tr from-purple-600 to-purple-400'][Math.floor(u.uid.charCodeAt(0) % 5)];
 
-                        tbody.innerHTML += `
-                            <tr class="stagger-item">
+                        html += `
+                            <tr>
                                 <td class="px-6 py-4">
                                     <div class="w-10 h-10 rounded-full ${avatarColor} text-white flex items-center justify-center font-bold text-[13px] shadow-lg border border-white/10">${info.name.substring(0,2).toUpperCase()}</div>
                                 </td>
@@ -896,23 +893,29 @@
                                 <td class="px-6 py-4 text-[12px] text-slate-400 font-mono">${dateStr}</td>
                                 <td class="px-6 py-4 text-right">
                                     <div class="flex items-center justify-end gap-2">
-                                        <button onclick="adminApp.users.showDetails('${u.uid}')" class="w-9 h-9 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 transition-all border border-slate-700 hover:border-slate-500 active:scale-90 flex items-center justify-center shadow-sm" title="查看詳情"><i class="fa-solid fa-id-card text-sm"></i></button>
-                                        <button onclick="adminApp.users.toggleRole('${u.uid}', '${u.role}')" class="w-9 h-9 rounded-xl bg-slate-800 hover:bg-brand-500/20 text-brand-400 transition-all border border-slate-700 hover:border-brand-500/50 active:scale-90 flex items-center justify-center shadow-sm" title="切換權限"><i class="fa-solid fa-crown text-sm"></i></button>
-                                        <button onclick="adminApp.users.toggleBan('${u.uid}', ${isBanned})" class="w-9 h-9 rounded-xl bg-slate-800 hover:bg-danger-500/20 ${isBanned?'text-success-400':'text-danger-400'} transition-all border border-slate-700 hover:border-danger-500/50 active:scale-90 flex items-center justify-center shadow-sm" title="${isBanned?'解除封鎖':'封鎖帳號'}"><i class="fa-solid ${isBanned?'fa-unlock':'fa-ban'} text-sm"></i></button>
+                                        <button onclick="adminApp.users.showDetails('${u.uid}')" class="w-9 h-9 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 transition-colors border border-slate-700 hover:border-slate-500 flex items-center justify-center shadow-sm active:scale-95" title="查看詳情"><i class="fa-solid fa-id-card text-sm"></i></button>
+                                        <button onclick="adminApp.users.toggleRole('${u.uid}', '${u.role}')" class="w-9 h-9 rounded-xl bg-slate-800 hover:bg-brand-500/20 text-brand-400 transition-colors border border-slate-700 hover:border-brand-500/50 flex items-center justify-center shadow-sm active:scale-95" title="切換權限"><i class="fa-solid fa-crown text-sm"></i></button>
+                                        <button onclick="adminApp.users.toggleBan('${u.uid}', ${isBanned})" class="w-9 h-9 rounded-xl bg-slate-800 hover:bg-danger-500/20 ${isBanned?'text-success-400':'text-danger-400'} transition-colors border border-slate-700 hover:border-danger-500/50 flex items-center justify-center shadow-sm active:scale-95" title="${isBanned?'解除封鎖':'封鎖帳號'}"><i class="fa-solid ${isBanned?'fa-unlock':'fa-ban'} text-sm"></i></button>
                                     </div>
                                 </td>
                             </tr>
                         `;
                     });
                     
+                    if (filtered.length > 100) {
+                        html += `<tr><td colspan="6" class="text-center py-4 text-slate-500 text-[11px] font-mono">僅顯示最新 100 筆結果以確保系統效能...</td></tr>`;
+                    }
+                    
+                    tbody.innerHTML = html;
+                    
+                    // 🚀 優化的輕量級動畫
                     if(typeof gsap !== 'undefined') {
-                        gsap.fromTo(".stagger-item", { opacity: 0, x: -20 }, { opacity: 1, x: 0, duration: 0.4, stagger: 0.03, ease: "power2.out" });
+                        gsap.fromTo(tbody, { opacity: 0 }, { opacity: 1, duration: 0.3 });
                     }
                 },
                 logsTable: () => {
                     const tbody = document.getElementById('logs-table-body');
                     if(!tbody) return;
-                    tbody.innerHTML = '';
                     
                     const term = (document.getElementById('log-search')?.value || '').toLowerCase();
                     const filtered = state.logs.filter(l => {
@@ -927,7 +930,9 @@
                         return;
                     }
 
-                    filtered.forEach(l => {
+                    // 🚀 效能優化：限制只渲染前 100 筆
+                    let html = '';
+                    filtered.slice(0, 100).forEach(l => {
                         const info = getUserDisplayInfo(l.uid);
                         const metaStr = l.device ? `Device: ${l.device.substring(0,20)}...` : (l.groupId ? `Group: ${l.groupId}` : (l.taskId ? `Task: ${l.taskId}` : ''));
                         
@@ -935,8 +940,8 @@
                         if(l.action.includes('CREATED') || l.action.includes('SAVED')) badgeClass = 'text-success-400';
                         if(l.action.includes('DELETED')) badgeClass = 'text-danger-400';
 
-                        tbody.innerHTML += `
-                            <tr class="stagger-item hover:bg-slate-800/50 transition-colors">
+                        html += `
+                            <tr>
                                 <td class="px-6 py-4 text-slate-400 tracking-wider">${new Date(l.timestamp).toLocaleString('en-US', {hour12:false})}</td>
                                 <td class="px-6 py-4">
                                     <div class="flex items-center gap-3">
@@ -950,8 +955,15 @@
                         `;
                     });
                     
+                    if (filtered.length > 100) {
+                        html += `<tr><td colspan="4" class="text-center py-4 text-slate-500 text-[11px] font-mono">僅顯示最新 100 筆紀錄以確保系統效能... (請使用匯出 CSV 檢視全部)</td></tr>`;
+                    }
+                    
+                    tbody.innerHTML = html;
+                    
+                    // 🚀 優化的輕量級動畫
                     if(typeof gsap !== 'undefined') {
-                        gsap.fromTo(".stagger-item", { opacity: 0, y: 10 }, { opacity: 1, y: 0, duration: 0.3, stagger: 0.02, ease: "power1.out" });
+                        gsap.fromTo(tbody, { opacity: 0 }, { opacity: 1, duration: 0.3 });
                     }
                 }
             },

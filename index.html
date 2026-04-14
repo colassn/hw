@@ -799,8 +799,25 @@
                         if (docSnap.exists()) {
                             state.profile = docSnap.data();
                             if (state.profile.isBanned) AdminService.triggerBlocker('帳號已停權', '您的帳號已被封鎖，無法存取系統。', true);
+                            
+                            // 🌟 核心修復：確保用戶的真實名稱與頭像會更新到資料庫，讓管理員能看見
+                            if (state.profile.displayName !== state.user.displayName || state.profile.photoURL !== state.user.photoURL || state.profile.email !== state.user.email) {
+                                updateDoc(docSnap.ref, {
+                                    displayName: state.user.displayName || '',
+                                    email: state.user.email || '',
+                                    photoURL: state.user.photoURL || ''
+                                }).catch(e=>{});
+                            }
                         } else {
-                            setDoc(docSnap.ref, { role: 'student', isBanned: false, createdAt: new Date().toISOString() });
+                            // 🌟 新用戶註冊時寫入完整資料
+                            setDoc(docSnap.ref, { 
+                                role: 'student', 
+                                isBanned: false, 
+                                createdAt: new Date().toISOString(),
+                                displayName: state.user.displayName || '',
+                                email: state.user.email || '',
+                                photoURL: state.user.photoURL || ''
+                            });
                         }
                     }));
                 } catch (e) {

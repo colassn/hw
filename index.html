@@ -1,10 +1,14 @@
 <!DOCTYPE html>
-<html lang="zh-HK" class="dark">
+<html lang="zh-HK" id="html-root" class="dark">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="theme-color" content="#6366f1">
     <title>電子手冊 Homework Record | Lumina Task</title>
     
+    <!-- PWA Manifest -->
+    <link rel="manifest" href="data:application/manifest+json;base64,eyAKICAibmFtZSI6ICJIb21ld29yayBSZWNvcmQiLAogICJzaG9ydF9uYW1lIjogIkx1bWluYSIsCiAgInN0YXJ0X3VybCI6ICIuIiwKICAiZGlzcGxheSI6ICJzdGFuZGFsb25lIiwKICAiYmFja2dyb3VuZF9jb2xvciI6ICIjMDMwMzA1IiwKICAidGhlbWVfY29sb3IiOiAiIzYzNjZmMSIsCiAgImljb25zIjogW3sic3JjIjogImh0dHBzOi8vd3d3LnN2Z3JlcG8uY29tL3Nob3cvNDc1NjU2L2dvb2dsZS1jb2xvci5zdmciLCAic2l6ZXMiOiAiMTkyeDE5MiIsICJ0eXBlIjogImltYWdlL3N2Zyt4bWwifV0KfQ==">
+
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
@@ -13,14 +17,20 @@
             theme: {
                 extend: {
                     colors: {
-                        glass: 'rgba(255, 255, 255, 0.05)',
-                        glassBorder: 'rgba(255, 255, 255, 0.1)',
-                        brand: { 400: '#818cf8', 500: '#6366f1', 600: '#4f46e5' },
-                        exam: { 400: '#f87171', 500: '#ef4444' }
+                        theme: {
+                            bg: 'var(--bg)',
+                            text: 'var(--text)',
+                            muted: 'var(--text-muted)',
+                            border: 'var(--border)',
+                            input: 'var(--input)',
+                            card: 'var(--card)'
+                        },
+                        brand: { 400: '#818cf8', 500: '#6366f1', 600: '#4f46e5' }
                     },
                     fontFamily: {
-                        sans: ['Inter', '-apple-system', 'BlinkMacSystemFont', 'system-ui', 'sans-serif'],
-                        display: ['Plus Jakarta Sans', 'sans-serif'],
+                        sans: ['Inter', 'Noto Sans HK', '-apple-system', 'BlinkMacSystemFont', 'system-ui', 'sans-serif'],
+                        display: ['Plus Jakarta Sans', 'Noto Sans HK', 'sans-serif'],
+                        serif: ['LXGW WenKai TC', 'Noto Serif HK', 'serif'],
                         mono: ['JetBrains Mono', 'Menlo', 'monospace']
                     }
                 }
@@ -30,24 +40,54 @@
 
     <!-- FontAwesome & Google Fonts -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;700&family=LXGW+WenKai+TC:wght@400;700&family=Noto+Sans+HK:wght@400;500;700&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- GSAP Animation Library -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@500;600;700;800&family=JetBrains+Mono:wght@400;700&display=swap');
-        
-        :root { --safe-area-inset-bottom: env(safe-area-inset-bottom, 20px); }
+        :root { 
+            --safe-area-inset-bottom: env(safe-area-inset-bottom, 20px);
+            /* 🌟 極簡淺色模式 (參考圖片配置) */
+            --bg: #f8fafc;
+            --text: #0f172a;
+            --text-muted: #64748b;
+            --border: rgba(0,0,0,0.06);
+            --card: #ffffff;
+            --input: #f1f5f9;
+            --nav-bg: rgba(248, 250, 252, 0.6);
+            --orb-opacity: 0.8;
+        }
+
+        .dark {
+            /* 🌟 極簡深色模式 */
+            --bg: #030305;
+            --text: #f8fafc;
+            --text-muted: #9ca3af;
+            --border: rgba(255,255,255,0.08);
+            --card: #0f111a;
+            --input: rgba(255,255,255,0.04);
+            --nav-bg: rgba(3, 3, 5, 0.6);
+            --orb-opacity: 0.3;
+        }
 
         body {
-            background-color: #030305;
-            color: #f8fafc;
+            background-color: var(--bg);
+            color: var(--text);
             overflow: hidden;
             -webkit-font-smoothing: antialiased;
             -webkit-tap-highlight-color: transparent;
+            transition: background-color 0.5s ease, color 0.5s ease;
         }
 
-        h1, h2, h3, h4, .font-display { font-family: 'Plus Jakarta Sans', sans-serif; }
+        h1, h2, h3, h4, .font-display { font-family: 'Plus Jakarta Sans', 'Noto Sans HK', sans-serif; }
+        .font-literary { font-family: 'LXGW WenKai TC', serif; }
 
         /* --- 流體背景特效 --- */
-        .ambient-bg { position: fixed; inset: 0; z-index: -1; overflow: hidden; background-color: #030305; }
-        .orb { position: absolute; border-radius: 50%; filter: blur(80px); opacity: 0.4; will-change: transform; animation: fluidOrb 25s infinite linear; }
+        .ambient-bg { position: fixed; inset: 0; z-index: -1; overflow: hidden; background-color: var(--bg); transition: background-color 0.5s; }
+        .orb { position: absolute; border-radius: 50%; filter: blur(80px); opacity: var(--orb-opacity); will-change: transform; animation: fluidOrb 25s infinite linear; transition: opacity 0.5s; }
         .orb-1 { width: 70vw; height: 70vw; background: radial-gradient(circle, #6366f1, transparent 60%); top: -20%; left: -10%; }
         .orb-2 { width: 60vw; height: 60vw; background: radial-gradient(circle, #db2777, transparent 60%); bottom: -10%; right: -20%; animation-duration: 30s; animation-direction: reverse; }
         .orb-3 { width: 50vw; height: 50vw; background: radial-gradient(circle, #0ea5e9, transparent 60%); top: 40%; left: 40%; animation-duration: 40s; }
@@ -58,39 +98,35 @@
             100% { transform: translate(0, 0) rotate(360deg) scale(1); }
         }
 
-        /* --- 液態玻璃卡片設計 --- */
-        .glass-panel { background: rgba(10, 10, 12, 0.65); backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px); border-top: 1px solid rgba(255, 255, 255, 0.08); }
-        .glass-card { background: linear-gradient(145deg, rgba(255, 255, 255, 0.05) 0%, rgba(255, 255, 255, 0.01) 100%); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 20px; box-shadow: 0 8px 32px -4px rgba(0,0,0,0.5); transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
+        /* --- 卡片與輸入框設計 --- */
+        .glass-card { background: var(--card); border: 1px solid var(--border); border-radius: 20px; box-shadow: 0 10px 40px -10px rgba(0,0,0,0.05); transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
+        .dark .glass-card { box-shadow: 0 10px 40px -10px rgba(0,0,0,0.6); border: 1px solid rgba(255,255,255,0.05); }
 
-        .no-scrollbar::-webkit-scrollbar { display: none; }
-        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        .premium-input { background: var(--input); border: 1px solid transparent; color: var(--text); padding: 1rem; border-radius: 16px; width: 100%; transition: all 0.3s ease; }
+        .premium-input:focus { outline: none; border-color: #6366f1; background: var(--bg); box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.15); }
 
-        .premium-input { background: rgba(0, 0, 0, 0.3); border: 1px solid rgba(255, 255, 255, 0.1); color: white; padding: 1rem; border-radius: 16px; width: 100%; font-size: 1rem; transition: all 0.3s ease; }
-        .premium-input:focus { outline: none; border-color: #6366f1; background: rgba(0, 0, 0, 0.6); box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2); }
+        .pill-btn { white-space: nowrap; padding: 0.5rem 1.25rem; border-radius: 9999px; background: var(--input); border: 1px solid var(--border); color: var(--text-muted); font-weight: 500; font-size: 0.875rem; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); cursor: pointer; }
+        .pill-btn:hover { background: var(--border); transform: translateY(-2px); color: var(--text); box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
+        .pill-btn.active { background: #6366f1; border-color: #818cf8; color: white; box-shadow: 0 4px 15px rgba(99, 102, 241, 0.4); transform: translateY(-2px) scale(1.05); }
 
-        .pill-btn { white-space: nowrap; padding: 0.5rem 1.25rem; border-radius: 9999px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); color: #9ca3af; font-weight: 500; font-size: 0.875rem; transition: all 0.2s; }
-        .pill-btn.active { background: #6366f1; border-color: #818cf8; color: white; box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3); transform: scale(1.05); }
+        .top-nav-item { cursor: pointer; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
+        .top-nav-item:hover:not(.active) { color: var(--text); background: var(--border); }
 
-        .bottom-nav { padding-bottom: var(--safe-area-inset-bottom); }
-        .nav-item { color: #6b7280; transition: color 0.3s, transform 0.2s; }
-        .nav-item.active { color: #fff; transform: translateY(-2px); }
-        
-        .fab-button { background: linear-gradient(135deg, #6366f1, #d946ef); box-shadow: 0 8px 32px rgba(99, 102, 241, 0.4); transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+        .fab-button { background: linear-gradient(135deg, #6366f1, #d946ef); box-shadow: 0 8px 32px rgba(99, 102, 241, 0.4); transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+        .fab-button:hover { transform: translateY(-4px) scale(1.08); box-shadow: 0 15px 40px rgba(99, 102, 241, 0.6); }
         .fab-button:active { transform: scale(0.9); }
-        .nav-item.active .fab-button { box-shadow: 0 0 0 4px rgba(255,255,255,0.2), 0 8px 32px rgba(99, 102, 241, 0.6); transform: scale(1.05); }
 
         .view-section { display: none; opacity: 0; }
         .view-section.active { display: block; opacity: 1; }
 
-        .widget-card { position: relative; overflow: hidden; }
-        .widget-card::before { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(180deg, rgba(255,255,255,0.05) 0%, transparent 100%); opacity: 0; transition: opacity 0.3s; }
-        .widget-card:hover::before { opacity: 1; }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
 
-        .overdue-pulse { animation: pulseRed 2s infinite; border-color: rgba(239, 68, 68, 0.5); }
-        @keyframes pulseRed { 0% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.4); } 70% { box-shadow: 0 0 0 10px rgba(239, 68, 68, 0); } 100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); } }
+        .overdue-pulse { animation: pulseRed 2s infinite; border-color: rgba(239, 68, 68, 0.3); }
+        @keyframes pulseRed { 0% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.3); } 70% { box-shadow: 0 0 0 10px rgba(239, 68, 68, 0); } 100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); } }
     </style>
 </head>
-<body class="flex flex-col h-screen w-full relative">
+<body class="flex flex-col h-screen w-full relative font-sans">
 
     <div class="ambient-bg">
         <div class="orb orb-1"></div>
@@ -99,308 +135,375 @@
     </div>
 
     <!-- 0. 系統載入遮罩 -->
-    <div id="system-loader" class="fixed inset-0 z-[400] flex items-center justify-center bg-[#030305]">
+    <div id="system-loader" class="fixed inset-0 z-[400] flex items-center justify-center bg-theme-bg">
         <div class="text-center">
             <div class="w-16 h-16 border-4 border-brand-500/30 border-t-brand-500 rounded-full animate-spin mx-auto mb-6 shadow-[0_0_30px_rgba(99,102,241,0.5)]"></div>
-            <div class="text-gray-400 font-mono tracking-widest text-xs uppercase font-bold">Initializing System...</div>
+            <div class="text-theme-muted font-mono tracking-widest text-xs uppercase font-bold">Initializing System...</div>
         </div>
     </div>
 
     <!-- 1. 登入頁面 -->
-    <section id="view-auth" class="fixed inset-0 z-[100] flex flex-col items-center justify-center px-6 hidden bg-[#030305]/60 backdrop-blur-md">
-        <div class="w-full max-w-sm glass-card p-8 text-center relative overflow-hidden shadow-2xl">
+    <section id="view-auth" class="fixed inset-0 z-[100] flex flex-col items-center justify-center px-6 hidden bg-white/60 dark:bg-[#030305]/60 backdrop-blur-md">
+        <div class="w-full max-w-sm glass-card p-8 text-center relative overflow-hidden shadow-2xl border border-theme-border">
             <div class="absolute -top-20 -right-20 w-40 h-40 bg-brand-500/20 blur-3xl rounded-full"></div>
             
             <div class="w-20 h-20 bg-gradient-to-tr from-brand-600 to-pink-500 rounded-2xl mx-auto mb-6 flex items-center justify-center shadow-[0_10px_30px_rgba(99,102,241,0.4)]">
                 <i class="fa-solid fa-book-bookmark text-3xl text-white"></i>
             </div>
             
-            <h1 class="text-2xl font-bold text-white mb-2 tracking-tight">電子手冊 Homework Record</h1>
-            <p class="text-sm text-gray-400 mb-8 font-mono">ENTERPRISE GRADE SYSTEM</p>
+            <h1 class="text-3xl font-bold text-theme-text mb-2 font-literary tracking-wide">電子手冊</h1>
+            <p class="text-sm text-theme-muted mb-8 font-mono">Homework Record System</p>
 
-            <button onclick="app.auth.loginWithGoogle()" class="w-full bg-white text-black py-3.5 rounded-xl font-bold text-sm hover:bg-gray-200 active:scale-95 transition shadow-lg flex items-center justify-center gap-3 mb-6">
+            <button onclick="app.auth.loginWithGoogle()" class="w-full bg-theme-text text-theme-bg py-3.5 rounded-xl font-bold text-sm hover:-translate-y-1 active:scale-95 transition-all duration-300 flex items-center justify-center gap-3 mb-6 shadow-lg">
                 <img src="https://www.svgrepo.com/show/475656/google-color.svg" class="w-5 h-5" alt="Google">
                 使用 Google 帳號登入
             </button>
 
             <div class="flex items-center gap-4 mb-6">
-                <div class="h-[1px] flex-1 bg-white/10"></div>
-                <span class="text-xs text-gray-500 font-medium">或使用電郵</span>
-                <div class="h-[1px] flex-1 bg-white/10"></div>
+                <div class="h-[1px] flex-1 bg-theme-border"></div>
+                <span class="text-xs text-theme-muted font-medium">或使用電郵</span>
+                <div class="h-[1px] flex-1 bg-theme-border"></div>
             </div>
 
             <div class="space-y-3 mb-6">
-                <input type="email" id="auth-email" placeholder="電子郵件" class="premium-input py-3 text-sm">
-                <input type="password" id="auth-password" placeholder="密碼" class="premium-input py-3 text-sm">
+                <input type="text" id="auth-name" placeholder="您的姓名 Name" class="premium-input py-3.5 text-sm hidden">
+                <input type="email" id="auth-email" placeholder="電子郵件 Email" class="premium-input py-3.5 text-sm">
+                <input type="password" id="auth-password" placeholder="密碼 Password" class="premium-input py-3.5 text-sm">
             </div>
 
-            <div class="flex gap-3">
-                <button onclick="app.auth.loginWithEmail()" class="flex-1 bg-brand-600/20 border border-brand-500/50 text-brand-300 py-3 rounded-xl font-bold text-sm active:scale-95 transition">登入</button>
-                <button onclick="app.auth.registerWithEmail()" class="flex-1 bg-brand-600 text-white py-3 rounded-xl font-bold text-sm shadow-lg shadow-brand-500/30 active:scale-95 transition">註冊</button>
+            <div class="flex flex-col gap-3">
+                <button id="auth-main-btn" onclick="app.auth.submit()" class="w-full bg-brand-600 text-white py-3.5 rounded-xl font-bold text-sm shadow-lg shadow-brand-500/30 hover:-translate-y-1 hover:shadow-brand-500/50 hover:shadow-xl active:scale-95 transition-all duration-300">登入 Login</button>
+                <button id="auth-toggle-btn" onclick="app.auth.toggleMode()" class="w-full bg-transparent border border-theme-border text-theme-muted py-3.5 rounded-xl font-bold text-sm hover:-translate-y-1 hover:bg-theme-input active:scale-95 transition-all duration-300">還沒有帳號？點此註冊</button>
             </div>
-        </div>
-        
-        <div class="mt-8 text-center opacity-50">
-            <span class="text-[10px] text-gray-500 font-mono tracking-widest block mb-1">PROUDLY CRAFTED BY <span class="text-brand-400">@colasonyt1123</span></span>
-            <span class="text-[10px] text-gray-600 font-mono">SECURED BY GOOGLE FIREBASE</span>
         </div>
     </section>
 
     <!-- 2. 超級管理員攔截層 -->
-    <div id="system-blocker" class="fixed inset-0 z-[300] hidden bg-[#030305]/95 backdrop-blur-xl flex-col items-center justify-center px-6 text-center">
+    <div id="system-blocker" class="fixed inset-0 z-[300] hidden bg-white/95 dark:bg-[#030305]/95 backdrop-blur-xl flex-col items-center justify-center px-6 text-center">
         <i id="blocker-icon" class="fa-solid fa-triangle-exclamation text-6xl text-yellow-500 mb-6 animate-pulse"></i>
-        <h2 id="blocker-title" class="text-3xl font-bold text-white mb-3 tracking-tight font-display">系統維護中</h2>
-        <p id="blocker-message" class="text-gray-400 text-sm max-w-xs leading-relaxed">超級管理員正在進行系統升級，請稍後再試。感謝您的耐心等候。</p>
-        <button onclick="app.auth.logout()" class="mt-8 px-6 py-2 rounded-full border border-white/20 text-xs text-gray-400 hover:bg-white/10 transition">安全登出</button>
-        <p class="absolute bottom-10 text-[10px] text-gray-600 font-mono">@colasonyt1123 | SYSTEM OVERRIDE ACTIVE</p>
+        <h2 id="blocker-title" class="text-3xl font-bold text-theme-text mb-3 tracking-tight font-display">系統維護中</h2>
+        <p id="blocker-message" class="text-theme-muted text-sm max-w-xs leading-relaxed">超級管理員正在進行系統升級，請稍後再試。感謝您的耐心等候。</p>
+        <button onclick="app.auth.logout()" class="mt-8 px-6 py-2 rounded-full border border-theme-border text-xs text-theme-muted hover:bg-theme-input transition">安全登出</button>
     </div>
 
     <!-- 3. 主系統核心 -->
     <div id="app-core" class="hidden flex-col h-full w-full relative">
-        <header class="shrink-0 pt-10 md:pt-12 pb-4 z-40 bg-gradient-to-b from-[#030305] via-[#030305]/90 to-transparent">
-            <div class="flex justify-between items-center mb-6 px-6">
-                <div>
-                    <h1 class="text-2xl md:text-3xl font-bold tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-white to-gray-400">電子手冊</h1>
-                    <p id="header-date" class="text-xs text-brand-400 font-mono mt-0.5 tracking-wider font-semibold">載入中...</p>
-                </div>
-                <div class="flex items-center gap-4">
-                    <button onclick="app.notifications.toggle()" class="relative text-gray-400 hover:text-white transition">
-                        <i class="fa-solid fa-bell text-xl md:text-2xl"></i>
-                        <span id="notif-badge" class="hidden absolute -top-1 -right-1 w-2.5 h-2.5 md:w-3 md:h-3 bg-pink-500 rounded-full border-2 border-[#030305]"></span>
-                    </button>
-                    <button onclick="app.profile.toggle()" class="w-9 h-9 md:w-10 md:h-10 rounded-full bg-gray-800 flex items-center justify-center overflow-hidden border border-white/10 shadow-lg active:scale-95 transition">
-                        <img id="header-avatar" src="" alt="Profile" class="w-full h-full object-cover hidden">
-                        <i id="header-avatar-fallback" class="fa-solid fa-user text-gray-400 text-sm"></i>
-                    </button>
-                </div>
+        
+        <!-- 第一層：上方標題加圖標頭像 -->
+        <header class="shrink-0 pt-10 md:pt-12 pb-4 flex justify-between items-center px-6 md:max-w-5xl lg:max-w-6xl md:mx-auto w-full z-40 relative">
+            <div>
+                <h1 class="text-3xl md:text-4xl font-bold tracking-wide text-theme-text font-literary drop-shadow-sm">電子手冊</h1>
+                <p id="header-date" class="text-xs text-brand-500 font-mono mt-1 tracking-wider font-semibold">載入中...</p>
             </div>
-
-            <div class="grid grid-cols-2 md:grid-cols-4 gap-3 px-6 md:max-w-4xl md:mx-auto">
-                <div class="widget-card glass-card p-3.5 border-brand-500/30 shadow-[0_0_15px_rgba(99,102,241,0.15)]">
-                    <div class="flex justify-between items-center mb-1">
-                        <span class="text-[10px] text-gray-400 font-semibold uppercase tracking-wider"><i class="fa-solid fa-satellite-dish mr-1 text-emerald-400 animate-pulse"></i>實時課堂</span>
-                    </div>
-                    <h3 id="widget-class-title" class="text-[15px] font-bold text-white truncate mt-1">分析中...</h3>
-                    <p id="widget-class-timer" class="text-xs text-emerald-400 font-mono mt-1 font-semibold">--:--:--</p>
-                </div>
-                <div class="widget-card glass-card p-3.5 cursor-pointer active:scale-95 transition" onclick="app.nav.switch('home')">
-                    <div class="flex justify-between items-center mb-1">
-                        <span class="text-[10px] text-gray-400 font-semibold uppercase tracking-wider"><i class="fa-solid fa-calendar-day mr-1"></i>今日到期</span>
-                    </div>
-                    <h3 class="text-sm font-bold text-white mt-1"><span id="widget-today-count" class="text-xl text-brand-400 mr-1">0</span>項</h3>
-                </div>
-                <div class="widget-card glass-card p-3.5 cursor-pointer active:scale-95 transition" onclick="app.nav.switch('home')">
-                    <div class="flex justify-between items-center mb-1">
-                        <span class="text-[10px] text-gray-400 font-semibold uppercase tracking-wider"><i class="fa-solid fa-calendar-week mr-1"></i>未來任務</span>
-                    </div>
-                    <h3 class="text-sm font-bold text-white mt-1"><span id="widget-future-count" class="text-xl text-gray-300 mr-1">0</span>項</h3>
-                </div>
-                <div class="widget-card glass-card p-3.5 border-pink-500/20 cursor-pointer active:scale-95 transition" onclick="app.nav.switch('home')">
-                    <div class="flex justify-between items-center mb-1">
-                        <span class="text-[10px] text-pink-400 font-semibold uppercase tracking-wider"><i class="fa-solid fa-triangle-exclamation mr-1"></i>測驗/考試</span>
-                    </div>
-                    <h3 class="text-sm font-bold text-white mt-1"><span id="widget-exam-count" class="text-xl text-pink-400 mr-1">0</span>項</h3>
-                </div>
+            <div class="flex items-center gap-4">
+                <div id="offline-badge" class="hidden bg-yellow-500/10 text-yellow-600 dark:text-yellow-400 text-[10px] font-bold px-2 py-1 rounded-md border border-yellow-500/20 flex items-center gap-1"><i class="fa-solid fa-bolt-slash"></i> 離線</div>
+                
+                <button onclick="app.notifications.toggle()" class="relative text-theme-muted hover:text-theme-text hover:scale-110 active:scale-95 transition-all duration-300">
+                    <i class="fa-solid fa-bell text-xl md:text-2xl"></i>
+                    <span id="notif-badge" class="hidden absolute -top-1 -right-1 w-2.5 h-2.5 md:w-3 md:h-3 bg-pink-500 rounded-full border-2 border-theme-bg"></span>
+                </button>
+                <button onclick="app.profile.toggle()" class="w-9 h-9 md:w-10 md:h-10 rounded-full bg-theme-input flex items-center justify-center overflow-hidden border border-theme-border shadow-sm hover:shadow-md hover:scale-105 active:scale-95 transition-all duration-300">
+                    <img id="header-avatar" src="" alt="Profile" class="w-full h-full object-cover hidden">
+                    <i id="header-avatar-fallback" class="fa-solid fa-user text-theme-muted text-sm"></i>
+                </button>
             </div>
         </header>
 
-        <main id="main-scroll-area" class="flex-1 overflow-y-auto pb-32 px-4 md:px-0 md:max-w-2xl md:mx-auto w-full relative z-10 no-scrollbar">
+        <!-- 整個可滾動區域 -->
+        <main id="main-scroll-area" class="flex-1 overflow-y-auto w-full relative z-10 no-scrollbar">
             
-            <section id="view-home" class="view-section active w-full">
-                <div class="flex justify-between items-end mb-4 px-2">
-                    <h2 class="text-xl font-bold text-white tracking-tight">待辦任務</h2>
-                    <span class="text-xs font-semibold text-brand-400 tracking-wider">依日期排序</span>
+            <!-- 浮空膠囊導航 (Sticky) -->
+            <div class="sticky top-0 z-40 py-2 px-4 shrink-0 pointer-events-none transition-colors duration-500">
+                <div class="flex gap-1.5 p-1.5 bg-white/70 dark:bg-[#030305]/70 backdrop-blur-2xl rounded-2xl border border-theme-border shadow-[0_8px_30px_rgba(0,0,0,0.06)] dark:shadow-[0_8px_30px_rgba(0,0,0,0.5)] overflow-x-auto no-scrollbar max-w-full md:max-w-lg mx-auto pointer-events-auto">
+                    <button onclick="app.nav.switch('home')" id="nav-home" class="top-nav-item flex-1 py-2 px-4 text-[13px] font-bold rounded-xl active bg-theme-card text-brand-600 dark:text-white shadow-sm border border-theme-border whitespace-nowrap flex items-center justify-center gap-1.5">
+                        <i class="fa-solid fa-layer-group"></i> 任務
+                    </button>
+                    <button onclick="app.nav.switch('timetable')" id="nav-timetable" class="top-nav-item flex-1 py-2 px-4 text-[13px] font-bold rounded-xl text-theme-muted whitespace-nowrap flex items-center justify-center gap-1.5">
+                        <i class="fa-solid fa-calendar-week"></i> 課表
+                    </button>
+                    <button onclick="app.nav.switch('history')" id="nav-history" class="top-nav-item flex-1 py-2 px-4 text-[13px] font-bold rounded-xl text-theme-muted whitespace-nowrap flex items-center justify-center gap-1.5">
+                        <i class="fa-solid fa-clock-rotate-left"></i> 歷史
+                    </button>
+                    <button onclick="app.nav.switch('settings')" id="nav-settings" class="top-nav-item flex-1 py-2 px-4 text-[13px] font-bold rounded-xl text-theme-muted whitespace-nowrap flex items-center justify-center gap-1.5">
+                        <i class="fa-solid fa-gear"></i> 設定
+                    </button>
                 </div>
-                <div id="todo-list" class="space-y-3"></div>
-                <div id="todo-empty" class="hidden flex-col items-center justify-center py-24 text-gray-500">
-                    <div class="w-16 h-16 mb-4 rounded-full glass-card flex items-center justify-center border border-white/5">
-                        <i class="fa-solid fa-mug-hot text-2xl opacity-50"></i>
-                    </div>
-                    <p class="text-sm font-bold tracking-wide">所有任務已清空</p>
-                </div>
-            </section>
+            </div>
 
-            <section id="view-timetable" class="view-section w-full">
-                <div class="flex justify-between items-end mb-4 px-2">
-                    <h2 class="text-xl font-bold text-white tracking-tight">時間表</h2>
-                </div>
-                <div class="flex gap-2 overflow-x-auto no-scrollbar pb-4 mb-2 snap-x">
-                    <button class="tt-day-btn pill-btn snap-center" data-day="1">星期一</button>
-                    <button class="tt-day-btn pill-btn snap-center" data-day="2">星期二</button>
-                    <button class="tt-day-btn pill-btn snap-center" data-day="3">星期三</button>
-                    <button class="tt-day-btn pill-btn snap-center" data-day="4">星期四</button>
-                    <button class="tt-day-btn pill-btn snap-center" data-day="5">星期五</button>
-                    <button class="tt-day-btn pill-btn snap-center" data-day="6">星期六</button>
-                    <button class="tt-day-btn pill-btn snap-center" data-day="0">星期日</button>
-                </div>
-                <div class="glass-card p-2 shadow-xl">
-                    <div class="flex justify-between items-center p-3 border-b border-white/10">
-                        <h3 class="font-bold text-sm text-white"><i class="fa-solid fa-clock text-brand-400 mr-2"></i>時間軸設定</h3>
-                        <button onclick="app.timetable.addSlotModal()" class="text-xs text-brand-400 font-bold bg-brand-500/10 px-3 py-1.5 rounded-full hover:bg-brand-500/20 transition">新增時段</button>
+            <!-- 第二層：動態欄 (Widgets) -->
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-3 px-6 md:max-w-5xl lg:max-w-6xl md:mx-auto w-full mt-4 mb-6">
+                <div class="glass-card p-4 hover:shadow-md hover:-translate-y-1 transition-all duration-300">
+                    <div class="flex justify-between items-center mb-1">
+                        <span class="text-[10px] text-theme-muted font-bold uppercase tracking-wider"><i class="fa-solid fa-satellite-dish mr-1 text-emerald-500 animate-pulse"></i>實時課堂</span>
                     </div>
-                    <div id="timetable-slots" class="flex flex-col py-2"></div>
+                    <h3 id="widget-class-title" class="text-[15px] font-bold text-theme-text truncate mt-1">分析中...</h3>
+                    <p id="widget-class-timer" class="text-xs text-emerald-500 font-mono mt-1 font-semibold">--:--:--</p>
                 </div>
-            </section>
+                <div class="glass-card p-4 cursor-pointer hover:shadow-md hover:-translate-y-1 active:scale-95 transition-all duration-300" onclick="app.nav.switch('home')">
+                    <div class="flex justify-between items-center mb-1">
+                        <span class="text-[10px] text-theme-muted font-bold uppercase tracking-wider"><i class="fa-solid fa-calendar-day mr-1"></i>今日到期</span>
+                    </div>
+                    <h3 class="text-sm font-bold text-theme-text mt-1"><span id="widget-today-count" class="text-2xl text-brand-500 mr-1">0</span>項</h3>
+                </div>
+                <div class="glass-card p-4 cursor-pointer hover:shadow-md hover:-translate-y-1 active:scale-95 transition-all duration-300" onclick="app.nav.switch('home')">
+                    <div class="flex justify-between items-center mb-1">
+                        <span class="text-[10px] text-theme-muted font-bold uppercase tracking-wider"><i class="fa-solid fa-calendar-week mr-1"></i>未來任務</span>
+                    </div>
+                    <h3 class="text-sm font-bold text-theme-text mt-1"><span id="widget-future-count" class="text-2xl text-theme-muted mr-1">0</span>項</h3>
+                </div>
+                <div class="glass-card p-4 cursor-pointer hover:shadow-md hover:-translate-y-1 active:scale-95 transition-all duration-300 border-pink-500/20" onclick="app.nav.switch('home')">
+                    <div class="flex justify-between items-center mb-1">
+                        <span class="text-[10px] text-pink-500 font-bold uppercase tracking-wider"><i class="fa-solid fa-triangle-exclamation mr-1"></i>測驗/考試</span>
+                    </div>
+                    <h3 class="text-sm font-bold text-theme-text mt-1"><span id="widget-exam-count" class="text-2xl text-pink-500 mr-1">0</span>項</h3>
+                </div>
+            </div>
 
-            <section id="view-add" class="view-section w-full">
-                <div class="flex justify-between items-end mb-4 px-2">
-                    <h2 id="form-header-title" class="text-xl font-bold text-white tracking-tight">新增任務</h2>
-                </div>
-                
-                <div class="glass-card p-5 relative overflow-hidden shadow-2xl">
-                    <div class="absolute top-0 right-0 w-40 h-40 bg-brand-500/10 blur-3xl rounded-full"></div>
-                    <input type="hidden" id="form-task-id">
-                    
-                    <div class="flex bg-black/50 p-1.5 rounded-xl mb-6 relative z-10 border border-white/10 shadow-inner">
-                        <button id="type-btn-task" onclick="app.tasks.setFormType('task')" class="flex-1 py-2 text-sm font-bold rounded-lg bg-white/15 text-white shadow-sm transition-all">📝 一般功課</button>
-                        <button id="type-btn-exam" onclick="app.tasks.setFormType('exam')" class="flex-1 py-2 text-sm font-semibold rounded-lg text-gray-500 hover:text-white transition-all">🚨 測驗考試</button>
-                        <input type="hidden" id="form-type" value="task">
+            <!-- 第三層：各頁面內容容器 -->
+            <div class="px-4 md:px-6 w-full pb-32 md:max-w-5xl lg:max-w-6xl md:mx-auto">
+                <section id="view-home" class="view-section active w-full">
+                    <!-- Group Announcements Container -->
+                    <div id="home-announcements" class="mb-4 space-y-2 md:max-w-3xl md:mx-auto hidden"></div>
+
+                    <!-- 作業過濾器 (Smart Task Filters) -->
+                    <div class="flex gap-2 mb-6 px-1 md:px-0 overflow-x-auto no-scrollbar md:max-w-3xl md:mx-auto mt-2">
+                        <button id="filter-subject-btn" onclick="app.tasks.openFilterSubjectModal()" class="bg-theme-card text-theme-text text-[12px] font-bold px-4 py-2.5 rounded-full border border-theme-border outline-none focus:border-brand-500 transition-colors flex items-center gap-2 shrink-0 hover:shadow-sm active:scale-95 shadow-sm">
+                            <span id="filter-subject-text">所有科目</span> <i class="fa-solid fa-chevron-down text-[10px] opacity-50"></i>
+                        </button>
+                        <button id="filter-incomplete" onclick="app.tasks.toggleIncompleteFilter()" class="bg-theme-card text-theme-muted text-[12px] font-bold px-4 py-2.5 rounded-full border border-theme-border whitespace-nowrap transition-colors flex items-center gap-2 shrink-0 hover:shadow-sm active:scale-95 shadow-sm">
+                            <i class="fa-solid fa-circle-check"></i> <span>僅未完成</span>
+                        </button>
+                        <button id="filter-sort" onclick="app.tasks.toggleSortFilter()" class="bg-theme-card text-brand-500 text-[12px] font-bold px-4 py-2.5 rounded-full border border-theme-border whitespace-nowrap transition-colors flex items-center gap-2 shrink-0 hover:shadow-sm active:scale-95 shadow-sm">
+                            <i class="fa-solid fa-arrow-down-short-wide"></i> <span>繳交日期</span>
+                        </button>
                     </div>
-                    
-                    <div class="space-y-6 relative z-10">
-                        <div>
-                            <input type="text" id="form-title" class="w-full bg-transparent border-0 border-b-2 border-white/20 px-2 py-2 text-xl font-bold text-white placeholder-gray-600 focus:ring-0 focus:border-brand-500 transition-colors" placeholder="輸入任務標題...">
+
+                    <div id="todo-list" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"></div>
+                    <div id="todo-empty" class="hidden flex-col items-center justify-center py-24 text-theme-muted">
+                        <div class="w-16 h-16 mb-4 rounded-full glass-card flex items-center justify-center border border-theme-border">
+                            <i class="fa-solid fa-mug-hot text-2xl opacity-50"></i>
                         </div>
+                        <p class="text-sm font-bold tracking-wide">所有任務已清空</p>
+                    </div>
+                </section>
 
-                        <div class="bg-black/20 p-4 rounded-2xl border border-white/5">
-                            <div class="flex justify-between items-center mb-3">
-                                <label class="block text-xs font-mono font-bold text-brand-400 uppercase tracking-wider">科目 Subject</label>
-                                <button onclick="app.settings.addSubjectModal()" class="text-xs text-brand-400 hover:text-white transition"><i class="fa-solid fa-plus"></i> 自訂</button>
+                <section id="view-timetable" class="view-section w-full">
+                    <!-- 動態日別選擇器 -->
+                    <div id="timetable-day-selector" class="flex gap-2 overflow-x-auto no-scrollbar pb-4 mb-2 snap-x md:justify-center md:max-w-3xl md:mx-auto"></div>
+                    <div class="glass-card p-3 shadow-md border-theme-border flex flex-col max-h-[70vh] md:max-w-3xl md:mx-auto">
+                        <div class="flex justify-between items-center p-2 mb-2 border-b border-theme-border shrink-0">
+                            <h3 class="font-bold text-[15px] text-theme-text font-literary tracking-wide"><i class="fa-solid fa-clock text-brand-500 mr-2 text-sm"></i>每日課表</h3>
+                            <div class="flex gap-2">
+                                <button id="tt-btn-edit" onclick="app.timetable.toggleEditMode()" class="text-[11px] sm:text-xs text-brand-500 font-bold bg-brand-500/10 px-4 py-2 rounded-full hover:bg-brand-500/20 hover:scale-105 active:scale-95 transition-all"><i class="fa-solid fa-pen"></i> 編輯</button>
+                                <button id="tt-btn-copy" onclick="app.timetable.copyToAllWeekModal()" class="hidden text-[11px] sm:text-xs text-emerald-500 font-bold bg-emerald-500/10 px-3 py-2 rounded-full hover:bg-emerald-500/20 hover:scale-105 active:scale-95 transition-all"><i class="fa-solid fa-copy"></i> 套用</button>
+                                <button id="tt-btn-add" onclick="app.timetable.addSlotDirect()" class="hidden text-[11px] sm:text-xs text-brand-500 font-bold bg-brand-500/10 px-3 py-2 rounded-full hover:bg-brand-500/20 hover:scale-105 active:scale-95 transition-all"><i class="fa-solid fa-plus"></i> 新增</button>
+                                <button id="tt-btn-done" onclick="app.timetable.toggleEditMode()" class="hidden text-[11px] sm:text-xs text-white font-bold bg-brand-500 px-4 py-2 rounded-full hover:bg-brand-600 hover:scale-105 active:scale-95 transition-all shadow-md"><i class="fa-solid fa-check"></i> 完成</button>
                             </div>
-                            <div id="form-subjects-scroll" class="flex gap-2 overflow-x-auto no-scrollbar pb-2 snap-x"></div>
-                            <input type="hidden" id="form-subject-value">
                         </div>
+                        <div id="timetable-slots" class="flex-1 overflow-y-auto no-scrollbar p-1"></div>
+                    </div>
+                </section>
 
-                        <div class="grid grid-cols-2 gap-4">
-                            <div class="col-span-2 md:col-span-1">
-                                <label class="block text-xs font-mono font-bold text-gray-400 uppercase tracking-wider mb-2">繳交日期 Due Date</label>
-                                <input type="date" id="form-date" class="premium-input py-3 font-semibold" style="color-scheme: dark;">
-                            </div>
-                            <div class="col-span-2 md:col-span-1" id="provider-target-section">
-                                <label class="block text-xs font-mono font-bold text-pink-400 uppercase tracking-wider mb-2"><i class="fa-solid fa-paper-plane mr-1"></i>發放對象 Target</label>
-                                <select id="form-target" class="premium-input bg-pink-500/10 border-pink-500/30 text-sm font-semibold text-white">
-                                    <option value="self">私人 (僅自己可見)</option>
-                                </select>
-                            </div>
+                <section id="view-history" class="view-section w-full">
+                    <div class="flex justify-between items-end mb-5 px-1 md:px-0">
+                        <h2 class="text-xl font-bold text-theme-text tracking-tight">歷史記錄</h2>
+                        <span class="text-xs font-semibold text-emerald-500 tracking-wider">已歸檔任務</span>
+                    </div>
+                    <div id="history-list" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"></div>
+                    <div id="history-empty" class="hidden flex-col items-center justify-center py-24 text-theme-muted">
+                        <i class="fa-solid fa-clock-rotate-left text-4xl mb-4 opacity-30"></i>
+                        <p class="text-sm font-bold tracking-wide">尚無歷史記錄</p>
+                    </div>
+                </section>
+
+                <!-- 🌟 全新升級：精緻版新增任務頁面 -->
+                <section id="view-add" class="view-section w-full">
+                    <div class="flex items-center mb-6 px-1 md:px-0 md:max-w-4xl md:mx-auto">
+                        <button onclick="app.nav.switch('home')" class="w-10 h-10 mr-4 rounded-full bg-theme-card flex items-center justify-center text-theme-text hover:bg-theme-input active:scale-95 transition-all border border-theme-border shadow-sm">
+                            <i class="fa-solid fa-arrow-left text-[15px]"></i>
+                        </button>
+                        <h2 id="form-header-title" class="text-2xl font-bold text-theme-text tracking-tight font-literary">新增任務</h2>
+                    </div>
+                    
+                    <div class="glass-card p-6 md:p-8 relative overflow-hidden shadow-sm md:max-w-4xl md:mx-auto">
+                        <input type="hidden" id="form-task-id">
+                        
+                        <!-- 🌟 頂級分段切換器 (Task / Exam Toggle) -->
+                        <div class="flex bg-theme-input p-1.5 rounded-2xl mb-8 relative z-10 border border-theme-border">
+                            <button id="type-btn-task" onclick="app.tasks.setFormType('task')" class="flex-1 py-3 text-[15px] font-bold rounded-xl bg-theme-card text-brand-600 dark:text-brand-400 shadow-sm border border-theme-border transition-all flex justify-center items-center gap-2">
+                                <i class="fa-solid fa-book-open"></i> 新增功課
+                            </button>
+                            <button id="type-btn-exam" onclick="app.tasks.setFormType('exam')" class="flex-1 py-3 text-[15px] font-semibold rounded-xl text-theme-muted hover:text-theme-text transition-all flex justify-center items-center gap-2">
+                                <i class="fa-regular fa-circle-question"></i> 新增測驗
+                            </button>
+                            <input type="hidden" id="form-type" value="task">
                         </div>
                         
-                        <div id="form-warning-msg" class="hidden bg-yellow-500/10 border border-yellow-500/30 p-3 rounded-xl flex items-center gap-3">
-                            <i class="fa-solid fa-triangle-exclamation text-yellow-500 text-lg"></i>
-                            <p class="text-xs text-yellow-200 font-semibold leading-relaxed">該日已有 <span id="form-warning-count" class="text-yellow-500 font-bold text-sm"></span> 項任務，建議提早規劃！</p>
-                        </div>
+                        <div class="space-y-6 relative z-10">
+                            <!-- 🌟 精美科目水平選擇列 -->
+                            <div class="flex items-center gap-2">
+                                <div id="form-subjects-scroll" class="flex flex-1 gap-2.5 overflow-x-auto no-scrollbar py-1 snap-x items-center"></div>
+                                <button onclick="app.settings.addSubjectModal()" class="w-10 h-10 shrink-0 flex items-center justify-center rounded-xl bg-theme-input text-theme-muted hover:text-brand-500 transition-colors shadow-sm border border-theme-border active:scale-95">
+                                    <i class="fa-solid fa-plus"></i>
+                                </button>
+                                <input type="hidden" id="form-subject-value">
+                            </div>
 
-                        <div>
-                            <label class="block text-xs font-mono font-bold text-gray-400 uppercase tracking-wider mb-2">詳細內容 Details</label>
-                            <textarea id="form-content" class="premium-input h-32 resize-none py-3 text-sm leading-relaxed" placeholder="- 支援多行輸入&#10;- 可以記錄書本頁數"></textarea>
-                        </div>
+                            <!-- 🌟 桌面/平板雙欄網格設計 -->
+                            <div class="flex flex-col lg:flex-row gap-6">
+                                <!-- 左側：標題與內容 -->
+                                <div class="flex-1 flex flex-col gap-4">
+                                    <input type="text" id="form-title" class="w-full px-5 py-4 bg-theme-input border border-theme-border hover:border-gray-300 dark:hover:border-gray-600 focus:border-brand-500 focus:bg-theme-card rounded-2xl text-[16px] font-bold text-theme-text placeholder-theme-muted shadow-sm transition-all outline-none" placeholder="功課標題 (必填)...">
+                                    
+                                    <div class="relative flex-1 flex flex-col">
+                                        <textarea id="form-content" class="w-full flex-1 px-5 py-4 bg-theme-input border border-theme-border hover:border-gray-300 dark:hover:border-gray-600 focus:border-brand-500 focus:bg-theme-card rounded-2xl text-[15px] leading-relaxed text-theme-text placeholder-theme-muted resize-none min-h-[180px] shadow-sm transition-all outline-none" placeholder="打返功課內容..."></textarea>
+                                        
+                                        <!-- 文字框內的工具列 -->
+                                        <div class="absolute bottom-3 right-3 flex gap-2">
+                                            <input type="file" id="form-image" accept="image/*" class="hidden" onchange="app.tasks.handleImageUpload(event)">
+                                            <button onclick="document.getElementById('form-image').click()" class="w-9 h-9 rounded-full bg-white dark:bg-gray-800 text-theme-muted hover:text-brand-500 flex items-center justify-center backdrop-blur-md transition-all border border-theme-border shadow-sm active:scale-95" title="附加圖片">
+                                                <i class="fa-solid fa-camera"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <img id="form-image-preview" class="hidden w-full h-48 object-cover rounded-2xl border border-theme-border shadow-sm mt-1">
+                                </div>
 
-                        <div class="pt-2 pb-4">
-                            <button onclick="app.tasks.save()" class="w-full bg-gradient-to-r from-brand-600 to-brand-500 text-white py-4 rounded-xl font-bold text-sm shadow-[0_10px_30px_rgba(99,102,241,0.4)] hover:shadow-[0_15px_40px_rgba(99,102,241,0.6)] active:scale-95 transition-all flex items-center justify-center gap-2">
-                                <i class="fa-solid fa-check"></i> 儲存並加入清單
-                            </button>
+                                <!-- 右側：日期、重複、提交 -->
+                                <div class="w-full lg:w-[280px] flex flex-col gap-4 shrink-0">
+                                    <!-- 超大日期選擇 -->
+                                    <div class="relative">
+                                        <input type="date" id="form-date" class="w-full h-16 px-5 bg-theme-input border border-theme-border hover:border-gray-300 dark:hover:border-gray-600 rounded-2xl text-[17px] font-bold text-theme-text text-center transition-all shadow-sm outline-none focus:border-brand-500 dark:[color-scheme:dark]">
+                                    </div>
+                                    
+                                    <!-- 重複選擇按鈕 -->
+                                    <input type="hidden" id="form-repeat" value="none">
+                                    <button type="button" onclick="app.tasks.openRepeatModal()" class="w-full h-14 px-5 bg-theme-input border border-theme-border hover:border-gray-300 dark:hover:border-gray-600 rounded-2xl text-[14px] font-bold text-theme-muted flex justify-between items-center transition-all shadow-sm outline-none">
+                                        <span><i class="fa-solid fa-repeat mr-2"></i><span id="form-repeat-text">不重複</span></span>
+                                        <i class="fa-solid fa-chevron-down text-[10px]"></i>
+                                    </button>
+
+                                    <!-- 超大吸睛提交按鈕 -->
+                                    <button onclick="app.tasks.save()" class="w-full mt-auto h-16 bg-brand-600 hover:bg-brand-500 text-white rounded-2xl font-bold shadow-[0_8px_25px_rgba(99,102,241,0.3)] hover:-translate-y-1 active:scale-95 transition-all flex justify-center items-center gap-2 text-[17px] tracking-wide border border-transparent">
+                                        <i class="fa-solid fa-plus"></i> 加入清單
+                                    </button>
+                                </div>
+                            </div>
+                            
+                            <div id="form-warning-msg" class="hidden mt-2 bg-yellow-500/10 border border-yellow-500/30 p-3 rounded-xl flex items-center gap-3">
+                                <i class="fa-solid fa-triangle-exclamation text-yellow-600 dark:text-yellow-500 text-lg"></i>
+                                <p class="text-xs text-yellow-700 dark:text-yellow-200 font-semibold leading-relaxed">該日已有 <span id="form-warning-count" class="text-yellow-600 dark:text-yellow-500 font-bold text-sm"></span> 項任務，建議提早規劃！</p>
+                            </div>
+
+                            <!-- Provider 廣播切換開關 -->
+                            <div id="provider-target-section" class="hidden pt-6 border-t border-theme-border mt-4">
+                                <div class="flex items-center justify-between p-4 bg-theme-input border border-theme-border rounded-2xl">
+                                    <div class="flex items-center gap-3.5">
+                                        <div class="w-10 h-10 rounded-full bg-pink-500/10 flex items-center justify-center text-pink-500 shadow-inner">
+                                            <i class="fa-solid fa-bullhorn text-sm"></i>
+                                        </div>
+                                        <div>
+                                            <p class="text-[15px] font-bold text-theme-text leading-tight">作為管理員廣播發放</p>
+                                            <p class="text-[11px] text-theme-muted font-bold mt-0.5" id="form-target-text">私人任務 (僅自己可見)</p>
+                                        </div>
+                                    </div>
+                                    <input type="hidden" id="form-target" value="self">
+                                    <label class="relative inline-flex items-center cursor-pointer">
+                                        <input type="checkbox" id="broadcast-toggle" class="sr-only peer" onchange="app.tasks.handleBroadcastToggle(this)">
+                                        <div class="w-12 h-7 bg-gray-300 dark:bg-gray-600 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-6 after:w-6 after:transition-all peer-checked:bg-pink-500 shadow-inner"></div>
+                                    </label>
+                                </div>
+                            </div>
                         </div>
                     </div>
-                </div>
-            </section>
+                </section>
 
-            <section id="view-history" class="view-section w-full">
-                <div class="flex justify-between items-end mb-4 px-2">
-                    <h2 class="text-xl font-bold text-white tracking-tight">歷史記錄</h2>
-                    <span class="text-xs font-semibold text-emerald-400 tracking-wider">已歸檔任務</span>
-                </div>
-                <div id="history-list" class="space-y-3"></div>
-                <div id="history-empty" class="hidden flex-col items-center justify-center py-24 text-gray-500">
-                    <i class="fa-solid fa-clock-rotate-left text-4xl mb-4 opacity-30"></i>
-                    <p class="text-sm font-bold tracking-wide">尚無歷史記錄</p>
-                </div>
-            </section>
-
-            <section id="view-settings" class="view-section w-full">
-                <div class="flex justify-between items-end mb-4 px-2">
-                    <h2 class="text-xl font-bold text-white tracking-tight">系統與群組</h2>
-                </div>
-                
-                <div class="glass-card p-6 mb-6 relative overflow-hidden shadow-xl">
-                    <div class="absolute top-0 right-0 w-32 h-32 bg-blue-500/10 blur-3xl rounded-full"></div>
-                    <h3 class="text-sm font-bold text-white mb-5 uppercase tracking-wider font-mono"><i class="fa-solid fa-users text-blue-400 mr-2"></i>學習群組連線</h3>
+                <section id="view-settings" class="view-section w-full">
+                    <div class="flex justify-between items-end mb-4 px-2 md:px-0 md:max-w-2xl md:mx-auto">
+                        <h2 class="text-xl font-bold text-theme-text tracking-tight">系統與群組</h2>
+                    </div>
                     
-                    <div class="flex gap-3 mb-6 relative z-10">
-                        <input type="text" id="join-group-code" class="premium-input py-3 px-4 text-sm font-mono font-bold uppercase bg-black/50 border-white/10 placeholder-gray-600" placeholder="輸入 6 位邀請碼" maxlength="6">
-                        <button onclick="app.groups.join()" class="bg-blue-600 hover:bg-blue-500 px-6 rounded-xl font-bold text-sm transition shadow-lg shadow-blue-500/30 active:scale-95">加入</button>
+                    <div class="grid grid-cols-2 gap-3 mb-6 md:max-w-2xl md:mx-auto">
+                        <button onclick="app.settings.toggleTheme()" class="glass-card p-4 flex flex-col items-center justify-center gap-2 hover:-translate-y-1 hover:shadow-md transition-all active:scale-95 text-theme-text">
+                            <i class="fa-solid fa-circle-half-stroke text-2xl text-brand-500"></i>
+                            <span class="text-xs font-bold mt-1">外觀主題切換</span>
+                        </button>
+                        <button onclick="app.settings.toggleTimetableMode()" class="glass-card p-4 flex flex-col items-center justify-center gap-2 hover:-translate-y-1 hover:shadow-md transition-all active:scale-95 text-theme-text">
+                            <i class="fa-solid fa-calendar-days text-2xl text-blue-500"></i>
+                            <span class="text-xs font-bold mt-1" id="setting-tt-mode-text">課表：星期制</span>
+                        </button>
                     </div>
 
-                    <div id="provider-create-group" class="hidden border-t border-white/10 pt-5 mb-5 relative z-10">
-                        <p class="text-xs font-mono font-bold text-pink-400 mb-3 uppercase tracking-wider">建立教學群組 (Provider)</p>
-                        <div class="flex gap-3">
-                            <input type="text" id="create-group-name" class="premium-input py-3 px-4 text-sm font-bold bg-black/50 border-white/10" placeholder="新群組名稱...">
-                            <button onclick="app.groups.create()" class="bg-pink-600 hover:bg-pink-500 px-6 rounded-xl font-bold text-sm transition shadow-lg shadow-pink-500/30 active:scale-95">建立</button>
+                    <div class="glass-card p-6 mb-6 relative overflow-hidden shadow-sm hover:shadow-md transition-all duration-500 md:max-w-2xl md:mx-auto">
+                        <div class="absolute top-0 right-0 w-32 h-32 bg-blue-500/10 blur-3xl rounded-full"></div>
+                        <h3 class="text-[15px] font-bold text-theme-text mb-5 font-literary tracking-wide"><i class="fa-solid fa-users text-blue-500 mr-2 text-sm"></i>學習群組連線</h3>
+                        
+                        <div class="flex gap-3 mb-6 relative z-10">
+                            <input type="text" id="join-group-code" class="premium-input py-3 px-4 text-[15px] font-mono font-bold uppercase placeholder-theme-muted hover:border-theme-border transition-colors shadow-sm" placeholder="輸入 6 位邀請碼" maxlength="6">
+                            <button onclick="app.groups.join()" class="bg-blue-600 hover:bg-blue-500 px-6 rounded-xl text-white font-bold text-[15px] hover:-translate-y-1 transition-all shadow-[0_4px_15px_rgba(59,130,246,0.3)] active:scale-95">加入</button>
                         </div>
+
+                        <div id="provider-create-group" class="hidden border-t border-theme-border pt-6 mb-2 relative z-10">
+                            <p class="text-xs font-mono font-bold text-pink-500 mb-3 uppercase tracking-wider">建立教學群組 (Provider)</p>
+                            <div class="flex gap-3">
+                                <input type="text" id="create-group-name" class="premium-input py-3 px-4 text-[15px] font-bold hover:border-theme-border transition-colors shadow-sm" placeholder="新群組名稱...">
+                                <button onclick="app.groups.create()" class="bg-pink-600 hover:bg-pink-500 px-6 rounded-xl text-white font-bold text-[15px] hover:-translate-y-1 transition-all shadow-[0_4px_15px_rgba(236,72,153,0.3)] active:scale-95">建立</button>
+                            </div>
+                        </div>
+
+                        <div id="settings-groups-list" class="space-y-3 relative z-10 mt-6"></div>
                     </div>
 
-                    <div id="settings-groups-list" class="space-y-3 relative z-10"></div>
-                </div>
-
-                <div class="mt-12 mb-8 text-center opacity-30 hover:opacity-100 transition duration-500 cursor-default">
-                    <div class="w-10 h-10 border border-white/20 rounded-full flex items-center justify-center mx-auto mb-3">
-                        <i class="fa-solid fa-code text-white"></i>
+                    <div class="mt-12 mb-8 text-center opacity-40 hover:opacity-100 transition duration-500 cursor-default md:max-w-2xl md:mx-auto">
+                        <div class="w-10 h-10 border border-theme-border rounded-full flex items-center justify-center mx-auto mb-3 hover:bg-theme-input transition-colors shadow-sm">
+                            <i class="fa-solid fa-code text-theme-text text-sm"></i>
+                        </div>
+                        <p class="text-[10px] text-theme-muted font-mono tracking-widest leading-loose font-bold">
+                            ENTERPRISE GRADE SYSTEM<br>
+                            PROUDLY CRAFTED BY <span class="text-brand-500">@colasonyt1123</span>
+                        </p>
                     </div>
-                    <p class="text-[10px] text-gray-300 font-mono tracking-widest leading-loose font-bold">
-                        ENTERPRISE GRADE SYSTEM<br>
-                        PROUDLY CRAFTED BY <span class="text-brand-400">@colasonyt1123</span>
-                    </p>
-                </div>
-            </section>
+                </section>
+            </div>
         </main>
 
-        <nav class="shrink-0 bottom-nav glass-panel z-50 flex justify-between items-center px-6 h-[80px] w-full md:max-w-md md:mx-auto md:rounded-t-[30px] md:border-x border-t border-white/10 shadow-[0_-10px_40px_rgba(0,0,0,0.5)]">
-            <button onclick="app.nav.switch('home')" class="nav-item active flex flex-col items-center gap-1.5 w-12" id="nav-home">
-                <i class="fa-solid fa-layer-group text-xl transition-transform duration-300"></i>
-                <span class="text-[9px] font-bold tracking-wider">任務</span>
-            </button>
-            <button onclick="app.nav.switch('timetable')" class="nav-item flex flex-col items-center gap-1.5 w-12" id="nav-timetable">
-                <i class="fa-solid fa-calendar-week text-xl transition-transform duration-300"></i>
-                <span class="text-[9px] font-bold tracking-wider">時間表</span>
-            </button>
-            <div class="relative -top-6 w-16 flex justify-center">
-                <button onclick="app.nav.switch('add')" class="nav-item fab-button w-14 h-14 rounded-full flex items-center justify-center text-white text-2xl z-50 shadow-2xl" id="nav-add">
-                    <i class="fa-solid fa-plus transition-transform duration-300" id="add-icon"></i>
-                </button>
-            </div>
-            <button onclick="app.nav.switch('history')" class="nav-item flex flex-col items-center gap-1.5 w-12" id="nav-history">
-                <i class="fa-solid fa-clock-rotate-left text-xl transition-transform duration-300"></i>
-                <span class="text-[9px] font-bold tracking-wider">歷史</span>
-            </button>
-            <button onclick="app.nav.switch('settings')" class="nav-item flex flex-col items-center gap-1.5 w-12" id="nav-settings">
-                <i class="fa-solid fa-gear text-xl transition-transform duration-300"></i>
-                <span class="text-[9px] font-bold tracking-wider">設定</span>
-            </button>
-        </nav>
+        <!-- 全域右下角懸浮新增按鈕 (Global FAB) -->
+        <button onclick="app.nav.switch('add')" id="global-fab" class="fixed bottom-8 right-6 md:bottom-12 md:right-12 lg:right-16 w-14 h-14 bg-gradient-to-tr from-brand-600 to-pink-500 rounded-full flex items-center justify-center text-white text-2xl shadow-[0_10px_30px_rgba(99,102,241,0.5)] hover:shadow-[0_15px_40px_rgba(99,102,241,0.8)] hover:scale-110 active:scale-95 transition-all duration-400 z-50">
+            <i class="fa-solid fa-plus transition-transform duration-400" id="add-icon"></i>
+        </button>
+
     </div>
 
     <!-- 4. 全域組件 -->
-    <div id="global-overlay" class="fixed inset-0 bg-[#030305]/80 backdrop-blur-md z-[200] hidden opacity-0 transition-opacity duration-300"></div>
+    <!-- 背景點擊關閉遮罩 -->
+    <div id="global-overlay" onclick="if(app.UI) { app.UI.sheet.close(); app.UI.modal.close(); }" class="fixed inset-0 bg-black/20 dark:bg-black/60 backdrop-blur-sm z-[200] hidden opacity-0 transition-opacity duration-300 cursor-pointer"></div>
+    
     <div id="center-modal" class="fixed inset-0 z-[210] hidden flex items-center justify-center p-6 pointer-events-none">
-        <div id="center-modal-content" class="glass-card w-full max-w-sm p-6 md:p-8 transform scale-95 opacity-0 pointer-events-auto shadow-2xl border-white/20"></div>
+        <div id="center-modal-content" class="glass-card w-full max-w-sm p-6 md:p-8 transform scale-95 opacity-0 pointer-events-auto shadow-2xl border-theme-border"></div>
     </div>
+    
+    <!-- Bottom Sheet (浮空 Modal 基礎) -->
     <div id="bottom-sheet" class="fixed inset-x-0 bottom-0 z-[210] hidden flex flex-col justify-end pointer-events-none">
-        <div id="bottom-sheet-content" class="glass-card bg-[#0a0a0c]/95 w-full md:max-w-md md:mx-auto rounded-b-none rounded-t-3xl p-6 pb-safe transform translate-y-full pointer-events-auto border-t border-white/20 shadow-[0_-20px_60px_rgba(0,0,0,0.8)]">
-            <div class="w-12 h-1.5 bg-white/20 rounded-full mx-auto mb-6"></div>
-            <div id="bottom-sheet-body"></div>
+        <div id="bottom-sheet-content" class="glass-card bg-theme-bg w-full md:max-w-md md:mx-auto rounded-b-none md:rounded-b-3xl rounded-t-3xl p-6 pb-safe transform translate-y-full pointer-events-auto border md:border-b-theme-border md:mb-6 border-t-theme-border shadow-[0_-20px_60px_rgba(0,0,0,0.15)] dark:shadow-[0_-20px_60px_rgba(0,0,0,0.8)] flex flex-col max-h-[85vh]">
+            <div class="w-12 h-1.5 bg-gray-300 dark:bg-white/20 rounded-full mx-auto mb-6 shrink-0"></div>
+            <div id="bottom-sheet-body" class="flex-1 overflow-y-auto no-scrollbar"></div>
         </div>
     </div>
-    <div id="notif-panel" class="fixed inset-y-0 right-0 w-full md:w-[380px] bg-[#0a0a0c]/95 backdrop-blur-2xl z-[210] hidden transform translate-x-full border-l border-white/10 flex flex-col shadow-2xl">
-        <div class="p-6 border-b border-white/10 flex justify-between items-center bg-black/40">
-            <h3 class="text-xl font-bold text-white"><i class="fa-solid fa-bell text-brand-400 mr-2"></i>系統通知</h3>
-            <button onclick="app.notifications.toggle()" class="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center text-gray-400 hover:text-white active:scale-95 transition"><i class="fa-solid fa-xmark"></i></button>
+    
+    <div id="notif-panel" class="fixed inset-y-0 right-0 w-full md:w-[380px] bg-theme-bg/95 backdrop-blur-2xl z-[210] hidden transform translate-x-full border-l border-theme-border flex flex-col shadow-2xl">
+        <div class="p-6 border-b border-theme-border flex justify-between items-center bg-theme-input">
+            <h3 class="text-xl font-bold text-theme-text font-literary"><i class="fa-solid fa-bell text-brand-500 mr-2 text-sm"></i>系統通知</h3>
+            <button onclick="app.notifications.toggle()" class="w-8 h-8 rounded-full bg-theme-card flex items-center justify-center text-theme-muted hover:text-theme-text border border-theme-border shadow-sm active:scale-95 transition"><i class="fa-solid fa-xmark"></i></button>
         </div>
         <div id="notif-list" class="flex-1 overflow-y-auto p-4 space-y-3 no-scrollbar"></div>
     </div>
+    
     <div id="toast-root" class="fixed top-16 left-0 right-0 z-[500] flex flex-col items-center gap-3 pointer-events-none px-4"></div>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-        import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, signInWithPopup, GoogleAuthProvider, onAuthStateChanged, signOut, setPersistence, browserLocalPersistence } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-        import { getFirestore, collection, doc, setDoc, getDoc, updateDoc, deleteDoc, onSnapshot, writeBatch, query, where } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+        import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, signInWithPopup, GoogleAuthProvider, onAuthStateChanged, signOut, setPersistence, browserLocalPersistence, updateProfile } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, collection, doc, setDoc, getDoc, updateDoc, deleteDoc, onSnapshot, writeBatch, query, where, getDocs, enableIndexedDbPersistence } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyByPLZqByFtsFbCXBaIz53psLcdKoXBouY",
@@ -420,6 +523,9 @@
             import("https://www.gstatic.com/firebasejs/11.6.1/firebase-analytics.js").then((module) => { module.getAnalytics(firebaseApp); }).catch(() => {});
             auth = getAuth(firebaseApp);
             db = getFirestore(firebaseApp);
+            
+            enableIndexedDbPersistence(db).catch(err => console.warn("Offline persistence issue:", err));
+            
             googleProvider = new GoogleAuthProvider();
             setPersistence(auth, browserLocalPersistence).catch(console.error);
         } catch (error) {
@@ -429,17 +535,20 @@
         const state = {
             user: null, profile: { role: 'student', isBanned: false }, currentView: 'home',
             tasks: [], groups: [], notifications: [],
-            subjects: ['中文 (中國語文)', '英文 (英國語文)', '數學', '通識教育', '科學', '體育', '物理', '化學', '生物', '歷史', '中史', '地理', '音樂', '視覺藝術', 'ICT', '設計與應用科技', '旅遊與款待', '經濟', 'BAFS', '公民教育', '科技與生活', '中文文學', '英文文學'],
-            currentDayTab: new Date().getDay(), timetableConfig: {}, classTimerInterval: null, unsubscribers: []
+            subjects: ['中文', '英文', '數學', '通識教育', '科學', '體育', '物理', '化學', '生物', '歷史', '中史', '地理', '音樂', '視覺藝術', 'ICT', '設計與應用科技', '旅遊與款待', '經濟', 'BAFS', '公民教育', '科技與生活', '中國文學', '英國文學'],
+            currentDayTab: '1', timetableConfig: {}, classTimerInterval: null, unsubscribers: [],
+            tempImageBase64: null,
+            filters: { subject: 'all', incompleteOnly: false, sortDesc: false }
         };
 
         const UI = {
             notify: (msg, type='success') => {
+                if(navigator.vibrate) navigator.vibrate(type==='success'?[50]:[50, 50, 50]);
                 const root = document.getElementById('toast-root');
                 const t = document.createElement('div');
-                const styles = { success: 'bg-[#10b981]/95 border-[#10b981]/50', error: 'bg-[#ef4444]/95 border-[#ef4444]/50', info: 'bg-[#6366f1]/95 border-[#6366f1]/50' };
-                t.className = `px-6 py-3.5 rounded-2xl text-white text-xs font-bold border ${styles[type]} transform -translate-y-full opacity-0 backdrop-blur-md flex items-center gap-2 w-max shadow-2xl`;
-                const icons = { success: 'fa-check-circle', error: 'fa-triangle-exclamation', info: 'fa-info-circle' };
+                const styles = { success: 'bg-[#10b981]/95 border-[#10b981]/50 text-white', error: 'bg-[#ef4444]/95 border-[#ef4444]/50 text-white', info: 'bg-[#6366f1]/95 border-[#6366f1]/50 text-white', warning: 'bg-orange-500/95 border-orange-500/50 text-white' };
+                t.className = `px-6 py-3.5 rounded-2xl text-[13px] font-bold border ${styles[type]} transform -translate-y-full opacity-0 backdrop-blur-md flex items-center gap-2 w-max shadow-2xl`;
+                const icons = { success: 'fa-check-circle', error: 'fa-triangle-exclamation', info: 'fa-info-circle', warning: 'fa-fire' };
                 t.innerHTML = `<i class="fa-solid ${icons[type]} text-base"></i> <span>${msg}</span>`;
                 root.appendChild(t);
                 
@@ -461,7 +570,10 @@
             },
             sheet: {
                 open: (html) => { UI.overlay.show(); document.getElementById('bottom-sheet-body').innerHTML = html; document.getElementById('bottom-sheet').classList.remove('hidden'); if(typeof gsap !== 'undefined') gsap.fromTo(document.getElementById('bottom-sheet-content'), { y: '100%' }, { y: '0%', duration: 0.4, ease: "power3.out" }); },
-                close: () => { if(typeof gsap !== 'undefined') gsap.to(document.getElementById('bottom-sheet-content'), { y: '100%', duration: 0.3, ease: "power3.in", onComplete: () => { document.getElementById('bottom-sheet').classList.add('hidden'); UI.overlay.hide(); }}); else { document.getElementById('bottom-sheet').classList.add('hidden'); UI.overlay.hide(); } }
+                close: () => { 
+                    if(typeof gsap !== 'undefined') gsap.to(document.getElementById('bottom-sheet-content'), { y: '100%', duration: 0.3, ease: "power3.in", onComplete: () => { document.getElementById('bottom-sheet').classList.add('hidden'); UI.overlay.hide(); }}); 
+                    else { document.getElementById('bottom-sheet').classList.add('hidden'); UI.overlay.hide(); } 
+                }
             }
         };
 
@@ -493,39 +605,76 @@
                 groups: () => `artifacts/${internalAppId}/public/data/groups`
             },
             genId: () => Math.random().toString(36).substring(2, 15),
-            getWorkingDay: () => { let d = new Date(); do { d.setDate(d.getDate() + 1); } while (d.getDay() === 0 || d.getDay() === 6); return new Date(d.getTime() - (d.getTimezoneOffset() * 60000)).toISOString().split('T')[0]; }
+            getWorkingDay: () => { let d = new Date(); do { d.setDate(d.getDate() + 1); } while (d.getDay() === 0 || d.getDay() === 6); return new Date(d.getTime() - (d.getTimezoneOffset() * 60000)).toISOString().split('T')[0]; },
+            formatDateLabel: (dateStr) => {
+                if(!dateStr) return '無期限';
+                const d = new Date(dateStr);
+                const days = ['日','一','二','三','四','五','六'];
+                return `${d.getFullYear()}-${(d.getMonth()+1).toString().padStart(2,'0')}-${d.getDate().toString().padStart(2,'0')} (星期${days[d.getDay()]})`;
+            }
+        };
+
+        const escapeHTML = (str) => {
+            return str.replace(/[&<>'"]/g, 
+                tag => ({'&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;'}[tag])
+            );
         };
 
         const app = {
             init: () => {
-                try {
-                    const loader = document.getElementById('system-loader');
-                    const authView = document.getElementById('view-auth');
+                const loader = document.getElementById('system-loader');
+                const authView = document.getElementById('view-auth');
+                
+                const hideLoader = () => {
+                    if (loader.style.display === 'none') return;
                     if (typeof gsap !== 'undefined') {
                         gsap.to(loader, { opacity: 0, duration: 0.5, onComplete: () => { loader.style.display = 'none'; authView.classList.remove('hidden'); }});
-                    } else { loader.style.display = 'none'; authView.classList.remove('hidden'); }
+                    } else { 
+                        loader.style.display = 'none'; 
+                        authView.classList.remove('hidden'); 
+                    }
+                };
 
-                    onAuthStateChanged(auth, async (user) => {
-                        if (user) {
-                            state.user = user;
-                            if (typeof gsap !== 'undefined') gsap.to(authView, { opacity: 0, duration: 0.4, onComplete: () => { authView.classList.add('hidden'); document.getElementById('app-core').classList.remove('hidden'); document.getElementById('app-core').classList.add('flex'); app.startSystem(); }});
-                            else { authView.classList.add('hidden'); document.getElementById('app-core').classList.remove('hidden'); document.getElementById('app-core').classList.add('flex'); app.startSystem(); }
-                            AdminService.log('USER_LOGIN', { method: user.providerData[0]?.providerId || 'email' });
-                        } else {
-                            state.user = null;
-                            document.getElementById('app-core').classList.add('hidden'); document.getElementById('app-core').classList.remove('flex');
-                            authView.classList.remove('hidden');
-                            if (typeof gsap !== 'undefined') gsap.to(authView, { opacity: 1, duration: 0.4 });
-                        }
-                    });
-                } catch(e) {}
+                try {
+                    try { app.settings.initTheme(); } catch(e){}
+                    try { app.settings.initTimetableMode(); } catch(e){}
+                    try { app.system.initOfflineDetection(); } catch(e){}
+                    try { app.system.requestNotification(); } catch(e){}
+
+                    hideLoader();
+
+                    if (auth) {
+                        onAuthStateChanged(auth, async (user) => {
+                            if (user) {
+                                state.user = user;
+                                if (typeof gsap !== 'undefined') gsap.to(authView, { opacity: 0, duration: 0.4, onComplete: () => { authView.classList.add('hidden'); document.getElementById('app-core').classList.remove('hidden'); document.getElementById('app-core').classList.add('flex'); app.startSystem(); }});
+                                else { authView.classList.add('hidden'); document.getElementById('app-core').classList.remove('hidden'); document.getElementById('app-core').classList.add('flex'); app.startSystem(); }
+                                AdminService.log('USER_LOGIN', { method: user.providerData[0]?.providerId || 'email' });
+                            } else {
+                                state.user = null;
+                                document.getElementById('app-core').classList.add('hidden'); document.getElementById('app-core').classList.remove('flex');
+                                authView.classList.remove('hidden');
+                                if (typeof gsap !== 'undefined') gsap.to(authView, { opacity: 1, duration: 0.4 });
+                            }
+                        });
+                    } else {
+                        UI.notify('登入服務暫時無法使用，請檢查瀏覽器設定', 'error');
+                    }
+                } catch(e) {
+                    console.error("Init Error:", e);
+                    hideLoader();
+                }
             },
             startSystem: async () => {
                 try {
-                    const profileSnap = await getDoc(doc(db, API.paths.userProfile(), 'main'));
-                    if (profileSnap.exists()) state.profile = profileSnap.data();
-                    else await setDoc(doc(db, API.paths.userProfile(), 'main'), { role: 'student', isBanned: false, createdAt: new Date().toISOString() });
-                    if (state.profile.isBanned) return AdminService.triggerBlocker('帳號已封鎖', '您的帳號已被超級管理員列入黑名單。', true);
+                    state.unsubscribers.push(onSnapshot(doc(db, API.paths.userProfile(), 'main'), (docSnap) => {
+                        if (docSnap.exists()) {
+                            state.profile = docSnap.data();
+                            if (state.profile.isBanned) AdminService.triggerBlocker('帳號已封鎖', '您的帳號已被超級管理員列入黑名單。', true);
+                        } else {
+                            setDoc(docSnap.ref, { role: 'student', isBanned: false, createdAt: new Date().toISOString() });
+                        }
+                    }));
                 } catch (e) {
                     console.warn("DB Rules:", e); UI.notify('權限不足：進入唯讀模式', 'error');
                 }
@@ -536,31 +685,114 @@
                 if (state.user.photoURL) { document.getElementById('header-avatar').src = state.user.photoURL; document.getElementById('header-avatar').classList.remove('hidden'); document.getElementById('header-avatar-fallback').classList.add('hidden'); }
                 if(state.profile.role === 'provider') { document.getElementById('provider-target-section').classList.remove('hidden'); document.getElementById('provider-create-group').classList.remove('hidden'); }
 
-                state.timetableConfig = JSON.parse(localStorage.getItem(`lumina_tt_${state.user.uid}`) || '{}');
+                try {
+                    state.timetableConfig = JSON.parse(localStorage.getItem(`lumina_tt_${state.user.uid}`) || '{}');
+                } catch(e) { state.timetableConfig = {}; }
 
-                if(state.classTimerInterval) clearInterval(state.classTimerInterval); // 清除舊計時器防記憶體洩漏
+                if(state.classTimerInterval) clearInterval(state.classTimerInterval);
                 app.setupListeners(); app.renders.subjectsPills(); app.timetable.initTracker(); app.timetable.renderDaySelector();
-                if(state.currentDayTab === 0 || state.currentDayTab === 6) { state.currentDayTab = 1; app.timetable.renderDaySelector(); }
+                
+                let ttMode = 'week';
+                try { ttMode = localStorage.getItem('lumina_tt_mode') || 'week'; } catch(e){}
+                if(ttMode === 'week') {
+                    let d = new Date().getDay();
+                    if(d === 0 || d === 6) d = 1;
+                    state.currentDayTab = d.toString();
+                } else {
+                    state.currentDayTab = 'd1';
+                }
+                app.timetable.renderDaySelector();
+            },
+            system: {
+                initOfflineDetection: () => {
+                    const badge = document.getElementById('offline-badge');
+                    window.addEventListener('offline', () => { badge.classList.remove('hidden'); UI.notify('網路已中斷，進入離線模式', 'warning'); });
+                    window.addEventListener('online', () => { badge.classList.add('hidden'); UI.notify('網路已恢復，資料自動同步中', 'success'); });
+                    if(!navigator.onLine) badge.classList.remove('hidden');
+                },
+                requestNotification: () => {
+                    if ("Notification" in window && Notification.permission !== "granted" && Notification.permission !== "denied") {
+                        Notification.requestPermission();
+                    }
+                }
             },
             auth: {
+                mode: 'login',
+                toggleMode: () => {
+                    const nameInput = document.getElementById('auth-name');
+                    const mainBtn = document.getElementById('auth-main-btn');
+                    const toggleBtn = document.getElementById('auth-toggle-btn');
+                    if (app.auth.mode === 'login') {
+                        app.auth.mode = 'register';
+                        nameInput.classList.remove('hidden');
+                        mainBtn.textContent = '註冊並登入 Sign Up';
+                        toggleBtn.textContent = '已有帳號？點此登入';
+                    } else {
+                        app.auth.mode = 'login';
+                        nameInput.classList.add('hidden');
+                        mainBtn.textContent = '登入 Login';
+                        toggleBtn.textContent = '還沒有帳號？點此註冊';
+                    }
+                },
+                submit: () => {
+                    if (app.auth.mode === 'login') app.auth.loginWithEmail();
+                    else app.auth.registerWithEmail();
+                },
                 loginWithGoogle: async () => { try { await signInWithPopup(auth, googleProvider); } catch(e) { UI.notify('登入失敗，可能被攔截', 'error'); } },
                 loginWithEmail: async () => { const e = document.getElementById('auth-email').value, p = document.getElementById('auth-password').value; if(!e||!p) return UI.notify('請輸入完整', 'error'); try { await signInWithEmailAndPassword(auth, e, p); } catch(err) { UI.notify('帳號或密碼錯誤', 'error'); } },
-                registerWithEmail: async () => { const e = document.getElementById('auth-email').value, p = document.getElementById('auth-password').value; if(p.length<6) return UI.notify('密碼至少6位', 'error'); try { await createUserWithEmailAndPassword(auth, e, p); UI.notify('註冊成功', 'success'); } catch(err) { UI.notify('註冊失敗', 'error'); } },
+                registerWithEmail: async () => { 
+                    const n = document.getElementById('auth-name').value.trim();
+                    const e = document.getElementById('auth-email').value.trim();
+                    const p = document.getElementById('auth-password').value; 
+                    if(!n || !e || !p) return UI.notify('請填寫完整資訊 (包含姓名)', 'error'); 
+                    if(p.length<6) return UI.notify('密碼至少6位', 'error'); 
+                    try { 
+                        const userCredential = await createUserWithEmailAndPassword(auth, e, p); 
+                        await updateProfile(userCredential.user, { displayName: n });
+                        state.user = userCredential.user; 
+                        UI.notify('註冊成功', 'success'); 
+                    } catch(err) { UI.notify('註冊失敗，可能信箱已存在', 'error'); } 
+                },
                 logout: async () => { UI.sheet.close(); AdminService.log('USER_LOGOUT'); clearInterval(state.classTimerInterval); state.unsubscribers.forEach(f=>f()); state.unsubscribers=[]; await signOut(auth); document.getElementById('system-blocker').classList.add('hidden'); }
             },
             profile: {
                 toggle: () => {
-                    const rb = state.profile.role === 'provider' ? `<span class="bg-pink-500/20 text-pink-400 text-[10px] px-2 py-1 rounded-full font-bold ml-2 border border-pink-500/30">Provider</span>` : `<span class="bg-brand-500/20 text-brand-400 text-[10px] px-2 py-1 rounded-full font-bold ml-2 border border-brand-500/30">Student</span>`;
-                    const src = state.user.photoURL ? `<img src="${state.user.photoURL}" class="w-24 h-24 rounded-full border-2 border-white/20 shadow-2xl object-cover mx-auto">` : `<div class="w-24 h-24 rounded-full bg-gray-800 flex items-center justify-center border-2 border-white/20 shadow-2xl mx-auto"><i class="fa-solid fa-user text-4xl text-gray-400"></i></div>`;
-                    UI.sheet.open(`<div class="text-center">${src}<h3 class="text-xl font-bold text-white mt-5 flex justify-center items-center">${state.user.displayName || 'Lumina User'} ${rb}</h3><p class="text-sm text-gray-400 font-mono mt-1 mb-8">${state.user.email || 'Anonymous'}</p><div class="space-y-3">${state.profile.role === 'provider' ? '' : `<button onclick="app.profile.demoRole()" class="w-full glass-card py-4 text-sm font-bold text-brand-300 hover:bg-white/5 active:scale-95 transition flex justify-center items-center gap-2"><i class="fa-solid fa-crown"></i> 申請升級 Provider</button>`}<button onclick="app.auth.logout()" class="w-full bg-red-500/10 border border-red-500/30 text-red-400 py-4 rounded-xl text-sm font-bold active:scale-95 transition shadow-lg">安全登出 Sign Out</button></div></div>`);
+                    const rb = state.profile.role === 'provider' ? `<span class="bg-pink-500/20 text-pink-500 text-[10px] px-2 py-1 rounded-md font-bold ml-2 border border-pink-500/30">Provider</span>` : `<span class="bg-brand-500/20 text-brand-500 text-[10px] px-2 py-1 rounded-md font-bold ml-2 border border-brand-500/30">Student</span>`;
+                    const src = state.user.photoURL ? `<img src="${state.user.photoURL}" class="w-24 h-24 rounded-full border-4 border-theme-bg shadow-xl object-cover mx-auto">` : `<div class="w-24 h-24 rounded-full bg-theme-input flex items-center justify-center border-4 border-theme-bg shadow-xl mx-auto"><i class="fa-solid fa-user text-4xl text-theme-muted"></i></div>`;
+
+                    UI.sheet.open(`
+                        <div class="relative text-center">
+                            <button onclick="app.UI.sheet.close()" class="absolute -top-2 right-0 w-8 h-8 rounded-full bg-theme-input flex items-center justify-center text-theme-muted hover:text-theme-text border border-theme-border active:scale-95 transition-all z-10"><i class="fa-solid fa-xmark"></i></button>
+                            
+                            <div class="relative inline-block">${src}</div>
+                            <h3 class="text-xl font-bold text-theme-text mt-4 flex justify-center items-center font-literary tracking-wide">${escapeHTML(state.user.displayName || 'Lumina User')} ${rb}</h3>
+                            <p class="text-[13px] text-theme-muted font-mono mt-1 mb-8">${escapeHTML(state.user.email || 'Anonymous')}</p>
+                            
+                            <div class="space-y-3">
+                                ${state.profile.role === 'provider' ? '' : `<button onclick="app.profile.demoRole()" class="w-full glass-card py-4 text-[15px] font-bold text-brand-500 hover:bg-theme-input hover:-translate-y-1 active:scale-95 transition-all duration-300 flex justify-center items-center gap-2"><i class="fa-solid fa-crown"></i> 申請升級 Provider</button>`}
+                                <button onclick="app.auth.logout()" class="w-full bg-red-500/10 border border-red-500/20 text-red-500 py-4 rounded-xl text-[15px] font-bold hover:bg-red-500/20 hover:-translate-y-1 active:scale-95 transition-all duration-300 shadow-sm">安全登出 Sign Out</button>
+                                <button onclick="app.UI.sheet.close()" class="w-full bg-theme-input border border-theme-border text-theme-text py-4 rounded-xl text-[15px] font-bold hover:bg-theme-border hover:-translate-y-1 active:scale-95 transition-all duration-300 shadow-sm">返回 Return</button>
+                            </div>
+                        </div>
+                    `);
                 },
                 demoRole: async () => { try { await updateDoc(doc(db, API.paths.userProfile(), 'main'), { role: 'provider' }); state.profile.role = 'provider'; document.getElementById('provider-target-section').classList.remove('hidden'); document.getElementById('provider-create-group').classList.remove('hidden'); UI.sheet.close(); app.renders.groups(); UI.notify('成功升級 Provider', 'success'); } catch(e) { UI.notify('升級失敗', 'error'); } }
             },
             setupListeners: () => {
                 try {
-                    state.unsubscribers.push(onSnapshot(collection(db, API.paths.tasks()), (s) => { state.tasks = []; s.forEach(d => state.tasks.push(d.data())); state.tasks.sort((a,b) => new Date(a.dueDate||'2099') - new Date(b.dueDate||'2099')); app.renders.tasks(); app.updateWidgets(); }));
-                    state.unsubscribers.push(onSnapshot(collection(db, API.paths.groups()), (s) => { state.groups = []; s.forEach(d => { if(d.data().members.includes(state.user.uid) || d.data().providerId === state.user.uid) state.groups.push(d.data()); }); app.renders.groups(); }));
-                    state.unsubscribers.push(onSnapshot(collection(db, API.paths.notifs()), (s) => { state.notifications = []; s.forEach(d => state.notifications.push(d.data())); state.notifications.sort((a,b) => new Date(b.timestamp) - new Date(a.timestamp)); app.notifications.render(); }));
+                    state.unsubscribers.push(onSnapshot(collection(db, API.paths.tasks()), (s) => { 
+                        state.tasks = []; s.forEach(d => state.tasks.push(d.data())); 
+                        app.renders.tasks(); app.updateWidgets(); 
+                    }));
+                    state.unsubscribers.push(onSnapshot(collection(db, API.paths.groups()), (s) => { 
+                        state.groups = []; s.forEach(d => { if(d.data().members.includes(state.user.uid) || d.data().providerId === state.user.uid) state.groups.push(d.data()); }); 
+                        app.renders.groups(); app.renders.announcements();
+                    }));
+                    state.unsubscribers.push(onSnapshot(collection(db, API.paths.notifs()), (s) => { 
+                        state.notifications = []; s.forEach(d => state.notifications.push(d.data())); 
+                        state.notifications.sort((a,b) => new Date(b.timestamp) - new Date(a.timestamp)); 
+                        app.notifications.render(); 
+                    }));
                     state.unsubscribers.push(AdminService.listenGlobalSettings());
                 } catch(e) {}
             },
@@ -572,24 +804,258 @@
             },
             notifications: {
                 toggle: () => { const p = document.getElementById('notif-panel'), b = document.getElementById('notif-badge'); if(p.classList.contains('hidden')) { UI.overlay.show(); p.classList.remove('hidden'); gsap.fromTo(p, { x: '100%' }, { x: '0%', duration: 0.4, ease: "power3.out" }); b.classList.add('hidden'); } else { gsap.to(p, { x: '100%', duration: 0.3, ease: "power3.in", onComplete: () => { p.classList.add('hidden'); UI.overlay.hide(); }}); } },
-                render: () => { const l = document.getElementById('notif-list'), b = document.getElementById('notif-badge'); l.innerHTML = ''; if(state.notifications.length === 0) { l.innerHTML = '<div class="text-center py-10 text-gray-500 text-sm font-bold">無新通知</div>'; return; } b.classList.remove('hidden'); state.notifications.forEach(n => { let i = n.type==='warning'?'fa-triangle-exclamation text-yellow-400':(n.type==='task'?'fa-paper-plane text-brand-400':'fa-info-circle text-blue-400'); l.innerHTML += `<div class="p-4 bg-white/5 rounded-2xl border border-white/5 shadow-sm"><div class="flex items-start gap-3"><div class="w-8 h-8 rounded-full bg-white/5 flex items-center justify-center shrink-0"><i class="fa-solid ${i}"></i></div><div><p class="text-[13px] text-gray-200 font-semibold leading-relaxed">${n.message}</p><p class="text-[10px] text-gray-500 mt-2 font-mono font-semibold">${new Date(n.timestamp).toLocaleString()}</p></div></div></div>`; }); },
+                render: () => { const l = document.getElementById('notif-list'), b = document.getElementById('notif-badge'); l.innerHTML = ''; if(state.notifications.length === 0) { l.innerHTML = '<div class="text-center py-10 text-theme-muted text-sm font-bold">無新通知</div>'; return; } b.classList.remove('hidden'); state.notifications.forEach(n => { let i = n.type==='warning'?'fa-triangle-exclamation text-yellow-500':(n.type==='task'?'fa-paper-plane text-brand-500':'fa-info-circle text-blue-500'); l.innerHTML += `<div class="p-4 bg-theme-input rounded-2xl border border-theme-border shadow-sm hover:border-brand-500/30 transition-colors"><div class="flex items-start gap-3"><div class="w-8 h-8 rounded-full bg-black/5 dark:bg-white/5 flex items-center justify-center shrink-0"><i class="fa-solid ${i}"></i></div><div><p class="text-[13px] text-theme-text font-semibold leading-relaxed">${escapeHTML(n.message)}</p><p class="text-[10px] text-theme-muted mt-2 font-mono font-semibold">${new Date(n.timestamp).toLocaleString()}</p></div></div></div>`; }); },
                 send: async (uid, m, t='info') => { try { const id = API.genId(); await setDoc(doc(db, `artifacts/${internalAppId}/users/${uid}/notifications`, id), { id, message: m, type: t, timestamp: new Date().toISOString() }); } catch(e) {} }
             },
             nav: {
-                switch: (vid) => { if (vid === state.currentView) return; document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active')); document.getElementById(`nav-${vid}`).classList.add('active'); const i = document.getElementById('add-icon'); if(vid === 'add') { i.classList.replace('fa-plus', 'fa-xmark'); i.style.transform = 'rotate(45deg)'; app.tasks.prepareForm(); } else { i.classList.replace('fa-xmark', 'fa-plus'); i.style.transform = 'rotate(0deg)'; } document.querySelectorAll('.view-section').forEach(v => v.classList.remove('active')); const t = document.getElementById(`view-${vid}`); t.classList.add('active'); gsap.fromTo(t, { opacity: 0, y: 15 }, { opacity: 1, y: 0, duration: 0.3, ease: "power2.out" }); state.currentView = vid; }
+                switch: (vid) => { 
+                    if (vid === state.currentView) return; 
+                    
+                    if(vid !== 'add') {
+                        document.querySelectorAll('.top-nav-item').forEach(n => {
+                            n.classList.remove('active', 'bg-theme-card', 'text-brand-600', 'dark:text-white', 'shadow-sm', 'border-theme-border');
+                            n.classList.add('text-theme-muted', 'border-transparent');
+                        });
+                        const activeNav = document.getElementById(`nav-${vid}`);
+                        if(activeNav) {
+                            activeNav.classList.remove('text-theme-muted', 'border-transparent');
+                            activeNav.classList.add('active', 'bg-theme-card', 'text-brand-600', 'dark:text-white', 'shadow-sm', 'border-theme-border');
+                        }
+                    }
+
+                    const fabIcon = document.getElementById('add-icon');
+                    const fabBtn = document.getElementById('global-fab');
+                    if(vid === 'add') { 
+                        fabIcon.classList.replace('fa-plus', 'fa-xmark'); 
+                        fabIcon.style.transform = 'rotate(90deg)'; 
+                        fabBtn.classList.add('from-red-600', 'to-red-400', 'shadow-red-500/50');
+                        fabBtn.classList.remove('from-brand-600', 'to-pink-500', 'shadow-[0_10px_30px_rgba(99,102,241,0.5)]');
+                        app.tasks.prepareForm(); 
+                    } else { 
+                        fabIcon.classList.replace('fa-xmark', 'fa-plus'); 
+                        fabIcon.style.transform = 'rotate(0deg)'; 
+                        fabBtn.classList.remove('from-red-600', 'to-red-400', 'shadow-red-500/50');
+                        fabBtn.classList.add('from-brand-600', 'to-pink-500', 'shadow-[0_10px_30px_rgba(99,102,241,0.5)]');
+                    } 
+
+                    document.querySelectorAll('.view-section').forEach(v => v.classList.remove('active')); 
+                    const t = document.getElementById(`view-${vid}`); 
+                    t.classList.add('active'); 
+                    gsap.fromTo(t, { opacity: 0, y: 15 }, { opacity: 1, y: 0, duration: 0.3, ease: "power2.out" }); 
+                    
+                    document.getElementById('main-scroll-area').scrollTo({top: 0, behavior: 'smooth'});
+                    state.currentView = vid; 
+                }
             },
             tasks: {
-                prepareForm: () => { document.getElementById('form-task-id').value = ''; document.getElementById('form-title').value = ''; document.getElementById('form-content').value = ''; document.getElementById('form-date').value = API.getWorkingDay(); app.tasks.setFormType('task'); app.tasks.checkStress(); document.getElementById('form-header-title').textContent = '新增任務'; },
-                setFormType: (type) => { document.getElementById('form-type').value = type; const bt = document.getElementById('type-btn-task'), be = document.getElementById('type-btn-exam'); if(type === 'task') { bt.className = 'flex-1 py-2.5 text-sm font-bold rounded-lg bg-white/15 text-white shadow-sm transition-all'; be.className = 'flex-1 py-2.5 text-sm font-semibold rounded-lg text-gray-500 hover:text-white transition-all'; } else { be.className = 'flex-1 py-2.5 text-sm font-bold rounded-lg bg-pink-500/20 text-pink-400 shadow-sm transition-all'; bt.className = 'flex-1 py-2.5 text-sm font-semibold rounded-lg text-gray-500 hover:text-white transition-all'; } },
-                checkStress: () => { const di = document.getElementById('form-date'); if(!di) return; const check = () => { const c = state.tasks.filter(t => t.dueDate === di.value && t.status !== 'completed').length; const w = document.getElementById('form-warning-msg'); if(c >= 5) { document.getElementById('form-warning-count').textContent = c; w.classList.remove('hidden'); } else { w.classList.add('hidden'); } }; di.addEventListener('change', check); check(); },
-                save: async () => {
-                    const id = document.getElementById('form-task-id').value, title = document.getElementById('form-title').value.trim(), content = document.getElementById('form-content').value.trim(), subject = document.getElementById('form-subject-value').value, dueDate = document.getElementById('form-date').value, target = document.getElementById('form-target')?.value, type = document.getElementById('form-type').value;
-                    if(!title || !subject) return UI.notify('請填寫完整', 'error');
-                    const data = { title, content, subject, dueDate, type };
-                    if (state.profile.role === 'provider' && target !== 'self' && !id) {
-                        try { const g = await getDoc(doc(db, API.paths.groups(), target)); const m = g.data()?.members || []; if(m.length === 0) return UI.notify('群組無人', 'error'); const batch = writeBatch(db); m.forEach(uid => { const tid = API.genId(); batch.set(doc(db, `artifacts/${internalAppId}/users/${uid}/assignments`, tid), { ...data, id: tid, status: 'pending', source: 'provider', createdAt: new Date().toISOString() }); app.notifications.send(uid, `管理員派發了新${type==='exam'?'考試':'功課'}：[${subject}] ${title}`, 'task'); }); await batch.commit(); AdminService.log('TASK_ASSIGNED', { groupId: target }); UI.notify(`派發給 ${m.length} 位學生`); } catch(e) { UI.notify('派發失敗', 'error'); }
+                openFilterSubjectModal: () => {
+                    const currentVal = state.filters.subject;
+                    let html = `<h3 class="text-xl font-bold text-theme-text mb-4">選擇篩選科目</h3><div class="flex flex-wrap gap-2 max-h-[60vh] overflow-y-auto no-scrollbar pb-6">`;
+                    html += `<button onclick="app.tasks.setFilterSubject('all')" class="whitespace-nowrap px-4 py-2.5 rounded-xl font-bold text-[13px] transition-all duration-300 font-literary tracking-wide border ${currentVal === 'all' ? 'bg-theme-card text-brand-600 shadow-sm border-theme-border scale-105' : 'bg-theme-input text-theme-muted border-transparent hover:bg-theme-border'}">所有科目</button>`;
+                    state.subjects.forEach(s => {
+                        html += `<button onclick="app.tasks.setFilterSubject('${s}')" class="whitespace-nowrap px-4 py-2.5 rounded-xl font-bold text-[13px] transition-all duration-300 font-literary tracking-wide border ${currentVal === s ? 'bg-theme-card text-brand-600 shadow-sm border-theme-border scale-105' : 'bg-theme-input text-theme-muted border-transparent hover:bg-theme-border'}">${s}</button>`;
+                    });
+                    html += `</div>`;
+                    UI.sheet.open(html);
+                },
+                setFilterSubject: (val) => {
+                    state.filters.subject = val;
+                    document.getElementById('filter-subject-text').textContent = val === 'all' ? '所有科目' : val;
+                    UI.sheet.close();
+                    app.renders.tasks();
+                },
+                toggleIncompleteFilter: () => {
+                    state.filters.incompleteOnly = !state.filters.incompleteOnly;
+                    const btn = document.getElementById('filter-incomplete');
+                    if (state.filters.incompleteOnly) {
+                        btn.classList.replace('text-theme-muted', 'text-brand-500');
+                        btn.classList.replace('bg-theme-card', 'bg-brand-500/10');
+                        btn.classList.replace('border-theme-border', 'border-brand-500/30');
+                        btn.querySelector('i').classList.replace('text-theme-muted', 'text-brand-500');
                     } else {
-                        try { const newId = id || API.genId(); await setDoc(doc(db, API.paths.tasks(), newId), { ...data, id: newId, status: id ? undefined : 'pending', updatedAt: new Date().toISOString() }, { merge: true }); AdminService.log('TASK_SAVED', { taskId: newId }); UI.notify('儲存成功'); } catch(e) { UI.notify('儲存失敗', 'error'); }
+                        btn.classList.replace('text-brand-500', 'text-theme-muted');
+                        btn.classList.replace('bg-brand-500/10', 'bg-theme-card');
+                        btn.classList.replace('border-brand-500/30', 'border-theme-border');
+                        btn.querySelector('i').classList.replace('text-brand-500', 'text-theme-muted');
+                    }
+                    app.renders.tasks();
+                },
+                toggleSortFilter: () => {
+                    state.filters.sortDesc = !state.filters.sortDesc;
+                    const btn = document.getElementById('filter-sort');
+                    const icon = btn.querySelector('i');
+                    if (state.filters.sortDesc) {
+                        icon.classList.replace('fa-arrow-down-short-wide', 'fa-arrow-up-wide-short');
+                    } else {
+                        icon.classList.replace('fa-arrow-up-wide-short', 'fa-arrow-down-short-wide');
+                    }
+                    app.renders.tasks();
+                },
+                prepareForm: () => { 
+                    document.getElementById('form-task-id').value = ''; 
+                    document.getElementById('form-title').value = ''; 
+                    document.getElementById('form-content').value = ''; 
+                    document.getElementById('form-date').value = API.getWorkingDay(); 
+                    app.tasks.setRepeat('none', '不重複');
+                    app.tasks.setTarget('self', '私人任務 (僅自己可見)');
+                    document.getElementById('broadcast-toggle').checked = false;
+                    document.getElementById('broadcast-toggle').disabled = false;
+                    app.tasks.setFormType('task'); 
+                    app.tasks.checkStress(); 
+                    document.getElementById('form-header-title').textContent = '新增任務';
+                    
+                    document.getElementById('form-image-preview').classList.add('hidden');
+                    document.getElementById('form-image-preview').src = '';
+                    state.tempImageBase64 = null;
+                    app.renders.subjectsPills();
+                },
+                setFormType: (type) => { 
+                    document.getElementById('form-type').value = type; 
+                    const bt = document.getElementById('type-btn-task'), be = document.getElementById('type-btn-exam'); 
+                    
+                    const activeClass = 'flex-1 py-3 text-[15px] font-bold rounded-xl bg-theme-card text-brand-600 shadow-sm border border-theme-border transition-all flex justify-center items-center gap-2';
+                    const activeClassExam = 'flex-1 py-3 text-[15px] font-bold rounded-xl bg-theme-card text-pink-600 shadow-sm border border-theme-border transition-all flex justify-center items-center gap-2';
+                    const inactiveClass = 'flex-1 py-3 text-[15px] font-semibold rounded-xl text-theme-muted border border-transparent hover:text-theme-text transition-all flex justify-center items-center gap-2';
+                    
+                    if(type === 'task') { 
+                        bt.className = activeClass; 
+                        be.className = inactiveClass; 
+                    } else { 
+                        be.className = activeClassExam; 
+                        bt.className = inactiveClass; 
+                    } 
+                },
+                checkStress: () => { const di = document.getElementById('form-date'); if(!di) return; const check = () => { const c = state.tasks.filter(t => t.dueDate === di.value && t.status !== 'completed').length; const w = document.getElementById('form-warning-msg'); if(c >= 5) { document.getElementById('form-warning-count').textContent = c; w.classList.remove('hidden'); } else { w.classList.add('hidden'); } }; di.addEventListener('change', check); check(); },
+                handleImageUpload: (e) => {
+                    const file = e.target.files[0];
+                    if(!file) return;
+                    if(file.size > 5 * 1024 * 1024) return UI.notify('圖片過大，請上傳小於 5MB 的圖片', 'error');
+                    
+                    const reader = new FileReader();
+                    reader.onload = (event) => {
+                        const img = new Image();
+                        img.onload = () => {
+                            const canvas = document.createElement('canvas');
+                            const MAX_SIZE = 800;
+                            let width = img.width, height = img.height;
+                            if (width > height) { if (width > MAX_SIZE) { height *= MAX_SIZE / width; width = MAX_SIZE; } } 
+                            else { if (height > MAX_SIZE) { width *= MAX_SIZE / height; height = MAX_SIZE; } }
+                            
+                            canvas.width = width; canvas.height = height;
+                            const ctx = canvas.getContext('2d');
+                            ctx.drawImage(img, 0, 0, width, height);
+                            
+                            const dataUrl = canvas.toDataURL('image/jpeg', 0.6);
+                            state.tempImageBase64 = dataUrl;
+                            
+                            const preview = document.getElementById('form-image-preview');
+                            preview.src = dataUrl;
+                            preview.classList.remove('hidden');
+                        };
+                        img.src = event.target.result;
+                    };
+                    reader.readAsDataURL(file);
+                },
+                openRepeatModal: () => {
+                    const currentVal = document.getElementById('form-repeat').value;
+                    const options = [
+                        {val: 'none', label: '不重複'},
+                        {val: 'daily', label: '每天 (連續5天)'},
+                        {val: 'weekly', label: '每週 (連續4週)'}
+                    ];
+                    let html = `<h3 class="text-xl font-bold text-theme-text mb-4">自動重複設定</h3><div class="flex flex-col gap-2">`;
+                    options.forEach(o => {
+                        const isActive = currentVal === o.val;
+                        html += `<button onclick="app.tasks.setRepeat('${o.val}', '${o.label}')" class="w-full text-left p-4 rounded-xl border ${isActive ? 'bg-brand-500/10 border-brand-500/40 text-brand-600 dark:text-brand-400 font-bold shadow-sm' : 'bg-theme-input border-theme-border text-theme-text font-semibold hover:bg-theme-border'} transition-all">${o.label}</button>`;
+                    });
+                    html += `</div>`;
+                    UI.sheet.open(html);
+                },
+                setRepeat: (val, label) => {
+                    document.getElementById('form-repeat').value = val;
+                    document.getElementById('form-repeat-text').textContent = label;
+                    UI.sheet.close();
+                },
+                handleBroadcastToggle: (checkbox) => {
+                    if(checkbox.checked) {
+                        if(state.groups.length === 0) {
+                            UI.notify('您目前沒有管理任何群組', 'error');
+                            checkbox.checked = false;
+                            return;
+                        }
+                        app.tasks.openTargetModal();
+                    } else {
+                        app.tasks.setTarget('self', '私人任務 (僅自己可見)');
+                    }
+                },
+                openTargetModal: () => {
+                    const currentVal = document.getElementById('form-target').value;
+                    let html = `<h3 class="text-xl font-bold text-theme-text mb-4">選擇發放對象</h3><div class="flex flex-col gap-2 max-h-[60vh] overflow-y-auto no-scrollbar pb-6">`;
+                    
+                    const isSelf = currentVal === 'self';
+                    html += `<button onclick="app.tasks.setTarget('self', '私人任務 (僅自己可見)')" class="w-full text-left p-4 rounded-xl border ${isSelf ? 'bg-pink-500/10 border-pink-500/40 text-pink-600 font-bold shadow-sm' : 'bg-theme-input border-theme-border text-theme-text font-semibold hover:bg-theme-border'} transition-all">私人任務 (僅自己可見)</button>`;
+
+                    if (state.profile.role === 'provider') {
+                        state.groups.forEach(g => {
+                            if (g.providerId === state.user.uid) {
+                                const isGroup = currentVal === g.id;
+                                html += `<button onclick="app.tasks.setTarget('${g.id}', '群組: ${escapeHTML(g.name)}')" class="w-full text-left p-4 rounded-xl border ${isGroup ? 'bg-pink-500/10 border-pink-500/40 text-pink-600 font-bold shadow-sm' : 'bg-theme-input border-theme-border text-theme-text font-semibold hover:bg-theme-border'} transition-all">群組: ${escapeHTML(g.name)}</button>`;
+                            }
+                        });
+                    }
+                    html += `</div>`;
+                    UI.sheet.open(html);
+                },
+                setTarget: (val, label) => {
+                    document.getElementById('form-target').value = val;
+                    document.getElementById('form-target-text').textContent = val === 'self' ? '私人任務 (僅自己可見)' : label;
+                    const toggle = document.getElementById('broadcast-toggle');
+                    if(toggle) toggle.checked = val !== 'self';
+                    UI.sheet.close();
+                },
+                save: async () => {
+                    const id = document.getElementById('form-task-id').value, title = document.getElementById('form-title').value.trim(), content = document.getElementById('form-content').value.trim(), subject = document.getElementById('form-subject-value').value, dueDate = document.getElementById('form-date').value, target = document.getElementById('form-target').value, type = document.getElementById('form-type').value, repeat = document.getElementById('form-repeat').value;
+                    if(!title || !subject) return UI.notify('請填寫完整 (需包含標題)', 'error');
+                    
+                    const data = { title, content, subject, type, attachment: state.tempImageBase64 };
+                    
+                    const createDates = [dueDate];
+                    if(repeat === 'daily') { for(let i=1; i<5; i++){ let d=new Date(dueDate); d.setDate(d.getDate()+i); createDates.push(d.toISOString().split('T')[0]); } }
+                    if(repeat === 'weekly') { for(let i=1; i<4; i++){ let d=new Date(dueDate); d.setDate(d.getDate()+(i*7)); createDates.push(d.toISOString().split('T')[0]); } }
+
+                    if (state.profile.role === 'provider' && target !== 'self' && !id) {
+                        try { 
+                            const g = await getDoc(doc(db, API.paths.groups(), target)); 
+                            const m = g.data()?.members || []; 
+                            if(m.length === 0) return UI.notify('群組無人', 'error'); 
+                            
+                            const batch = writeBatch(db); 
+                            m.forEach(uid => { 
+                                createDates.forEach(d => {
+                                    const tid = API.genId(); 
+                                    batch.set(doc(db, `artifacts/${internalAppId}/users/${uid}/assignments`, tid), { ...data, id: tid, dueDate: d, status: 'pending', source: 'provider', groupId: target, originalTaskId: id || tid, createdAt: new Date().toISOString() }); 
+                                });
+                                app.notifications.send(uid, `管理員派發了新${type==='exam'?'考試':'功課'}：[${subject}] ${title} ${createDates.length>1?'(包含重複)':''}`, 'task'); 
+                            }); 
+                            await batch.commit(); 
+                            AdminService.log('TASK_ASSIGNED', { groupId: target }); 
+                            UI.notify(`已將 ${createDates.length} 筆任務派發給 ${m.length} 位學生`); 
+                        } catch(e) { UI.notify('派發失敗', 'error'); }
+                    } else {
+                        try { 
+                            const batch = writeBatch(db);
+                            if(id) { 
+                                batch.set(doc(db, API.paths.tasks(), id), { ...data, id: id, dueDate: dueDate, status: undefined, updatedAt: new Date().toISOString() }, { merge: true });
+                            } else {
+                                createDates.forEach(d => {
+                                    const nid = API.genId();
+                                    batch.set(doc(db, API.paths.tasks(), nid), { ...data, id: nid, dueDate: d, status: 'pending', updatedAt: new Date().toISOString() });
+                                });
+                            }
+                            await batch.commit();
+                            AdminService.log('TASK_SAVED'); 
+                            UI.notify(`已成功儲存 ${id ? '1' : createDates.length} 筆任務`); 
+                        } catch(e) { UI.notify('儲存失敗', 'error'); }
                     }
                     app.nav.switch('home');
                 },
@@ -600,92 +1066,281 @@
                     document.getElementById('form-title').value = task.title;
                     document.getElementById('form-content').value = task.content || '';
                     document.getElementById('form-date').value = task.dueDate || '';
-                    document.getElementById('form-subject-value').value = task.subject || state.subjects[0];
+                    
+                    const inp = document.getElementById('form-subject-value');
+                    inp.value = task.subject || state.subjects[0];
+                    if(!state.subjects.includes(inp.value)) { state.subjects.unshift(inp.value); }
+                    app.renders.subjectsPills();
+
+                    app.tasks.setRepeat('none', '不重複');
+                    
+                    if(task.groupId) {
+                        app.tasks.setTarget(task.groupId, '群組任務 (已派發無法更改)');
+                        document.getElementById('broadcast-toggle').checked = true;
+                        document.getElementById('broadcast-toggle').disabled = true;
+                    } else {
+                        app.tasks.setTarget('self', '私人任務 (僅自己可見)');
+                        document.getElementById('broadcast-toggle').checked = false;
+                        document.getElementById('broadcast-toggle').disabled = false;
+                    }
+                    
                     app.tasks.setFormType(task.type || 'task');
                     document.getElementById('form-header-title').textContent = '編輯任務';
-                    app.renders.subjectsPills();
-                    document.getElementById('main-scroll-area').scrollTo({top: 0, behavior: 'smooth'});
+                    
+                    if(task.attachment) {
+                        state.tempImageBase64 = task.attachment;
+                        const p = document.getElementById('form-image-preview');
+                        p.src = task.attachment; p.classList.remove('hidden');
+                    }
                 },
-                markComplete: (id, el) => { gsap.to(el, { scale: 0.9, opacity: 0, x: '50%', duration: 0.4, ease: "power2.in", onComplete: async () => { await updateDoc(doc(db, API.paths.tasks(), id), { status: 'completed', completedAt: new Date().toISOString() }); AdminService.log('TASK_COMPLETED', { taskId: id }); }}); },
-                confirmDelete: (id) => { UI.modal.open(`<div class="text-center"><div class="w-16 h-16 bg-red-500/10 rounded-full flex items-center justify-center mx-auto mb-4"><i class="fa-solid fa-trash-can text-red-500 text-3xl"></i></div><h3 class="text-xl font-bold text-white mb-2 tracking-tight">刪除任務？</h3><p class="text-gray-400 text-sm mb-6">此動作無法復原</p><div class="flex gap-3"><button onclick="app.UI.modal.close()" class="flex-1 glass-card py-3.5 font-bold text-white active:scale-95 transition">取消</button><button onclick="app.tasks.doDelete('${id}')" class="flex-1 bg-red-600 hover:bg-red-500 rounded-xl py-3.5 font-bold text-white shadow-lg active:scale-95 transition">確認刪除</button></div></div>`); },
+                markComplete: (id, el) => { 
+                    gsap.to(el, { scale: 0.95, opacity: 0, x: '50%', duration: 0.3, ease: "power2.in", onComplete: async () => { 
+                        await updateDoc(doc(db, API.paths.tasks(), id), { status: 'completed', completedAt: new Date().toISOString() }); 
+                        AdminService.log('TASK_COMPLETED', { taskId: id }); 
+                        
+                        const t = state.tasks.find(x => x.id === id);
+                        if (t && t.groupId && t.originalTaskId) {
+                            try {
+                                const groupRef = doc(db, API.paths.groups(), t.groupId);
+                                await setDoc(groupRef, { completions: { [t.originalTaskId]: { [state.user.uid]: true } } }, { merge: true });
+                            } catch(e) {}
+                        }
+                        
+                        UI.notify('已完成並歸檔', 'success');
+                    }}); 
+                },
+                confirmDelete: (id) => { UI.modal.open(`<div class="text-center"><div class="w-16 h-16 bg-red-500/10 rounded-full flex items-center justify-center mx-auto mb-4"><i class="fa-solid fa-trash-can text-red-500 text-3xl"></i></div><h3 class="text-xl font-bold text-theme-text mb-2 tracking-tight">刪除任務？</h3><p class="text-theme-muted text-sm mb-6">此動作無法復原</p><div class="flex gap-3"><button onclick="app.UI.modal.close()" class="flex-1 glass-card py-3.5 font-bold text-theme-text hover:-translate-y-1 hover:bg-theme-input active:scale-95 transition-all duration-300">取消</button><button onclick="app.tasks.doDelete('${id}')" class="flex-1 bg-red-600 hover:bg-red-500 rounded-xl py-3.5 font-bold text-white shadow-lg hover:-translate-y-1 hover:shadow-red-500/40 active:scale-95 transition-all duration-300">確認刪除</button></div></div>`); },
                 doDelete: async (id) => { await deleteDoc(doc(db, API.paths.tasks(), id)); AdminService.log('TASK_DELETED', { taskId: id }); UI.modal.close(); UI.notify('已刪除'); }
             },
             timetable: {
+                isEditMode: false,
+                changeDay: (dayKey) => {
+                    state.currentDayTab = dayKey;
+                    app.timetable.renderDaySelector();
+                },
+                toggleEditMode: () => {
+                    app.timetable.isEditMode = !app.timetable.isEditMode;
+                    app.timetable.renderDaySelector();
+                },
                 initTracker: () => {
                     if(state.classTimerInterval) clearInterval(state.classTimerInterval);
                     state.classTimerInterval = setInterval(() => {
-                        const now = new Date(), day = now.getDay().toString(), slots = state.timetableConfig[day] || [];
+                        let ttMode = 'week';
+                        try { ttMode = localStorage.getItem('lumina_tt_mode') || 'week'; } catch(e){}
+                        let slots = [];
+                        if (ttMode === 'week') {
+                            slots = state.timetableConfig[new Date().getDay().toString()] || [];
+                        } else {
+                            slots = state.timetableConfig[state.currentDayTab] || [];
+                        }
+
                         const tt = document.getElementById('widget-class-title'), tm = document.getElementById('widget-class-timer');
                         if(slots.length === 0) { tt.textContent = '今日無行程'; tm.textContent = '--:--:--'; return; }
                         let c = null, n = null, nt = now.getHours() * 60 + now.getMinutes() + now.getSeconds()/60;
                         for(let i=0; i<slots.length; i++) { const [sH,sM]=slots[i].start.split(':').map(Number), [eH,eM]=slots[i].end.split(':').map(Number); const s=sH*60+sM, e=eH*60+eM; if(nt>=s && nt<e) { c=slots[i]; c.em=e; } else if(nt<s && !n) { n=slots[i]; n.sm=s; } }
-                        if (c) { tt.textContent = c.subject || c.label; const d = c.em - nt, m = Math.floor(d), sec = Math.floor((d-m)*60); tm.textContent = `剩餘 ${m.toString().padStart(2,'0')}:${sec.toString().padStart(2,'0')}`; tm.className = `text-[11px] font-mono mt-1 font-bold ${m<5?'text-red-400 animate-pulse':'text-emerald-400'}`; }
-                        else if (n) { tt.textContent = `即將: ${n.subject || n.label}`; tm.textContent = `${n.start} 開始`; tm.className = 'text-[11px] text-gray-400 font-mono mt-1 font-semibold'; }
-                        else { tt.textContent = '課堂已結束'; tm.textContent = 'Enjoy!'; tm.className = 'text-[11px] text-brand-400 font-mono mt-1 font-semibold'; }
+                        if (c) { 
+                            tt.textContent = c.subject || c.label; 
+                            const d = c.em - nt, m = Math.floor(d), sec = Math.floor((d-m)*60); 
+                            tm.textContent = `剩餘 ${m.toString().padStart(2,'0')}:${sec.toString().padStart(2,'0')}`; 
+                            tm.className = `text-[11px] font-mono mt-1 font-bold ${m<5?'text-red-500 animate-pulse':'text-emerald-500'}`; 
+                        }
+                        else if (n) { 
+                            tt.textContent = `即將: ${n.subject || n.label}`; tm.textContent = `${n.start} 開始`; tm.className = 'text-[11px] text-theme-muted font-mono mt-1 font-semibold'; 
+                        }
+                        else { tt.textContent = '課堂已結束'; tm.textContent = 'Enjoy!'; tm.className = 'text-[11px] text-brand-500 font-mono mt-1 font-semibold'; }
                     }, 1000);
                 },
                 renderDaySelector: () => {
-                    document.querySelectorAll('.tt-day-btn').forEach(b => { b.classList.remove('active'); if(parseInt(b.dataset.day) === state.currentDayTab) { b.classList.add('active'); b.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' }); } b.onclick = () => { state.currentDayTab = parseInt(b.dataset.day); app.timetable.renderDaySelector(); }; });
-                    const c = document.getElementById('timetable-slots'), slots = state.timetableConfig[state.currentDayTab] || [];
-                    if(slots.length === 0) { c.innerHTML = `<div class="py-12 text-center"><div class="w-12 h-12 bg-white/5 rounded-full flex items-center justify-center mx-auto mb-3"><i class="fa-solid fa-calendar-xmark text-gray-500 text-xl"></i></div><p class="text-gray-400 text-sm mb-4 font-bold tracking-wide">此日尚未設定</p><button onclick="app.timetable.generateDefault(${state.currentDayTab})" class="text-xs font-bold bg-brand-500 px-5 py-2.5 rounded-full text-white shadow-lg transition">套用預設</button></div>`; return; }
+                    const c = document.getElementById('timetable-slots');
+                    const selectorContainer = document.getElementById('timetable-day-selector');
+                    let ttMode = 'week';
+                    try { ttMode = localStorage.getItem('lumina_tt_mode') || 'week'; } catch(e){}
+                    
+                    let dayHtml = '';
+                    if (ttMode === 'week') {
+                        const days = [{k:'1', l:'星期一'},{k:'2', l:'星期二'},{k:'3', l:'星期三'},{k:'4', l:'星期四'},{k:'5', l:'星期五'},{k:'6', l:'星期六'},{k:'0', l:'星期日'}];
+                        dayHtml = days.map(d => `<button class="whitespace-nowrap px-4 py-2.5 rounded-xl font-bold text-[13px] transition-all duration-300 border snap-center ${state.currentDayTab===d.k?'bg-theme-card text-brand-600 shadow-sm border-theme-border scale-105':'bg-theme-input text-theme-muted border-transparent hover:bg-theme-border'}" onclick="app.timetable.changeDay('${d.k}')">${d.l}</button>`).join('');
+                    } else {
+                        const days = [{k:'d1', l:'Day 1'},{k:'d2', l:'Day 2'},{k:'d3', l:'Day 3'},{k:'d4', l:'Day 4'},{k:'d5', l:'Day 5'},{k:'d6', l:'Day 6'}];
+                        dayHtml = days.map(d => `<button class="whitespace-nowrap px-4 py-2.5 rounded-xl font-bold text-[13px] transition-all duration-300 border snap-center ${state.currentDayTab===d.k?'bg-theme-card text-brand-600 shadow-sm border-theme-border scale-105':'bg-theme-input text-theme-muted border-transparent hover:bg-theme-border'}" onclick="app.timetable.changeDay('${d.k}')">${d.l}</button>`).join('');
+                    }
+                    if(selectorContainer) selectorContainer.innerHTML = dayHtml;
+
+                    let slots = state.timetableConfig[state.currentDayTab] || [];
+                    
+                    const btnEdit = document.getElementById('tt-btn-edit');
+                    const btnCopy = document.getElementById('tt-btn-copy');
+                    const btnAdd = document.getElementById('tt-btn-add');
+                    const btnDone = document.getElementById('tt-btn-done');
+                    
+                    if(btnEdit) {
+                        if(app.timetable.isEditMode) {
+                            btnEdit.classList.add('hidden');
+                            btnCopy.classList.remove('hidden'); btnAdd.classList.remove('hidden'); btnDone.classList.remove('hidden');
+                        } else {
+                            btnEdit.classList.remove('hidden');
+                            btnCopy.classList.add('hidden'); btnAdd.classList.add('hidden'); btnDone.classList.add('hidden');
+                        }
+                    }
+
+                    if(slots.length === 0) { 
+                        if (app.timetable.isEditMode) {
+                            c.innerHTML = `<div class="py-12 text-center animate-[fadeIn_0.3s_ease-out]"><div class="w-12 h-12 bg-theme-input rounded-full flex items-center justify-center mx-auto mb-3"><i class="fa-solid fa-calendar-plus text-theme-muted text-xl"></i></div><p class="text-theme-muted text-sm mb-4 font-bold tracking-wide">此日尚未設定</p><button onclick="app.timetable.generateDefault('${state.currentDayTab}')" class="text-xs font-bold bg-brand-500 px-5 py-2.5 rounded-full text-white shadow-lg hover:-translate-y-1 hover:shadow-brand-500/40 active:scale-95 transition-all duration-300">套用預設時段</button></div>`; 
+                        } else {
+                            c.innerHTML = `<div class="py-12 text-center animate-[fadeIn_0.3s_ease-out]"><div class="w-12 h-12 bg-theme-input rounded-full flex items-center justify-center mx-auto mb-3"><i class="fa-solid fa-calendar-xmark text-theme-muted text-xl"></i></div><p class="text-theme-muted text-sm mb-4 font-bold tracking-wide">此日尚未設定</p><button onclick="app.timetable.toggleEditMode()" class="text-xs font-bold text-brand-500 bg-brand-500/10 px-5 py-2.5 rounded-full hover:-translate-y-1 hover:bg-brand-500/20 active:scale-95 transition-all duration-300">開始編輯</button></div>`; 
+                        }
+                        return; 
+                    }
+                    
                     slots.sort((a,b) => a.start.localeCompare(b.start));
-                    c.innerHTML = slots.map(s => `<div class="time-slot p-3 border-b border-white/5 flex items-center justify-between hover:bg-white/5 transition cursor-pointer ${s.type==='special'?'special':''}" onclick="app.timetable.editSlotModal('${s.id}')"><div class="flex items-center gap-4"><div class="text-xs font-mono text-gray-400 w-12 text-right"><div class="font-bold text-gray-300">${s.start}</div><div class="opacity-40 text-[10px] mt-0.5">${s.end}</div></div><div><p class="text-[10px] font-bold text-brand-400 mb-0.5 uppercase">${s.label}</p><p class="text-sm font-bold text-white">${s.subject || '<span class="text-gray-600 border border-dashed px-2 py-0.5 rounded text-[10px]">點擊設定</span>'}</p></div></div><i class="fa-solid fa-chevron-right text-gray-600 text-xs"></i></div>`).join('');
+                    let html = '';
+
+                    if (app.timetable.isEditMode) {
+                        html += `<div class="flex text-[10px] font-bold text-theme-muted mb-2 px-1 uppercase tracking-wider animate-[fadeIn_0.3s_ease-out]">
+                            <div class="w-[75px] shrink-0">時間 Time</div>
+                            <div class="flex-1">標籤與科目 Subject</div>
+                            <div class="w-8 shrink-0 text-center"></div>
+                        </div>`;
+
+                        html += slots.map(s => `
+                            <div class="flex items-center gap-2.5 p-2 mb-2 bg-theme-input border border-theme-border rounded-xl transition-colors hover:border-brand-500/40 focus-within:border-brand-500/80 shadow-sm animate-[fadeIn_0.3s_ease-out]">
+                                <div class="flex flex-col gap-1.5 w-[75px] shrink-0">
+                                    <input type="time" value="${s.start}" onchange="app.timetable.updateSlotInline('${s.id}', 'start', this.value)" class="bg-transparent text-[12px] font-mono font-bold text-theme-text outline-none border-b border-transparent focus:border-brand-500 pb-0.5 dark:[color-scheme:dark]">
+                                    <input type="time" value="${s.end}" onchange="app.timetable.updateSlotInline('${s.id}', 'end', this.value)" class="bg-transparent text-[11px] font-mono text-theme-muted outline-none border-b border-transparent focus:border-brand-500 pb-0.5 dark:[color-scheme:dark]">
+                                </div>
+                                <div class="flex flex-col gap-1.5 flex-1 min-w-0">
+                                    <input type="text" value="${s.label}" placeholder="標籤 (例: 第1節)" onchange="app.timetable.updateSlotInline('${s.id}', 'label', this.value)" class="bg-transparent text-[11px] font-bold text-brand-500 outline-none border-b border-transparent focus:border-brand-500 pb-0.5 w-full">
+                                    <button onclick="app.timetable.openSubjectSelectModal('${s.id}')" class="bg-theme-bg border border-theme-border text-[13px] font-bold text-theme-text rounded-lg p-1.5 w-full outline-none hover:border-brand-500 transition-colors font-literary text-left flex justify-between items-center shadow-sm">
+                                        <span class="truncate">${s.subject || '-- 空堂 / 休息 --'}</span>
+                                        <i class="fa-solid fa-chevron-down text-[10px] opacity-50 ml-1 shrink-0"></i>
+                                    </button>
+                                </div>
+                                <button onclick="app.timetable.deleteSlot('${s.id}')" class="w-8 h-8 flex items-center justify-center shrink-0 text-theme-muted hover:text-red-500 hover:bg-red-500/10 rounded-full transition-all active:scale-95">
+                                    <i class="fa-solid fa-xmark text-lg"></i>
+                                </button>
+                            </div>
+                        `).join('');
+                    } else {
+                        html += `<div class="mt-2 flex flex-col gap-2 px-1 animate-[fadeIn_0.3s_ease-out]">`;
+                        html += slots.map(s => `
+                            <div class="flex items-center gap-3 p-3 bg-theme-input border border-theme-border rounded-xl hover:shadow-md transition-all shadow-sm">
+                                <div class="flex flex-col text-right w-[50px] shrink-0 border-r border-theme-border pr-3">
+                                    <span class="text-[13px] font-mono font-bold text-theme-text">${s.start}</span>
+                                    <span class="text-[10px] font-mono text-theme-muted mt-0.5">${s.end}</span>
+                                </div>
+                                <div class="flex flex-col flex-1 pl-1 overflow-hidden">
+                                    <span class="text-[10px] font-bold text-brand-500 mb-1 uppercase tracking-wider truncate">${s.label}</span>
+                                    <span class="text-[15px] font-bold text-theme-text font-literary truncate">${s.subject || '<span class="opacity-40">空堂 / 休息</span>'}</span>
+                                </div>
+                            </div>
+                        `).join('');
+                        html += `</div>`;
+                    }
+                    
+                    c.innerHTML = html;
                 },
-                generateDefault: (d) => { state.timetableConfig[d] = [{id:API.genId(),start:'08:00',end:'08:40',label:'第1節',type:'class',subject:''},{id:API.genId(),start:'08:40',end:'09:20',label:'第2節',type:'class',subject:''},{id:API.genId(),start:'09:20',end:'09:40',label:'小息',type:'special',subject:'☕️ 休息'},{id:API.genId(),start:'09:40',end:'10:20',label:'第3節',type:'class',subject:''},{id:API.genId(),start:'10:20',end:'11:00',label:'第4節',type:'class',subject:''},{id:API.genId(),start:'11:00',end:'11:20',label:'小息',type:'special',subject:'☕️ 休息'},{id:API.genId(),start:'11:20',end:'12:00',label:'第5節',type:'class',subject:''},{id:API.genId(),start:'12:00',end:'13:00',label:'午膳',type:'special',subject:'🍱 午餐'},{id:API.genId(),start:'13:00',end:'13:40',label:'第6節',type:'class',subject:''},{id:API.genId(),start:'13:40',end:'14:20',label:'第7節',type:'class',subject:''}]; app.timetable.saveConfig(); app.timetable.renderDaySelector(); },
-                saveConfig: () => { localStorage.setItem(`lumina_tt_${state.user.uid}`, JSON.stringify(state.timetableConfig)); AdminService.log('TIMETABLE_UPDATED'); },
-                editSlotModal: (id) => { const s = state.timetableConfig[state.currentDayTab].find(x => x.id === id); const btns = state.subjects.map(sub => `<button onclick="app.timetable.updateSlot('${id}', 'subject', '${sub}')" class="w-full text-left p-4 border-b border-white/5 text-sm font-bold text-gray-200 active:bg-white/10 transition">${sub}</button>`).join(''); UI.sheet.open(`<div class="flex justify-between items-center mb-6"><div><h3 class="font-bold text-white text-xl">${s.label}</h3><p class="text-sm text-brand-400 font-mono mt-1">${s.start} - ${s.end}</p></div><button onclick="app.timetable.deleteSlot('${id}')" class="text-red-400 text-xs font-bold bg-red-500/10 px-4 py-2 rounded-full transition">移除時段</button></div><p class="text-xs text-gray-500 mb-3 uppercase font-mono font-bold">快速選擇科目</p><div class="max-h-64 overflow-y-auto bg-black/40 rounded-2xl border border-white/5 no-scrollbar">${btns}<button onclick="app.timetable.updateSlot('${id}', 'subject', '')" class="w-full text-left p-4 text-sm font-bold text-gray-500 active:bg-white/10">清除科目 (空堂)</button></div>`); },
-                updateSlot: (id, k, v) => { const s = state.timetableConfig[state.currentDayTab].find(x => x.id === id); if(s) s[k] = v; app.timetable.saveConfig(); UI.sheet.close(); app.timetable.renderDaySelector(); },
-                deleteSlot: (id) => { state.timetableConfig[state.currentDayTab] = state.timetableConfig[state.currentDayTab].filter(s => s.id !== id); app.timetable.saveConfig(); UI.sheet.close(); app.timetable.renderDaySelector(); },
-                addSlotModal: () => { UI.modal.open(`<h3 class="text-xl font-bold text-white mb-6">新增時間軸</h3><div class="space-y-4"><div><label class="block text-xs font-mono font-bold text-gray-400 uppercase mb-2">標籤 Label</label><input type="text" id="slot-label" class="premium-input font-bold" placeholder="例: 補課"></div><div class="grid grid-cols-2 gap-4"><div><label class="block text-xs font-mono font-bold text-gray-400 uppercase mb-2">開始 Start</label><input type="time" id="slot-start" class="premium-input font-mono font-bold" style="color-scheme: dark;"></div><div><label class="block text-xs font-mono font-bold text-gray-400 uppercase mb-2">結束 End</label><input type="time" id="slot-end" class="premium-input font-mono font-bold" style="color-scheme: dark;"></div></div></div><div class="mt-8 flex gap-3"><button onclick="app.UI.modal.close()" class="flex-1 glass-card py-3.5 text-sm font-bold text-white active:scale-95 transition">取消</button><button onclick="app.timetable.doAddSlot()" class="flex-1 bg-brand-600 rounded-xl py-3.5 text-sm font-bold text-white shadow-lg active:scale-95 transition">新增</button></div>`); },
-                doAddSlot: () => { const l = document.getElementById('slot-label').value, s = document.getElementById('slot-start').value, e = document.getElementById('slot-end').value; if(!l||!s||!e) return UI.notify('請填寫完整', 'error'); if(!state.timetableConfig[state.currentDayTab]) state.timetableConfig[state.currentDayTab] = []; state.timetableConfig[state.currentDayTab].push({ id: API.genId(), start:s, end:e, label:l, type: 'class', subject: '' }); app.timetable.saveConfig(); UI.modal.close(); app.timetable.renderDaySelector(); }
+                openSubjectSelectModal: (slotId) => {
+                    const s = state.timetableConfig[state.currentDayTab].find(x => x.id === slotId);
+                    if(!s) return;
+                    const currentVal = s.subject || '';
+                    let html = `<h3 class="text-xl font-bold text-theme-text mb-4">設定科目 <span class="text-brand-500 text-base">(${s.start} - ${s.end})</span></h3><div class="flex flex-wrap gap-2 max-h-[60vh] overflow-y-auto no-scrollbar pb-6">`;
+                    
+                    html += `<button onclick="app.timetable.updateSlotInline('${slotId}', 'subject', ''); UI.sheet.close();" class="whitespace-nowrap px-4 py-2.5 rounded-xl font-bold text-[13px] transition-all duration-300 font-literary tracking-wide border ${currentVal === '' ? 'bg-theme-card text-brand-600 shadow-sm border-theme-border scale-105' : 'bg-theme-input text-theme-muted border-transparent hover:bg-theme-border'}">-- 空堂 / 休息 --</button>`;
+                    state.subjects.forEach(sub => {
+                        html += `<button onclick="app.timetable.updateSlotInline('${slotId}', 'subject', '${sub}'); UI.sheet.close();" class="whitespace-nowrap px-4 py-2.5 rounded-xl font-bold text-[13px] transition-all duration-300 font-literary tracking-wide border ${currentVal === sub ? 'bg-theme-card text-brand-600 shadow-sm border-theme-border scale-105' : 'bg-theme-input text-theme-muted border-transparent hover:bg-theme-border'}">${sub}</button>`;
+                    });
+                    
+                    html += `</div>`;
+                    UI.sheet.open(html);
+                },
+                updateSlotInline: (id, k, v) => { 
+                    const s = state.timetableConfig[state.currentDayTab].find(x => x.id === id); 
+                    if(s) s[k] = v; 
+                    app.timetable.saveConfig(); 
+                    if (k === 'start' || k === 'end' || k === 'subject') app.timetable.renderDaySelector();
+                },
+                generateDefault: (d) => { state.timetableConfig[d] = [{id:API.genId(),start:'08:00',end:'08:40',label:'第1節',type:'class',subject:''},{id:API.genId(),start:'08:40',end:'09:20',label:'第2節',type:'class',subject:''},{id:API.genId(),start:'09:20',end:'09:40',label:'小息',type:'special',subject:''},{id:API.genId(),start:'09:40',end:'10:20',label:'第3節',type:'class',subject:''},{id:API.genId(),start:'10:20',end:'11:00',label:'第4節',type:'class',subject:''},{id:API.genId(),start:'11:00',end:'11:20',label:'小息',type:'special',subject:''},{id:API.genId(),start:'11:20',end:'12:00',label:'第5節',type:'class',subject:''},{id:API.genId(),start:'12:00',end:'13:00',label:'午膳',type:'special',subject:''},{id:API.genId(),start:'13:00',end:'13:40',label:'第6節',type:'class',subject:''},{id:API.genId(),start:'13:40',end:'14:20',label:'第7節',type:'class',subject:''}]; app.timetable.saveConfig(); app.timetable.renderDaySelector(); },
+                saveConfig: () => { try { localStorage.setItem(`lumina_tt_${state.user.uid}`, JSON.stringify(state.timetableConfig)); } catch(e){} AdminService.log('TIMETABLE_UPDATED'); },
+                deleteSlot: (id) => { state.timetableConfig[state.currentDayTab] = state.timetableConfig[state.currentDayTab].filter(s => s.id !== id); app.timetable.saveConfig(); app.timetable.renderDaySelector(); UI.notify('已移除時段', 'info'); },
+                copyToAllWeekModal: () => {
+                    const currentSlots = state.timetableConfig[state.currentDayTab] || [];
+                    if (currentSlots.length === 0) return UI.notify('請先建立時間軸再進行複製', 'error');
+                    UI.modal.open(`<div class="text-center"><div class="w-16 h-16 bg-emerald-500/10 rounded-full flex items-center justify-center mx-auto mb-4"><i class="fa-solid fa-copy text-emerald-500 text-3xl"></i></div><h3 class="text-xl font-bold text-theme-text mb-2 tracking-tight">套用到全循環？</h3><p class="text-theme-muted text-sm mb-6">將把今天的「時間軸結構」複製到其他所有的日子<br>(原有的資料將被覆蓋，需重新點擊填寫科目)</p><div class="flex gap-3"><button onclick="app.UI.modal.close()" class="flex-1 glass-card py-3.5 font-bold text-theme-text hover:-translate-y-1 hover:bg-theme-input active:scale-95 transition-all duration-300">取消</button><button onclick="app.timetable.doCopyToAllWeek()" class="flex-1 bg-emerald-600 hover:bg-emerald-500 rounded-xl py-3.5 font-bold text-white shadow-lg hover:-translate-y-1 hover:shadow-emerald-500/40 active:scale-95 transition-all duration-300">確認套用</button></div></div>`);
+                },
+                doCopyToAllWeek: () => {
+                    const currentSlots = state.timetableConfig[state.currentDayTab] || [];
+                    let ttMode = 'week';
+                    try { ttMode = localStorage.getItem('lumina_tt_mode') || 'week'; } catch(e){}
+                    const targetDays = ttMode === 'week' ? ['1','2','3','4','5'] : ['d1','d2','d3','d4','d5','d6'];
+                    
+                    targetDays.forEach(day => {
+                        if (day === state.currentDayTab) return;
+                        state.timetableConfig[day] = currentSlots.map(s => ({ ...s, id: API.genId(), subject: '' }));
+                    });
+                    
+                    app.timetable.saveConfig();
+                    UI.modal.close();
+                    UI.notify('已成功套用時間軸！', 'success');
+                },
+                addSlotDirect: () => { 
+                    const slots = state.timetableConfig[state.currentDayTab] || [];
+                    let defaultStart = '08:00', defaultEnd = '08:40', defaultLabel = `第${slots.length + 1}節`;
+                    if (slots.length > 0) {
+                        const lastSlot = slots.reduce((latest, current) => current.end > latest.end ? current : latest, slots[0]);
+                        defaultStart = lastSlot.end;
+                        const [h, m] = defaultStart.split(':').map(Number);
+                        const d = new Date(); d.setHours(h, m + 40, 0, 0);
+                        defaultEnd = d.toTimeString().substring(0, 5);
+                    }
+                    if(!state.timetableConfig[state.currentDayTab]) state.timetableConfig[state.currentDayTab] = [];
+                    state.timetableConfig[state.currentDayTab].push({ id: API.genId(), start: defaultStart, end: defaultEnd, label: defaultLabel, type: 'class', subject: '' });
+                    app.timetable.saveConfig();
+                    app.timetable.renderDaySelector();
+                    setTimeout(() => { const c = document.getElementById('timetable-slots'); c.scrollTop = c.scrollHeight; }, 50);
+                }
             },
             groups: {
-                create: async () => { const n = document.getElementById('create-group-name').value.trim(); if(!n) return UI.notify('輸入群組名稱','error'); const id = API.genId(), code = Math.random().toString(36).substring(2,8).toUpperCase(); await setDoc(doc(db, API.paths.groups(), id), { id, name: n, code, providerId: state.user.uid, members: [], createdAt: new Date().toISOString() }); document.getElementById('create-group-name').value = ''; AdminService.log('GROUP_CREATED'); UI.notify(`建立成功: ${code}`); },
-                join: async () => { const c = document.getElementById('join-group-code').value.toUpperCase(); if(c.length!==6) return UI.notify('代碼為 6 位數', 'error'); const snap = await getDocs(query(collection(db, API.paths.groups()), where('code', '==', c))); if(snap.empty) return UI.notify('代碼無效', 'error'); const t = snap.docs[0].data(); if(t.members.includes(state.user.uid)) return UI.notify('已在群組中'); await updateDoc(doc(db, API.paths.groups(), t.id), { members: [...t.members, state.user.uid] }); document.getElementById('join-group-code').value = ''; AdminService.log('GROUP_JOINED'); UI.notify(`成功加入: ${t.name}`); }
-            },
-            settings: {
-                addSubjectModal: () => { UI.modal.open(`<h3 class="text-xl font-bold text-white mb-6">新增自訂科目</h3><input type="text" id="new-subject-input" class="premium-input font-bold" placeholder="例如：M2"><div class="mt-8 flex gap-3"><button onclick="app.UI.modal.close()" class="flex-1 glass-card py-3.5 text-sm font-bold text-white active:scale-95 transition">取消</button><button onclick="app.settings.doAddSubject()" class="flex-1 bg-brand-600 rounded-xl py-3.5 text-sm font-bold text-white shadow-lg active:scale-95 transition">新增</button></div>`); },
-                doAddSubject: () => { const v = document.getElementById('new-subject-input').value.trim(); if(v && !state.subjects.includes(v)) { state.subjects.unshift(v); app.renders.subjectsPills(); UI.modal.close(); UI.notify(`已加入 ${v}`); } }
-            },
-            renders: {
-                tasks: () => {
-                    const todo = document.getElementById('todo-list'), hist = document.getElementById('history-list'); let tc=0, hc=0; todo.innerHTML = ''; hist.innerHTML = '';
-                    const today = new Date().toISOString().split('T')[0];
-                    state.tasks.forEach(t => {
-                        const done = t.status === 'completed', over = !done && t.dueDate && t.dueDate < today, exam = t.type === 'exam';
-                        const c = document.createElement('div'); c.className = `glass-card p-4.5 relative overflow-hidden flex flex-col gap-3 shadow-lg ${done?'opacity-50':''} ${over?'overdue-pulse':''}`; c.id = `task-${t.id}`;
-                        const bColor = exam ? 'bg-pink-500/20 text-pink-400 border-pink-500/30' : 'bg-brand-500/20 text-brand-300 border-brand-500/30';
-                        const bText = exam ? `🚨 考試: ${t.subject}` : `📝 ${t.subject}`, dStr = t.dueDate ? t.dueDate.replace(/-/g, '/') : '無期限', cHtml = (t.content || '').replace(/\n/g, '<br>');
-                        c.innerHTML = `<div class="flex justify-between items-start"><div class="${bColor} border text-[10px] font-bold px-2.5 py-1 rounded-full">${bText}</div>${!done?`<div class="flex gap-2"><button class="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center text-gray-400 hover:text-white active:scale-95 transition" onclick="app.tasks.edit('${t.id}')"><i class="fa-solid fa-pen text-xs"></i></button><button class="w-8 h-8 rounded-full bg-red-500/10 flex items-center justify-center text-red-400 hover:bg-red-500/20 active:scale-95 transition" onclick="app.tasks.confirmDelete('${t.id}')"><i class="fa-solid fa-trash text-xs"></i></button></div>`:''}</div><div class="mt-1"><h3 class="text-[16px] font-bold text-white ${done?'line-through':''}">${t.title}</h3>${cHtml?`<p class="text-[13px] text-gray-400 mt-2.5 font-mono">${cHtml}</p>`:''}</div><div class="mt-2 flex justify-between items-center pt-3 border-t border-white/5"><div class="text-[11px] font-bold ${over?'text-red-400':'text-gray-400'}"><i class="fa-regular fa-calendar"></i> ${dStr} ${over?'<span class="bg-red-500/20 px-1 rounded ml-1">已逾期</span>':''}</div>${!done?`<button class="bg-white/10 px-5 py-2 rounded-full text-[11px] font-bold text-white flex items-center gap-1.5" onclick="app.tasks.markComplete('${t.id}', document.getElementById('task-${t.id}'))"><i class="fa-solid fa-check"></i> 完成</button>`:`<span class="text-[10px] text-emerald-500 font-bold"><i class="fa-solid fa-check-double"></i> 歸檔</span>`}</div>`;
-                        if (done) { hist.appendChild(c); hc++; } else { todo.appendChild(c); tc++; }
-                    });
-                    document.getElementById('todo-empty').style.display = tc===0?'flex':'none'; document.getElementById('history-empty').style.display = hc===0?'flex':'none';
-                },
-                subjectsPills: () => {
-                    const c = document.getElementById('form-subjects-scroll'), inp = document.getElementById('form-subject-value'); c.innerHTML = ''; if(!inp.value) inp.value = state.subjects[0];
-                    state.subjects.forEach(s => { const b = document.createElement('button'); b.className = `pill-btn snap-start ${s===inp.value?'active':''}`; b.textContent = s; b.onclick = () => { inp.value = s; app.renders.subjectsPills(); b.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' }); }; c.appendChild(b); });
-                },
-                groups: () => {
-                    const l = document.getElementById('settings-groups-list'), t = document.getElementById('form-target');
-                    if(l) l.innerHTML = ''; 
+                create: async () => { 
+                    const n = document.getElementById('create-group-name').value.trim(); 
+                    if(!n) return UI.notify('輸入群組名稱','error'); 
+                    const id = API.genId();
+                    const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+                    let code = '';
+                    for(let i=0; i<6; i++) code += chars.charAt(Math.floor(Math.random() * chars.length));
                     
-                    if(state.groups.length === 0 && l) { l.innerHTML = '<div class="text-center py-6 text-xs text-gray-500 font-mono font-bold">NO GROUPS FOUND</div>'; }
-                    else {
-                        state.groups.forEach(g => { if(l) l.innerHTML += `<div class="bg-black/50 p-4 rounded-xl border border-white/5 flex justify-between items-center"><div><p class="text-sm font-bold text-white">${g.name} ${g.providerId===state.user.uid?'<span class="bg-pink-500/20 text-pink-400 text-[9px] px-1.5 py-0.5 rounded-full ml-2">Admin</span>':''}</p><p class="text-[10px] text-gray-500 font-mono mt-1.5">代碼: ${g.code} • 成員: ${g.members.length}</p></div><i class="fa-solid fa-users text-gray-400 text-xs"></i></div>`; });
-                    }
-                    
-                    // 獨立處理 Target Select，避免被 return 影響
-                    if(t) {
-                        t.innerHTML = '<option value="self">私人 (僅自己可見)</option>';
-                        state.groups.forEach(g => { if (state.profile.role==='provider' && g.providerId===state.user.uid) t.innerHTML += `<option value="${g.id}">群組: ${g.name}</option>`; });
-                    }
+                    await setDoc(doc(db, API.paths.groups(), id), { id, name: n, code, providerId: state.user.uid, members: [], createdAt: new Date().toISOString() }); 
+                    document.getElementById('create-group-name').value = ''; 
+                    AdminService.log('GROUP_CREATED'); 
+                    UI.notify(`建立成功: ${code}`); 
+                },
+                join: async () => { 
+                    const c = document.getElementById('join-group-code').value.toUpperCase(); 
+                    if(c.length!==6) return UI.notify('代碼為 6 位數', 'error'); 
+                    const snap = await getDocs(query(collection(db, API.paths.groups()), where('code', '==', c))); 
+                    if(snap.empty) return UI.notify('代碼無效', 'error'); 
+                    const t = snap.docs[0].data(); 
+                    if(t.members.includes(state.user.uid)) return UI.notify('已在群組中'); 
+                    await updateDoc(doc(db, API.paths.groups(), t.id), { members: [...t.members, state.user.uid] }); 
+                    document.getElementById('join-group-code').value = ''; 
+                    AdminService.log('GROUP_JOINED'); 
+                    UI.notify(`成功加入: ${t.name}`); 
+                },
+                setAnnouncementModal: (groupId, currentMsg) => {
+                    UI.modal.open(`<h3 class="text-xl font-bold text-theme-text mb-2">群組置頂公告</h3><p class="text-xs text-theme-muted mb-6">此公告將顯示在所有學生的首頁最上方</p><textarea id="group-announcement-input" class="premium-input h-32 resize-none py-3 text-sm" placeholder="輸入公告內容... (留空即刪除)">${currentMsg || ''}</textarea><div class="mt-8 flex gap-3"><button onclick="app.UI.modal.close()" class="flex-1 glass-card py-3.5 text-sm font-bold text-theme-text hover:-translate-y-1 active:scale-95 transition-all">取消</button><button onclick="app.groups.saveAnnouncement('${groupId}')" class="flex-1 bg-brand-600 rounded-xl py-3.5 text-sm font-bold text-white shadow-lg hover:-translate-y-1 active:scale-95 transition-all">發佈公告</button></div>`);
+                },
+                saveAnnouncement: async (groupId) => {
+                    const msg = document.getElementById('group-announcement-input').value.trim();
+                    try {
+                        await updateDoc(doc(db, API.paths.groups(), groupId), { announcement: msg, announcementTime: new Date().toISOString() });
+                        UI.modal.close();
+                        UI.notify(msg ? '公告已發佈' : '公告已清除', 'success');
+                    } catch(e) { UI.notify('發佈失敗', 'error'); }
                 }
             }
         };
 
         window.app = app; window.app.UI = UI;
 
-        // 絕對安全的執行入口
         try {
             window.moduleExecuted = true; 
             if (document.readyState === 'loading') { document.addEventListener('DOMContentLoaded', app.init); } else { app.init(); }

@@ -1,0 +1,647 @@
+<!DOCTYPE html>
+<html lang="zh-HK" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lumina Super Admin | 上帝視角控制台</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        dark: {
+                            bg: '#020617',
+                            card: '#0f172a',
+                            border: '#1e293b',
+                            input: '#1e293b',
+                            hover: '#334155'
+                        },
+                        brand: { 400: '#38bdf8', 500: '#0ea5e9', 600: '#0284c7' },
+                        accent: { 400: '#a78bfa', 500: '#8b5cf6', 600: '#7c3aed' }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'system-ui', 'sans-serif'],
+                        mono: ['JetBrains Mono', 'monospace']
+                    }
+                }
+            }
+        }
+    </script>
+
+    <!-- FontAwesome & Google Fonts -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    
+    <!-- GSAP Animation Library -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    
+    <style>
+        body { background-color: theme('colors.dark.bg'); color: #e2e8f0; font-family: 'Inter', sans-serif; overflow: hidden; }
+        
+        /* 科技感網格背景 */
+        .grid-bg {
+            position: fixed; inset: 0; z-index: -1;
+            background-size: 40px 40px;
+            background-image: linear-gradient(to right, rgba(255,255,255,0.03) 1px, transparent 1px),
+                              linear-gradient(to bottom, rgba(255,255,255,0.03) 1px, transparent 1px);
+        }
+
+        .glow-card {
+            background: linear-gradient(145deg, theme('colors.dark.card'), #090e17);
+            border: 1px solid theme('colors.dark.border');
+            border-radius: 16px;
+            box-shadow: 0 4px 20px -2px rgba(0,0,0,0.5);
+            transition: all 0.3s ease;
+        }
+
+        .nav-item.active { background: theme('colors.brand.500'); color: white; border-color: theme('colors.brand.400'); box-shadow: 0 0 15px rgba(14,165,233,0.4); }
+        .nav-item { border: 1px solid transparent; }
+        
+        .table-row { transition: all 0.2s; border-bottom: 1px solid theme('colors.dark.border'); }
+        .table-row:hover { background: theme('colors.dark.hover'); }
+
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        
+        /* 霓虹發光效果 */
+        .neon-text-brand { text-shadow: 0 0 10px rgba(56, 189, 248, 0.5); }
+        .neon-text-accent { text-shadow: 0 0 10px rgba(167, 139, 250, 0.5); }
+
+        /* Custom Toggle Switch */
+        .toggle-switch {
+            position: relative; display: inline-block; width: 44px; height: 24px;
+        }
+        .toggle-switch input { opacity: 0; width: 0; height: 0; }
+        .slider {
+            position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0;
+            background-color: theme('colors.dark.border'); transition: .4s; border-radius: 34px;
+        }
+        .slider:before {
+            position: absolute; content: ""; height: 18px; width: 18px; left: 3px; bottom: 3px;
+            background-color: white; transition: .4s; border-radius: 50%;
+        }
+        input:checked + .slider { background-color: theme('colors.brand.500'); box-shadow: 0 0 10px theme('colors.brand.500'); }
+        input:checked + .slider:before { transform: translateX(20px); }
+    </style>
+</head>
+<body class="flex h-screen">
+
+    <div class="grid-bg"></div>
+    
+    <!-- 閃爍裝飾球 -->
+    <div class="absolute top-0 left-1/4 w-96 h-96 bg-brand-600/20 blur-[100px] rounded-full pointer-events-none"></div>
+    <div class="absolute bottom-0 right-1/4 w-96 h-96 bg-accent-600/20 blur-[100px] rounded-full pointer-events-none"></div>
+
+    <!-- Auth Guard -->
+    <div id="admin-login" class="fixed inset-0 z-50 flex items-center justify-center bg-dark-bg/90 backdrop-blur-md">
+        <div class="glow-card p-10 max-w-sm w-full text-center relative overflow-hidden">
+            <i class="fa-solid fa-shield-halved text-5xl text-brand-500 mb-6 neon-text-brand"></i>
+            <h1 class="text-2xl font-black text-white mb-2 tracking-widest">LUMINA <span class="text-brand-500">ADMIN</span></h1>
+            <p class="text-xs text-slate-400 mb-8 font-mono">AUTHORIZED PERSONNEL ONLY</p>
+            <button onclick="adminApp.auth.login()" class="w-full bg-brand-600 hover:bg-brand-500 text-white font-bold py-3 rounded-xl shadow-[0_0_15px_rgba(2,132,199,0.5)] transition-all flex justify-center items-center gap-2">
+                <i class="fa-brands fa-google"></i> 管理員登入
+            </button>
+        </div>
+    </div>
+
+    <!-- Sidebar -->
+    <aside class="w-64 bg-dark-card border-r border-dark-border flex flex-col shrink-0 z-10 hidden md:flex">
+        <div class="h-20 flex items-center px-6 border-b border-dark-border">
+            <i class="fa-solid fa-terminal text-brand-500 text-2xl mr-3 neon-text-brand"></i>
+            <div>
+                <h1 class="font-black text-lg text-white tracking-widest leading-none">LUMINA</h1>
+                <span class="text-[10px] text-brand-500 font-mono tracking-widest font-bold">GOD MODE</span>
+            </div>
+        </div>
+        <nav class="flex-1 p-4 space-y-2">
+            <button onclick="adminApp.nav.switch('dashboard')" id="nav-dashboard" class="nav-item active w-full flex items-center px-4 py-3 rounded-xl text-sm font-bold text-slate-300 hover:bg-dark-hover hover:text-white transition-all">
+                <i class="fa-solid fa-chart-line w-6 text-center"></i> 控制儀表板
+            </button>
+            <button onclick="adminApp.nav.switch('users')" id="nav-users" class="nav-item w-full flex items-center px-4 py-3 rounded-xl text-sm font-bold text-slate-300 hover:bg-dark-hover hover:text-white transition-all">
+                <i class="fa-solid fa-users-gear w-6 text-center"></i> 用戶與權限管理
+            </button>
+            <button onclick="adminApp.nav.switch('settings')" id="nav-settings" class="nav-item w-full flex items-center px-4 py-3 rounded-xl text-sm font-bold text-slate-300 hover:bg-dark-hover hover:text-white transition-all">
+                <i class="fa-solid fa-sliders w-6 text-center"></i> 系統全域設定
+            </button>
+            <button onclick="adminApp.nav.switch('logs')" id="nav-logs" class="nav-item w-full flex items-center px-4 py-3 rounded-xl text-sm font-bold text-slate-300 hover:bg-dark-hover hover:text-white transition-all">
+                <i class="fa-solid fa-database w-6 text-center"></i> 系統操作日誌
+            </button>
+        </nav>
+        <div class="p-4 border-t border-dark-border">
+            <div class="flex items-center gap-3 mb-4">
+                <img id="admin-avatar" src="" class="w-10 h-10 rounded-full border border-dark-border hidden">
+                <div class="flex-1 overflow-hidden">
+                    <p id="admin-name" class="text-sm font-bold text-white truncate">載入中...</p>
+                    <p class="text-[10px] text-emerald-400 font-mono"><i class="fa-solid fa-circle text-[8px]"></i> 系統連線正常</p>
+                </div>
+            </div>
+            <button onclick="adminApp.auth.logout()" class="w-full py-2 bg-red-500/10 text-red-500 hover:bg-red-500 hover:text-white rounded-lg text-xs font-bold transition-colors border border-red-500/20">安全登出</button>
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="flex-1 flex flex-col relative z-10 overflow-hidden hidden" id="main-app">
+        <!-- Topbar (Mobile Nav) -->
+        <div class="h-16 md:hidden flex items-center justify-between px-4 border-b border-dark-border bg-dark-card shrink-0">
+            <h1 class="font-black text-lg text-white tracking-widest">LUMINA <span class="text-brand-500">ADMIN</span></h1>
+            <button onclick="document.querySelector('aside').classList.toggle('hidden')" class="text-white text-xl"><i class="fa-solid fa-bars"></i></button>
+        </div>
+
+        <div class="flex-1 overflow-y-auto p-6 md:p-10 no-scrollbar relative" id="scroll-container">
+            
+            <!-- Dashboard View -->
+            <section id="view-dashboard" class="view-section active w-full max-w-6xl mx-auto space-y-6">
+                <h2 class="text-2xl font-black text-white mb-6">實時系統概況 <span class="text-sm font-normal text-slate-400 font-mono ml-2" id="current-time"></span></h2>
+                
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <div class="glow-card p-6 border-brand-500/30">
+                        <div class="flex justify-between items-start mb-4">
+                            <p class="text-sm font-bold text-brand-400">總註冊用戶數</p>
+                            <i class="fa-solid fa-users text-xl text-brand-500/50"></i>
+                        </div>
+                        <h3 class="text-4xl font-black text-white font-mono" id="stat-users">--</h3>
+                    </div>
+                    <div class="glow-card p-6 border-accent-500/30">
+                        <div class="flex justify-between items-start mb-4">
+                            <p class="text-sm font-bold text-accent-400">運作中群組數</p>
+                            <i class="fa-solid fa-layer-group text-xl text-accent-500/50"></i>
+                        </div>
+                        <h3 class="text-4xl font-black text-white font-mono" id="stat-groups">--</h3>
+                    </div>
+                    <div class="glow-card p-6 border-emerald-500/30">
+                        <div class="flex justify-between items-start mb-4">
+                            <p class="text-sm font-bold text-emerald-400">今日任務活動量</p>
+                            <i class="fa-solid fa-bolt text-xl text-emerald-500/50"></i>
+                        </div>
+                        <h3 class="text-4xl font-black text-white font-mono" id="stat-logs">--</h3>
+                    </div>
+                </div>
+
+                <div class="glow-card p-6 mt-8">
+                    <h3 class="text-lg font-bold text-white mb-4"><i class="fa-solid fa-radar mr-2 text-brand-500"></i>最新系統活動偵測</h3>
+                    <div id="recent-logs" class="space-y-3 font-mono text-sm">
+                        <div class="text-slate-500 text-center py-4">擷取資料中...</div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Users Management View -->
+            <section id="view-users" class="view-section w-full max-w-6xl mx-auto space-y-6">
+                <div class="flex justify-between items-end mb-6">
+                    <div>
+                        <h2 class="text-2xl font-black text-white">用戶與權限管理</h2>
+                        <p class="text-sm text-slate-400 mt-1">升級群組管理員 (Provider) 或封鎖違規帳號</p>
+                    </div>
+                    <button onclick="adminApp.data.loadUsers()" class="px-4 py-2 bg-dark-input hover:bg-dark-hover rounded-lg text-sm font-bold border border-dark-border transition-colors"><i class="fa-solid fa-rotate-right mr-1"></i> 重新整理</button>
+                </div>
+
+                <div class="glow-card overflow-hidden">
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left text-sm">
+                            <thead class="bg-dark-input/50 text-slate-400 font-mono text-[11px] uppercase tracking-wider border-b border-dark-border">
+                                <tr>
+                                    <th class="px-6 py-4">User ID / Email</th>
+                                    <th class="px-6 py-4">角色 (Role)</th>
+                                    <th class="px-6 py-4">帳號狀態</th>
+                                    <th class="px-6 py-4">註冊時間</th>
+                                    <th class="px-6 py-4 text-right">管理操作</th>
+                                </tr>
+                            </thead>
+                            <tbody id="users-table-body" class="text-slate-300">
+                                <tr><td colspan="5" class="text-center py-8 text-slate-500">載入中...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Settings View -->
+            <section id="view-settings" class="view-section w-full max-w-6xl mx-auto space-y-6">
+                <h2 class="text-2xl font-black text-white mb-6">系統全域設定</h2>
+                
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    <!-- Maintenance Toggle -->
+                    <div class="glow-card p-6 border-red-500/20 relative overflow-hidden">
+                        <div class="absolute top-0 right-0 p-4 opacity-10"><i class="fa-solid fa-triangle-exclamation text-8xl text-red-500"></i></div>
+                        <div class="relative z-10">
+                            <h3 class="text-lg font-bold text-white mb-2"><i class="fa-solid fa-power-off text-red-500 mr-2"></i>緊急維護模式 (Maintenance Mode)</h3>
+                            <p class="text-sm text-slate-400 mb-6">開啟後，所有前台用戶將會被強制登出並鎖定在攔截畫面，直到您關閉為止。</p>
+                            
+                            <div class="flex items-center justify-between bg-dark-input p-4 rounded-xl border border-dark-border mb-4">
+                                <span class="font-bold text-white">啟動維護攔截</span>
+                                <label class="toggle-switch">
+                                    <input type="checkbox" id="sys-maint-toggle" onchange="adminApp.settings.updateMaintenance()">
+                                    <span class="slider"></span>
+                                </label>
+                            </div>
+
+                            <div class="space-y-2">
+                                <label class="text-xs font-bold text-slate-400 uppercase tracking-wider">維護畫面公告訊息</label>
+                                <textarea id="sys-maint-msg" class="w-full bg-dark-input border border-dark-border rounded-xl p-3 text-sm text-white focus:border-red-500 outline-none resize-none h-24" placeholder="輸入要顯示給學生的維護原因..."></textarea>
+                                <button onclick="adminApp.settings.updateMaintenance()" class="w-full bg-dark-hover hover:bg-red-500/20 text-white font-bold py-2.5 rounded-lg border border-dark-border hover:border-red-500/50 hover:text-red-400 transition-colors">儲存設定</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Security & Whitelist -->
+                    <div class="glow-card p-6">
+                        <h3 class="text-lg font-bold text-white mb-2"><i class="fa-solid fa-shield-halved text-brand-500 mr-2"></i>系統安全與限制</h3>
+                        <p class="text-sm text-slate-400 mb-6">進階的應用程式保護設定</p>
+                        
+                        <div class="space-y-4 opacity-50 pointer-events-none" title="即將推出">
+                            <div class="flex items-center justify-between bg-dark-input p-4 rounded-xl border border-dark-border">
+                                <div>
+                                    <span class="font-bold text-white block">允許新用戶註冊</span>
+                                    <span class="text-xs text-slate-400">關閉後將隱藏註冊按鈕</span>
+                                </div>
+                                <label class="toggle-switch">
+                                    <input type="checkbox" checked disabled>
+                                    <span class="slider"></span>
+                                </label>
+                            </div>
+                            <div class="flex items-center justify-between bg-dark-input p-4 rounded-xl border border-dark-border">
+                                <div>
+                                    <span class="font-bold text-white block">強制家長綁定</span>
+                                    <span class="text-xs text-slate-400">學生必須輸入家長驗證碼才可使用</span>
+                                </div>
+                                <label class="toggle-switch">
+                                    <input type="checkbox" disabled>
+                                    <span class="slider"></span>
+                                </label>
+                            </div>
+                            <div class="text-xs text-center text-brand-500 font-mono mt-4 border border-brand-500/20 p-2 rounded bg-brand-500/5">
+                                此區塊功能將於 v2.0 開放
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Logs View -->
+            <section id="view-logs" class="view-section w-full max-w-6xl mx-auto space-y-6">
+                <div class="flex justify-between items-end mb-6">
+                    <div>
+                        <h2 class="text-2xl font-black text-white">系統操作日誌 (Audit Logs)</h2>
+                        <p class="text-sm text-slate-400 mt-1">追蹤所有使用者的建立、完成、刪除與登入行為</p>
+                    </div>
+                </div>
+
+                <div class="glow-card overflow-hidden">
+                    <div class="bg-dark-input p-3 border-b border-dark-border flex gap-3">
+                        <input type="text" id="log-search" onkeyup="adminApp.logs.filter()" placeholder="搜尋 User ID 或 動作代碼..." class="bg-dark-bg border border-dark-border text-white text-sm px-4 py-2 rounded-lg outline-none focus:border-brand-500 w-64">
+                    </div>
+                    <div class="overflow-x-auto max-h-[600px] overflow-y-auto no-scrollbar">
+                        <table class="w-full text-left text-sm font-mono">
+                            <thead class="bg-dark-input/50 text-slate-400 text-[11px] uppercase tracking-wider sticky top-0 backdrop-blur-md">
+                                <tr>
+                                    <th class="px-6 py-3 border-b border-dark-border">Timestamp</th>
+                                    <th class="px-6 py-3 border-b border-dark-border">User ID</th>
+                                    <th class="px-6 py-3 border-b border-dark-border">Action</th>
+                                    <th class="px-6 py-3 border-b border-dark-border">Meta Data</th>
+                                </tr>
+                            </thead>
+                            <tbody id="logs-table-body" class="text-slate-300 text-[12px]">
+                                <tr><td colspan="4" class="text-center py-8 text-slate-500">載入中...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+        </div>
+    </main>
+
+    <!-- Global Modal -->
+    <div id="admin-modal" class="fixed inset-0 z-[200] hidden flex items-center justify-center bg-black/60 backdrop-blur-sm px-4 opacity-0 transition-opacity duration-300">
+        <div id="admin-modal-content" class="glow-card w-full max-w-md p-6 transform scale-95 transition-transform duration-300">
+            <!-- Modal Content Injected Here -->
+        </div>
+    </div>
+
+    <!-- Toast -->
+    <div id="toast-root" class="fixed top-10 right-10 z-[500] flex flex-col gap-3 pointer-events-none"></div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, collection, doc, setDoc, getDoc, updateDoc, onSnapshot, query, orderBy, limit, getDocs, collectionGroup } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+        // ⚠️ 必須與主程式完全相同的 Firebase Config
+        const firebaseConfig = {
+            apiKey: "AIzaSyByPLZqByFtsFbCXBaIz53psLcdKoXBouY",
+            authDomain: "newhw-daf31.firebaseapp.com",
+            projectId: "newhw-daf31",
+            storageBucket: "newhw-daf31.firebasestorage.app",
+            messagingSenderId: "128108976196",
+            appId: "1:128108976196:web:165632fd92d0f1e4af8411"
+        };
+        const internalAppId = 'lumina-task-pro';
+
+        let firebaseApp, auth, db, googleProvider;
+        try {
+            firebaseApp = initializeApp(firebaseConfig);
+            auth = getAuth(firebaseApp);
+            db = getFirestore(firebaseApp);
+            googleProvider = new GoogleAuthProvider();
+        } catch(e) { console.error("Firebase init fail", e); }
+
+        const state = {
+            user: null,
+            users: [],
+            logs: [],
+            groupsCount: 0
+        };
+
+        const UI = {
+            notify: (msg, type='success') => {
+                const root = document.getElementById('toast-root');
+                const t = document.createElement('div');
+                const bg = type === 'success' ? 'bg-emerald-500/20 border-emerald-500/50 text-emerald-400' : 'bg-red-500/20 border-red-500/50 text-red-400';
+                t.className = `px-5 py-3 rounded-xl text-sm font-bold border backdrop-blur-md shadow-lg ${bg}`;
+                t.innerHTML = `<i class="fa-solid ${type==='success'?'fa-check':'fa-triangle-exclamation'} mr-2"></i> ${msg}`;
+                root.appendChild(t);
+                gsap.fromTo(t, { x: 50, opacity: 0 }, { x: 0, opacity: 1, duration: 0.3 });
+                setTimeout(() => gsap.to(t, { opacity: 0, x: 50, duration: 0.3, onComplete: ()=>t.remove() }), 3000);
+            },
+            modal: {
+                open: (html) => {
+                    const m = document.getElementById('admin-modal');
+                    const c = document.getElementById('admin-modal-content');
+                    c.innerHTML = html;
+                    m.classList.remove('hidden');
+                    setTimeout(() => { m.classList.remove('opacity-0'); c.classList.remove('scale-95'); }, 10);
+                },
+                close: () => {
+                    const m = document.getElementById('admin-modal');
+                    const c = document.getElementById('admin-modal-content');
+                    m.classList.add('opacity-0'); c.classList.add('scale-95');
+                    setTimeout(() => m.classList.add('hidden'), 300);
+                }
+            }
+        };
+
+        const adminApp = {
+            init: () => {
+                setInterval(() => {
+                    const d = new Date();
+                    document.getElementById('current-time').textContent = d.toLocaleString();
+                }, 1000);
+
+                onAuthStateChanged(auth, (user) => {
+                    if (user) {
+                        // 簡單安全檢查 (這裡假設只要能登入就是管理者，您可以根據需要寫死 Email 白名單)
+                        state.user = user;
+                        document.getElementById('admin-login').classList.add('hidden');
+                        document.getElementById('main-app').classList.remove('hidden');
+                        document.querySelector('aside').classList.remove('hidden');
+                        
+                        document.getElementById('admin-name').textContent = user.displayName || 'Super Admin';
+                        if(user.photoURL) {
+                            document.getElementById('admin-avatar').src = user.photoURL;
+                            document.getElementById('admin-avatar').classList.remove('hidden');
+                        }
+                        
+                        adminApp.data.initListeners();
+                    } else {
+                        document.getElementById('admin-login').classList.remove('hidden');
+                        document.getElementById('main-app').classList.add('hidden');
+                        document.querySelector('aside').classList.add('hidden');
+                    }
+                });
+            },
+            auth: {
+                login: async () => {
+                    try { await signInWithPopup(auth, googleProvider); } 
+                    catch(e) { UI.notify('登入失敗', 'error'); }
+                },
+                logout: () => signOut(auth)
+            },
+            nav: {
+                switch: (viewId) => {
+                    document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active', 'text-white', 'bg-brand-500'));
+                    document.getElementById(`nav-${viewId}`).classList.add('active');
+                    
+                    document.querySelectorAll('.view-section').forEach(el => {
+                        el.classList.remove('active');
+                        el.style.display = 'none';
+                    });
+                    const target = document.getElementById(`view-${viewId}`);
+                    target.classList.add('active');
+                    target.style.display = 'block';
+                    gsap.fromTo(target, { opacity: 0, y: 20 }, { opacity: 1, y: 0, duration: 0.4 });
+                }
+            },
+            data: {
+                initListeners: () => {
+                    // 1. Listen to Global Settings
+                    const settingsRef = doc(db, `artifacts/${internalAppId}/public/data/global_settings`, 'main');
+                    onSnapshot(settingsRef, (snap) => {
+                        if(snap.exists()) {
+                            const data = snap.data();
+                            const isMaint = data.status === 'maintenance';
+                            document.getElementById('sys-maint-toggle').checked = isMaint;
+                            document.getElementById('sys-maint-msg').value = data.message || '';
+                        }
+                    });
+
+                    // 2. Listen to Audit Logs (For Dashboard & Logs view)
+                    const logsRef = collection(db, `artifacts/${internalAppId}/public/data/audit_logs`);
+                    // Firebase Canvas limitation: Complex queries might fail if no index. We fetch all and sort in memory if needed, 
+                    // or just use basic onSnapshot.
+                    onSnapshot(logsRef, (snap) => {
+                        state.logs = [];
+                        snap.forEach(d => state.logs.push({ id: d.id, ...d.data() }));
+                        state.logs.sort((a,b) => new Date(b.timestamp) - new Date(a.timestamp));
+                        
+                        adminApp.renders.dashboardStats();
+                        adminApp.renders.logsTable();
+                    });
+
+                    // 3. Count Groups
+                    getDocs(collection(db, `artifacts/${internalAppId}/public/data/groups`)).then(snap => {
+                        state.groupsCount = snap.size;
+                        document.getElementById('stat-groups').textContent = snap.size;
+                    }).catch(e=>{});
+
+                    // 4. Initial Users load
+                    adminApp.data.loadUsers();
+                },
+                loadUsers: async () => {
+                    try {
+                        const tbody = document.getElementById('users-table-body');
+                        tbody.innerHTML = '<tr><td colspan="5" class="text-center py-8 text-brand-500 animate-pulse">Scanning Database...</td></tr>';
+                        
+                        // 利用 collectionGroup 獲取所有 profile
+                        const profilesSnap = await getDocs(collectionGroup(db, 'profile'));
+                        state.users = [];
+                        profilesSnap.forEach(docSnap => {
+                            if(docSnap.id === 'main') {
+                                // 路徑格式: artifacts/APP_ID/users/USER_ID/profile/main
+                                const pathParts = docSnap.ref.path.split('/');
+                                const uid = pathParts[3]; 
+                                state.users.push({ uid, ...docSnap.data() });
+                            }
+                        });
+                        
+                        document.getElementById('stat-users').textContent = state.users.length;
+                        adminApp.renders.usersTable();
+                        UI.notify('用戶名單已更新');
+                    } catch(e) {
+                        console.error(e);
+                        document.getElementById('users-table-body').innerHTML = `<tr><td colspan="5" class="text-center py-8 text-red-500">讀取失敗。請確保 Firebase 規則已開通 Collection Group 查詢。</td></tr>`;
+                    }
+                }
+            },
+            renders: {
+                dashboardStats: () => {
+                    const today = new Date().toISOString().split('T')[0];
+                    const todayLogs = state.logs.filter(l => l.timestamp.startsWith(today)).length;
+                    document.getElementById('stat-logs').textContent = todayLogs;
+
+                    const recentContainer = document.getElementById('recent-logs');
+                    recentContainer.innerHTML = '';
+                    state.logs.slice(0, 5).forEach(l => {
+                        const time = new Date(l.timestamp).toLocaleTimeString();
+                        let color = 'text-slate-400';
+                        if(l.action.includes('CREATED') || l.action.includes('SAVED')) color = 'text-emerald-400';
+                        if(l.action.includes('DELETED')) color = 'text-red-400';
+                        
+                        recentContainer.innerHTML += `
+                            <div class="flex justify-between items-center py-2 border-b border-dark-border/50 last:border-0">
+                                <div>
+                                    <span class="text-[10px] text-slate-500 mr-2">${time}</span>
+                                    <span class="${color} font-bold">${l.action}</span>
+                                </div>
+                                <span class="text-[10px] text-slate-500 truncate max-w-[100px]">${l.uid}</span>
+                            </div>
+                        `;
+                    });
+                },
+                usersTable: () => {
+                    const tbody = document.getElementById('users-table-body');
+                    tbody.innerHTML = '';
+                    if(state.users.length === 0) {
+                        tbody.innerHTML = '<tr><td colspan="5" class="text-center py-8">無用戶資料</td></tr>';
+                        return;
+                    }
+                    
+                    state.users.forEach(u => {
+                        const isBanned = u.isBanned;
+                        const roleColor = u.role === 'provider' ? 'text-pink-400 bg-pink-500/10 border-pink-500/30' : 'text-brand-400 bg-brand-500/10 border-brand-500/30';
+                        const statusTag = isBanned ? '<span class="text-red-500 bg-red-500/10 px-2 py-1 rounded font-bold">BANNED</span>' : '<span class="text-emerald-500 bg-emerald-500/10 px-2 py-1 rounded">ACTIVE</span>';
+                        
+                        const dateStr = u.createdAt ? new Date(u.createdAt).toLocaleDateString() : 'Unknown';
+
+                        tbody.innerHTML += `
+                            <tr class="table-row">
+                                <td class="px-6 py-4 font-mono text-[11px] text-slate-400">${u.uid}</td>
+                                <td class="px-6 py-4"><span class="px-2 py-1 rounded border text-xs font-bold uppercase ${roleColor}">${u.role || 'student'}</span></td>
+                                <td class="px-6 py-4 text-xs">${statusTag}</td>
+                                <td class="px-6 py-4 text-xs text-slate-400">${dateStr}</td>
+                                <td class="px-6 py-4 text-right space-x-2">
+                                    <button onclick="adminApp.users.toggleRole('${u.uid}', '${u.role}')" class="px-3 py-1.5 bg-dark-input hover:bg-brand-500/20 text-brand-400 rounded border border-dark-border hover:border-brand-500/50 transition-colors text-[11px] font-bold" title="切換角色"><i class="fa-solid fa-crown"></i></button>
+                                    <button onclick="adminApp.users.toggleBan('${u.uid}', ${isBanned})" class="px-3 py-1.5 bg-dark-input hover:bg-red-500/20 ${isBanned?'text-emerald-400':'text-red-400'} rounded border border-dark-border hover:border-red-500/50 transition-colors text-[11px] font-bold" title="${isBanned?'解除封鎖':'封鎖'}"><i class="fa-solid ${isBanned?'fa-unlock':'fa-ban'}"></i></button>
+                                </td>
+                            </tr>
+                        `;
+                    });
+                },
+                logsTable: () => {
+                    const tbody = document.getElementById('logs-table-body');
+                    tbody.innerHTML = '';
+                    const term = document.getElementById('log-search').value.toLowerCase();
+                    
+                    const filtered = state.logs.filter(l => l.uid.toLowerCase().includes(term) || l.action.toLowerCase().includes(term));
+                    
+                    if(filtered.length === 0) {
+                        tbody.innerHTML = '<tr><td colspan="4" class="text-center py-8">無符合記錄</td></tr>';
+                        return;
+                    }
+
+                    filtered.forEach(l => {
+                        const metaStr = l.device || l.groupId || l.taskId || '';
+                        tbody.innerHTML += `
+                            <tr class="table-row">
+                                <td class="px-6 py-3 text-slate-500">${new Date(l.timestamp).toLocaleString()}</td>
+                                <td class="px-6 py-3 text-brand-400">${l.uid}</td>
+                                <td class="px-6 py-3 font-bold text-white">${l.action}</td>
+                                <td class="px-6 py-3 text-slate-500 truncate max-w-xs">${metaStr}</td>
+                            </tr>
+                        `;
+                    });
+                }
+            },
+            users: {
+                toggleRole: (uid, currentRole) => {
+                    const newRole = currentRole === 'provider' ? 'student' : 'provider';
+                    UI.modal.open(`
+                        <div class="text-center">
+                            <i class="fa-solid fa-user-gear text-4xl text-brand-500 mb-4"></i>
+                            <h3 class="text-xl font-bold text-white mb-2">變更用戶權限</h3>
+                            <p class="text-sm text-slate-400 mb-6 font-mono">${uid}<br>將被設定為 <span class="text-brand-400 font-bold uppercase">${newRole}</span></p>
+                            <div class="flex gap-3">
+                                <button onclick="adminApp.UI.modal.close()" class="flex-1 py-3 bg-dark-input text-white rounded-xl font-bold hover:bg-dark-hover transition-colors">取消</button>
+                                <button onclick="adminApp.users.doUpdate('${uid}', {role: '${newRole}'})" class="flex-1 py-3 bg-brand-600 text-white rounded-xl font-bold hover:bg-brand-500 transition-colors shadow-[0_0_15px_rgba(2,132,199,0.5)]">確認更改</button>
+                            </div>
+                        </div>
+                    `);
+                },
+                toggleBan: (uid, isBanned) => {
+                    const action = isBanned ? '解除封鎖' : '封鎖';
+                    const color = isBanned ? 'emerald' : 'red';
+                    UI.modal.open(`
+                        <div class="text-center">
+                            <i class="fa-solid ${isBanned?'fa-unlock text-emerald-500':'fa-ban text-red-500'} text-4xl mb-4"></i>
+                            <h3 class="text-xl font-bold text-white mb-2">${action} 用戶</h3>
+                            <p class="text-sm text-slate-400 mb-6 font-mono">${uid}</p>
+                            <div class="flex gap-3">
+                                <button onclick="adminApp.UI.modal.close()" class="flex-1 py-3 bg-dark-input text-white rounded-xl font-bold hover:bg-dark-hover transition-colors">取消</button>
+                                <button onclick="adminApp.users.doUpdate('${uid}', {isBanned: ${!isBanned}})" class="flex-1 py-3 bg-${color}-600 text-white rounded-xl font-bold hover:bg-${color}-500 transition-colors shadow-[0_0_15px_rgba(${isBanned?'16,185,129':'239,68,68'},0.5)]">確認${action}</button>
+                            </div>
+                        </div>
+                    `);
+                },
+                doUpdate: async (uid, data) => {
+                    try {
+                        await updateDoc(doc(db, `artifacts/${internalAppId}/users/${uid}/profile`, 'main'), data);
+                        UI.modal.close();
+                        UI.notify('更新成功');
+                        adminApp.data.loadUsers(); // refresh
+                    } catch(e) {
+                        UI.notify('更新失敗', 'error');
+                        console.error(e);
+                    }
+                }
+            },
+            settings: {
+                updateMaintenance: async () => {
+                    const isMaint = document.getElementById('sys-maint-toggle').checked;
+                    const msg = document.getElementById('sys-maint-msg').value.trim();
+                    try {
+                        await setDoc(doc(db, `artifacts/${internalAppId}/public/data/global_settings`, 'main'), {
+                            status: isMaint ? 'maintenance' : 'active',
+                            message: msg,
+                            updatedAt: new Date().toISOString()
+                        }, { merge: true });
+                        UI.notify('系統全域設定已發佈', 'success');
+                    } catch (e) {
+                        UI.notify('設定發佈失敗', 'error');
+                    }
+                }
+            },
+            logs: {
+                filter: () => { adminApp.renders.logsTable(); }
+            }
+        };
+
+        window.adminApp = adminApp;
+        window.adminApp.UI = UI;
+
+        document.addEventListener('DOMContentLoaded', adminApp.init);
+    </script>
+</body>
+</html>

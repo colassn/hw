@@ -25,8 +25,7 @@
                             input: 'var(--input)',
                             card: 'var(--card)'
                         },
-                        brand: { 400: '#818cf8', 500: '#6366f1', 600: '#4f46e5' },
-                        exam: { 400: '#f87171', 500: '#ef4444' }
+                        brand: { 400: '#818cf8', 500: '#6366f1', 600: '#4f46e5' }
                     },
                     fontFamily: {
                         sans: ['Inter', 'Noto Sans HK', '-apple-system', 'BlinkMacSystemFont', 'system-ui', 'sans-serif'],
@@ -262,6 +261,8 @@
 
             <!-- 第三層：各頁面內容容器 -->
             <div class="px-4 md:px-6 w-full pb-32 md:max-w-5xl lg:max-w-6xl md:mx-auto">
+                
+                <!-- 🏠 HOME 頁面 -->
                 <section id="view-home" class="view-section active w-full">
                     <div id="home-announcements" class="mb-4 space-y-2 md:max-w-3xl md:mx-auto hidden"></div>
 
@@ -291,6 +292,7 @@
                     </div>
                 </section>
 
+                <!-- 🕒 TIMETABLE 頁面 -->
                 <section id="view-timetable" class="view-section w-full">
                     <div class="flex justify-between items-end mb-4 px-2 md:px-0 md:max-w-3xl md:mx-auto">
                         <h2 class="text-xl font-bold text-theme-text tracking-tight">時間表</h2>
@@ -311,6 +313,7 @@
                     </div>
                 </section>
 
+                <!-- 📚 HISTORY 頁面 -->
                 <section id="view-history" class="view-section w-full">
                     <div class="flex justify-between items-end mb-5 px-1 md:px-0">
                         <h2 class="text-xl font-bold text-theme-text tracking-tight">歷史記錄</h2>
@@ -323,9 +326,10 @@
                     </div>
                 </section>
 
+                <!-- ➕ ADD 頁面 (精緻排版版) -->
                 <section id="view-add" class="view-section w-full">
                     <div class="flex items-center mb-6 px-1 md:px-0 md:max-w-4xl md:mx-auto">
-                        <button onclick="app.nav.switch('home')" class="w-10 h-10 mr-4 rounded-full bg-theme-card flex items-center justify-center text-theme-text hover:bg-theme-input active:scale-95 transition-all border border-theme-border shadow-sm">
+                        <button onclick="app.nav.toggleAdd()" class="w-10 h-10 mr-4 rounded-full bg-theme-card flex items-center justify-center text-theme-text hover:bg-theme-input active:scale-95 transition-all border border-theme-border shadow-sm">
                             <i class="fa-solid fa-arrow-left text-[15px]"></i>
                         </button>
                         <h2 id="form-header-title" class="text-2xl font-bold text-theme-text tracking-tight font-literary">新增任務</h2>
@@ -334,6 +338,7 @@
                     <div class="glass-card p-6 md:p-8 relative overflow-hidden shadow-sm md:max-w-4xl md:mx-auto">
                         <input type="hidden" id="form-task-id">
                         
+                        <!-- 頂級分段切換器 (Task / Exam Toggle) -->
                         <div class="flex bg-theme-input p-1.5 rounded-2xl mb-8 relative z-10 border border-theme-border">
                             <button id="type-btn-task" onclick="app.tasks.setFormType('task')" class="flex-1 py-3 text-[15px] font-bold rounded-xl bg-theme-card text-brand-600 dark:text-brand-400 shadow-sm border border-theme-border transition-all flex justify-center items-center gap-2">
                                 <i class="fa-solid fa-book-open"></i> 新增功課
@@ -345,6 +350,7 @@
                         </div>
                         
                         <div class="space-y-6 relative z-10">
+                            <!-- 精美科目水平選擇列 -->
                             <div class="flex items-center gap-2">
                                 <div id="form-subjects-scroll" class="flex flex-1 gap-2.5 overflow-x-auto no-scrollbar py-1 snap-x items-center"></div>
                                 <button onclick="app.settings.addSubjectModal()" class="w-10 h-10 shrink-0 flex items-center justify-center rounded-xl bg-theme-input text-theme-muted hover:text-brand-500 transition-colors shadow-sm border border-theme-border active:scale-95">
@@ -353,13 +359,16 @@
                                 <input type="hidden" id="form-subject-value">
                             </div>
 
+                            <!-- 桌面/平板雙欄網格設計 -->
                             <div class="flex flex-col lg:flex-row gap-6">
+                                <!-- 左側：標題與內容 -->
                                 <div class="flex-1 flex flex-col gap-4">
                                     <input type="text" id="form-title" class="w-full px-5 py-4 bg-theme-input border border-theme-border hover:border-gray-300 dark:hover:border-gray-600 focus:border-brand-500 focus:bg-theme-card rounded-2xl text-[16px] font-bold text-theme-text placeholder-theme-muted shadow-sm transition-all outline-none" placeholder="功課標題 (必填)...">
                                     
                                     <div class="relative flex-1 flex flex-col">
                                         <textarea id="form-content" class="w-full flex-1 px-5 py-4 bg-theme-input border border-theme-border hover:border-gray-300 dark:hover:border-gray-600 focus:border-brand-500 focus:bg-theme-card rounded-2xl text-[15px] leading-relaxed text-theme-text placeholder-theme-muted resize-none min-h-[180px] shadow-sm transition-all outline-none" placeholder="打返功課內容..."></textarea>
                                         
+                                        <!-- 文字框內的工具列 -->
                                         <div class="absolute bottom-3 right-3 flex gap-2">
                                             <input type="file" id="form-image" accept="image/*" class="hidden" onchange="app.tasks.handleImageUpload(event)">
                                             <button onclick="document.getElementById('form-image').click()" class="w-9 h-9 rounded-full bg-white dark:bg-gray-800 text-theme-muted hover:text-brand-500 flex items-center justify-center backdrop-blur-md transition-all border border-theme-border shadow-sm active:scale-95" title="附加圖片">
@@ -370,17 +379,21 @@
                                     <img id="form-image-preview" class="hidden w-full h-48 object-cover rounded-2xl border border-theme-border shadow-sm mt-1">
                                 </div>
 
+                                <!-- 右側：日期、重複、提交 -->
                                 <div class="w-full lg:w-[280px] flex flex-col gap-4 shrink-0">
+                                    <!-- 超大日期選擇 -->
                                     <div class="relative">
                                         <input type="date" id="form-date" onchange="app.tasks.checkStress()" class="w-full h-16 px-5 bg-theme-input border border-theme-border hover:border-gray-300 dark:hover:border-gray-600 rounded-2xl text-[17px] font-bold text-theme-text text-center transition-all shadow-sm outline-none focus:border-brand-500 dark:[color-scheme:dark]">
                                     </div>
                                     
+                                    <!-- 重複選擇按鈕 -->
                                     <input type="hidden" id="form-repeat" value="none">
                                     <button type="button" onclick="app.tasks.openRepeatModal()" class="w-full h-14 px-5 bg-theme-input border border-theme-border hover:border-gray-300 dark:hover:border-gray-600 rounded-2xl text-[14px] font-bold text-theme-muted flex justify-between items-center transition-all shadow-sm outline-none">
                                         <span><i class="fa-solid fa-repeat mr-2"></i><span id="form-repeat-text">不重複</span></span>
                                         <i class="fa-solid fa-chevron-down text-[10px]"></i>
                                     </button>
 
+                                    <!-- 超大吸睛提交按鈕 -->
                                     <button onclick="app.tasks.save()" class="w-full mt-auto h-16 bg-brand-600 hover:bg-brand-500 text-white rounded-2xl font-bold shadow-[0_8px_25px_rgba(99,102,241,0.3)] hover:-translate-y-1 active:scale-95 transition-all flex justify-center items-center gap-2 text-[17px] tracking-wide border border-transparent">
                                         <i class="fa-solid fa-plus"></i> 加入清單
                                     </button>
@@ -392,6 +405,7 @@
                                 <p class="text-xs text-yellow-700 dark:text-yellow-200 font-semibold leading-relaxed">該日已有 <span id="form-warning-count" class="text-yellow-600 dark:text-yellow-500 font-bold text-sm"></span> 項任務，建議提早規劃！</p>
                             </div>
 
+                            <!-- Provider 廣播切換開關 -->
                             <div id="provider-target-section" class="hidden pt-6 border-t border-theme-border mt-4">
                                 <div class="flex items-center justify-between p-4 bg-theme-input border border-theme-border rounded-2xl">
                                     <div class="flex items-center gap-3.5">
@@ -414,6 +428,7 @@
                     </div>
                 </section>
 
+                <!-- ⚙️ SETTINGS 頁面 -->
                 <section id="view-settings" class="view-section w-full">
                     <div class="flex justify-between items-end mb-4 px-2 md:px-0 md:max-w-2xl md:mx-auto">
                         <h2 class="text-xl font-bold text-theme-text tracking-tight">系統與群組</h2>
@@ -463,7 +478,7 @@
             </div>
         </main>
 
-        <!-- 🌟 修正 FAB 切換邏輯 -->
+        <!-- 全域右下角懸浮新增按鈕 (Global FAB) -->
         <button onclick="app.nav.toggleAdd()" id="global-fab" class="fixed bottom-8 right-6 md:bottom-12 md:right-12 lg:right-16 w-14 h-14 bg-gradient-to-tr from-brand-600 to-pink-500 rounded-full flex items-center justify-center text-white text-2xl shadow-[0_10px_30px_rgba(99,102,241,0.5)] hover:shadow-[0_15px_40px_rgba(99,102,241,0.8)] hover:scale-110 active:scale-95 transition-all duration-400 z-50">
             <i class="fa-solid fa-plus transition-transform duration-400" id="add-icon"></i>
         </button>
@@ -477,7 +492,6 @@
         <div id="center-modal-content" class="glass-card w-full max-w-sm p-6 md:p-8 transform scale-95 opacity-0 pointer-events-auto shadow-2xl border-theme-border"></div>
     </div>
     
-    <!-- Bottom Sheet (浮空 Modal 基礎) -->
     <div id="bottom-sheet" class="fixed inset-x-0 bottom-0 z-[210] hidden flex flex-col justify-end pointer-events-none">
         <div id="bottom-sheet-content" class="glass-card bg-theme-bg w-full md:max-w-md md:mx-auto rounded-b-none md:rounded-b-3xl rounded-t-3xl p-6 pb-safe transform translate-y-full pointer-events-auto border md:border-b-theme-border md:mb-6 border-t-theme-border shadow-[0_-20px_60px_rgba(0,0,0,0.15)] dark:shadow-[0_-20px_60px_rgba(0,0,0,0.8)] flex flex-col max-h-[85vh]">
             <div class="w-12 h-1.5 bg-gray-300 dark:bg-white/20 rounded-full mx-auto mb-6 shrink-0"></div>
@@ -536,7 +550,7 @@
             filters: { subject: 'all', incompleteOnly: false, sortDesc: false }
         };
 
-        // 安全跳脫處理，避免單引號與換行導致事件癱瘓
+        // 🌟 防當機：安全跳脫字元處理 (解決單引號等符號造成崩潰)
         const safeStr = (str) => encodeURIComponent(str || '');
         const escapeHTML = (str) => {
             return (str || '').replace(/[&<>'"]/g, 
@@ -574,7 +588,6 @@
             sheet: {
                 open: (html) => { UI.overlay.show(); document.getElementById('bottom-sheet-body').innerHTML = html; document.getElementById('bottom-sheet').classList.remove('hidden'); if(typeof gsap !== 'undefined') gsap.fromTo(document.getElementById('bottom-sheet-content'), { y: '100%' }, { y: '0%', duration: 0.4, ease: "power3.out" }); },
                 close: () => { 
-                    if(app.pomodoro && app.pomodoro.isRunning) app.pomodoro.stop(); 
                     if(typeof gsap !== 'undefined') gsap.to(document.getElementById('bottom-sheet-content'), { y: '100%', duration: 0.3, ease: "power3.in", onComplete: () => { document.getElementById('bottom-sheet').classList.add('hidden'); UI.overlay.hide(); }}); 
                     else { document.getElementById('bottom-sheet').classList.add('hidden'); UI.overlay.hide(); } 
                 }
@@ -591,13 +604,6 @@
                 document.getElementById('blocker-title').textContent = t; document.getElementById('blocker-message').textContent = m;
                 document.getElementById('blocker-icon').className = `fa-solid ${banned ? 'fa-ban text-red-500' : 'fa-triangle-exclamation text-yellow-500'} text-6xl mb-6 animate-pulse`;
                 document.getElementById('system-blocker').classList.remove('hidden'); document.getElementById('system-blocker').classList.add('flex');
-            },
-            listenGlobalSettings: () => {
-                try {
-                    return onSnapshot(doc(db, `artifacts/${internalAppId}/public/data/global_settings`, 'main'), (snap) => {
-                        if (snap.exists() && snap.data().status === 'maintenance') AdminService.triggerBlocker('系統維護中', snap.data().message || '超級管理員升級中。');
-                    });
-                } catch(e) { return () => {}; }
             }
         };
 
@@ -609,13 +615,7 @@
                 groups: () => `artifacts/${internalAppId}/public/data/groups`
             },
             genId: () => Math.random().toString(36).substring(2, 15),
-            getWorkingDay: () => { let d = new Date(); do { d.setDate(d.getDate() + 1); } while (d.getDay() === 0 || d.getDay() === 6); return new Date(d.getTime() - (d.getTimezoneOffset() * 60000)).toISOString().split('T')[0]; },
-            formatDateLabel: (dateStr) => {
-                if(!dateStr) return '無期限';
-                const d = new Date(dateStr);
-                const days = ['日','一','二','三','四','五','六'];
-                return `${d.getFullYear()}-${(d.getMonth()+1).toString().padStart(2,'0')}-${d.getDate().toString().padStart(2,'0')} (星期${days[d.getDay()]})`;
-            }
+            getWorkingDay: () => { let d = new Date(); do { d.setDate(d.getDate() + 1); } while (d.getDay() === 0 || d.getDay() === 6); return new Date(d.getTime() - (d.getTimezoneOffset() * 60000)).toISOString().split('T')[0]; }
         };
 
         const app = {
@@ -634,6 +634,7 @@
                 };
 
                 try {
+                    // 🌟 安全的啟動機制
                     try { app.settings.initTheme(); } catch(e){}
                     try { app.settings.initTimetableMode(); } catch(e){}
                     try { app.system.initOfflineDetection(); } catch(e){}
@@ -791,22 +792,30 @@
                         state.notifications.sort((a,b) => new Date(b.timestamp) - new Date(a.timestamp)); 
                         app.notifications.render(); 
                     }));
-                    state.unsubscribers.push(AdminService.listenGlobalSettings());
+                    
+                    const gRef = doc(db, `artifacts/${internalAppId}/public/data/global_settings`, 'main');
+                    state.unsubscribers.push(onSnapshot(gRef, (snap) => {
+                        if (snap.exists() && snap.data().status === 'maintenance') AdminService.triggerBlocker('系統維護中', snap.data().message || '超級管理員升級中。');
+                    }));
                 } catch(e) {}
             },
             updateWidgets: () => {
                 const today = new Date().toISOString().split('T')[0]; let t=0, f=0, e=0;
                 state.tasks.forEach(task => { if(task.status === 'completed') return; if(task.type === 'exam') e++; else { if(task.dueDate && task.dueDate <= today) t++; else f++; } });
-                document.getElementById('widget-today-count').textContent = t; document.getElementById('widget-future-count').textContent = f; document.getElementById('widget-exam-count').textContent = e;
+                const elT = document.getElementById('widget-today-count'); if(elT) elT.textContent = t; 
+                const elF = document.getElementById('widget-future-count'); if(elF) elF.textContent = f; 
+                const elE = document.getElementById('widget-exam-count'); if(elE) elE.textContent = e;
             },
             notifications: {
-                toggle: () => { const p = document.getElementById('notif-panel'), b = document.getElementById('notif-badge'); if(p.classList.contains('hidden')) { UI.overlay.show(); p.classList.remove('hidden'); gsap.fromTo(p, { x: '100%' }, { x: '0%', duration: 0.4, ease: "power3.out" }); b.classList.add('hidden'); } else { gsap.to(p, { x: '100%', duration: 0.3, ease: "power3.in", onComplete: () => { p.classList.add('hidden'); UI.overlay.hide(); }}); } },
-                render: () => { const l = document.getElementById('notif-list'), b = document.getElementById('notif-badge'); l.innerHTML = ''; if(state.notifications.length === 0) { l.innerHTML = '<div class="text-center py-10 text-theme-muted text-sm font-bold">無新通知</div>'; return; } b.classList.remove('hidden'); state.notifications.forEach(n => { let i = n.type==='warning'?'fa-triangle-exclamation text-yellow-500':(n.type==='task'?'fa-paper-plane text-brand-500':'fa-info-circle text-blue-500'); l.innerHTML += `<div class="p-4 bg-theme-input rounded-2xl border border-theme-border shadow-sm hover:border-brand-500/30 transition-colors"><div class="flex items-start gap-3"><div class="w-8 h-8 rounded-full bg-black/5 dark:bg-white/5 flex items-center justify-center shrink-0"><i class="fa-solid ${i}"></i></div><div><p class="text-[13px] text-theme-text font-semibold leading-relaxed">${escapeHTML(n.message)}</p><p class="text-[10px] text-theme-muted mt-2 font-mono font-semibold">${new Date(n.timestamp).toLocaleString()}</p></div></div></div>`; }); },
+                toggle: () => { const p = document.getElementById('notif-panel'), b = document.getElementById('notif-badge'); if(p.classList.contains('hidden')) { UI.overlay.show(); p.classList.remove('hidden'); if(typeof gsap!=='undefined') gsap.fromTo(p, { x: '100%' }, { x: '0%', duration: 0.4, ease: "power3.out" }); b.classList.add('hidden'); } else { if(typeof gsap!=='undefined') gsap.to(p, { x: '100%', duration: 0.3, ease: "power3.in", onComplete: () => { p.classList.add('hidden'); UI.overlay.hide(); }}); else { p.classList.add('hidden'); UI.overlay.hide(); } } },
+                render: () => { const l = document.getElementById('notif-list'), b = document.getElementById('notif-badge'); if(!l) return; l.innerHTML = ''; if(state.notifications.length === 0) { l.innerHTML = '<div class="text-center py-10 text-theme-muted text-sm font-bold">無新通知</div>'; return; } if(b) b.classList.remove('hidden'); state.notifications.forEach(n => { let i = n.type==='warning'?'fa-triangle-exclamation text-yellow-500':(n.type==='task'?'fa-paper-plane text-brand-500':'fa-info-circle text-blue-500'); l.innerHTML += `<div class="p-4 bg-theme-input rounded-2xl border border-theme-border shadow-sm hover:border-brand-500/30 transition-colors"><div class="flex items-start gap-3"><div class="w-8 h-8 rounded-full bg-black/5 dark:bg-white/5 flex items-center justify-center shrink-0"><i class="fa-solid ${i}"></i></div><div><p class="text-[13px] text-theme-text font-semibold leading-relaxed">${escapeHTML(n.message)}</p><p class="text-[10px] text-theme-muted mt-2 font-mono font-semibold">${new Date(n.timestamp).toLocaleString()}</p></div></div></div>`; }); },
                 send: async (uid, m, t='info') => { try { const id = API.genId(); await setDoc(doc(db, `artifacts/${internalAppId}/users/${uid}/notifications`, id), { id, message: m, type: t, timestamp: new Date().toISOString() }); } catch(e) {} }
             },
             nav: {
+                // 🌟 新增：專屬的 toggleAdd 邏輯，確保在 "add" 與 "home" 之間來回切換
                 toggleAdd: () => {
-                    app.nav.switch(state.currentView === 'add' ? 'home' : 'add');
+                    const nextView = state.currentView === 'add' ? 'home' : 'add';
+                    app.nav.switch(nextView);
                 },
                 switch: (vid) => { 
                     if (vid === state.currentView) return; 
@@ -834,7 +843,7 @@
                             fabBtn.classList.add('from-red-600', 'to-red-400', 'shadow-red-500/50');
                             fabBtn.classList.remove('from-brand-600', 'to-pink-500', 'shadow-[0_10px_30px_rgba(99,102,241,0.5)]');
                         }
-                        try { app.tasks.prepareForm(); } catch (e) { console.error('Form preparation issue:', e); } 
+                        try { app.tasks.prepareForm(); } catch (e) {} 
                     } else { 
                         if(fabIcon) {
                             fabIcon.classList.replace('fa-xmark', 'fa-plus'); 
@@ -857,6 +866,188 @@
                     if(scrollArea) scrollArea.scrollTo({top: 0, behavior: 'smooth'});
                     
                     state.currentView = vid; 
+                }
+            },
+            settings: {
+                initTheme: () => {
+                    const saved = localStorage.getItem('lumina_theme');
+                    const root = document.getElementById('html-root');
+                    if (saved === 'light') root.classList.remove('dark');
+                    else root.classList.add('dark');
+                },
+                toggleTheme: () => {
+                    const root = document.getElementById('html-root');
+                    if (root.classList.contains('dark')) {
+                        root.classList.remove('dark');
+                        localStorage.setItem('lumina_theme', 'light');
+                        UI.notify('已切換為淺色模式', 'info');
+                    } else {
+                        root.classList.add('dark');
+                        localStorage.setItem('lumina_theme', 'dark');
+                        UI.notify('已切換為深色模式', 'info');
+                    }
+                },
+                initTimetableMode: () => {
+                    const ttMode = localStorage.getItem('lumina_tt_mode') || 'week';
+                    const modeText = document.getElementById('setting-tt-mode-text');
+                    if(modeText) modeText.textContent = ttMode === 'week' ? '課表：星期制' : '課表：Day 1-6';
+                },
+                toggleTimetableMode: () => {
+                    const currentMode = localStorage.getItem('lumina_tt_mode') || 'week';
+                    const newMode = currentMode === 'week' ? 'day6' : 'week';
+                    localStorage.setItem('lumina_tt_mode', newMode);
+                    
+                    app.settings.initTimetableMode();
+                    
+                    state.currentDayTab = newMode === 'week' ? '1' : 'd1';
+                    if (state.currentView === 'timetable') app.timetable.renderDaySelector();
+                    
+                    UI.notify(`已切換為 ${newMode === 'week' ? '星期制' : 'Day 1-6 循環制'}`, 'success');
+                },
+                exportCalendar: () => {
+                    if (state.tasks.length === 0) return UI.notify('尚無任務可匯出', 'warning');
+                    
+                    let ics = "BEGIN:VCALENDAR\nVERSION:2.0\nPRODID:-//Lumina Task//EN\n";
+                    state.tasks.forEach(t => {
+                        if (!t.dueDate) return;
+                        const dateStr = t.dueDate.replace(/-/g, '');
+                        ics += `BEGIN:VEVENT\nDTSTART;VALUE=DATE:${dateStr}\nDTEND;VALUE=DATE:${dateStr}\nSUMMARY:[${t.subject}] ${t.title}\nDESCRIPTION:${(t.content || '').replace(/\n/g, '\\n')}\nSTATUS:${t.status === 'completed' ? 'CONFIRMED' : 'TENTATIVE'}\nEND:VEVENT\n`;
+                    });
+                    ics += "END:VCALENDAR";
+                    
+                    const blob = new Blob([ics], { type: 'text/calendar;charset=utf-8' });
+                    const url = window.URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = `Lumina_Tasks_${new Date().toISOString().split('T')[0]}.ics`;
+                    document.body.appendChild(a);
+                    a.click();
+                    document.body.removeChild(a);
+                    UI.notify('行事曆已成功匯出！', 'success');
+                },
+                addSubjectModal: () => { UI.modal.open(`<h3 class="text-xl font-bold text-theme-text mb-6">新增自訂科目</h3><input type="text" id="new-subject-input" class="premium-input font-bold" placeholder="例如：M2"><div class="mt-8 flex gap-3"><button onclick="app.UI.modal.close()" class="flex-1 glass-card py-3.5 text-sm font-bold text-theme-text hover:-translate-y-1 hover:bg-theme-input active:scale-95 transition-all duration-300">取消</button><button onclick="app.settings.doAddSubject()" class="flex-1 bg-brand-600 hover:bg-brand-500 rounded-xl py-3.5 text-sm font-bold text-white shadow-lg hover:-translate-y-1 hover:shadow-brand-500/40 active:scale-95 transition-all duration-300">新增</button></div>`); },
+                doAddSubject: () => { const v = document.getElementById('new-subject-input').value.trim(); if(v && !state.subjects.includes(v)) { state.subjects.unshift(v); app.renders.subjectsPills(); UI.modal.close(); UI.notify(`已加入 ${v}`); } }
+            },
+            renders: {
+                announcements: () => {
+                    const c = document.getElementById('home-announcements');
+                    if(!c) return;
+                    let html = '';
+                    state.groups.forEach(g => {
+                        if (g.announcement) {
+                            html += `
+                            <div class="bg-gradient-to-r from-blue-500/20 to-brand-500/10 border border-blue-500/30 p-3.5 rounded-xl shadow-sm animate-[fadeIn_0.5s_ease-out]">
+                                <div class="flex items-start gap-3">
+                                    <i class="fa-solid fa-bullhorn text-blue-500 mt-1"></i>
+                                    <div>
+                                        <p class="text-[10px] font-bold text-blue-400 uppercase tracking-wider mb-0.5">${escapeHTML(g.name)} 公告</p>
+                                        <p class="text-[13px] text-theme-text font-bold leading-relaxed whitespace-pre-wrap">${escapeHTML(g.announcement)}</p>
+                                    </div>
+                                </div>
+                            </div>`;
+                        }
+                    });
+                    if(html) { c.innerHTML = html; c.classList.remove('hidden'); } 
+                    else { c.classList.add('hidden'); }
+                },
+                tasks: () => {
+                    const todo = document.getElementById('todo-list'), hist = document.getElementById('history-list'); 
+                    if(!todo || !hist) return;
+                    let tc=0, hc=0; todo.innerHTML = ''; hist.innerHTML = '';
+                    const today = new Date().toISOString().split('T')[0];
+                    
+                    let displayTasks = [...state.tasks];
+                    
+                    if (state.filters.subject !== 'all') {
+                        displayTasks = displayTasks.filter(t => t.subject === state.filters.subject);
+                    }
+                    if (state.filters.incompleteOnly) {
+                        displayTasks = displayTasks.filter(t => t.status !== 'completed');
+                    }
+                    displayTasks.sort((a,b) => {
+                        let d1 = a.dueDate || '2099'; let d2 = b.dueDate || '2099';
+                        return state.filters.sortDesc ? d2.localeCompare(d1) : d1.localeCompare(d2);
+                    });
+
+                    displayTasks.forEach(t => {
+                        const done = t.status === 'completed', over = !done && t.dueDate && t.dueDate < today, exam = t.type === 'exam';
+                        const c = document.createElement('div'); c.className = `glass-card p-5 relative overflow-hidden flex flex-col gap-3 shadow-sm hover:shadow-xl transition-all duration-300 ${done?'opacity-60 bg-theme-input/50':''} ${over?'overdue-pulse':''}`; c.id = `task-${t.id}`;
+                        
+                        const bColor = exam ? 'bg-pink-500/20 text-pink-500' : 'bg-brand-500/20 text-brand-500';
+                        const bIcon = exam ? 'fa-triangle-exclamation' : 'fa-book';
+                        const dStr = t.dueDate ? t.dueDate.replace(/-/g, '/') : '無期限';
+                        
+                        const cHtml = escapeHTML(t.content || '').replace(/\n/g, '<br>');
+                        const imgHtml = t.attachment ? `<div class="mt-3 overflow-hidden rounded-xl border border-theme-border cursor-pointer hover:opacity-80 transition" onclick="window.open('${t.attachment}', '_blank')"><img src="${t.attachment}" class="w-full h-32 object-cover"></div>` : '';
+
+                        // 🌟 最新現代化 iOS 樣式卡片設計
+                        c.innerHTML = `
+                            <div class="flex items-start gap-3">
+                                ${!done ? `
+                                    <button class="w-6 h-6 shrink-0 rounded-full border-2 border-theme-border hover:border-brand-500 flex items-center justify-center text-transparent hover:text-brand-500 transition-colors mt-0.5 group" onclick="app.tasks.markComplete('${t.id}', document.getElementById('task-${t.id}'))">
+                                        <i class="fa-solid fa-check text-[10px] scale-50 group-hover:scale-100 transition-transform"></i>
+                                    </button>
+                                ` : `
+                                    <div class="w-6 h-6 shrink-0 rounded-full bg-emerald-500 flex items-center justify-center text-white mt-0.5 shadow-sm">
+                                        <i class="fa-solid fa-check text-[10px]"></i>
+                                    </div>
+                                `}
+                                <div class="flex-1 min-w-0">
+                                    <div class="flex flex-wrap items-center gap-2 mb-1.5">
+                                        <span class="${bColor} px-2 py-0.5 rounded-md text-[10px] font-bold font-literary tracking-wide flex items-center gap-1"><i class="fa-solid ${bIcon} text-[9px]"></i> ${escapeHTML(t.subject)}</span>
+                                        ${over ? `<span class="bg-red-500/10 text-red-500 px-2 py-0.5 rounded-md text-[10px] font-bold">已逾期</span>` : ''}
+                                    </div>
+                                    <h3 class="text-[17px] font-bold text-theme-text leading-tight ${done?'line-through':''}">${escapeHTML(t.title)}</h3>
+                                    ${cHtml?`<p class="text-[13px] text-theme-muted mt-2 font-mono line-clamp-3">${cHtml}</p>`:''}
+                                    ${imgHtml}
+                                </div>
+                            </div>
+                            <div class="mt-auto pt-4 flex justify-between items-center">
+                                <div class="text-[11px] font-bold ${over?'text-red-500':'text-theme-muted'} flex items-center gap-1.5">
+                                    <i class="fa-regular fa-calendar"></i> ${dStr}
+                                </div>
+                                <div class="flex items-center gap-1">
+                                    ${!done ? `
+                                        <button class="w-8 h-8 rounded-full bg-theme-input text-theme-muted hover:bg-brand-500 hover:text-white transition-all active:scale-95 flex items-center justify-center" title="編輯" onclick="app.tasks.edit('${t.id}')"><i class="fa-solid fa-pen text-[11px]"></i></button>
+                                        <button class="w-8 h-8 rounded-full bg-theme-input text-theme-muted hover:bg-red-500 hover:text-white transition-all active:scale-95 flex items-center justify-center" title="刪除" onclick="app.tasks.confirmDelete('${t.id}')"><i class="fa-solid fa-trash text-[11px]"></i></button>
+                                    ` : `
+                                        <button class="w-8 h-8 rounded-full bg-theme-input text-theme-muted hover:bg-red-500 hover:text-white transition-all active:scale-95 flex items-center justify-center" title="刪除" onclick="app.tasks.confirmDelete('${t.id}')"><i class="fa-solid fa-trash text-[11px]"></i></button>
+                                    `}
+                                </div>
+                            </div>`;
+                        
+                        if (done) { hist.appendChild(c); hc++; } else { todo.appendChild(c); tc++; }
+                    });
+                    
+                    const elE1 = document.getElementById('todo-empty'); if(elE1) elE1.style.display = tc===0?'flex':'none';
+                    const elE2 = document.getElementById('history-empty'); if(elE2) elE2.style.display = hc===0?'flex':'none';
+                },
+                subjectsPills: () => {
+                    const c = document.getElementById('form-subjects-scroll'), inp = document.getElementById('form-subject-value'); 
+                    if(!c || !inp) return;
+                    c.innerHTML = ''; if(!inp.value) inp.value = state.subjects[0];
+                    state.subjects.forEach(s => { 
+                        const b = document.createElement('button'); 
+                        const isActive = s === inp.value;
+                        // 🌟 升級版科目按鈕設計 (方形、圓潤、浮雕感)
+                        b.className = `shrink-0 px-4 py-2.5 rounded-xl font-bold text-[13px] transition-all duration-300 font-literary tracking-wide border ${isActive ? 'bg-theme-card text-brand-600 shadow-md border-theme-border scale-105' : 'bg-theme-input text-theme-muted border-transparent hover:bg-theme-border'}`; 
+                        b.textContent = s; 
+                        b.onclick = () => { inp.value = s; app.renders.subjectsPills(); b.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' }); }; 
+                        c.appendChild(b); 
+                    });
+                },
+                groups: () => {
+                    const l = document.getElementById('settings-groups-list');
+                    if(l) l.innerHTML = ''; 
+                    
+                    if(state.groups.length === 0 && l) { l.innerHTML = '<div class="text-center py-6 text-xs text-theme-muted font-mono font-bold">尚無群組</div>'; }
+                    else {
+                        state.groups.forEach(g => { 
+                            const isAdmin = state.user && g.providerId === state.user.uid;
+                            const actionBtn = isAdmin ? `<button onclick="app.groups.setAnnouncementModal('${g.id}', '${safeStr(g.announcement || '')}')" class="w-8 h-8 rounded-full bg-blue-500/10 text-blue-500 flex items-center justify-center hover:bg-blue-500 hover:text-white transition-all active:scale-95 ml-3 shrink-0"><i class="fa-solid fa-bullhorn text-xs"></i></button>` : '';
+                            if(l) l.innerHTML += `<div class="bg-theme-input p-4 rounded-xl border border-theme-border flex justify-between items-center hover:border-brand-500/30 transition-colors"><div class="flex-1 min-w-0"><p class="text-sm font-bold text-theme-text truncate">${escapeHTML(g.name)} ${isAdmin?'<span class="bg-pink-500/20 text-pink-500 text-[9px] px-1.5 py-0.5 rounded-md ml-2 border border-pink-500/30 align-text-bottom">Admin</span>':''}</p><p class="text-[10px] text-theme-muted font-mono mt-1.5">代碼: ${g.code} • 成員: ${g.members.length}</p></div>${actionBtn}</div>`; 
+                        });
+                    }
                 }
             },
             tasks: {
@@ -922,22 +1113,16 @@
                     app.tasks.setTarget('self', '私人任務 (僅自己可見)');
                     
                     const toggle = document.getElementById('broadcast-toggle');
-                    if(toggle) {
-                        toggle.checked = false;
-                        toggle.disabled = false;
-                    }
+                    if(toggle) { toggle.checked = false; toggle.disabled = false; }
                     
                     app.tasks.setFormType('task'); 
                     app.tasks.checkStress(); 
                     
-                    const headerTitle = document.getElementById('form-header-title');
-                    if(headerTitle) headerTitle.textContent = '新增任務';
+                    const hTitle = document.getElementById('form-header-title');
+                    if(hTitle) hTitle.textContent = '新增任務';
                     
-                    const imgPreview = document.getElementById('form-image-preview');
-                    if(imgPreview) {
-                        imgPreview.classList.add('hidden');
-                        imgPreview.src = '';
-                    }
+                    const p = document.getElementById('form-image-preview');
+                    if(p) { p.classList.add('hidden'); p.src = ''; }
                     state.tempImageBase64 = null;
                     app.renders.subjectsPills();
                 },
@@ -946,19 +1131,13 @@
                     if(typeEl) typeEl.value = type; 
                     
                     const bt = document.getElementById('type-btn-task'), be = document.getElementById('type-btn-exam'); 
-                    
-                    const activeClass = 'flex-1 py-3 text-[15px] font-bold rounded-xl bg-theme-card text-brand-600 dark:text-brand-400 shadow-sm border border-theme-border transition-all flex justify-center items-center gap-2';
+                    const activeClass = 'flex-1 py-3 text-[15px] font-bold rounded-xl bg-theme-card text-brand-600 shadow-sm border border-theme-border transition-all flex justify-center items-center gap-2';
                     const activeClassExam = 'flex-1 py-3 text-[15px] font-bold rounded-xl bg-theme-card text-pink-600 shadow-sm border border-theme-border transition-all flex justify-center items-center gap-2';
                     const inactiveClass = 'flex-1 py-3 text-[15px] font-semibold rounded-xl text-theme-muted border border-transparent hover:text-theme-text transition-all flex justify-center items-center gap-2';
                     
                     if(bt && be) {
-                        if(type === 'task') { 
-                            bt.className = activeClass; 
-                            be.className = inactiveClass; 
-                        } else { 
-                            be.className = activeClassExam; 
-                            bt.className = inactiveClass; 
-                        } 
+                        if(type === 'task') { bt.className = activeClass; be.className = inactiveClass; } 
+                        else { be.className = activeClassExam; bt.className = inactiveClass; } 
                     }
                 },
                 checkStress: () => { 
@@ -968,12 +1147,8 @@
                     const w = document.getElementById('form-warning-msg');
                     const wc = document.getElementById('form-warning-count');
                     if(w && wc) {
-                        if(c >= 5) { 
-                            wc.textContent = c; 
-                            w.classList.remove('hidden'); 
-                        } else { 
-                            w.classList.add('hidden'); 
-                        } 
+                        if(c >= 5) { wc.textContent = c; w.classList.remove('hidden'); } 
+                        else { w.classList.add('hidden'); } 
                     }
                 },
                 handleImageUpload: (e) => {
@@ -998,11 +1173,8 @@
                             const dataUrl = canvas.toDataURL('image/jpeg', 0.6);
                             state.tempImageBase64 = dataUrl;
                             
-                            const preview = document.getElementById('form-image-preview');
-                            if(preview) {
-                                preview.src = dataUrl;
-                                preview.classList.remove('hidden');
-                            }
+                            const p = document.getElementById('form-image-preview');
+                            if(p) { p.src = dataUrl; p.classList.remove('hidden'); }
                         };
                         img.src = event.target.result;
                     };
@@ -1019,7 +1191,7 @@
                     let html = `<h3 class="text-xl font-bold text-theme-text mb-4">自動重複設定</h3><div class="flex flex-col gap-2">`;
                     options.forEach(o => {
                         const isActive = currentVal === o.val;
-                        html += `<button onclick="app.tasks.setRepeat('${o.val}', '${o.label}')" class="w-full text-left p-4 rounded-xl border ${isActive ? 'bg-brand-500/10 border-brand-500/40 text-brand-600 dark:text-brand-400 font-bold shadow-sm' : 'bg-theme-input border-theme-border text-theme-text font-semibold hover:bg-theme-border'} transition-all">${o.label}</button>`;
+                        html += `<button onclick="app.tasks.setRepeat('${o.val}', '${o.label}')" class="w-full text-left p-4 rounded-xl border ${isActive ? 'bg-brand-500/10 border-brand-500/40 text-brand-600 font-bold shadow-sm' : 'bg-theme-input border-theme-border text-theme-text font-semibold hover:bg-theme-border'} transition-all">${o.label}</button>`;
                     });
                     html += `</div>`;
                     UI.sheet.open(html);
@@ -1112,7 +1284,6 @@
                                     const tid = API.genId(); 
                                     batch.set(doc(db, `artifacts/${internalAppId}/users/${uid}/assignments`, tid), { ...data, id: tid, dueDate: d, status: 'pending', source: 'provider', groupId: target, originalTaskId: id || tid, createdAt: new Date().toISOString() }); 
                                 });
-                                app.notifications.send(uid, `管理員派發了新${type==='exam'?'考試':'功課'}：[${subject}] ${title} ${createDates.length>1?'(包含重複)':''}`, 'task'); 
                             }); 
                             await batch.commit(); 
                             AdminService.log('TASK_ASSIGNED', { groupId: target }); 
@@ -1161,16 +1332,10 @@
                     const toggle = document.getElementById('broadcast-toggle');
                     if(task.groupId) {
                         app.tasks.setTarget(task.groupId, '群組任務 (已派發無法更改)');
-                        if(toggle) {
-                            toggle.checked = true;
-                            toggle.disabled = true;
-                        }
+                        if(toggle) { toggle.checked = true; toggle.disabled = true; }
                     } else {
                         app.tasks.setTarget('self', '私人任務 (僅自己可見)');
-                        if(toggle) {
-                            toggle.checked = false;
-                            toggle.disabled = false;
-                        }
+                        if(toggle) { toggle.checked = false; toggle.disabled = false; }
                     }
                     
                     app.tasks.setFormType(task.type || 'task');
@@ -1180,26 +1345,25 @@
                     if(task.attachment) {
                         state.tempImageBase64 = task.attachment;
                         const p = document.getElementById('form-image-preview');
-                        if(p) {
-                            p.src = task.attachment; 
-                            p.classList.remove('hidden');
-                        }
+                        if(p) { p.src = task.attachment; p.classList.remove('hidden'); }
                     }
                 },
                 markComplete: (id, el) => { 
                     const doComplete = async () => {
-                        await updateDoc(doc(db, API.paths.tasks(), id), { status: 'completed', completedAt: new Date().toISOString() }); 
-                        AdminService.log('TASK_COMPLETED', { taskId: id }); 
-                        
-                        const t = state.tasks.find(x => x.id === id);
-                        if (t && t.groupId && t.originalTaskId) {
-                            try {
-                                const groupRef = doc(db, API.paths.groups(), t.groupId);
-                                await setDoc(groupRef, { completions: { [t.originalTaskId]: { [state.user.uid]: true } } }, { merge: true });
-                            } catch(e) {}
-                        }
-                        
-                        UI.notify('已完成並歸檔', 'success');
+                        try {
+                            await updateDoc(doc(db, API.paths.tasks(), id), { status: 'completed', completedAt: new Date().toISOString() }); 
+                            AdminService.log('TASK_COMPLETED', { taskId: id }); 
+                            
+                            const t = state.tasks.find(x => x.id === id);
+                            if (t && t.groupId && t.originalTaskId) {
+                                try {
+                                    const groupRef = doc(db, API.paths.groups(), t.groupId);
+                                    await setDoc(groupRef, { completions: { [t.originalTaskId]: { [state.user.uid]: true } } }, { merge: true });
+                                } catch(e) {}
+                            }
+                            
+                            UI.notify('已完成並歸檔', 'success');
+                        } catch(e) { UI.notify('歸檔失敗', 'error'); }
                     };
 
                     if(typeof gsap !== 'undefined') {
@@ -1210,7 +1374,7 @@
                     }
                 },
                 confirmDelete: (id) => { UI.modal.open(`<div class="text-center"><div class="w-16 h-16 bg-red-500/10 rounded-full flex items-center justify-center mx-auto mb-4"><i class="fa-solid fa-trash-can text-red-500 text-3xl"></i></div><h3 class="text-xl font-bold text-theme-text mb-2 tracking-tight">刪除任務？</h3><p class="text-theme-muted text-sm mb-6">此動作無法復原</p><div class="flex gap-3"><button onclick="app.UI.modal.close()" class="flex-1 glass-card py-3.5 font-bold text-theme-text hover:-translate-y-1 hover:bg-theme-input active:scale-95 transition-all duration-300">取消</button><button onclick="app.tasks.doDelete('${id}')" class="flex-1 bg-red-600 hover:bg-red-500 rounded-xl py-3.5 font-bold text-white shadow-lg hover:-translate-y-1 hover:shadow-red-500/40 active:scale-95 transition-all duration-300">確認刪除</button></div></div>`); },
-                doDelete: async (id) => { await deleteDoc(doc(db, API.paths.tasks(), id)); AdminService.log('TASK_DELETED', { taskId: id }); UI.modal.close(); UI.notify('已刪除'); }
+                doDelete: async (id) => { try { await deleteDoc(doc(db, API.paths.tasks(), id)); AdminService.log('TASK_DELETED', { taskId: id }); UI.modal.close(); UI.notify('已刪除'); } catch(e) { UI.notify('刪除失敗', 'error'); } }
             },
             timetable: {
                 isEditMode: false,
@@ -1333,8 +1497,8 @@
                     } else {
                         html += `<div class="mt-2 flex flex-col gap-2 px-1 animate-[fadeIn_0.3s_ease-out]">`;
                         html += slots.map(s => `
-                            <div class="flex items-center gap-3 p-3 bg-theme-input/30 border border-theme-border rounded-xl hover:shadow-md transition-all shadow-sm">
-                                <div class="flex flex-col text-right w-[50px] shrink-0 border-r border-theme-border/50 pr-3">
+                            <div class="flex items-center gap-3 p-3 bg-theme-input border border-theme-border rounded-xl hover:shadow-md transition-all shadow-sm">
+                                <div class="flex flex-col text-right w-[50px] shrink-0 border-r border-theme-border pr-3">
                                     <span class="text-[13px] font-mono font-bold text-theme-text">${s.start}</span>
                                     <span class="text-[10px] font-mono text-theme-muted mt-0.5">${s.end}</span>
                                 </div>

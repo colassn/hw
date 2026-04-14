@@ -180,7 +180,7 @@
         </div>
     </section>
 
-    <!-- 2. 超級管理員攔截層 (修復淺色模式) -->
+    <!-- 2. 超級管理員攔截層 -->
     <div id="system-blocker" class="fixed inset-0 z-[300] hidden bg-white/95 dark:bg-[#030305]/95 backdrop-blur-xl flex-col items-center justify-center px-6 text-center">
         <i id="blocker-icon" class="fa-solid fa-triangle-exclamation text-6xl text-yellow-500 mb-6 animate-pulse"></i>
         <h2 id="blocker-title" class="text-3xl font-bold text-theme-text mb-3 tracking-tight font-display">系統維護中</h2>
@@ -262,7 +262,7 @@
                 </div>
             </div>
 
-            <!-- 第三層：各頁面內容容器 (功課記錄等) -->
+            <!-- 第三層：各頁面內容容器 -->
             <div class="px-4 md:px-6 w-full pb-32 md:max-w-5xl lg:max-w-6xl md:mx-auto">
                 <section id="view-home" class="view-section active w-full">
                     <!-- Group Announcements Container -->
@@ -365,6 +365,7 @@
                                     <label class="block text-xs font-mono font-bold text-theme-muted uppercase tracking-wider mb-2">繳交日期 Due Date</label>
                                     <input type="date" id="form-date" class="premium-input py-3 font-semibold dark:[color-scheme:dark] shadow-sm">
                                 </div>
+                                <!-- 無原生 select：點擊開啟 Bottom Sheet -->
                                 <div class="col-span-2 md:col-span-1">
                                     <label class="block text-xs font-mono font-bold text-theme-muted uppercase tracking-wider mb-2"><i class="fa-solid fa-repeat mr-1"></i>自動重複 Repeat</label>
                                     <input type="hidden" id="form-repeat" value="none">
@@ -418,6 +419,7 @@
                             <i class="fa-solid fa-circle-half-stroke text-2xl text-brand-500"></i>
                             <span class="text-xs font-bold">外觀主題切換</span>
                         </button>
+                        <!-- 🌟 課表模式切換按鈕 -->
                         <button onclick="app.settings.toggleTimetableMode()" class="glass-card p-4 flex flex-col items-center justify-center gap-2 hover:-translate-y-1 hover:shadow-lg transition-all active:scale-95 text-theme-text">
                             <i class="fa-solid fa-calendar-days text-2xl text-blue-500"></i>
                             <span class="text-xs font-bold" id="setting-tt-mode-text">課表：星期制</span>
@@ -457,18 +459,21 @@
             </div>
         </main>
 
-        <!-- 全域右下角懸浮新增按鈕 (Global FAB) - iPad position adjusted -->
+        <!-- 全域右下角懸浮新增按鈕 (Global FAB) -->
         <button onclick="app.nav.switch('add')" id="global-fab" class="fixed bottom-8 right-6 md:bottom-12 md:right-12 lg:right-16 w-14 h-14 bg-gradient-to-tr from-brand-600 to-pink-500 rounded-full flex items-center justify-center text-white text-2xl shadow-[0_10px_30px_rgba(99,102,241,0.5)] hover:shadow-[0_15px_40px_rgba(99,102,241,0.8)] hover:scale-110 active:scale-95 transition-all duration-400 z-50">
             <i class="fa-solid fa-plus transition-transform duration-400" id="add-icon"></i>
         </button>
 
     </div>
 
-    <!-- 4. 全域組件 (加入 onclick 事件，允許點擊背景關閉) -->
-    <div id="global-overlay" onclick="if(app.UI) { app.UI.sheet.close(); app.UI.modal.close(); }" class="fixed inset-0 bg-black/20 dark:bg-black/60 backdrop-blur-sm z-[200] hidden opacity-0 transition-opacity duration-300"></div>
+    <!-- 4. 全域組件 -->
+    <!-- 背景點擊關閉遮罩 -->
+    <div id="global-overlay" onclick="if(app.UI) { app.UI.sheet.close(); app.UI.modal.close(); }" class="fixed inset-0 bg-black/20 dark:bg-black/60 backdrop-blur-sm z-[200] hidden opacity-0 transition-opacity duration-300 cursor-pointer"></div>
+    
     <div id="center-modal" class="fixed inset-0 z-[210] hidden flex items-center justify-center p-6 pointer-events-none">
         <div id="center-modal-content" class="glass-card w-full max-w-sm p-6 md:p-8 transform scale-95 opacity-0 pointer-events-auto shadow-2xl border-theme-border"></div>
     </div>
+    
     <!-- Bottom Sheet (浮空 Modal 基礎) -->
     <div id="bottom-sheet" class="fixed inset-x-0 bottom-0 z-[210] hidden flex flex-col justify-end pointer-events-none">
         <div id="bottom-sheet-content" class="glass-card bg-theme-bg w-full md:max-w-md md:mx-auto rounded-b-none md:rounded-b-3xl rounded-t-3xl p-6 pb-safe transform translate-y-full pointer-events-auto border md:border-b-theme-border md:mb-6 border-t-theme-border shadow-[0_-20px_60px_rgba(0,0,0,0.3)] dark:shadow-[0_-20px_60px_rgba(0,0,0,0.8)] flex flex-col max-h-[85vh]">
@@ -477,14 +482,14 @@
         </div>
     </div>
     
-    <!-- 通知面板 -->
-    <div id="notif-panel" class="fixed inset-y-0 right-0 w-full md:w-[380px] bg-white/90 dark:bg-[#0a0a0c]/90 backdrop-blur-2xl z-[210] hidden transform translate-x-full border-l border-theme-border flex flex-col shadow-2xl">
+    <div id="notif-panel" class="fixed inset-y-0 right-0 w-full md:w-[380px] bg-theme-bg/95 backdrop-blur-2xl z-[210] hidden transform translate-x-full border-l border-theme-border flex flex-col shadow-2xl">
         <div class="p-6 border-b border-theme-border flex justify-between items-center bg-theme-input">
             <h3 class="text-xl font-bold text-theme-text"><i class="fa-solid fa-bell text-brand-500 mr-2"></i>系統通知</h3>
             <button onclick="app.notifications.toggle()" class="w-8 h-8 rounded-full bg-theme-input flex items-center justify-center text-theme-muted hover:text-theme-text border border-theme-border active:scale-95 transition"><i class="fa-solid fa-xmark"></i></button>
         </div>
         <div id="notif-list" class="flex-1 overflow-y-auto p-4 space-y-3 no-scrollbar"></div>
     </div>
+    
     <div id="toast-root" class="fixed top-16 left-0 right-0 z-[500] flex flex-col items-center gap-3 pointer-events-none px-4"></div>
 
     <script type="module">
@@ -725,7 +730,7 @@
 
                     UI.sheet.open(`
                         <div class="relative text-center">
-                            <!-- 右上角關閉 (X) 按鈕 -->
+                            <!-- 返回/關閉圖示 -->
                             <button onclick="app.UI.sheet.close()" class="absolute -top-2 right-0 w-8 h-8 rounded-full bg-theme-input flex items-center justify-center text-theme-muted hover:text-theme-text border border-theme-border active:scale-95 transition-all z-10"><i class="fa-solid fa-xmark"></i></button>
                             
                             <div class="relative inline-block">${src}</div>
@@ -735,7 +740,7 @@
                             <div class="space-y-3">
                                 ${state.profile.role === 'provider' ? '' : `<button onclick="app.profile.demoRole()" class="w-full glass-card py-4 text-sm font-bold text-brand-500 hover:bg-theme-input hover:-translate-y-1 active:scale-95 transition-all duration-300 flex justify-center items-center gap-2"><i class="fa-solid fa-crown"></i> 申請升級 Provider</button>`}
                                 <button onclick="app.auth.logout()" class="w-full bg-red-500/10 border border-red-500/30 text-red-500 py-4 rounded-xl text-sm font-bold hover:bg-red-500/20 hover:-translate-y-1 active:scale-95 transition-all duration-300 shadow-sm">安全登出 Sign Out</button>
-                                <!-- 下方大大的返回按鈕 -->
+                                <!-- 下方大型返回按鈕 -->
                                 <button onclick="app.UI.sheet.close()" class="w-full bg-theme-input border border-theme-border text-theme-text py-4 rounded-xl text-sm font-bold hover:bg-theme-border hover:-translate-y-1 active:scale-95 transition-all duration-300 shadow-sm">返回 Return</button>
                             </div>
                         </div>
@@ -1010,7 +1015,7 @@
                     UI.sheet.close();
                 },
                 save: async () => {
-                    const id = document.getElementById('form-task-id').value, title = document.getElementById('form-title').value.trim(), content = document.getElementById('form-content').value.trim(), subject = document.getElementById('form-subject-value').value, dueDate = document.getElementById('form-date').value, target = document.getElementById('form-target')?.value, type = document.getElementById('form-type').value, repeat = document.getElementById('form-repeat').value;
+                    const id = document.getElementById('form-task-id').value, title = document.getElementById('form-title').value.trim(), content = document.getElementById('form-content').value.trim(), subject = document.getElementById('form-subject-value').value, dueDate = document.getElementById('form-date').value, target = document.getElementById('form-target').value, type = document.getElementById('form-type').value, repeat = document.getElementById('form-repeat').value;
                     if(!title || !subject) return UI.notify('請填寫完整', 'error');
                     
                     const data = { title, content, subject, type, attachment: state.tempImageBase64 };
@@ -1096,6 +1101,10 @@
             },
             timetable: {
                 isEditMode: false,
+                changeDay: (dayKey) => {
+                    state.currentDayTab = dayKey;
+                    app.timetable.renderDaySelector();
+                },
                 toggleEditMode: () => {
                     app.timetable.isEditMode = !app.timetable.isEditMode;
                     app.timetable.renderDaySelector();
@@ -1128,8 +1137,6 @@
                     }, 1000);
                 },
                 renderDaySelector: () => {
-                    document.querySelectorAll('.tt-day-btn').forEach(b => { b.classList.remove('active'); if(parseInt(b.dataset.day) === state.currentDayTab) { b.classList.add('active'); b.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' }); } b.onclick = () => { state.currentDayTab = parseInt(b.dataset.day); app.timetable.renderDaySelector(); }; });
-                    
                     const c = document.getElementById('timetable-slots');
                     const selectorContainer = document.getElementById('timetable-day-selector');
                     const ttMode = localStorage.getItem('lumina_tt_mode') || 'week';
@@ -1137,10 +1144,10 @@
                     let dayHtml = '';
                     if (ttMode === 'week') {
                         const days = [{k:'1', l:'星期一'},{k:'2', l:'星期二'},{k:'3', l:'星期三'},{k:'4', l:'星期四'},{k:'5', l:'星期五'},{k:'6', l:'星期六'},{k:'0', l:'星期日'}];
-                        dayHtml = days.map(d => `<button class="tt-day-btn pill-btn snap-center ${state.currentDayTab===d.k?'active':''}" onclick="state.currentDayTab='${d.k}'; app.timetable.renderDaySelector()">${d.l}</button>`).join('');
+                        dayHtml = days.map(d => `<button class="tt-day-btn pill-btn snap-center ${state.currentDayTab===d.k?'active':''}" onclick="app.timetable.changeDay('${d.k}')">${d.l}</button>`).join('');
                     } else {
                         const days = [{k:'d1', l:'Day 1'},{k:'d2', l:'Day 2'},{k:'d3', l:'Day 3'},{k:'d4', l:'Day 4'},{k:'d5', l:'Day 5'},{k:'d6', l:'Day 6'}];
-                        dayHtml = days.map(d => `<button class="tt-day-btn pill-btn snap-center ${state.currentDayTab===d.k?'active':''}" onclick="state.currentDayTab='${d.k}'; app.timetable.renderDaySelector()">${d.l}</button>`).join('');
+                        dayHtml = days.map(d => `<button class="tt-day-btn pill-btn snap-center ${state.currentDayTab===d.k?'active':''}" onclick="app.timetable.changeDay('${d.k}')">${d.l}</button>`).join('');
                     }
                     if(selectorContainer) selectorContainer.innerHTML = dayHtml;
 
@@ -1181,7 +1188,7 @@
                         </div>`;
 
                         html += slots.map(s => `
-                            <div class="flex items-center gap-2.5 p-2 mb-2 bg-theme-input border border-theme-border rounded-xl transition-colors hover:border-brand-500/40 focus-within:border-brand-500/80 shadow-sm animate-[fadeIn_0.3s_ease-out]">
+                            <div class="flex items-center gap-2.5 p-2 mb-2 bg-theme-input/50 border border-theme-border rounded-xl transition-colors hover:border-brand-500/40 focus-within:border-brand-500/80 focus-within:bg-theme-bg shadow-sm animate-[fadeIn_0.3s_ease-out]">
                                 <div class="flex flex-col gap-1.5 w-[75px] shrink-0">
                                     <input type="time" value="${s.start}" onchange="app.timetable.updateSlotInline('${s.id}', 'start', this.value)" class="bg-transparent text-[12px] font-mono font-bold text-theme-text outline-none border-b border-transparent focus:border-brand-500 pb-0.5 dark:[color-scheme:dark]">
                                     <input type="time" value="${s.end}" onchange="app.timetable.updateSlotInline('${s.id}', 'end', this.value)" class="bg-transparent text-[11px] font-mono text-theme-muted outline-none border-b border-transparent focus:border-brand-500 pb-0.5 dark:[color-scheme:dark]">
@@ -1201,8 +1208,8 @@
                     } else {
                         html += `<div class="mt-2 flex flex-col gap-2 px-1 animate-[fadeIn_0.3s_ease-out]">`;
                         html += slots.map(s => `
-                            <div class="flex items-center gap-3 p-3 bg-theme-input border border-theme-border rounded-xl hover:bg-gray-200/50 dark:hover:bg-white/10 transition-colors shadow-sm">
-                                <div class="flex flex-col text-right w-[50px] shrink-0 border-r border-theme-border pr-3">
+                            <div class="flex items-center gap-3 p-3 bg-theme-input/30 border border-theme-border rounded-xl hover:bg-theme-input/60 transition-colors">
+                                <div class="flex flex-col text-right w-[50px] shrink-0 border-r border-theme-border/50 pr-3">
                                     <span class="text-[13px] font-mono font-bold text-theme-text">${s.start}</span>
                                     <span class="text-[10px] font-mono text-theme-muted mt-0.5">${s.end}</span>
                                 </div>

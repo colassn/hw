@@ -144,8 +144,8 @@
         </div>
     </div>
 
-    <!-- 1. 登入頁面 -->
-    <section id="view-auth" class="fixed inset-0 z-[100] flex flex-col items-center justify-center px-6 hidden bg-theme-bg/60 backdrop-blur-md">
+    <!-- 1. 登入頁面 (修復淺色模式下 bg-opacity 的問題) -->
+    <section id="view-auth" class="fixed inset-0 z-[100] flex flex-col items-center justify-center px-6 hidden bg-white/60 dark:bg-[#030305]/60 backdrop-blur-md">
         <div class="w-full max-w-sm glass-card p-8 text-center relative overflow-hidden shadow-2xl border border-theme-border">
             <div class="absolute -top-20 -right-20 w-40 h-40 bg-brand-500/20 blur-3xl rounded-full"></div>
             
@@ -180,8 +180,8 @@
         </div>
     </section>
 
-    <!-- 2. 超級管理員攔截層 -->
-    <div id="system-blocker" class="fixed inset-0 z-[300] hidden bg-theme-bg/95 backdrop-blur-xl flex-col items-center justify-center px-6 text-center">
+    <!-- 2. 超級管理員攔截層 (修復淺色模式) -->
+    <div id="system-blocker" class="fixed inset-0 z-[300] hidden bg-white/95 dark:bg-[#030305]/95 backdrop-blur-xl flex-col items-center justify-center px-6 text-center">
         <i id="blocker-icon" class="fa-solid fa-triangle-exclamation text-6xl text-yellow-500 mb-6 animate-pulse"></i>
         <h2 id="blocker-title" class="text-3xl font-bold text-theme-text mb-3 tracking-tight font-display">系統維護中</h2>
         <p id="blocker-message" class="text-theme-muted text-sm max-w-xs leading-relaxed">超級管理員正在進行系統升級，請稍後再試。感謝您的耐心等候。</p>
@@ -202,7 +202,7 @@
                 
                 <button onclick="app.notifications.toggle()" class="relative text-theme-muted hover:text-theme-text hover:scale-110 active:scale-95 transition-all duration-300">
                     <i class="fa-solid fa-bell text-xl md:text-2xl"></i>
-                    <span id="notif-badge" class="hidden absolute -top-1 -right-1 w-2.5 h-2.5 md:w-3 md:h-3 bg-pink-500 rounded-full border-2 border-theme-bg"></span>
+                    <span id="notif-badge" class="hidden absolute -top-1 -right-1 w-2.5 h-2.5 md:w-3 md:h-3 bg-pink-500 rounded-full border-2 border-white dark:border-[#030305]"></span>
                 </button>
                 <button onclick="app.profile.toggle()" class="w-9 h-9 md:w-10 md:h-10 rounded-full bg-theme-input flex items-center justify-center overflow-hidden border border-theme-border shadow-lg hover:shadow-brand-500/50 hover:scale-105 active:scale-95 transition-all duration-300">
                     <img id="header-avatar" src="" alt="Profile" class="w-full h-full object-cover hidden">
@@ -265,198 +265,196 @@
             <!-- 第三層：各頁面內容容器 (功課記錄等) -->
             <div class="px-4 md:px-6 w-full pb-32 md:max-w-5xl lg:max-w-6xl md:mx-auto">
                 <section id="view-home" class="view-section active w-full">
+                    <!-- Group Announcements Container -->
+                    <div id="home-announcements" class="mb-4 space-y-2 md:max-w-3xl md:mx-auto hidden"></div>
 
-                <div class="flex justify-between items-end mb-4 px-2 md:px-0">
-                    <h2 class="text-xl font-bold text-theme-text tracking-tight">待辦任務</h2>
-                </div>
-
-                <!-- 🌟 全新作業過濾器 (Smart Task Filters - Custom Dropdown Models) -->
-                <div class="flex gap-2 mb-6 px-2 md:px-0 overflow-x-auto no-scrollbar md:max-w-3xl md:mx-auto">
-                    <button id="filter-subject-btn" onclick="app.tasks.openFilterSubjectModal()" class="bg-theme-input text-theme-text text-[11px] font-bold px-3 py-2 rounded-full border border-theme-border outline-none focus:border-brand-500 transition-colors flex items-center gap-1.5 shrink-0 hover:-translate-y-0.5 active:scale-95 shadow-sm">
-                        <span id="filter-subject-text">所有科目</span> <i class="fa-solid fa-chevron-down text-[9px] opacity-70"></i>
-                    </button>
-                    <button id="filter-incomplete" onclick="app.tasks.toggleIncompleteFilter()" class="bg-theme-input text-theme-muted text-[11px] font-bold px-3 py-2 rounded-full border border-theme-border whitespace-nowrap transition-colors flex items-center gap-1.5 shrink-0 hover:-translate-y-0.5 active:scale-95 shadow-sm">
-                        <i class="fa-solid fa-circle-check"></i> <span>僅未完成</span>
-                    </button>
-                    <button id="filter-sort" onclick="app.tasks.toggleSortFilter()" class="bg-theme-input text-brand-500 text-[11px] font-bold px-3 py-2 rounded-full border border-theme-border whitespace-nowrap transition-colors flex items-center gap-1.5 shrink-0 hover:-translate-y-0.5 active:scale-95 shadow-sm">
-                        <i class="fa-solid fa-arrow-down-short-wide"></i> <span>繳交日期</span>
-                    </button>
-                </div>
-
-                <div id="todo-list" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"></div>
-                <div id="todo-empty" class="hidden flex-col items-center justify-center py-24 text-theme-muted">
-                    <div class="w-16 h-16 mb-4 rounded-full glass-card flex items-center justify-center border border-theme-border">
-                        <i class="fa-solid fa-mug-hot text-2xl opacity-50"></i>
+                    <div class="flex justify-between items-end mb-4 px-2 md:px-0">
+                        <h2 class="text-xl font-bold text-theme-text tracking-tight">待辦任務</h2>
                     </div>
-                    <p class="text-sm font-bold tracking-wide">所有任務已清空</p>
-                </div>
-            </section>
 
-            <section id="view-timetable" class="view-section w-full">
-                <div class="flex justify-between items-end mb-4 px-2 md:px-0 md:max-w-3xl md:mx-auto">
-                    <h2 class="text-xl font-bold text-theme-text tracking-tight">時間表</h2>
-                </div>
-                <!-- 🌟 動態日別選擇器 (Week or Day 1-6) -->
-                <div id="timetable-day-selector" class="flex gap-2 overflow-x-auto no-scrollbar pb-4 mb-2 snap-x md:justify-center md:max-w-3xl md:mx-auto">
-                    <!-- Javascript will populate this based on Timetable Mode -->
-                </div>
-                <div class="glass-card p-2 shadow-xl border-theme-border flex flex-col max-h-[70vh] md:max-w-3xl md:mx-auto">
-                    <div class="flex justify-between items-center p-3 border-b border-theme-border shrink-0">
-                        <h3 class="font-bold text-sm text-theme-text"><i class="fa-solid fa-clock text-brand-500 mr-2"></i>每日課表</h3>
-                        <div class="flex gap-2">
-                            <!-- 唯讀模式按鈕 -->
-                            <button id="tt-btn-edit" onclick="app.timetable.toggleEditMode()" class="text-[10px] sm:text-xs text-brand-500 font-bold bg-brand-500/10 px-4 py-1.5 rounded-full hover:bg-brand-500/20 hover:scale-105 active:scale-95 transition-all"><i class="fa-solid fa-pen"></i> 編輯</button>
-                            <!-- 編輯模式按鈕 (預設隱藏) -->
-                            <button id="tt-btn-copy" onclick="app.timetable.copyToAllWeekModal()" class="hidden text-[10px] sm:text-xs text-emerald-500 font-bold bg-emerald-500/10 px-3 py-1.5 rounded-full hover:bg-emerald-500/20 hover:scale-105 active:scale-95 transition-all"><i class="fa-solid fa-copy"></i> 套用</button>
-                            <button id="tt-btn-add" onclick="app.timetable.addSlotDirect()" class="hidden text-[10px] sm:text-xs text-brand-500 font-bold bg-brand-500/10 px-3 py-1.5 rounded-full hover:bg-brand-500/20 hover:scale-105 active:scale-95 transition-all"><i class="fa-solid fa-plus"></i> 新增</button>
-                            <button id="tt-btn-done" onclick="app.timetable.toggleEditMode()" class="hidden text-[10px] sm:text-xs text-white font-bold bg-brand-500 px-4 py-1.5 rounded-full hover:bg-brand-600 hover:scale-105 active:scale-95 transition-all shadow-md shadow-brand-500/30"><i class="fa-solid fa-check"></i> 完成</button>
+                    <!-- 🌟 全新作業過濾器 (Smart Task Filters - Custom Dropdown Models) -->
+                    <div class="flex gap-2 mb-6 px-2 md:px-0 overflow-x-auto no-scrollbar md:max-w-3xl md:mx-auto">
+                        <button id="filter-subject-btn" onclick="app.tasks.openFilterSubjectModal()" class="bg-theme-input text-theme-text text-[11px] font-bold px-3 py-2 rounded-full border border-theme-border outline-none focus:border-brand-500 transition-colors flex items-center gap-1.5 shrink-0 hover:-translate-y-0.5 active:scale-95 shadow-sm">
+                            <span id="filter-subject-text">所有科目</span> <i class="fa-solid fa-chevron-down text-[9px] opacity-70"></i>
+                        </button>
+                        <button id="filter-incomplete" onclick="app.tasks.toggleIncompleteFilter()" class="bg-theme-input text-theme-muted text-[11px] font-bold px-3 py-2 rounded-full border border-theme-border whitespace-nowrap transition-colors flex items-center gap-1.5 shrink-0 hover:-translate-y-0.5 active:scale-95 shadow-sm">
+                            <i class="fa-solid fa-circle-check"></i> <span>僅未完成</span>
+                        </button>
+                        <button id="filter-sort" onclick="app.tasks.toggleSortFilter()" class="bg-theme-input text-brand-500 text-[11px] font-bold px-3 py-2 rounded-full border border-theme-border whitespace-nowrap transition-colors flex items-center gap-1.5 shrink-0 hover:-translate-y-0.5 active:scale-95 shadow-sm">
+                            <i class="fa-solid fa-arrow-down-short-wide"></i> <span>繳交日期</span>
+                        </button>
+                    </div>
+
+                    <div id="todo-list" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"></div>
+                    <div id="todo-empty" class="hidden flex-col items-center justify-center py-24 text-theme-muted">
+                        <div class="w-16 h-16 mb-4 rounded-full glass-card flex items-center justify-center border border-theme-border">
+                            <i class="fa-solid fa-mug-hot text-2xl opacity-50"></i>
                         </div>
+                        <p class="text-sm font-bold tracking-wide">所有任務已清空</p>
                     </div>
-                    <!-- Timetable Slots Container -->
-                    <div id="timetable-slots" class="flex-1 overflow-y-auto no-scrollbar p-2"></div>
-                </div>
-            </section>
+                </section>
 
-            <section id="view-history" class="view-section w-full">
-                <div class="flex justify-between items-end mb-4 px-2 md:px-0">
-                    <h2 class="text-xl font-bold text-theme-text tracking-tight">歷史記錄</h2>
-                    <span class="text-xs font-semibold text-emerald-500 tracking-wider">已歸檔任務</span>
-                </div>
-                <div id="history-list" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"></div>
-                <div id="history-empty" class="hidden flex-col items-center justify-center py-24 text-theme-muted">
-                    <i class="fa-solid fa-clock-rotate-left text-4xl mb-4 opacity-30"></i>
-                    <p class="text-sm font-bold tracking-wide">尚無歷史記錄</p>
-                </div>
-            </section>
+                <section id="view-timetable" class="view-section w-full">
+                    <div class="flex justify-between items-end mb-4 px-2 md:px-0 md:max-w-3xl md:mx-auto">
+                        <h2 class="text-xl font-bold text-theme-text tracking-tight">時間表</h2>
+                    </div>
+                    <!-- 🌟 動態日別選擇器 (Week or Day 1-6) -->
+                    <div id="timetable-day-selector" class="flex gap-2 overflow-x-auto no-scrollbar pb-4 mb-2 snap-x md:justify-center md:max-w-3xl md:mx-auto">
+                        <!-- Javascript will populate this based on Timetable Mode -->
+                    </div>
+                    <div class="glass-card p-2 shadow-xl border-theme-border flex flex-col max-h-[70vh] md:max-w-3xl md:mx-auto">
+                        <div class="flex justify-between items-center p-3 border-b border-theme-border shrink-0">
+                            <h3 class="font-bold text-sm text-theme-text"><i class="fa-solid fa-clock text-brand-500 mr-2"></i>每日課表</h3>
+                            <div class="flex gap-2">
+                                <button id="tt-btn-edit" onclick="app.timetable.toggleEditMode()" class="text-[10px] sm:text-xs text-brand-500 font-bold bg-brand-500/10 px-4 py-1.5 rounded-full hover:bg-brand-500/20 hover:scale-105 active:scale-95 transition-all"><i class="fa-solid fa-pen"></i> 編輯</button>
+                                <button id="tt-btn-copy" onclick="app.timetable.copyToAllWeekModal()" class="hidden text-[10px] sm:text-xs text-emerald-500 font-bold bg-emerald-500/10 px-3 py-1.5 rounded-full hover:bg-emerald-500/20 hover:scale-105 active:scale-95 transition-all"><i class="fa-solid fa-copy"></i> 套用</button>
+                                <button id="tt-btn-add" onclick="app.timetable.addSlotDirect()" class="hidden text-[10px] sm:text-xs text-brand-500 font-bold bg-brand-500/10 px-3 py-1.5 rounded-full hover:bg-brand-500/20 hover:scale-105 active:scale-95 transition-all"><i class="fa-solid fa-plus"></i> 新增</button>
+                                <button id="tt-btn-done" onclick="app.timetable.toggleEditMode()" class="hidden text-[10px] sm:text-xs text-white font-bold bg-brand-500 px-4 py-1.5 rounded-full hover:bg-brand-600 hover:scale-105 active:scale-95 transition-all shadow-md shadow-brand-500/30"><i class="fa-solid fa-check"></i> 完成</button>
+                            </div>
+                        </div>
+                        <div id="timetable-slots" class="flex-1 overflow-y-auto no-scrollbar p-2"></div>
+                    </div>
+                </section>
 
-            <section id="view-add" class="view-section w-full">
-                <div class="flex items-center mb-6 px-2 md:px-0 md:max-w-2xl md:mx-auto">
-                    <button onclick="app.nav.switch('home')" class="w-8 h-8 mr-3 rounded-full bg-theme-input flex items-center justify-center text-theme-text hover:bg-theme-border active:scale-95 transition-all border border-theme-border shadow-sm">
-                        <i class="fa-solid fa-arrow-left text-sm"></i>
-                    </button>
-                    <h2 id="form-header-title" class="text-xl font-bold text-theme-text tracking-tight">新增任務</h2>
-                </div>
-                
-                <div class="glass-card p-5 relative overflow-hidden shadow-2xl md:max-w-2xl md:mx-auto">
-                    <div class="absolute top-0 right-0 w-40 h-40 bg-brand-500/10 blur-3xl rounded-full"></div>
-                    <input type="hidden" id="form-task-id">
-                    
-                    <div class="flex bg-theme-input p-1.5 rounded-xl mb-6 relative z-10 border border-theme-border shadow-inner">
-                        <button id="type-btn-task" onclick="app.tasks.setFormType('task')" class="flex-1 py-2.5 text-sm font-bold rounded-lg bg-theme-text text-theme-bg shadow-sm transition-all">📝 一般功課</button>
-                        <button id="type-btn-exam" onclick="app.tasks.setFormType('exam')" class="flex-1 py-2.5 text-sm font-semibold rounded-lg text-theme-muted hover:text-theme-text transition-all">🚨 測驗考試</button>
-                        <input type="hidden" id="form-type" value="task">
+                <section id="view-history" class="view-section w-full">
+                    <div class="flex justify-between items-end mb-4 px-2 md:px-0">
+                        <h2 class="text-xl font-bold text-theme-text tracking-tight">歷史記錄</h2>
+                        <span class="text-xs font-semibold text-emerald-500 tracking-wider">已歸檔任務</span>
+                    </div>
+                    <div id="history-list" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"></div>
+                    <div id="history-empty" class="hidden flex-col items-center justify-center py-24 text-theme-muted">
+                        <i class="fa-solid fa-clock-rotate-left text-4xl mb-4 opacity-30"></i>
+                        <p class="text-sm font-bold tracking-wide">尚無歷史記錄</p>
+                    </div>
+                </section>
+
+                <section id="view-add" class="view-section w-full">
+                    <div class="flex items-center mb-6 px-2 md:px-0 md:max-w-2xl md:mx-auto">
+                        <button onclick="app.nav.switch('home')" class="w-8 h-8 mr-3 rounded-full bg-theme-input flex items-center justify-center text-theme-text hover:bg-theme-border active:scale-95 transition-all border border-theme-border shadow-sm">
+                            <i class="fa-solid fa-arrow-left text-sm"></i>
+                        </button>
+                        <h2 id="form-header-title" class="text-xl font-bold text-theme-text tracking-tight">新增任務</h2>
                     </div>
                     
-                    <div class="space-y-6 relative z-10">
-                        <div>
-                            <input type="text" id="form-title" class="w-full bg-transparent border-0 border-b-2 border-theme-border px-2 py-2 text-xl font-bold text-theme-text placeholder-theme-muted focus:ring-0 focus:border-brand-500 transition-colors" placeholder="輸入任務標題...">
-                        </div>
-
-                        <div class="bg-theme-input p-4 rounded-2xl border border-theme-border hover:border-gray-300 dark:hover:border-white/20 transition-colors shadow-sm">
-                            <div class="flex justify-between items-center mb-3">
-                                <label class="block text-xs font-mono font-bold text-brand-500 uppercase tracking-wider">科目 Subject</label>
-                                <button onclick="app.settings.addSubjectModal()" class="text-xs text-brand-500 hover:text-brand-600 hover:scale-105 transition-all"><i class="fa-solid fa-plus"></i> 自訂</button>
-                            </div>
-                            <div id="form-subjects-scroll" class="flex gap-2 overflow-x-auto no-scrollbar pb-2 snap-x"></div>
-                            <input type="hidden" id="form-subject-value">
-                        </div>
-
-                        <div class="grid grid-cols-2 gap-4">
-                            <div class="col-span-2 md:col-span-1">
-                                <label class="block text-xs font-mono font-bold text-theme-muted uppercase tracking-wider mb-2">繳交日期 Due Date</label>
-                                <input type="date" id="form-date" class="premium-input py-3 font-semibold dark:[color-scheme:dark] shadow-sm">
-                            </div>
-                            <!-- 🌟 全新浮空 Modal 選擇器 (取代原生的 select) -->
-                            <div class="col-span-2 md:col-span-1">
-                                <label class="block text-xs font-mono font-bold text-theme-muted uppercase tracking-wider mb-2"><i class="fa-solid fa-repeat mr-1"></i>自動重複 Repeat</label>
-                                <input type="hidden" id="form-repeat" value="none">
-                                <button type="button" onclick="app.tasks.openRepeatModal()" class="premium-input py-3 text-sm font-semibold text-left flex justify-between items-center bg-theme-input hover:border-theme-muted transition-colors shadow-sm">
-                                    <span id="form-repeat-text">不重複</span> <i class="fa-solid fa-chevron-down opacity-50 text-[10px]"></i>
-                                </button>
-                            </div>
-                            
-                            <div class="col-span-2" id="provider-target-section">
-                                <label class="block text-xs font-mono font-bold text-pink-500 uppercase tracking-wider mb-2"><i class="fa-solid fa-paper-plane mr-1"></i>發放對象 Target</label>
-                                <input type="hidden" id="form-target" value="self">
-                                <button type="button" onclick="app.tasks.openTargetModal()" class="premium-input bg-pink-500/10 border-pink-500/30 text-sm font-semibold text-theme-text hover:border-pink-500/60 transition-colors shadow-sm text-left flex justify-between items-center">
-                                    <span id="form-target-text">私人 (僅自己可見)</span> <i class="fa-solid fa-chevron-down opacity-50 text-[10px] text-pink-500"></i>
-                                </button>
-                            </div>
+                    <div class="glass-card p-5 relative overflow-hidden shadow-2xl md:max-w-2xl md:mx-auto">
+                        <div class="absolute top-0 right-0 w-40 h-40 bg-brand-500/10 blur-3xl rounded-full"></div>
+                        <input type="hidden" id="form-task-id">
+                        
+                        <div class="flex bg-theme-input p-1.5 rounded-xl mb-6 relative z-10 border border-theme-border shadow-inner">
+                            <button id="type-btn-task" onclick="app.tasks.setFormType('task')" class="flex-1 py-2.5 text-sm font-bold rounded-lg bg-theme-text text-theme-bg shadow-sm transition-all">📝 一般功課</button>
+                            <button id="type-btn-exam" onclick="app.tasks.setFormType('exam')" class="flex-1 py-2.5 text-sm font-semibold rounded-lg text-theme-muted hover:text-theme-text transition-all">🚨 測驗考試</button>
+                            <input type="hidden" id="form-type" value="task">
                         </div>
                         
-                        <div id="form-warning-msg" class="hidden bg-yellow-500/10 border border-yellow-500/30 p-3 rounded-xl flex items-center gap-3">
-                            <i class="fa-solid fa-triangle-exclamation text-yellow-600 dark:text-yellow-500 text-lg"></i>
-                            <p class="text-xs text-yellow-700 dark:text-yellow-200 font-semibold leading-relaxed">該日已有 <span id="form-warning-count" class="text-yellow-600 dark:text-yellow-500 font-bold text-sm"></span> 項任務，建議提早規劃！</p>
-                        </div>
+                        <div class="space-y-6 relative z-10">
+                            <div>
+                                <input type="text" id="form-title" class="w-full bg-transparent border-0 border-b-2 border-theme-border px-2 py-2 text-xl font-bold text-theme-text placeholder-theme-muted focus:ring-0 focus:border-brand-500 transition-colors" placeholder="輸入任務標題...">
+                            </div>
 
-                        <div>
-                            <div class="flex justify-between items-center mb-2">
-                                <label class="block text-xs font-mono font-bold text-theme-muted uppercase tracking-wider">詳細內容 Details</label>
-                                <input type="file" id="form-image" accept="image/*" class="hidden" onchange="app.tasks.handleImageUpload(event)">
-                                <button onclick="document.getElementById('form-image').click()" class="text-[10px] font-bold bg-theme-input border border-theme-border text-theme-text px-2.5 py-1.5 rounded-full hover:shadow-md hover:-translate-y-0.5 active:scale-95 transition-all flex items-center gap-1.5">
-                                    <i class="fa-solid fa-camera"></i> 附加圖片
+                            <div class="bg-theme-input p-4 rounded-2xl border border-theme-border hover:border-gray-300 dark:hover:border-white/20 transition-colors shadow-sm">
+                                <div class="flex justify-between items-center mb-3">
+                                    <label class="block text-xs font-mono font-bold text-brand-500 uppercase tracking-wider">科目 Subject</label>
+                                    <button onclick="app.settings.addSubjectModal()" class="text-xs text-brand-500 hover:text-brand-600 hover:scale-105 transition-all"><i class="fa-solid fa-plus"></i> 自訂</button>
+                                </div>
+                                <div id="form-subjects-scroll" class="flex gap-2 overflow-x-auto no-scrollbar pb-2 snap-x"></div>
+                                <input type="hidden" id="form-subject-value">
+                            </div>
+
+                            <div class="grid grid-cols-2 gap-4">
+                                <div class="col-span-2 md:col-span-1">
+                                    <label class="block text-xs font-mono font-bold text-theme-muted uppercase tracking-wider mb-2">繳交日期 Due Date</label>
+                                    <input type="date" id="form-date" class="premium-input py-3 font-semibold dark:[color-scheme:dark] shadow-sm">
+                                </div>
+                                <div class="col-span-2 md:col-span-1">
+                                    <label class="block text-xs font-mono font-bold text-theme-muted uppercase tracking-wider mb-2"><i class="fa-solid fa-repeat mr-1"></i>自動重複 Repeat</label>
+                                    <input type="hidden" id="form-repeat" value="none">
+                                    <button type="button" onclick="app.tasks.openRepeatModal()" class="premium-input py-3 text-sm font-semibold text-left flex justify-between items-center bg-theme-input hover:border-theme-muted transition-colors shadow-sm">
+                                        <span id="form-repeat-text">不重複</span> <i class="fa-solid fa-chevron-down opacity-50 text-[10px]"></i>
+                                    </button>
+                                </div>
+                                
+                                <div class="col-span-2" id="provider-target-section">
+                                    <label class="block text-xs font-mono font-bold text-pink-500 uppercase tracking-wider mb-2"><i class="fa-solid fa-paper-plane mr-1"></i>發放對象 Target</label>
+                                    <input type="hidden" id="form-target" value="self">
+                                    <button type="button" onclick="app.tasks.openTargetModal()" class="premium-input bg-pink-500/10 border-pink-500/30 text-sm font-semibold text-theme-text hover:border-pink-500/60 transition-colors shadow-sm text-left flex justify-between items-center">
+                                        <span id="form-target-text">私人 (僅自己可見)</span> <i class="fa-solid fa-chevron-down opacity-50 text-[10px] text-pink-500"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            
+                            <div id="form-warning-msg" class="hidden bg-yellow-500/10 border border-yellow-500/30 p-3 rounded-xl flex items-center gap-3">
+                                <i class="fa-solid fa-triangle-exclamation text-yellow-600 dark:text-yellow-500 text-lg"></i>
+                                <p class="text-xs text-yellow-700 dark:text-yellow-200 font-semibold leading-relaxed">該日已有 <span id="form-warning-count" class="text-yellow-600 dark:text-yellow-500 font-bold text-sm"></span> 項任務，建議提早規劃！</p>
+                            </div>
+
+                            <div>
+                                <div class="flex justify-between items-center mb-2">
+                                    <label class="block text-xs font-mono font-bold text-theme-muted uppercase tracking-wider">詳細內容 Details</label>
+                                    <input type="file" id="form-image" accept="image/*" class="hidden" onchange="app.tasks.handleImageUpload(event)">
+                                    <button onclick="document.getElementById('form-image').click()" class="text-[10px] font-bold bg-theme-input border border-theme-border text-theme-text px-2.5 py-1.5 rounded-full hover:shadow-md hover:-translate-y-0.5 active:scale-95 transition-all flex items-center gap-1.5">
+                                        <i class="fa-solid fa-camera"></i> 附加圖片
+                                    </button>
+                                </div>
+                                <img id="form-image-preview" class="hidden w-full h-40 object-cover rounded-xl mb-3 border border-theme-border shadow-sm">
+                                <textarea id="form-content" class="premium-input h-32 resize-none py-3 text-sm leading-relaxed transition-all duration-300 focus:h-48 shadow-sm" placeholder="- 支援多行輸入&#10;- 可以記錄書本頁數"></textarea>
+                            </div>
+
+                            <div class="pt-2 pb-4">
+                                <button onclick="app.tasks.save()" class="w-full bg-gradient-to-r from-brand-600 to-brand-500 text-white py-4 rounded-xl font-bold text-sm shadow-[0_10px_30px_rgba(99,102,241,0.4)] hover:-translate-y-1 hover:shadow-[0_15px_40px_rgba(99,102,241,0.7)] active:scale-95 transition-all duration-300 flex items-center justify-center gap-2 group">
+                                    <i class="fa-solid fa-check group-hover:scale-125 transition-transform duration-300"></i> 儲存並加入清單
                                 </button>
                             </div>
-                            <img id="form-image-preview" class="hidden w-full h-40 object-cover rounded-xl mb-3 border border-theme-border shadow-sm">
-                            <textarea id="form-content" class="premium-input h-32 resize-none py-3 text-sm leading-relaxed transition-all duration-300 focus:h-48 shadow-sm" placeholder="- 支援多行輸入&#10;- 可以記錄書本頁數"></textarea>
-                        </div>
-
-                        <div class="pt-2 pb-4">
-                            <button onclick="app.tasks.save()" class="w-full bg-gradient-to-r from-brand-600 to-brand-500 text-white py-4 rounded-xl font-bold text-sm shadow-[0_10px_30px_rgba(99,102,241,0.4)] hover:-translate-y-1 hover:shadow-[0_15px_40px_rgba(99,102,241,0.7)] active:scale-95 transition-all duration-300 flex items-center justify-center gap-2 group">
-                                <i class="fa-solid fa-check group-hover:scale-125 transition-transform duration-300"></i> 儲存並加入清單
-                            </button>
                         </div>
                     </div>
-                </div>
-            </section>
+                </section>
 
-            <section id="view-settings" class="view-section w-full">
-                <div class="flex justify-between items-end mb-4 px-2 md:px-0 md:max-w-2xl md:mx-auto">
-                    <h2 class="text-xl font-bold text-theme-text tracking-tight">系統與群組</h2>
-                </div>
-                
-                <div class="grid grid-cols-2 gap-3 mb-6 md:max-w-2xl md:mx-auto">
-                    <button onclick="app.settings.toggleTheme()" class="glass-card p-4 flex flex-col items-center justify-center gap-2 hover:-translate-y-1 hover:shadow-lg transition-all active:scale-95 text-theme-text">
-                        <i class="fa-solid fa-circle-half-stroke text-2xl text-brand-500"></i>
-                        <span class="text-xs font-bold">外觀主題切換</span>
-                    </button>
-                    <!-- 🌟 課表模式切換按鈕 -->
-                    <button onclick="app.settings.toggleTimetableMode()" class="glass-card p-4 flex flex-col items-center justify-center gap-2 hover:-translate-y-1 hover:shadow-lg transition-all active:scale-95 text-theme-text">
-                        <i class="fa-solid fa-calendar-days text-2xl text-blue-500"></i>
-                        <span class="text-xs font-bold" id="setting-tt-mode-text">課表：星期制</span>
-                    </button>
-                </div>
-
-                <div class="glass-card p-6 mb-6 relative overflow-hidden shadow-xl hover:shadow-[0_15px_40px_rgba(0,0,0,0.1)] dark:hover:shadow-[0_15px_40px_rgba(0,0,0,0.6)] transition-all duration-500 md:max-w-2xl md:mx-auto">
-                    <div class="absolute top-0 right-0 w-32 h-32 bg-blue-500/10 blur-3xl rounded-full"></div>
-                    <h3 class="text-sm font-bold text-theme-text mb-5 uppercase tracking-wider font-mono"><i class="fa-solid fa-users text-blue-500 mr-2"></i>學習群組連線</h3>
+                <section id="view-settings" class="view-section w-full">
+                    <div class="flex justify-between items-end mb-4 px-2 md:px-0 md:max-w-2xl md:mx-auto">
+                        <h2 class="text-xl font-bold text-theme-text tracking-tight">系統與群組</h2>
+                    </div>
                     
-                    <div class="flex gap-3 mb-6 relative z-10">
-                        <input type="text" id="join-group-code" class="premium-input py-3 px-4 text-sm font-mono font-bold uppercase placeholder-theme-muted hover:border-gray-400 dark:hover:border-white/20 transition-colors shadow-sm" placeholder="輸入 6 位邀請碼" maxlength="6">
-                        <button onclick="app.groups.join()" class="bg-blue-600 hover:bg-blue-500 px-6 rounded-xl text-white font-bold text-sm hover:-translate-y-1 transition-all shadow-lg shadow-blue-500/30 hover:shadow-blue-500/50 active:scale-95">加入</button>
+                    <div class="grid grid-cols-2 gap-3 mb-6 md:max-w-2xl md:mx-auto">
+                        <button onclick="app.settings.toggleTheme()" class="glass-card p-4 flex flex-col items-center justify-center gap-2 hover:-translate-y-1 hover:shadow-lg transition-all active:scale-95 text-theme-text">
+                            <i class="fa-solid fa-circle-half-stroke text-2xl text-brand-500"></i>
+                            <span class="text-xs font-bold">外觀主題切換</span>
+                        </button>
+                        <button onclick="app.settings.toggleTimetableMode()" class="glass-card p-4 flex flex-col items-center justify-center gap-2 hover:-translate-y-1 hover:shadow-lg transition-all active:scale-95 text-theme-text">
+                            <i class="fa-solid fa-calendar-days text-2xl text-blue-500"></i>
+                            <span class="text-xs font-bold" id="setting-tt-mode-text">課表：星期制</span>
+                        </button>
                     </div>
 
-                    <div id="provider-create-group" class="hidden border-t border-theme-border pt-5 mb-5 relative z-10">
-                        <p class="text-xs font-mono font-bold text-pink-500 mb-3 uppercase tracking-wider">建立教學群組 (Provider)</p>
-                        <div class="flex gap-3">
-                            <input type="text" id="create-group-name" class="premium-input py-3 px-4 text-sm font-bold hover:border-gray-400 dark:hover:border-white/20 transition-colors shadow-sm" placeholder="新群組名稱...">
-                            <button onclick="app.groups.create()" class="bg-pink-600 hover:bg-pink-500 px-6 rounded-xl text-white font-bold text-sm hover:-translate-y-1 transition-all shadow-lg shadow-pink-500/30 hover:shadow-pink-500/50 active:scale-95">建立</button>
+                    <div class="glass-card p-6 mb-6 relative overflow-hidden shadow-xl hover:shadow-[0_15px_40px_rgba(0,0,0,0.1)] dark:hover:shadow-[0_15px_40px_rgba(0,0,0,0.6)] transition-all duration-500 md:max-w-2xl md:mx-auto">
+                        <div class="absolute top-0 right-0 w-32 h-32 bg-blue-500/10 blur-3xl rounded-full"></div>
+                        <h3 class="text-sm font-bold text-theme-text mb-5 uppercase tracking-wider font-mono"><i class="fa-solid fa-users text-blue-500 mr-2"></i>學習群組連線</h3>
+                        
+                        <div class="flex gap-3 mb-6 relative z-10">
+                            <input type="text" id="join-group-code" class="premium-input py-3 px-4 text-sm font-mono font-bold uppercase placeholder-theme-muted hover:border-theme-border transition-colors shadow-sm" placeholder="輸入 6 位邀請碼" maxlength="6">
+                            <button onclick="app.groups.join()" class="bg-blue-600 hover:bg-blue-500 px-6 rounded-xl text-white font-bold text-sm hover:-translate-y-1 transition-all shadow-lg shadow-blue-500/30 hover:shadow-blue-500/50 active:scale-95">加入</button>
                         </div>
+
+                        <div id="provider-create-group" class="hidden border-t border-theme-border pt-5 mb-5 relative z-10">
+                            <p class="text-xs font-mono font-bold text-pink-500 mb-3 uppercase tracking-wider">建立教學群組 (Provider)</p>
+                            <div class="flex gap-3">
+                                <input type="text" id="create-group-name" class="premium-input py-3 px-4 text-sm font-bold hover:border-theme-border transition-colors shadow-sm" placeholder="新群組名稱...">
+                                <button onclick="app.groups.create()" class="bg-pink-600 hover:bg-pink-500 px-6 rounded-xl text-white font-bold text-sm hover:-translate-y-1 transition-all shadow-lg shadow-pink-500/30 hover:shadow-pink-500/50 active:scale-95">建立</button>
+                            </div>
+                        </div>
+
+                        <div id="settings-groups-list" class="space-y-3 relative z-10"></div>
                     </div>
 
-                    <div id="settings-groups-list" class="space-y-3 relative z-10"></div>
-                </div>
-
-                <div class="mt-12 mb-8 text-center opacity-30 hover:opacity-100 transition duration-500 cursor-default md:max-w-2xl md:mx-auto">
-                    <div class="w-10 h-10 border border-theme-border rounded-full flex items-center justify-center mx-auto mb-3 hover:bg-theme-input transition-colors shadow-sm">
-                        <i class="fa-solid fa-code text-theme-text"></i>
+                    <div class="mt-12 mb-8 text-center opacity-30 hover:opacity-100 transition duration-500 cursor-default md:max-w-2xl md:mx-auto">
+                        <div class="w-10 h-10 border border-theme-border rounded-full flex items-center justify-center mx-auto mb-3 hover:bg-theme-input transition-colors shadow-sm">
+                            <i class="fa-solid fa-code text-theme-text"></i>
+                        </div>
+                        <p class="text-[10px] text-theme-muted font-mono tracking-widest leading-loose font-bold">
+                            ENTERPRISE GRADE SYSTEM<br>
+                            PROUDLY CRAFTED BY <span class="text-brand-500">@colasonyt1123</span>
+                        </p>
                     </div>
-                    <p class="text-[10px] text-theme-muted font-mono tracking-widest leading-loose font-bold">
-                        ENTERPRISE GRADE SYSTEM<br>
-                        PROUDLY CRAFTED BY <span class="text-brand-500">@colasonyt1123</span>
-                    </p>
-                </div>
-            </section>
+                </section>
+            </div>
         </main>
 
         <!-- 全域右下角懸浮新增按鈕 (Global FAB) - iPad position adjusted -->
@@ -466,8 +464,8 @@
 
     </div>
 
-    <!-- 4. 全域組件 -->
-    <div id="global-overlay" class="fixed inset-0 bg-black/60 backdrop-blur-md z-[200] hidden opacity-0 transition-opacity duration-300"></div>
+    <!-- 4. 全域組件 (修正遮罩淺色模式的顏色，避免「全黑」錯覺) -->
+    <div id="global-overlay" class="fixed inset-0 bg-black/20 dark:bg-black/60 backdrop-blur-sm z-[200] hidden opacity-0 transition-opacity duration-300"></div>
     <div id="center-modal" class="fixed inset-0 z-[210] hidden flex items-center justify-center p-6 pointer-events-none">
         <div id="center-modal-content" class="glass-card w-full max-w-sm p-6 md:p-8 transform scale-95 opacity-0 pointer-events-auto shadow-2xl border-theme-border"></div>
     </div>
@@ -478,7 +476,9 @@
             <div id="bottom-sheet-body" class="flex-1 overflow-y-auto no-scrollbar"></div>
         </div>
     </div>
-    <div id="notif-panel" class="fixed inset-y-0 right-0 w-full md:w-[380px] bg-theme-bg/95 backdrop-blur-2xl z-[210] hidden transform translate-x-full border-l border-theme-border flex flex-col shadow-2xl">
+    
+    <!-- 通知面板 -->
+    <div id="notif-panel" class="fixed inset-y-0 right-0 w-full md:w-[380px] bg-white/90 dark:bg-[#0a0a0c]/90 backdrop-blur-2xl z-[210] hidden transform translate-x-full border-l border-theme-border flex flex-col shadow-2xl">
         <div class="p-6 border-b border-theme-border flex justify-between items-center bg-theme-input">
             <h3 class="text-xl font-bold text-theme-text"><i class="fa-solid fa-bell text-brand-500 mr-2"></i>系統通知</h3>
             <button onclick="app.notifications.toggle()" class="w-8 h-8 rounded-full bg-theme-input flex items-center justify-center text-theme-muted hover:text-theme-text border border-theme-border active:scale-95 transition"><i class="fa-solid fa-xmark"></i></button>
@@ -525,7 +525,6 @@
             subjects: ['中文 (中國語文)', '英文 (英國語文)', '數學', '通識教育', '科學', '體育', '物理', '化學', '生物', '歷史', '中史', '地理', '音樂', '視覺藝術', 'ICT', '設計與應用科技', '旅遊與款待', '經濟', 'BAFS', '公民教育', '科技與生活', '中文文學', '英文文學'],
             currentDayTab: '1', timetableConfig: {}, classTimerInterval: null, unsubscribers: [],
             tempImageBase64: null,
-            // 🌟 作業過濾狀態
             filters: { subject: 'all', incompleteOnly: false, sortDesc: false }
         };
 
@@ -559,6 +558,7 @@
             sheet: {
                 open: (html) => { UI.overlay.show(); document.getElementById('bottom-sheet-body').innerHTML = html; document.getElementById('bottom-sheet').classList.remove('hidden'); if(typeof gsap !== 'undefined') gsap.fromTo(document.getElementById('bottom-sheet-content'), { y: '100%' }, { y: '0%', duration: 0.4, ease: "power3.out" }); },
                 close: () => { 
+                    if(app.pomodoro && app.pomodoro.isRunning) app.pomodoro.stop(); 
                     if(typeof gsap !== 'undefined') gsap.to(document.getElementById('bottom-sheet-content'), { y: '100%', duration: 0.3, ease: "power3.in", onComplete: () => { document.getElementById('bottom-sheet').classList.add('hidden'); UI.overlay.hide(); }}); 
                     else { document.getElementById('bottom-sheet').classList.add('hidden'); UI.overlay.hide(); } 
                 }
@@ -656,7 +656,6 @@
                 if(state.classTimerInterval) clearInterval(state.classTimerInterval);
                 app.setupListeners(); app.renders.subjectsPills(); app.timetable.initTracker(); app.timetable.renderDaySelector();
                 
-                // 預設選擇日別
                 const ttMode = localStorage.getItem('lumina_tt_mode') || 'week';
                 if(ttMode === 'week') {
                     let d = new Date().getDay();
@@ -763,9 +762,64 @@
                 document.getElementById('widget-today-count').textContent = t; document.getElementById('widget-future-count').textContent = f; document.getElementById('widget-exam-count').textContent = e;
                 app.tasks.checkStress();
             },
+            pomodoro: {
+                interval: null, timeLeft: 1500, isRunning: false, currentTaskId: null,
+                open: (taskId, title) => {
+                    app.pomodoro.currentTaskId = taskId;
+                    app.pomodoro.timeLeft = 1500; 
+                    app.pomodoro.isRunning = false;
+                    clearInterval(app.pomodoro.interval);
+                    
+                    UI.sheet.open(`
+                        <div class="text-center py-6">
+                            <h3 class="text-lg font-bold text-theme-text mb-2"><i class="fa-solid fa-stopwatch mr-2 text-brand-500"></i>專注模式</h3>
+                            <p class="text-sm text-theme-muted mb-8 truncate max-w-xs mx-auto">${escapeHTML(title)}</p>
+                            
+                            <div class="w-56 h-56 mx-auto border-[10px] border-brand-500/20 rounded-full flex items-center justify-center mb-8 relative shadow-[0_0_40px_rgba(99,102,241,0.15)] bg-theme-input">
+                                <div id="pomo-timer-text" class="text-6xl font-mono font-bold text-brand-500">25:00</div>
+                            </div>
+                            
+                            <div class="flex justify-center gap-4">
+                                <button onclick="app.pomodoro.toggle()" id="pomo-btn-toggle" class="bg-brand-600 text-white px-8 py-3.5 rounded-full font-bold shadow-lg hover:-translate-y-1 hover:shadow-brand-500/50 active:scale-95 transition-all">開始專注</button>
+                                <button onclick="app.pomodoro.stop()" class="bg-red-500/10 text-red-500 border border-red-500/20 px-6 py-3.5 rounded-full font-bold hover:bg-red-500/20 hover:-translate-y-1 active:scale-95 transition-all">放棄</button>
+                            </div>
+                            <p class="text-xs text-theme-muted mt-6"><i class="fa-solid fa-circle-info mr-1"></i> 請保持螢幕開啟以確保計時準確</p>
+                        </div>
+                    `);
+                },
+                toggle: () => {
+                    const btn = document.getElementById('pomo-btn-toggle');
+                    if(app.pomodoro.isRunning) {
+                        app.pomodoro.isRunning = false; clearInterval(app.pomodoro.interval);
+                        btn.textContent = '繼續專注'; btn.className = 'bg-emerald-600 text-white px-8 py-3.5 rounded-full font-bold shadow-lg hover:-translate-y-1 hover:shadow-emerald-500/50 active:scale-95 transition-all';
+                    } else {
+                        app.pomodoro.isRunning = true;
+                        btn.textContent = '暫停'; btn.className = 'bg-yellow-500 text-white px-8 py-3.5 rounded-full font-bold shadow-lg hover:-translate-y-1 hover:shadow-yellow-500/50 active:scale-95 transition-all';
+                        app.pomodoro.interval = setInterval(() => {
+                            app.pomodoro.timeLeft--;
+                            app.pomodoro.updateUI();
+                            if(app.pomodoro.timeLeft <= 0) {
+                                clearInterval(app.pomodoro.interval); app.pomodoro.isRunning = false;
+                                UI.notify('🎉 番茄鐘專注完成！', 'success');
+                                if(navigator.vibrate) navigator.vibrate([200, 100, 200, 100, 500]);
+                                btn.textContent = '完成'; 
+                                btn.className = 'bg-brand-600 text-white px-8 py-3.5 rounded-full font-bold shadow-lg hover:-translate-y-1 transition-all';
+                                btn.onclick = UI.sheet.close;
+                            }
+                        }, 1000);
+                    }
+                },
+                updateUI: () => {
+                    const m = Math.floor(app.pomodoro.timeLeft / 60).toString().padStart(2, '0');
+                    const s = (app.pomodoro.timeLeft % 60).toString().padStart(2, '0');
+                    const el = document.getElementById('pomo-timer-text');
+                    if(el) el.textContent = `${m}:${s}`;
+                },
+                stop: () => { clearInterval(app.pomodoro.interval); app.pomodoro.isRunning = false; UI.sheet.close(); }
+            },
             notifications: {
                 toggle: () => { const p = document.getElementById('notif-panel'), b = document.getElementById('notif-badge'); if(p.classList.contains('hidden')) { UI.overlay.show(); p.classList.remove('hidden'); gsap.fromTo(p, { x: '100%' }, { x: '0%', duration: 0.4, ease: "power3.out" }); b.classList.add('hidden'); } else { gsap.to(p, { x: '100%', duration: 0.3, ease: "power3.in", onComplete: () => { p.classList.add('hidden'); UI.overlay.hide(); }}); } },
-                render: () => { const l = document.getElementById('notif-list'), b = document.getElementById('notif-badge'); l.innerHTML = ''; if(state.notifications.length === 0) { l.innerHTML = '<div class="text-center py-10 text-theme-muted text-sm font-bold">無新通知</div>'; return; } b.classList.remove('hidden'); state.notifications.forEach(n => { let i = n.type==='warning'?'fa-triangle-exclamation text-yellow-500':(n.type==='task'?'fa-paper-plane text-brand-500':'fa-info-circle text-blue-500'); l.innerHTML += `<div class="p-4 bg-theme-input rounded-2xl border border-theme-border shadow-sm hover:border-brand-500/30 transition-colors"><div class="flex items-start gap-3"><div class="w-8 h-8 rounded-full bg-white/5 flex items-center justify-center shrink-0"><i class="fa-solid ${i}"></i></div><div><p class="text-[13px] text-theme-text font-semibold leading-relaxed">${escapeHTML(n.message)}</p><p class="text-[10px] text-theme-muted mt-2 font-mono font-semibold">${new Date(n.timestamp).toLocaleString()}</p></div></div></div>`; }); },
+                render: () => { const l = document.getElementById('notif-list'), b = document.getElementById('notif-badge'); l.innerHTML = ''; if(state.notifications.length === 0) { l.innerHTML = '<div class="text-center py-10 text-theme-muted text-sm font-bold">無新通知</div>'; return; } b.classList.remove('hidden'); state.notifications.forEach(n => { let i = n.type==='warning'?'fa-triangle-exclamation text-yellow-500':(n.type==='task'?'fa-paper-plane text-brand-500':'fa-info-circle text-blue-500'); l.innerHTML += `<div class="p-4 bg-theme-input rounded-2xl border border-theme-border shadow-sm hover:border-brand-500/30 transition-colors"><div class="flex items-start gap-3"><div class="w-8 h-8 rounded-full bg-black/5 dark:bg-white/5 flex items-center justify-center shrink-0"><i class="fa-solid ${i}"></i></div><div><p class="text-[13px] text-theme-text font-semibold leading-relaxed">${escapeHTML(n.message)}</p><p class="text-[10px] text-theme-muted mt-2 font-mono font-semibold">${new Date(n.timestamp).toLocaleString()}</p></div></div></div>`; }); },
                 send: async (uid, m, t='info') => { try { const id = API.genId(); await setDoc(doc(db, `artifacts/${internalAppId}/users/${uid}/notifications`, id), { id, message: m, type: t, timestamp: new Date().toISOString() }); } catch(e) {} }
             },
             nav: {
@@ -809,7 +863,6 @@
                 }
             },
             tasks: {
-                // 🌟 新增：浮空 Modal 篩選科目邏輯
                 openFilterSubjectModal: () => {
                     const currentVal = state.filters.subject;
                     let html = `<h3 class="text-xl font-bold text-theme-text mb-4">選擇篩選科目</h3><div class="flex flex-wrap gap-2 max-h-[60vh] overflow-y-auto no-scrollbar">`;
@@ -908,7 +961,6 @@
                     };
                     reader.readAsDataURL(file);
                 },
-                // 🌟 新增：浮空 Modal 自動重複邏輯
                 openRepeatModal: () => {
                     const currentVal = document.getElementById('form-repeat').value;
                     const options = [
@@ -929,7 +981,6 @@
                     document.getElementById('form-repeat-text').textContent = label;
                     UI.sheet.close();
                 },
-                // 🌟 新增：浮空 Modal 發放對象邏輯
                 openTargetModal: () => {
                     const currentVal = document.getElementById('form-target').value;
                     let html = `<h3 class="text-xl font-bold text-theme-text mb-4">選擇發放對象</h3><div class="flex flex-col gap-2 max-h-[60vh] overflow-y-auto no-scrollbar">`;
@@ -1072,6 +1123,8 @@
                     }, 1000);
                 },
                 renderDaySelector: () => {
+                    document.querySelectorAll('.tt-day-btn').forEach(b => { b.classList.remove('active'); if(parseInt(b.dataset.day) === state.currentDayTab) { b.classList.add('active'); b.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' }); } b.onclick = () => { state.currentDayTab = parseInt(b.dataset.day); app.timetable.renderDaySelector(); }; });
+                    
                     const c = document.getElementById('timetable-slots');
                     const selectorContainer = document.getElementById('timetable-day-selector');
                     const ttMode = localStorage.getItem('lumina_tt_mode') || 'week';
@@ -1123,14 +1176,13 @@
                         </div>`;
 
                         html += slots.map(s => `
-                            <div class="flex items-center gap-2.5 p-2 mb-2 bg-theme-input/50 border border-theme-border rounded-xl transition-colors hover:border-brand-500/40 focus-within:border-brand-500/80 focus-within:bg-theme-bg shadow-sm animate-[fadeIn_0.3s_ease-out]">
+                            <div class="flex items-center gap-2.5 p-2 mb-2 bg-theme-input border border-theme-border rounded-xl transition-colors hover:border-brand-500/40 focus-within:border-brand-500/80 shadow-sm animate-[fadeIn_0.3s_ease-out]">
                                 <div class="flex flex-col gap-1.5 w-[75px] shrink-0">
                                     <input type="time" value="${s.start}" onchange="app.timetable.updateSlotInline('${s.id}', 'start', this.value)" class="bg-transparent text-[12px] font-mono font-bold text-theme-text outline-none border-b border-transparent focus:border-brand-500 pb-0.5 dark:[color-scheme:dark]">
                                     <input type="time" value="${s.end}" onchange="app.timetable.updateSlotInline('${s.id}', 'end', this.value)" class="bg-transparent text-[11px] font-mono text-theme-muted outline-none border-b border-transparent focus:border-brand-500 pb-0.5 dark:[color-scheme:dark]">
                                 </div>
                                 <div class="flex flex-col gap-1.5 flex-1 min-w-0">
                                     <input type="text" value="${s.label}" placeholder="標籤 (例: 第1節)" onchange="app.timetable.updateSlotInline('${s.id}', 'label', this.value)" class="bg-transparent text-[11px] font-bold text-brand-500 outline-none border-b border-transparent focus:border-brand-500 pb-0.5 w-full">
-                                    <!-- 🌟 升級：浮空 Modal 選擇科目 -->
                                     <button onclick="app.timetable.openSubjectSelectModal('${s.id}')" class="bg-theme-bg border border-theme-border text-[13px] font-bold text-theme-text rounded-lg p-1.5 w-full outline-none hover:border-brand-500 transition-colors font-literary text-left flex justify-between items-center shadow-sm">
                                         <span class="truncate">${s.subject || '-- 空堂 / 休息 --'}</span>
                                         <i class="fa-solid fa-chevron-down text-[10px] opacity-50 ml-1 shrink-0"></i>
@@ -1144,8 +1196,8 @@
                     } else {
                         html += `<div class="mt-2 flex flex-col gap-2 px-1 animate-[fadeIn_0.3s_ease-out]">`;
                         html += slots.map(s => `
-                            <div class="flex items-center gap-3 p-3 bg-theme-input/30 border border-theme-border rounded-xl hover:bg-theme-input/60 transition-colors">
-                                <div class="flex flex-col text-right w-[50px] shrink-0 border-r border-theme-border/50 pr-3">
+                            <div class="flex items-center gap-3 p-3 bg-theme-input border border-theme-border rounded-xl hover:bg-gray-200/50 dark:hover:bg-white/10 transition-colors shadow-sm">
+                                <div class="flex flex-col text-right w-[50px] shrink-0 border-r border-theme-border pr-3">
                                     <span class="text-[13px] font-mono font-bold text-theme-text">${s.start}</span>
                                     <span class="text-[10px] font-mono text-theme-muted mt-0.5">${s.end}</span>
                                 </div>
@@ -1160,7 +1212,6 @@
                     
                     c.innerHTML = html;
                 },
-                // 🌟 新增：浮空 Modal 編輯科目邏輯
                 openSubjectSelectModal: (slotId) => {
                     const s = state.timetableConfig[state.currentDayTab].find(x => x.id === slotId);
                     if(!s) return;
@@ -1375,18 +1426,14 @@
                     const todo = document.getElementById('todo-list'), hist = document.getElementById('history-list'); let tc=0, hc=0; todo.innerHTML = ''; hist.innerHTML = '';
                     const today = new Date().toISOString().split('T')[0];
                     
-                    // 🌟 核心：套用搜尋與過濾條件
                     let displayTasks = [...state.tasks];
                     
-                    // Filter: Subject
                     if (state.filters.subject !== 'all') {
                         displayTasks = displayTasks.filter(t => t.subject === state.filters.subject);
                     }
-                    // Filter: Incomplete Only
                     if (state.filters.incompleteOnly) {
                         displayTasks = displayTasks.filter(t => t.status !== 'completed');
                     }
-                    // Sort: Due Date (Default is Asc, Toggle to Desc)
                     displayTasks.sort((a,b) => {
                         let d1 = a.dueDate || '2099'; let d2 = b.dueDate || '2099';
                         return state.filters.sortDesc ? d2.localeCompare(d1) : d1.localeCompare(d2);
@@ -1401,7 +1448,6 @@
                         const cHtml = escapeHTML(t.content || '').replace(/\n/g, '<br>');
                         const imgHtml = t.attachment ? `<div class="mt-3 overflow-hidden rounded-xl border border-theme-border cursor-pointer hover:opacity-80 transition" onclick="window.open('${t.attachment}', '_blank')"><img src="${t.attachment}" class="w-full h-32 object-cover"></div>` : '';
 
-                        // 進度追蹤按鈕 (僅限 Provider)
                         const trackBtn = (state.profile.role === 'provider' && t.groupId && t.originalTaskId && !done) ? `<button class="bg-blue-500/10 text-blue-500 border border-blue-500/20 px-3 py-2 rounded-full text-[10px] font-bold flex items-center gap-1.5 hover:bg-blue-500 hover:text-white transition-all active:scale-95" onclick="app.groups.checkProgress('${t.groupId}', '${t.originalTaskId}', '${escapeHTML(t.title)}')"><i class="fa-solid fa-chart-bar"></i> 查看進度</button>` : '';
 
                         c.innerHTML = `
@@ -1429,7 +1475,6 @@
                     const c = document.getElementById('form-subjects-scroll'), inp = document.getElementById('form-subject-value'); c.innerHTML = ''; if(!inp.value) inp.value = state.subjects[0];
                     state.subjects.forEach(s => { const b = document.createElement('button'); b.className = `pill-btn snap-start font-literary tracking-wide ${s===inp.value?'active':''}`; b.textContent = s; b.onclick = () => { inp.value = s; app.renders.subjectsPills(); b.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' }); }; c.appendChild(b); });
                     
-                    // 順便更新過濾器的科目下拉選單
                     app.tasks.populateFilterSubjects();
                 },
                 groups: () => {
@@ -1453,11 +1498,10 @@
             }
         };
 
-        // 為過濾器建立輔助函式
         app.tasks.populateFilterSubjects = () => {
             const sel = document.getElementById('filter-subject-text');
             if(sel) {
-                // Not using select anymore, logic is handled by Modal
+                // Modal logic handled above
             }
         };
 

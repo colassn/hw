@@ -286,7 +286,10 @@
                 <div class="glass-card p-2 shadow-xl border-theme-border">
                     <div class="flex justify-between items-center p-3 border-b border-theme-border">
                         <h3 class="font-bold text-sm text-theme-text"><i class="fa-solid fa-clock text-brand-500 mr-2"></i>時間軸設定</h3>
-                        <button onclick="app.timetable.addSlotModal()" class="text-xs text-brand-500 font-bold bg-brand-500/10 px-3 py-1.5 rounded-full hover:bg-brand-500/30 hover:scale-105 active:scale-95 transition-all">新增時段</button>
+                        <div class="flex gap-2">
+                            <button onclick="app.timetable.copyToAllWeekModal()" class="text-[10px] sm:text-xs text-emerald-500 font-bold bg-emerald-500/10 px-3 py-1.5 rounded-full hover:bg-emerald-500/20 hover:scale-105 active:scale-95 transition-all"><i class="fa-solid fa-copy"></i> 套用全週</button>
+                            <button onclick="app.timetable.addSlotModal()" class="text-[10px] sm:text-xs text-brand-500 font-bold bg-brand-500/10 px-3 py-1.5 rounded-full hover:bg-brand-500/30 hover:scale-105 active:scale-95 transition-all"><i class="fa-solid fa-plus"></i> 新增時段</button>
+                        </div>
                     </div>
                     <div id="timetable-slots" class="flex flex-col py-2"></div>
                 </div>
@@ -915,7 +918,33 @@
                 editSlotModal: (id) => { const s = state.timetableConfig[state.currentDayTab].find(x => x.id === id); const btns = state.subjects.map(sub => `<button onclick="app.timetable.updateSlot('${id}', 'subject', '${sub}')" class="w-full text-left p-4 border-b border-theme-border text-sm font-bold text-theme-text hover:bg-theme-input transition">${sub}</button>`).join(''); UI.sheet.open(`<div class="flex justify-between items-center mb-6"><div><h3 class="font-bold text-theme-text text-xl">${s.label}</h3><p class="text-sm text-brand-500 font-mono mt-1">${s.start} - ${s.end}</p></div><button onclick="app.timetable.deleteSlot('${id}')" class="text-red-500 text-xs font-bold bg-red-500/10 px-4 py-2 rounded-full hover:bg-red-500/20 hover:scale-105 transition-all">移除時段</button></div><p class="text-xs text-theme-muted mb-3 uppercase font-mono font-bold">快速選擇科目</p><div class="max-h-64 overflow-y-auto bg-theme-input rounded-2xl border border-theme-border no-scrollbar">${btns}<button onclick="app.timetable.updateSlot('${id}', 'subject', '')" class="w-full text-left p-4 text-sm font-bold text-theme-muted hover:bg-theme-border transition-colors">清除科目 (空堂)</button></div>`); },
                 updateSlot: (id, k, v) => { const s = state.timetableConfig[state.currentDayTab].find(x => x.id === id); if(s) s[k] = v; app.timetable.saveConfig(); UI.sheet.close(); app.timetable.renderDaySelector(); },
                 deleteSlot: (id) => { state.timetableConfig[state.currentDayTab] = state.timetableConfig[state.currentDayTab].filter(s => s.id !== id); app.timetable.saveConfig(); UI.sheet.close(); app.timetable.renderDaySelector(); },
-                addSlotModal: () => { UI.modal.open(`<h3 class="text-xl font-bold text-theme-text mb-6">新增時間軸</h3><div class="space-y-4"><div><label class="block text-xs font-mono font-bold text-theme-muted uppercase mb-2">標籤 Label</label><input type="text" id="slot-label" class="premium-input font-bold" placeholder="例: 補課"></div><div class="grid grid-cols-2 gap-4"><div><label class="block text-xs font-mono font-bold text-theme-muted uppercase mb-2">開始 Start</label><input type="time" id="slot-start" class="premium-input font-mono font-bold dark:[color-scheme:dark]"></div><div><label class="block text-xs font-mono font-bold text-theme-muted uppercase mb-2">結束 End</label><input type="time" id="slot-end" class="premium-input font-mono font-bold dark:[color-scheme:dark]"></div></div></div><div class="mt-8 flex gap-3"><button onclick="app.UI.modal.close()" class="flex-1 glass-card py-3.5 text-sm font-bold text-theme-text hover:-translate-y-1 hover:bg-theme-input active:scale-95 transition-all duration-300">取消</button><button onclick="app.timetable.doAddSlot()" class="flex-1 bg-brand-600 hover:bg-brand-500 rounded-xl py-3.5 text-sm font-bold text-white shadow-lg hover:-translate-y-1 hover:shadow-brand-500/40 active:scale-95 transition-all duration-300">新增</button></div>`); },
+                copyToAllWeekModal: () => {
+                    const currentSlots = state.timetableConfig[state.currentDayTab] || [];
+                    if (currentSlots.length === 0) return UI.notify('請先建立今日時間軸再進行複製', 'error');
+                    UI.modal.open(`<div class="text-center"><div class="w-16 h-16 bg-emerald-500/10 rounded-full flex items-center justify-center mx-auto mb-4"><i class="fa-solid fa-copy text-emerald-500 text-3xl"></i></div><h3 class="text-xl font-bold text-theme-text mb-2 tracking-tight">套用到全週？</h3><p class="text-theme-muted text-sm mb-6">將把今天的「時間軸結構」複製到星期一至五<br>(原有的全週資料將被覆蓋，需重新點擊填寫科目)</p><div class="flex gap-3"><button onclick="app.UI.modal.close()" class="flex-1 glass-card py-3.5 font-bold text-theme-text hover:-translate-y-1 hover:bg-theme-input active:scale-95 transition-all duration-300">取消</button><button onclick="app.timetable.doCopyToAllWeek()" class="flex-1 bg-emerald-600 hover:bg-emerald-500 rounded-xl py-3.5 font-bold text-white shadow-lg hover:-translate-y-1 hover:shadow-emerald-500/40 active:scale-95 transition-all duration-300">確認套用</button></div></div>`);
+                },
+                doCopyToAllWeek: () => {
+                    const currentSlots = state.timetableConfig[state.currentDayTab] || [];
+                    for (let i = 1; i <= 5; i++) {
+                        if (i === state.currentDayTab) continue;
+                        state.timetableConfig[i] = currentSlots.map(s => ({ ...s, id: API.genId(), subject: '' }));
+                    }
+                    app.timetable.saveConfig();
+                    UI.modal.close();
+                    UI.notify('已成功套用時間軸到全週！', 'success');
+                },
+                addSlotModal: () => { 
+                    const slots = state.timetableConfig[state.currentDayTab] || [];
+                    let defaultStart = '08:00', defaultEnd = '08:40', defaultLabel = `第${slots.length + 1}節`;
+                    if (slots.length > 0) {
+                        const lastSlot = slots.reduce((latest, current) => current.end > latest.end ? current : latest, slots[0]);
+                        defaultStart = lastSlot.end;
+                        const [h, m] = defaultStart.split(':').map(Number);
+                        const d = new Date(); d.setHours(h, m + 40, 0, 0);
+                        defaultEnd = d.toTimeString().substring(0, 5);
+                    }
+                    UI.modal.open(`<h3 class="text-xl font-bold text-theme-text mb-6">新增時間軸</h3><div class="space-y-4"><div><label class="block text-xs font-mono font-bold text-theme-muted uppercase mb-2">標籤 Label</label><input type="text" id="slot-label" class="premium-input font-bold" value="${defaultLabel}" placeholder="例: 補課"></div><div class="grid grid-cols-2 gap-4"><div><label class="block text-xs font-mono font-bold text-theme-muted uppercase mb-2">開始 Start</label><input type="time" id="slot-start" class="premium-input font-mono font-bold dark:[color-scheme:dark]" value="${defaultStart}"></div><div><label class="block text-xs font-mono font-bold text-theme-muted uppercase mb-2">結束 End</label><input type="time" id="slot-end" class="premium-input font-mono font-bold dark:[color-scheme:dark]" value="${defaultEnd}"></div></div></div><div class="mt-8 flex gap-3"><button onclick="app.UI.modal.close()" class="flex-1 glass-card py-3.5 text-sm font-bold text-theme-text hover:-translate-y-1 hover:bg-theme-input active:scale-95 transition-all duration-300">取消</button><button onclick="app.timetable.doAddSlot()" class="flex-1 bg-brand-600 hover:bg-brand-500 rounded-xl py-3.5 text-sm font-bold text-white shadow-lg hover:-translate-y-1 hover:shadow-brand-500/40 active:scale-95 transition-all duration-300">新增</button></div>`); 
+                },
                 doAddSlot: () => { const l = document.getElementById('slot-label').value, s = document.getElementById('slot-start').value, e = document.getElementById('slot-end').value; if(!l||!s||!e) return UI.notify('請填寫完整', 'error'); if(!state.timetableConfig[state.currentDayTab]) state.timetableConfig[state.currentDayTab] = []; state.timetableConfig[state.currentDayTab].push({ id: API.genId(), start:s, end:e, label:l, type: 'class', subject: '' }); app.timetable.saveConfig(); UI.modal.close(); app.timetable.renderDaySelector(); }
             },
             groups: {

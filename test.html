@@ -240,7 +240,7 @@
         <!-- 頂部膠囊導航 (Sticky Segmented Control) -->
         <div class="sticky top-0 z-40 py-3 px-4 shadow-sm shrink-0" style="background: var(--nav-bg); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);">
             <div class="flex gap-1.5 p-1.5 bg-theme-input rounded-2xl border border-theme-border overflow-x-auto no-scrollbar md:max-w-2xl md:mx-auto">
-                <button onclick="app.nav.switch('home')" id="nav-home" class="top-nav-item flex-1 py-2 px-4 text-[13px] font-bold rounded-xl text-theme-bg bg-theme-text shadow-sm whitespace-nowrap active flex items-center justify-center gap-1.5">
+                <button onclick="app.nav.switch('home')" id="nav-home" class="top-nav-item flex-1 py-2 px-4 text-[13px] font-bold rounded-xl active bg-white dark:bg-white/10 text-brand-600 dark:text-white shadow-md whitespace-nowrap flex items-center justify-center gap-1.5">
                     <i class="fa-solid fa-layer-group"></i> 任務
                 </button>
                 <button onclick="app.nav.switch('timetable')" id="nav-timetable" class="top-nav-item flex-1 py-2 px-4 text-[13px] font-bold rounded-xl text-theme-muted whitespace-nowrap flex items-center justify-center gap-1.5">
@@ -286,13 +286,17 @@
                 </div>
                 <div class="glass-card p-2 shadow-xl border-theme-border flex flex-col max-h-[70vh]">
                     <div class="flex justify-between items-center p-3 border-b border-theme-border shrink-0">
-                        <h3 class="font-bold text-sm text-theme-text"><i class="fa-solid fa-clock text-brand-500 mr-2"></i>可視化表格</h3>
+                        <h3 class="font-bold text-sm text-theme-text"><i class="fa-solid fa-clock text-brand-500 mr-2"></i>每日課表</h3>
                         <div class="flex gap-2">
-                            <button onclick="app.timetable.copyToAllWeekModal()" class="text-[10px] sm:text-xs text-emerald-500 font-bold bg-emerald-500/10 px-3 py-1.5 rounded-full hover:bg-emerald-500/20 hover:scale-105 active:scale-95 transition-all"><i class="fa-solid fa-copy"></i> 套用全週</button>
-                            <button onclick="app.timetable.addSlotDirect()" class="text-[10px] sm:text-xs text-brand-500 font-bold bg-brand-500/10 px-3 py-1.5 rounded-full hover:bg-brand-500/30 hover:scale-105 active:scale-95 transition-all"><i class="fa-solid fa-plus"></i> 新增時段</button>
+                            <!-- 唯讀模式按鈕 -->
+                            <button id="tt-btn-edit" onclick="app.timetable.toggleEditMode()" class="text-[10px] sm:text-xs text-brand-500 font-bold bg-brand-500/10 px-4 py-1.5 rounded-full hover:bg-brand-500/20 hover:scale-105 active:scale-95 transition-all"><i class="fa-solid fa-pen"></i> 編輯</button>
+                            <!-- 編輯模式按鈕 (預設隱藏) -->
+                            <button id="tt-btn-copy" onclick="app.timetable.copyToAllWeekModal()" class="hidden text-[10px] sm:text-xs text-emerald-500 font-bold bg-emerald-500/10 px-3 py-1.5 rounded-full hover:bg-emerald-500/20 hover:scale-105 active:scale-95 transition-all"><i class="fa-solid fa-copy"></i> 套用</button>
+                            <button id="tt-btn-add" onclick="app.timetable.addSlotDirect()" class="hidden text-[10px] sm:text-xs text-brand-500 font-bold bg-brand-500/10 px-3 py-1.5 rounded-full hover:bg-brand-500/20 hover:scale-105 active:scale-95 transition-all"><i class="fa-solid fa-plus"></i> 新增</button>
+                            <button id="tt-btn-done" onclick="app.timetable.toggleEditMode()" class="hidden text-[10px] sm:text-xs text-white font-bold bg-brand-500 px-4 py-1.5 rounded-full hover:bg-brand-600 hover:scale-105 active:scale-95 transition-all shadow-md shadow-brand-500/30"><i class="fa-solid fa-check"></i> 完成</button>
                         </div>
                     </div>
-                    <!-- Inline Editable Table Slots Container -->
+                    <!-- Timetable Slots Container -->
                     <div id="timetable-slots" class="flex-1 overflow-y-auto no-scrollbar p-2"></div>
                 </div>
             </section>
@@ -322,8 +326,8 @@
                     <input type="hidden" id="form-task-id">
                     
                     <div class="flex bg-theme-input p-1.5 rounded-xl mb-6 relative z-10 border border-theme-border shadow-inner">
-                        <button id="type-btn-task" onclick="app.tasks.setFormType('task')" class="flex-1 py-2 text-sm font-bold rounded-lg bg-theme-text text-theme-bg shadow-sm transition-all">📝 一般功課</button>
-                        <button id="type-btn-exam" onclick="app.tasks.setFormType('exam')" class="flex-1 py-2 text-sm font-semibold rounded-lg text-theme-muted hover:text-theme-text transition-all">🚨 測驗考試</button>
+                        <button id="type-btn-task" onclick="app.tasks.setFormType('task')" class="flex-1 py-2.5 text-sm font-bold rounded-lg bg-white dark:bg-white/10 text-brand-600 dark:text-white shadow-md transition-all">📝 一般功課</button>
+                        <button id="type-btn-exam" onclick="app.tasks.setFormType('exam')" class="flex-1 py-2.5 text-sm font-semibold rounded-lg text-theme-muted hover:text-theme-text transition-all">🚨 測驗考試</button>
                         <input type="hidden" id="form-type" value="task">
                     </div>
                     
@@ -770,13 +774,13 @@
                     
                     if(vid !== 'add') {
                         document.querySelectorAll('.top-nav-item').forEach(n => {
-                            n.classList.remove('active', 'bg-theme-text', 'text-theme-bg', 'shadow-sm');
+                            n.classList.remove('active', 'bg-white', 'dark:bg-white/10', 'text-brand-600', 'dark:text-white', 'shadow-md');
                             n.classList.add('text-theme-muted');
                         });
                         const activeNav = document.getElementById(`nav-${vid}`);
                         if(activeNav) {
                             activeNav.classList.remove('text-theme-muted');
-                            activeNav.classList.add('active', 'bg-theme-text', 'text-theme-bg', 'shadow-sm');
+                            activeNav.classList.add('active', 'bg-white', 'dark:bg-white/10', 'text-brand-600', 'dark:text-white', 'shadow-md');
                         }
                     }
 
@@ -819,7 +823,17 @@
                     document.getElementById('form-image-preview').src = '';
                     state.tempImageBase64 = null;
                 },
-                setFormType: (type) => { document.getElementById('form-type').value = type; const bt = document.getElementById('type-btn-task'), be = document.getElementById('type-btn-exam'); if(type === 'task') { bt.className = 'flex-1 py-2.5 text-sm font-bold rounded-lg bg-theme-text text-theme-bg shadow-sm transition-all'; be.className = 'flex-1 py-2.5 text-sm font-semibold rounded-lg text-theme-muted hover:text-theme-text transition-all'; } else { be.className = 'flex-1 py-2.5 text-sm font-bold rounded-lg bg-pink-500/20 text-pink-500 shadow-sm transition-all'; bt.className = 'flex-1 py-2.5 text-sm font-semibold rounded-lg text-theme-muted hover:text-theme-text transition-all'; } },
+                setFormType: (type) => { 
+                    document.getElementById('form-type').value = type; 
+                    const bt = document.getElementById('type-btn-task'), be = document.getElementById('type-btn-exam'); 
+                    if(type === 'task') { 
+                        bt.className = 'flex-1 py-2.5 text-sm font-bold rounded-lg bg-white dark:bg-white/10 text-brand-600 dark:text-white shadow-md transition-all'; 
+                        be.className = 'flex-1 py-2.5 text-sm font-semibold rounded-lg text-theme-muted hover:text-theme-text transition-all'; 
+                    } else { 
+                        be.className = 'flex-1 py-2.5 text-sm font-bold rounded-lg bg-pink-500 text-white shadow-md transition-all'; 
+                        bt.className = 'flex-1 py-2.5 text-sm font-semibold rounded-lg text-theme-muted hover:text-theme-text transition-all'; 
+                    } 
+                },
                 checkStress: () => { const di = document.getElementById('form-date'); if(!di) return; const check = () => { const c = state.tasks.filter(t => t.dueDate === di.value && t.status !== 'completed').length; const w = document.getElementById('form-warning-msg'); if(c >= 5) { document.getElementById('form-warning-count').textContent = c; w.classList.remove('hidden'); } else { w.classList.add('hidden'); } }; di.addEventListener('change', check); check(); },
                 handleImageUpload: (e) => {
                     const file = e.target.files[0];
@@ -928,6 +942,11 @@
                 doDelete: async (id) => { await deleteDoc(doc(db, API.paths.tasks(), id)); AdminService.log('TASK_DELETED', { taskId: id }); UI.modal.close(); UI.notify('已刪除'); }
             },
             timetable: {
+                isEditMode: false,
+                toggleEditMode: () => {
+                    app.timetable.isEditMode = !app.timetable.isEditMode;
+                    app.timetable.renderDaySelector();
+                },
                 initTracker: () => {
                     if(state.classTimerInterval) clearInterval(state.classTimerInterval);
                     state.classTimerInterval = setInterval(() => {
@@ -943,46 +962,90 @@
                 },
                 renderDaySelector: () => {
                     document.querySelectorAll('.tt-day-btn').forEach(b => { b.classList.remove('active'); if(parseInt(b.dataset.day) === state.currentDayTab) { b.classList.add('active'); b.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' }); } b.onclick = () => { state.currentDayTab = parseInt(b.dataset.day); app.timetable.renderDaySelector(); }; });
+                    
                     const c = document.getElementById('timetable-slots');
                     let slots = state.timetableConfig[state.currentDayTab] || [];
                     
+                    // 控制頂部按鈕顯示與隱藏
+                    const btnEdit = document.getElementById('tt-btn-edit');
+                    const btnCopy = document.getElementById('tt-btn-copy');
+                    const btnAdd = document.getElementById('tt-btn-add');
+                    const btnDone = document.getElementById('tt-btn-done');
+                    
+                    if(btnEdit) {
+                        if(app.timetable.isEditMode) {
+                            btnEdit.classList.add('hidden');
+                            btnCopy.classList.remove('hidden'); btnAdd.classList.remove('hidden'); btnDone.classList.remove('hidden');
+                        } else {
+                            btnEdit.classList.remove('hidden');
+                            btnCopy.classList.add('hidden'); btnAdd.classList.add('hidden'); btnDone.classList.add('hidden');
+                        }
+                    }
+
+                    // 空白狀態 (Empty State)
                     if(slots.length === 0) { 
-                        c.innerHTML = `<div class="py-12 text-center"><div class="w-12 h-12 bg-theme-input rounded-full flex items-center justify-center mx-auto mb-3"><i class="fa-solid fa-calendar-xmark text-theme-muted text-xl"></i></div><p class="text-theme-muted text-sm mb-4 font-bold tracking-wide">此日尚未設定</p><button onclick="app.timetable.generateDefault(${state.currentDayTab})" class="text-xs font-bold bg-brand-500 px-5 py-2.5 rounded-full text-white shadow-lg hover:-translate-y-1 hover:shadow-brand-500/40 active:scale-95 transition-all duration-300">套用預設</button></div>`; 
+                        if (app.timetable.isEditMode) {
+                            c.innerHTML = `<div class="py-12 text-center animate-[fadeIn_0.3s_ease-out]"><div class="w-12 h-12 bg-theme-input rounded-full flex items-center justify-center mx-auto mb-3"><i class="fa-solid fa-calendar-plus text-theme-muted text-xl"></i></div><p class="text-theme-muted text-sm mb-4 font-bold tracking-wide">此日尚未設定</p><button onclick="app.timetable.generateDefault(${state.currentDayTab})" class="text-xs font-bold bg-brand-500 px-5 py-2.5 rounded-full text-white shadow-lg hover:-translate-y-1 hover:shadow-brand-500/40 active:scale-95 transition-all duration-300">套用預設時段</button></div>`; 
+                        } else {
+                            c.innerHTML = `<div class="py-12 text-center animate-[fadeIn_0.3s_ease-out]"><div class="w-12 h-12 bg-theme-input rounded-full flex items-center justify-center mx-auto mb-3"><i class="fa-solid fa-calendar-xmark text-theme-muted text-xl"></i></div><p class="text-theme-muted text-sm mb-4 font-bold tracking-wide">此日尚未設定</p><button onclick="app.timetable.toggleEditMode()" class="text-xs font-bold text-brand-500 bg-brand-500/10 px-5 py-2.5 rounded-full hover:-translate-y-1 hover:bg-brand-500/20 active:scale-95 transition-all duration-300">開始編輯</button></div>`; 
+                        }
                         return; 
                     }
                     
                     slots.sort((a,b) => a.start.localeCompare(b.start));
-                    
-                    let html = `<div class="flex text-[10px] font-bold text-theme-muted mb-2 px-1 uppercase tracking-wider">
-                        <div class="w-[75px] shrink-0">時間 Time</div>
-                        <div class="flex-1">標籤與科目 Subject</div>
-                        <div class="w-8 shrink-0 text-center"></div>
-                    </div>`;
+                    let html = '';
 
-                    html += slots.map(s => `
-                        <div class="flex items-center gap-2.5 p-2 mb-2 bg-theme-input/50 border border-theme-border rounded-xl transition-colors hover:border-brand-500/40 focus-within:border-brand-500/80 focus-within:bg-theme-bg shadow-sm">
-                            <div class="flex flex-col gap-1.5 w-[75px] shrink-0">
-                                <input type="time" value="${s.start}" onchange="app.timetable.updateSlotInline('${s.id}', 'start', this.value)" class="bg-transparent text-[12px] font-mono font-bold text-theme-text outline-none border-b border-transparent focus:border-brand-500 pb-0.5 dark:[color-scheme:dark]">
-                                <input type="time" value="${s.end}" onchange="app.timetable.updateSlotInline('${s.id}', 'end', this.value)" class="bg-transparent text-[11px] font-mono text-theme-muted outline-none border-b border-transparent focus:border-brand-500 pb-0.5 dark:[color-scheme:dark]">
+                    if (app.timetable.isEditMode) {
+                        // ✏️ 編輯模式 (Editable Grid)
+                        html += `<div class="flex text-[10px] font-bold text-theme-muted mb-2 px-1 uppercase tracking-wider animate-[fadeIn_0.3s_ease-out]">
+                            <div class="w-[75px] shrink-0">時間 Time</div>
+                            <div class="flex-1">標籤與科目 Subject</div>
+                            <div class="w-8 shrink-0 text-center"></div>
+                        </div>`;
+
+                        html += slots.map(s => `
+                            <div class="flex items-center gap-2.5 p-2 mb-2 bg-theme-input/50 border border-theme-border rounded-xl transition-colors hover:border-brand-500/40 focus-within:border-brand-500/80 focus-within:bg-theme-bg shadow-sm animate-[fadeIn_0.3s_ease-out]">
+                                <div class="flex flex-col gap-1.5 w-[75px] shrink-0">
+                                    <input type="time" value="${s.start}" onchange="app.timetable.updateSlotInline('${s.id}', 'start', this.value)" class="bg-transparent text-[12px] font-mono font-bold text-theme-text outline-none border-b border-transparent focus:border-brand-500 pb-0.5 dark:[color-scheme:dark]">
+                                    <input type="time" value="${s.end}" onchange="app.timetable.updateSlotInline('${s.id}', 'end', this.value)" class="bg-transparent text-[11px] font-mono text-theme-muted outline-none border-b border-transparent focus:border-brand-500 pb-0.5 dark:[color-scheme:dark]">
+                                </div>
+                                <div class="flex flex-col gap-1.5 flex-1 min-w-0">
+                                    <input type="text" value="${s.label}" placeholder="標籤 (例: 第1節)" onchange="app.timetable.updateSlotInline('${s.id}', 'label', this.value)" class="bg-transparent text-[11px] font-bold text-brand-500 outline-none border-b border-transparent focus:border-brand-500 pb-0.5 w-full">
+                                    <select onchange="app.timetable.updateSlotInline('${s.id}', 'subject', this.value)" class="bg-theme-bg border border-theme-border text-[13px] font-bold text-theme-text rounded-lg p-1.5 w-full outline-none focus:border-brand-500 font-literary">
+                                        <option value="">-- 空堂 / 休息 --</option>
+                                        ${state.subjects.map(sub => `<option value="${sub}" ${s.subject === sub ? 'selected' : ''}>${sub}</option>`).join('')}
+                                    </select>
+                                </div>
+                                <button onclick="app.timetable.deleteSlot('${s.id}')" class="w-8 h-8 flex items-center justify-center shrink-0 text-theme-muted hover:text-red-500 hover:bg-red-500/10 rounded-full transition-all active:scale-95">
+                                    <i class="fa-solid fa-xmark text-lg"></i>
+                                </button>
                             </div>
-                            <div class="flex flex-col gap-1.5 flex-1 min-w-0">
-                                <input type="text" value="${s.label}" placeholder="標籤 (例: 第1節)" onchange="app.timetable.updateSlotInline('${s.id}', 'label', this.value)" class="bg-transparent text-[11px] font-bold text-brand-500 outline-none border-b border-transparent focus:border-brand-500 pb-0.5 w-full">
-                                <select onchange="app.timetable.updateSlotInline('${s.id}', 'subject', this.value)" class="bg-theme-bg border border-theme-border text-[13px] font-bold text-theme-text rounded-lg p-1.5 w-full outline-none focus:border-brand-500 font-literary">
-                                    <option value="">-- 空堂 / 休息 --</option>
-                                    ${state.subjects.map(sub => `<option value="${sub}" ${s.subject === sub ? 'selected' : ''}>${sub}</option>`).join('')}
-                                </select>
+                        `).join('');
+                    } else {
+                        // 👀 唯讀模式 (Read-only Clean View)
+                        html += `<div class="mt-2 flex flex-col gap-2 px-1 animate-[fadeIn_0.3s_ease-out]">`;
+                        html += slots.map(s => `
+                            <div class="flex items-center gap-3 p-3 bg-theme-input/30 border border-theme-border rounded-xl hover:bg-theme-input/60 transition-colors">
+                                <div class="flex flex-col text-right w-[50px] shrink-0 border-r border-theme-border/50 pr-3">
+                                    <span class="text-[13px] font-mono font-bold text-theme-text">${s.start}</span>
+                                    <span class="text-[10px] font-mono text-theme-muted mt-0.5">${s.end}</span>
+                                </div>
+                                <div class="flex flex-col flex-1 pl-1 overflow-hidden">
+                                    <span class="text-[10px] font-bold text-brand-500 mb-1 uppercase tracking-wider truncate">${s.label}</span>
+                                    <span class="text-[15px] font-bold text-theme-text font-literary truncate">${s.subject || '<span class="opacity-40">空堂 / 休息</span>'}</span>
+                                </div>
                             </div>
-                            <button onclick="app.timetable.deleteSlot('${s.id}')" class="w-8 h-8 flex items-center justify-center shrink-0 text-theme-muted hover:text-red-500 hover:bg-red-500/10 rounded-full transition-all active:scale-95">
-                                <i class="fa-solid fa-xmark text-lg"></i>
-                            </button>
-                        </div>
-                    `).join('');
+                        `).join('');
+                        html += `</div>`;
+                    }
+                    
                     c.innerHTML = html;
                 },
                 updateSlotInline: (id, k, v) => { 
                     const s = state.timetableConfig[state.currentDayTab].find(x => x.id === id); 
                     if(s) s[k] = v; 
                     app.timetable.saveConfig(); 
+                    // 若改的是時間才重新渲染，避免改變下拉選單時失去焦點
                     if (k === 'start' || k === 'end') app.timetable.renderDaySelector();
                 },
                 generateDefault: (d) => { state.timetableConfig[d] = [{id:API.genId(),start:'08:00',end:'08:40',label:'第1節',type:'class',subject:''},{id:API.genId(),start:'08:40',end:'09:20',label:'第2節',type:'class',subject:''},{id:API.genId(),start:'09:20',end:'09:40',label:'小息',type:'special',subject:''},{id:API.genId(),start:'09:40',end:'10:20',label:'第3節',type:'class',subject:''},{id:API.genId(),start:'10:20',end:'11:00',label:'第4節',type:'class',subject:''},{id:API.genId(),start:'11:00',end:'11:20',label:'小息',type:'special',subject:''},{id:API.genId(),start:'11:20',end:'12:00',label:'第5節',type:'class',subject:''},{id:API.genId(),start:'12:00',end:'13:00',label:'午膳',type:'special',subject:''},{id:API.genId(),start:'13:00',end:'13:40',label:'第6節',type:'class',subject:''},{id:API.genId(),start:'13:40',end:'14:20',label:'第7節',type:'class',subject:''}]; app.timetable.saveConfig(); app.timetable.renderDaySelector(); },

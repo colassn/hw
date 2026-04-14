@@ -25,7 +25,8 @@
                             input: 'var(--input)',
                             card: 'var(--card)'
                         },
-                        brand: { 400: '#818cf8', 500: '#6366f1', 600: '#4f46e5' }
+                        brand: { 400: '#818cf8', 500: '#6366f1', 600: '#4f46e5' },
+                        exam: { 400: '#f87171', 500: '#ef4444' }
                     },
                     fontFamily: {
                         sans: ['Inter', 'Noto Sans HK', '-apple-system', 'BlinkMacSystemFont', 'system-ui', 'sans-serif'],
@@ -294,6 +295,7 @@
                     <div class="flex justify-between items-end mb-4 px-2 md:px-0 md:max-w-3xl md:mx-auto">
                         <h2 class="text-xl font-bold text-theme-text tracking-tight">時間表</h2>
                     </div>
+                    <!-- 動態日別選擇器 -->
                     <div id="timetable-day-selector" class="flex gap-2 overflow-x-auto no-scrollbar pb-4 mb-2 snap-x md:justify-center md:max-w-3xl md:mx-auto"></div>
                     <div class="glass-card p-3 shadow-md border-theme-border flex flex-col max-h-[70vh] md:max-w-3xl md:mx-auto">
                         <div class="flex justify-between items-center p-2 mb-2 border-b border-theme-border shrink-0">
@@ -321,7 +323,6 @@
                     </div>
                 </section>
 
-                <!-- 🌟 全新升級：精緻版新增任務頁面 -->
                 <section id="view-add" class="view-section w-full">
                     <div class="flex items-center mb-6 px-1 md:px-0 md:max-w-4xl md:mx-auto">
                         <button onclick="app.nav.switch('home')" class="w-10 h-10 mr-4 rounded-full bg-theme-card flex items-center justify-center text-theme-text hover:bg-theme-input active:scale-95 transition-all border border-theme-border shadow-sm">
@@ -333,7 +334,6 @@
                     <div class="glass-card p-6 md:p-8 relative overflow-hidden shadow-sm md:max-w-4xl md:mx-auto">
                         <input type="hidden" id="form-task-id">
                         
-                        <!-- 🌟 頂級分段切換器 (Task / Exam Toggle) -->
                         <div class="flex bg-theme-input p-1.5 rounded-2xl mb-8 relative z-10 border border-theme-border">
                             <button id="type-btn-task" onclick="app.tasks.setFormType('task')" class="flex-1 py-3 text-[15px] font-bold rounded-xl bg-theme-card text-brand-600 dark:text-brand-400 shadow-sm border border-theme-border transition-all flex justify-center items-center gap-2">
                                 <i class="fa-solid fa-book-open"></i> 新增功課
@@ -345,7 +345,6 @@
                         </div>
                         
                         <div class="space-y-6 relative z-10">
-                            <!-- 🌟 精美科目水平選擇列 -->
                             <div class="flex items-center gap-2">
                                 <div id="form-subjects-scroll" class="flex flex-1 gap-2.5 overflow-x-auto no-scrollbar py-1 snap-x items-center"></div>
                                 <button onclick="app.settings.addSubjectModal()" class="w-10 h-10 shrink-0 flex items-center justify-center rounded-xl bg-theme-input text-theme-muted hover:text-brand-500 transition-colors shadow-sm border border-theme-border active:scale-95">
@@ -354,16 +353,13 @@
                                 <input type="hidden" id="form-subject-value">
                             </div>
 
-                            <!-- 🌟 桌面/平板雙欄網格設計 -->
                             <div class="flex flex-col lg:flex-row gap-6">
-                                <!-- 左側：標題與內容 -->
                                 <div class="flex-1 flex flex-col gap-4">
                                     <input type="text" id="form-title" class="w-full px-5 py-4 bg-theme-input border border-theme-border hover:border-gray-300 dark:hover:border-gray-600 focus:border-brand-500 focus:bg-theme-card rounded-2xl text-[16px] font-bold text-theme-text placeholder-theme-muted shadow-sm transition-all outline-none" placeholder="功課標題 (必填)...">
                                     
                                     <div class="relative flex-1 flex flex-col">
                                         <textarea id="form-content" class="w-full flex-1 px-5 py-4 bg-theme-input border border-theme-border hover:border-gray-300 dark:hover:border-gray-600 focus:border-brand-500 focus:bg-theme-card rounded-2xl text-[15px] leading-relaxed text-theme-text placeholder-theme-muted resize-none min-h-[180px] shadow-sm transition-all outline-none" placeholder="打返功課內容..."></textarea>
                                         
-                                        <!-- 文字框內的工具列 -->
                                         <div class="absolute bottom-3 right-3 flex gap-2">
                                             <input type="file" id="form-image" accept="image/*" class="hidden" onchange="app.tasks.handleImageUpload(event)">
                                             <button onclick="document.getElementById('form-image').click()" class="w-9 h-9 rounded-full bg-white dark:bg-gray-800 text-theme-muted hover:text-brand-500 flex items-center justify-center backdrop-blur-md transition-all border border-theme-border shadow-sm active:scale-95" title="附加圖片">
@@ -374,21 +370,17 @@
                                     <img id="form-image-preview" class="hidden w-full h-48 object-cover rounded-2xl border border-theme-border shadow-sm mt-1">
                                 </div>
 
-                                <!-- 右側：日期、重複、提交 -->
                                 <div class="w-full lg:w-[280px] flex flex-col gap-4 shrink-0">
-                                    <!-- 超大日期選擇 -->
                                     <div class="relative">
                                         <input type="date" id="form-date" onchange="app.tasks.checkStress()" class="w-full h-16 px-5 bg-theme-input border border-theme-border hover:border-gray-300 dark:hover:border-gray-600 rounded-2xl text-[17px] font-bold text-theme-text text-center transition-all shadow-sm outline-none focus:border-brand-500 dark:[color-scheme:dark]">
                                     </div>
                                     
-                                    <!-- 重複選擇按鈕 -->
                                     <input type="hidden" id="form-repeat" value="none">
                                     <button type="button" onclick="app.tasks.openRepeatModal()" class="w-full h-14 px-5 bg-theme-input border border-theme-border hover:border-gray-300 dark:hover:border-gray-600 rounded-2xl text-[14px] font-bold text-theme-muted flex justify-between items-center transition-all shadow-sm outline-none">
                                         <span><i class="fa-solid fa-repeat mr-2"></i><span id="form-repeat-text">不重複</span></span>
                                         <i class="fa-solid fa-chevron-down text-[10px]"></i>
                                     </button>
 
-                                    <!-- 超大吸睛提交按鈕 -->
                                     <button onclick="app.tasks.save()" class="w-full mt-auto h-16 bg-brand-600 hover:bg-brand-500 text-white rounded-2xl font-bold shadow-[0_8px_25px_rgba(99,102,241,0.3)] hover:-translate-y-1 active:scale-95 transition-all flex justify-center items-center gap-2 text-[17px] tracking-wide border border-transparent">
                                         <i class="fa-solid fa-plus"></i> 加入清單
                                     </button>
@@ -400,7 +392,6 @@
                                 <p class="text-xs text-yellow-700 dark:text-yellow-200 font-semibold leading-relaxed">該日已有 <span id="form-warning-count" class="text-yellow-600 dark:text-yellow-500 font-bold text-sm"></span> 項任務，建議提早規劃！</p>
                             </div>
 
-                            <!-- Provider 廣播切換開關 -->
                             <div id="provider-target-section" class="hidden pt-6 border-t border-theme-border mt-4">
                                 <div class="flex items-center justify-between p-4 bg-theme-input border border-theme-border rounded-2xl">
                                     <div class="flex items-center gap-3.5">
@@ -472,16 +463,14 @@
             </div>
         </main>
 
-        <!-- 全域右下角懸浮新增按鈕 (Global FAB) -->
-        <!-- 🌟 修正 FAB 的切換邏輯，點擊時會正確在 home 與 add 之間切換 -->
-        <button onclick="app.nav.switch(state.currentView === 'add' ? 'home' : 'add')" id="global-fab" class="fixed bottom-8 right-6 md:bottom-12 md:right-12 lg:right-16 w-14 h-14 bg-gradient-to-tr from-brand-600 to-pink-500 rounded-full flex items-center justify-center text-white text-2xl shadow-[0_10px_30px_rgba(99,102,241,0.5)] hover:shadow-[0_15px_40px_rgba(99,102,241,0.8)] hover:scale-110 active:scale-95 transition-all duration-400 z-50">
+        <!-- 🌟 修正 FAB 切換邏輯 -->
+        <button onclick="app.nav.toggleAdd()" id="global-fab" class="fixed bottom-8 right-6 md:bottom-12 md:right-12 lg:right-16 w-14 h-14 bg-gradient-to-tr from-brand-600 to-pink-500 rounded-full flex items-center justify-center text-white text-2xl shadow-[0_10px_30px_rgba(99,102,241,0.5)] hover:shadow-[0_15px_40px_rgba(99,102,241,0.8)] hover:scale-110 active:scale-95 transition-all duration-400 z-50">
             <i class="fa-solid fa-plus transition-transform duration-400" id="add-icon"></i>
         </button>
 
     </div>
 
     <!-- 4. 全域組件 -->
-    <!-- 背景點擊關閉遮罩 -->
     <div id="global-overlay" onclick="if(app.UI) { app.UI.sheet.close(); app.UI.modal.close(); }" class="fixed inset-0 bg-black/20 dark:bg-black/60 backdrop-blur-sm z-[200] hidden opacity-0 transition-opacity duration-300 cursor-pointer"></div>
     
     <div id="center-modal" class="fixed inset-0 z-[210] hidden flex items-center justify-center p-6 pointer-events-none">
@@ -547,6 +536,14 @@
             filters: { subject: 'all', incompleteOnly: false, sortDesc: false }
         };
 
+        // 安全跳脫處理，避免單引號與換行導致事件癱瘓
+        const safeStr = (str) => encodeURIComponent(str || '');
+        const escapeHTML = (str) => {
+            return (str || '').replace(/[&<>'"]/g, 
+                tag => ({'&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;'}[tag])
+            );
+        };
+
         const UI = {
             notify: (msg, type='success') => {
                 if(navigator.vibrate) navigator.vibrate(type==='success'?[50]:[50, 50, 50]);
@@ -577,6 +574,7 @@
             sheet: {
                 open: (html) => { UI.overlay.show(); document.getElementById('bottom-sheet-body').innerHTML = html; document.getElementById('bottom-sheet').classList.remove('hidden'); if(typeof gsap !== 'undefined') gsap.fromTo(document.getElementById('bottom-sheet-content'), { y: '100%' }, { y: '0%', duration: 0.4, ease: "power3.out" }); },
                 close: () => { 
+                    if(app.pomodoro && app.pomodoro.isRunning) app.pomodoro.stop(); 
                     if(typeof gsap !== 'undefined') gsap.to(document.getElementById('bottom-sheet-content'), { y: '100%', duration: 0.3, ease: "power3.in", onComplete: () => { document.getElementById('bottom-sheet').classList.add('hidden'); UI.overlay.hide(); }}); 
                     else { document.getElementById('bottom-sheet').classList.add('hidden'); UI.overlay.hide(); } 
                 }
@@ -618,12 +616,6 @@
                 const days = ['日','一','二','三','四','五','六'];
                 return `${d.getFullYear()}-${(d.getMonth()+1).toString().padStart(2,'0')}-${d.getDate().toString().padStart(2,'0')} (星期${days[d.getDay()]})`;
             }
-        };
-
-        const escapeHTML = (str) => {
-            return str.replace(/[&<>'"]/g, 
-                tag => ({'&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;'}[tag])
-            );
         };
 
         const app = {
@@ -813,6 +805,9 @@
                 send: async (uid, m, t='info') => { try { const id = API.genId(); await setDoc(doc(db, `artifacts/${internalAppId}/users/${uid}/notifications`, id), { id, message: m, type: t, timestamp: new Date().toISOString() }); } catch(e) {} }
             },
             nav: {
+                toggleAdd: () => {
+                    app.nav.switch(state.currentView === 'add' ? 'home' : 'add');
+                },
                 switch: (vid) => { 
                     if (vid === state.currentView) return; 
                     
@@ -870,7 +865,7 @@
                     let html = `<h3 class="text-xl font-bold text-theme-text mb-4">選擇篩選科目</h3><div class="flex flex-wrap gap-2 max-h-[60vh] overflow-y-auto no-scrollbar pb-6">`;
                     html += `<button onclick="app.tasks.setFilterSubject('all')" class="whitespace-nowrap px-4 py-2.5 rounded-xl font-bold text-[13px] transition-all duration-300 font-literary tracking-wide border ${currentVal === 'all' ? 'bg-theme-card text-brand-600 shadow-sm border-theme-border scale-105' : 'bg-theme-input text-theme-muted border-transparent hover:bg-theme-border'}">所有科目</button>`;
                     state.subjects.forEach(s => {
-                        html += `<button onclick="app.tasks.setFilterSubject('${s}')" class="whitespace-nowrap px-4 py-2.5 rounded-xl font-bold text-[13px] transition-all duration-300 font-literary tracking-wide border ${currentVal === s ? 'bg-theme-card text-brand-600 shadow-sm border-theme-border scale-105' : 'bg-theme-input text-theme-muted border-transparent hover:bg-theme-border'}">${s}</button>`;
+                        html += `<button onclick="app.tasks.setFilterSubject(decodeURIComponent('${safeStr(s)}'))" class="whitespace-nowrap px-4 py-2.5 rounded-xl font-bold text-[13px] transition-all duration-300 font-literary tracking-wide border ${currentVal === s ? 'bg-theme-card text-brand-600 shadow-sm border-theme-border scale-105' : 'bg-theme-input text-theme-muted border-transparent hover:bg-theme-border'}">${escapeHTML(s)}</button>`;
                     });
                     html += `</div>`;
                     UI.sheet.open(html);
@@ -878,7 +873,7 @@
                 setFilterSubject: (val) => {
                     state.filters.subject = val;
                     const el = document.getElementById('filter-subject-text');
-                    if(el) el.textContent = val === 'all' ? '所有科目' : val;
+                    if(el) el.textContent = val === 'all' ? '所有科目' : escapeHTML(val);
                     UI.sheet.close();
                     app.renders.tasks();
                 },
@@ -914,10 +909,15 @@
                     app.renders.tasks();
                 },
                 prepareForm: () => { 
-                    document.getElementById('form-task-id').value = ''; 
-                    document.getElementById('form-title').value = ''; 
-                    document.getElementById('form-content').value = ''; 
-                    document.getElementById('form-date').value = API.getWorkingDay(); 
+                    const tId = document.getElementById('form-task-id');
+                    const tTitle = document.getElementById('form-title');
+                    const tContent = document.getElementById('form-content');
+                    const tDate = document.getElementById('form-date');
+                    if(tId) tId.value = ''; 
+                    if(tTitle) tTitle.value = ''; 
+                    if(tContent) tContent.value = ''; 
+                    if(tDate) tDate.value = API.getWorkingDay(); 
+                    
                     app.tasks.setRepeat('none', '不重複');
                     app.tasks.setTarget('self', '私人任務 (僅自己可見)');
                     
@@ -929,7 +929,9 @@
                     
                     app.tasks.setFormType('task'); 
                     app.tasks.checkStress(); 
-                    document.getElementById('form-header-title').textContent = '新增任務';
+                    
+                    const headerTitle = document.getElementById('form-header-title');
+                    if(headerTitle) headerTitle.textContent = '新增任務';
                     
                     const imgPreview = document.getElementById('form-image-preview');
                     if(imgPreview) {
@@ -1007,7 +1009,8 @@
                     reader.readAsDataURL(file);
                 },
                 openRepeatModal: () => {
-                    const currentVal = document.getElementById('form-repeat').value;
+                    const rep = document.getElementById('form-repeat');
+                    const currentVal = rep ? rep.value : 'none';
                     const options = [
                         {val: 'none', label: '不重複'},
                         {val: 'daily', label: '每天 (連續5天)'},
@@ -1041,7 +1044,8 @@
                     }
                 },
                 openTargetModal: () => {
-                    const currentVal = document.getElementById('form-target').value;
+                    const tgt = document.getElementById('form-target');
+                    const currentVal = tgt ? tgt.value : 'self';
                     let html = `<h3 class="text-xl font-bold text-theme-text mb-4">選擇發放對象</h3><div class="flex flex-col gap-2 max-h-[60vh] overflow-y-auto no-scrollbar pb-6">`;
                     
                     const isSelf = currentVal === 'self';
@@ -1051,7 +1055,7 @@
                         state.groups.forEach(g => {
                             if (g.providerId === state.user.uid) {
                                 const isGroup = currentVal === g.id;
-                                html += `<button onclick="app.tasks.setTarget('${g.id}', '群組: ${escapeHTML(g.name)}')" class="w-full text-left p-4 rounded-xl border ${isGroup ? 'bg-pink-500/10 border-pink-500/40 text-pink-600 font-bold shadow-sm' : 'bg-theme-input border-theme-border text-theme-text font-semibold hover:bg-theme-border'} transition-all">群組: ${escapeHTML(g.name)}</button>`;
+                                html += `<button onclick="app.tasks.setTarget('${g.id}', decodeURIComponent('${safeStr('群組: ' + g.name)}'))" class="w-full text-left p-4 rounded-xl border ${isGroup ? 'bg-pink-500/10 border-pink-500/40 text-pink-600 font-bold shadow-sm' : 'bg-theme-input border-theme-border text-theme-text font-semibold hover:bg-theme-border'} transition-all">群組: ${escapeHTML(g.name)}</button>`;
                             }
                         });
                     }
@@ -1070,7 +1074,24 @@
                     UI.sheet.close();
                 },
                 save: async () => {
-                    const id = document.getElementById('form-task-id').value, title = document.getElementById('form-title').value.trim(), content = document.getElementById('form-content').value.trim(), subject = document.getElementById('form-subject-value').value, dueDate = document.getElementById('form-date').value, target = document.getElementById('form-target').value, type = document.getElementById('form-type').value, repeat = document.getElementById('form-repeat').value;
+                    const elId = document.getElementById('form-task-id');
+                    const elTitle = document.getElementById('form-title');
+                    const elContent = document.getElementById('form-content');
+                    const elSubject = document.getElementById('form-subject-value');
+                    const elDate = document.getElementById('form-date');
+                    const elTarget = document.getElementById('form-target');
+                    const elType = document.getElementById('form-type');
+                    const elRepeat = document.getElementById('form-repeat');
+
+                    const id = elId ? elId.value : '';
+                    const title = elTitle ? elTitle.value.trim() : '';
+                    const content = elContent ? elContent.value.trim() : '';
+                    const subject = elSubject ? elSubject.value : '';
+                    const dueDate = elDate ? elDate.value : '';
+                    const target = elTarget ? elTarget.value : 'self';
+                    const type = elType ? elType.value : 'task';
+                    const repeat = elRepeat ? elRepeat.value : 'none';
+
                     if(!title || !subject) return UI.notify('請填寫完整 (需包含標題)', 'error');
                     
                     const data = { title, content, subject, type, attachment: state.tempImageBase64 };
@@ -1079,7 +1100,7 @@
                     if(repeat === 'daily') { for(let i=1; i<5; i++){ let d=new Date(dueDate); d.setDate(d.getDate()+i); createDates.push(d.toISOString().split('T')[0]); } }
                     if(repeat === 'weekly') { for(let i=1; i<4; i++){ let d=new Date(dueDate); d.setDate(d.getDate()+(i*7)); createDates.push(d.toISOString().split('T')[0]); } }
 
-                    if (state.profile.role === 'provider' && target !== 'self' && !id) {
+                    if (state.profile && state.profile.role === 'provider' && target !== 'self' && !id) {
                         try { 
                             const g = await getDoc(doc(db, API.paths.groups(), target)); 
                             const m = g.data()?.members || []; 
@@ -1118,10 +1139,15 @@
                 edit: (id) => {
                     const task = state.tasks.find(x => x.id === id); if(!task) return;
                     app.nav.switch('add');
-                    document.getElementById('form-task-id').value = task.id;
-                    document.getElementById('form-title').value = task.title;
-                    document.getElementById('form-content').value = task.content || '';
-                    document.getElementById('form-date').value = task.dueDate || '';
+                    
+                    const tId = document.getElementById('form-task-id');
+                    const tTitle = document.getElementById('form-title');
+                    const tContent = document.getElementById('form-content');
+                    const tDate = document.getElementById('form-date');
+                    if(tId) tId.value = task.id;
+                    if(tTitle) tTitle.value = task.title;
+                    if(tContent) tContent.value = task.content || '';
+                    if(tDate) tDate.value = task.dueDate || '';
                     
                     const inp = document.getElementById('form-subject-value');
                     if(inp) {
@@ -1148,7 +1174,8 @@
                     }
                     
                     app.tasks.setFormType(task.type || 'task');
-                    document.getElementById('form-header-title').textContent = '編輯任務';
+                    const hTitle = document.getElementById('form-header-title');
+                    if(hTitle) hTitle.textContent = '編輯任務';
                     
                     if(task.attachment) {
                         state.tempImageBase64 = task.attachment;
@@ -1160,7 +1187,7 @@
                     }
                 },
                 markComplete: (id, el) => { 
-                    gsap.to(el, { scale: 0.95, opacity: 0, x: '50%', duration: 0.3, ease: "power2.in", onComplete: async () => { 
+                    const doComplete = async () => {
                         await updateDoc(doc(db, API.paths.tasks(), id), { status: 'completed', completedAt: new Date().toISOString() }); 
                         AdminService.log('TASK_COMPLETED', { taskId: id }); 
                         
@@ -1173,7 +1200,14 @@
                         }
                         
                         UI.notify('已完成並歸檔', 'success');
-                    }}); 
+                    };
+
+                    if(typeof gsap !== 'undefined') {
+                        gsap.to(el, { scale: 0.95, opacity: 0, x: '50%', duration: 0.3, ease: "power2.in", onComplete: doComplete }); 
+                    } else {
+                        if(el) el.style.display = 'none';
+                        doComplete();
+                    }
                 },
                 confirmDelete: (id) => { UI.modal.open(`<div class="text-center"><div class="w-16 h-16 bg-red-500/10 rounded-full flex items-center justify-center mx-auto mb-4"><i class="fa-solid fa-trash-can text-red-500 text-3xl"></i></div><h3 class="text-xl font-bold text-theme-text mb-2 tracking-tight">刪除任務？</h3><p class="text-theme-muted text-sm mb-6">此動作無法復原</p><div class="flex gap-3"><button onclick="app.UI.modal.close()" class="flex-1 glass-card py-3.5 font-bold text-theme-text hover:-translate-y-1 hover:bg-theme-input active:scale-95 transition-all duration-300">取消</button><button onclick="app.tasks.doDelete('${id}')" class="flex-1 bg-red-600 hover:bg-red-500 rounded-xl py-3.5 font-bold text-white shadow-lg hover:-translate-y-1 hover:shadow-red-500/40 active:scale-95 transition-all duration-300">確認刪除</button></div></div>`); },
                 doDelete: async (id) => { await deleteDoc(doc(db, API.paths.tasks(), id)); AdminService.log('TASK_DELETED', { taskId: id }); UI.modal.close(); UI.notify('已刪除'); }
@@ -1261,9 +1295,9 @@
 
                     if(slots.length === 0) { 
                         if (app.timetable.isEditMode) {
-                            c.innerHTML = `<div class="py-12 text-center animate-[fadeIn_0.3s_ease-out]"><div class="w-12 h-12 bg-theme-input rounded-full flex items-center justify-center mx-auto mb-3"><i class="fa-solid fa-calendar-plus text-theme-muted text-xl"></i></div><p class="text-theme-muted text-sm mb-4 font-bold tracking-wide">此日尚未設定</p><button onclick="app.timetable.generateDefault('${state.currentDayTab}')" class="text-xs font-bold bg-brand-500 px-5 py-2.5 rounded-full text-white shadow-lg hover:-translate-y-1 hover:shadow-brand-500/40 active:scale-95 transition-all duration-300">套用預設時段</button></div>`; 
+                            if(c) c.innerHTML = `<div class="py-12 text-center animate-[fadeIn_0.3s_ease-out]"><div class="w-12 h-12 bg-theme-input rounded-full flex items-center justify-center mx-auto mb-3"><i class="fa-solid fa-calendar-plus text-theme-muted text-xl"></i></div><p class="text-theme-muted text-sm mb-4 font-bold tracking-wide">此日尚未設定</p><button onclick="app.timetable.generateDefault('${state.currentDayTab}')" class="text-xs font-bold bg-brand-500 px-5 py-2.5 rounded-full text-white shadow-lg hover:-translate-y-1 hover:shadow-brand-500/40 active:scale-95 transition-all duration-300">套用預設時段</button></div>`; 
                         } else {
-                            c.innerHTML = `<div class="py-12 text-center animate-[fadeIn_0.3s_ease-out]"><div class="w-12 h-12 bg-theme-input rounded-full flex items-center justify-center mx-auto mb-3"><i class="fa-solid fa-calendar-xmark text-theme-muted text-xl"></i></div><p class="text-theme-muted text-sm mb-4 font-bold tracking-wide">此日尚未設定</p><button onclick="app.timetable.toggleEditMode()" class="text-xs font-bold text-brand-500 bg-brand-500/10 px-5 py-2.5 rounded-full hover:-translate-y-1 hover:bg-brand-500/20 active:scale-95 transition-all duration-300">開始編輯</button></div>`; 
+                            if(c) c.innerHTML = `<div class="py-12 text-center animate-[fadeIn_0.3s_ease-out]"><div class="w-12 h-12 bg-theme-input rounded-full flex items-center justify-center mx-auto mb-3"><i class="fa-solid fa-calendar-xmark text-theme-muted text-xl"></i></div><p class="text-theme-muted text-sm mb-4 font-bold tracking-wide">此日尚未設定</p><button onclick="app.timetable.toggleEditMode()" class="text-xs font-bold text-brand-500 bg-brand-500/10 px-5 py-2.5 rounded-full hover:-translate-y-1 hover:bg-brand-500/20 active:scale-95 transition-all duration-300">開始編輯</button></div>`; 
                         }
                         return; 
                     }
@@ -1285,9 +1319,9 @@
                                     <input type="time" value="${s.end}" onchange="app.timetable.updateSlotInline('${s.id}', 'end', this.value)" class="bg-transparent text-[11px] font-mono text-theme-muted outline-none border-b border-transparent focus:border-brand-500 pb-0.5 dark:[color-scheme:dark]">
                                 </div>
                                 <div class="flex flex-col gap-1.5 flex-1 min-w-0">
-                                    <input type="text" value="${s.label}" placeholder="標籤 (例: 第1節)" onchange="app.timetable.updateSlotInline('${s.id}', 'label', this.value)" class="bg-transparent text-[11px] font-bold text-brand-500 outline-none border-b border-transparent focus:border-brand-500 pb-0.5 w-full">
+                                    <input type="text" value="${escapeHTML(s.label)}" placeholder="標籤 (例: 第1節)" onchange="app.timetable.updateSlotInline('${s.id}', 'label', this.value)" class="bg-transparent text-[11px] font-bold text-brand-500 outline-none border-b border-transparent focus:border-brand-500 pb-0.5 w-full">
                                     <button onclick="app.timetable.openSubjectSelectModal('${s.id}')" class="bg-theme-bg border border-theme-border text-[13px] font-bold text-theme-text rounded-lg p-1.5 w-full outline-none hover:border-brand-500 transition-colors font-literary text-left flex justify-between items-center shadow-sm">
-                                        <span class="truncate">${s.subject || '-- 空堂 / 休息 --'}</span>
+                                        <span class="truncate">${escapeHTML(s.subject) || '-- 空堂 / 休息 --'}</span>
                                         <i class="fa-solid fa-chevron-down text-[10px] opacity-50 ml-1 shrink-0"></i>
                                     </button>
                                 </div>
@@ -1299,21 +1333,21 @@
                     } else {
                         html += `<div class="mt-2 flex flex-col gap-2 px-1 animate-[fadeIn_0.3s_ease-out]">`;
                         html += slots.map(s => `
-                            <div class="flex items-center gap-3 p-3 bg-theme-input/30 border border-theme-border rounded-xl hover:bg-theme-input/60 transition-colors shadow-sm">
+                            <div class="flex items-center gap-3 p-3 bg-theme-input/30 border border-theme-border rounded-xl hover:shadow-md transition-all shadow-sm">
                                 <div class="flex flex-col text-right w-[50px] shrink-0 border-r border-theme-border/50 pr-3">
                                     <span class="text-[13px] font-mono font-bold text-theme-text">${s.start}</span>
                                     <span class="text-[10px] font-mono text-theme-muted mt-0.5">${s.end}</span>
                                 </div>
                                 <div class="flex flex-col flex-1 pl-1 overflow-hidden">
-                                    <span class="text-[10px] font-bold text-brand-500 mb-1 uppercase tracking-wider truncate">${s.label}</span>
-                                    <span class="text-[15px] font-bold text-theme-text font-literary truncate">${s.subject || '<span class="opacity-40">空堂 / 休息</span>'}</span>
+                                    <span class="text-[10px] font-bold text-brand-500 mb-1 uppercase tracking-wider truncate">${escapeHTML(s.label)}</span>
+                                    <span class="text-[15px] font-bold text-theme-text font-literary truncate">${escapeHTML(s.subject) || '<span class="opacity-40">空堂 / 休息</span>'}</span>
                                 </div>
                             </div>
                         `).join('');
                         html += `</div>`;
                     }
                     
-                    c.innerHTML = html;
+                    if(c) c.innerHTML = html;
                 },
                 openSubjectSelectModal: (slotId) => {
                     const s = state.timetableConfig[state.currentDayTab].find(x => x.id === slotId);
@@ -1323,7 +1357,7 @@
                     
                     html += `<button onclick="app.timetable.updateSlotInline('${slotId}', 'subject', ''); UI.sheet.close();" class="whitespace-nowrap px-4 py-2.5 rounded-xl font-bold text-[13px] transition-all duration-300 font-literary tracking-wide border ${currentVal === '' ? 'bg-theme-card text-brand-600 shadow-sm border-theme-border scale-105' : 'bg-theme-input text-theme-muted border-transparent hover:bg-theme-border'}">-- 空堂 / 休息 --</button>`;
                     state.subjects.forEach(sub => {
-                        html += `<button onclick="app.timetable.updateSlotInline('${slotId}', 'subject', '${sub}'); UI.sheet.close();" class="whitespace-nowrap px-4 py-2.5 rounded-xl font-bold text-[13px] transition-all duration-300 font-literary tracking-wide border ${currentVal === sub ? 'bg-theme-card text-brand-600 shadow-sm border-theme-border scale-105' : 'bg-theme-input text-theme-muted border-transparent hover:bg-theme-border'}">${sub}</button>`;
+                        html += `<button onclick="app.timetable.updateSlotInline('${slotId}', 'subject', decodeURIComponent('${safeStr(sub)}')); UI.sheet.close();" class="whitespace-nowrap px-4 py-2.5 rounded-xl font-bold text-[13px] transition-all duration-300 font-literary tracking-wide border ${currentVal === sub ? 'bg-theme-card text-brand-600 shadow-sm border-theme-border scale-105' : 'bg-theme-input text-theme-muted border-transparent hover:bg-theme-border'}">${escapeHTML(sub)}</button>`;
                     });
                     
                     html += `</div>`;
@@ -1413,10 +1447,6 @@
                     } catch(e) { UI.notify('發佈失敗', 'error'); }
                 }
             }
-        };
-
-        app.tasks.populateFilterSubjects = () => {
-            // Nothing to do here since we moved to pure Modal
         };
 
         window.app = app; window.app.UI = UI;

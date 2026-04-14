@@ -50,14 +50,14 @@
     <style>
         :root { 
             --safe-area-inset-bottom: env(safe-area-inset-bottom, 20px);
-            /* 🌟 極簡淺色模式 (參考圖片配置) */
+            /* 🌟 極簡淺色模式 */
             --bg: #f8fafc;
             --text: #0f172a;
             --text-muted: #64748b;
             --border: rgba(0,0,0,0.06);
             --card: #ffffff;
             --input: #f1f5f9;
-            --nav-bg: rgba(248, 250, 252, 0.6);
+            --nav-bg: rgba(248, 250, 252, 0.4);
             --orb-opacity: 0.8;
         }
 
@@ -69,8 +69,8 @@
             --border: rgba(255,255,255,0.08);
             --card: #0f111a;
             --input: rgba(255,255,255,0.04);
-            --nav-bg: rgba(3, 3, 5, 0.6);
-            --orb-opacity: 0.3;
+            --nav-bg: rgba(3, 3, 5, 0.4);
+            --orb-opacity: 0.4;
         }
 
         body {
@@ -262,8 +262,11 @@
             <!-- 第三層：各頁面內容容器 -->
             <div class="px-4 md:px-6 w-full pb-32 md:max-w-5xl lg:max-w-6xl md:mx-auto">
                 <section id="view-home" class="view-section active w-full">
-                    <!-- Group Announcements Container -->
                     <div id="home-announcements" class="mb-4 space-y-2 md:max-w-3xl md:mx-auto hidden"></div>
+
+                    <div class="flex justify-between items-end mb-4 px-2 md:px-0">
+                        <h2 class="text-xl font-bold text-theme-text tracking-tight">待辦任務</h2>
+                    </div>
 
                     <!-- 作業過濾器 (Smart Task Filters) -->
                     <div class="flex gap-2 mb-6 px-1 md:px-0 overflow-x-auto no-scrollbar md:max-w-3xl md:mx-auto mt-2">
@@ -288,7 +291,9 @@
                 </section>
 
                 <section id="view-timetable" class="view-section w-full">
-                    <!-- 動態日別選擇器 -->
+                    <div class="flex justify-between items-end mb-4 px-2 md:px-0 md:max-w-3xl md:mx-auto">
+                        <h2 class="text-xl font-bold text-theme-text tracking-tight">時間表</h2>
+                    </div>
                     <div id="timetable-day-selector" class="flex gap-2 overflow-x-auto no-scrollbar pb-4 mb-2 snap-x md:justify-center md:max-w-3xl md:mx-auto"></div>
                     <div class="glass-card p-3 shadow-md border-theme-border flex flex-col max-h-[70vh] md:max-w-3xl md:mx-auto">
                         <div class="flex justify-between items-center p-2 mb-2 border-b border-theme-border shrink-0">
@@ -373,7 +378,7 @@
                                 <div class="w-full lg:w-[280px] flex flex-col gap-4 shrink-0">
                                     <!-- 超大日期選擇 -->
                                     <div class="relative">
-                                        <input type="date" id="form-date" class="w-full h-16 px-5 bg-theme-input border border-theme-border hover:border-gray-300 dark:hover:border-gray-600 rounded-2xl text-[17px] font-bold text-theme-text text-center transition-all shadow-sm outline-none focus:border-brand-500 dark:[color-scheme:dark]">
+                                        <input type="date" id="form-date" onchange="app.tasks.checkStress()" class="w-full h-16 px-5 bg-theme-input border border-theme-border hover:border-gray-300 dark:hover:border-gray-600 rounded-2xl text-[17px] font-bold text-theme-text text-center transition-all shadow-sm outline-none focus:border-brand-500 dark:[color-scheme:dark]">
                                     </div>
                                     
                                     <!-- 重複選擇按鈕 -->
@@ -468,7 +473,8 @@
         </main>
 
         <!-- 全域右下角懸浮新增按鈕 (Global FAB) -->
-        <button onclick="app.nav.switch('add')" id="global-fab" class="fixed bottom-8 right-6 md:bottom-12 md:right-12 lg:right-16 w-14 h-14 bg-gradient-to-tr from-brand-600 to-pink-500 rounded-full flex items-center justify-center text-white text-2xl shadow-[0_10px_30px_rgba(99,102,241,0.5)] hover:shadow-[0_15px_40px_rgba(99,102,241,0.8)] hover:scale-110 active:scale-95 transition-all duration-400 z-50">
+        <!-- 🌟 修正 FAB 的切換邏輯，點擊時會正確在 home 與 add 之間切換 -->
+        <button onclick="app.nav.switch(state.currentView === 'add' ? 'home' : 'add')" id="global-fab" class="fixed bottom-8 right-6 md:bottom-12 md:right-12 lg:right-16 w-14 h-14 bg-gradient-to-tr from-brand-600 to-pink-500 rounded-full flex items-center justify-center text-white text-2xl shadow-[0_10px_30px_rgba(99,102,241,0.5)] hover:shadow-[0_15px_40px_rgba(99,102,241,0.8)] hover:scale-110 active:scale-95 transition-all duration-400 z-50">
             <i class="fa-solid fa-plus transition-transform duration-400" id="add-icon"></i>
         </button>
 
@@ -800,7 +806,6 @@
                 const today = new Date().toISOString().split('T')[0]; let t=0, f=0, e=0;
                 state.tasks.forEach(task => { if(task.status === 'completed') return; if(task.type === 'exam') e++; else { if(task.dueDate && task.dueDate <= today) t++; else f++; } });
                 document.getElementById('widget-today-count').textContent = t; document.getElementById('widget-future-count').textContent = f; document.getElementById('widget-exam-count').textContent = e;
-                app.tasks.checkStress();
             },
             notifications: {
                 toggle: () => { const p = document.getElementById('notif-panel'), b = document.getElementById('notif-badge'); if(p.classList.contains('hidden')) { UI.overlay.show(); p.classList.remove('hidden'); gsap.fromTo(p, { x: '100%' }, { x: '0%', duration: 0.4, ease: "power3.out" }); b.classList.add('hidden'); } else { gsap.to(p, { x: '100%', duration: 0.3, ease: "power3.in", onComplete: () => { p.classList.add('hidden'); UI.overlay.hide(); }}); } },
@@ -826,24 +831,36 @@
                     const fabIcon = document.getElementById('add-icon');
                     const fabBtn = document.getElementById('global-fab');
                     if(vid === 'add') { 
-                        fabIcon.classList.replace('fa-plus', 'fa-xmark'); 
-                        fabIcon.style.transform = 'rotate(90deg)'; 
-                        fabBtn.classList.add('from-red-600', 'to-red-400', 'shadow-red-500/50');
-                        fabBtn.classList.remove('from-brand-600', 'to-pink-500', 'shadow-[0_10px_30px_rgba(99,102,241,0.5)]');
-                        app.tasks.prepareForm(); 
+                        if(fabIcon) {
+                            fabIcon.classList.replace('fa-plus', 'fa-xmark'); 
+                            fabIcon.style.transform = 'rotate(90deg)'; 
+                        }
+                        if(fabBtn) {
+                            fabBtn.classList.add('from-red-600', 'to-red-400', 'shadow-red-500/50');
+                            fabBtn.classList.remove('from-brand-600', 'to-pink-500', 'shadow-[0_10px_30px_rgba(99,102,241,0.5)]');
+                        }
+                        try { app.tasks.prepareForm(); } catch (e) { console.error('Form preparation issue:', e); } 
                     } else { 
-                        fabIcon.classList.replace('fa-xmark', 'fa-plus'); 
-                        fabIcon.style.transform = 'rotate(0deg)'; 
-                        fabBtn.classList.remove('from-red-600', 'to-red-400', 'shadow-red-500/50');
-                        fabBtn.classList.add('from-brand-600', 'to-pink-500', 'shadow-[0_10px_30px_rgba(99,102,241,0.5)]');
+                        if(fabIcon) {
+                            fabIcon.classList.replace('fa-xmark', 'fa-plus'); 
+                            fabIcon.style.transform = 'rotate(0deg)'; 
+                        }
+                        if(fabBtn) {
+                            fabBtn.classList.remove('from-red-600', 'to-red-400', 'shadow-red-500/50');
+                            fabBtn.classList.add('from-brand-600', 'to-pink-500', 'shadow-[0_10px_30px_rgba(99,102,241,0.5)]');
+                        }
                     } 
 
                     document.querySelectorAll('.view-section').forEach(v => v.classList.remove('active')); 
                     const t = document.getElementById(`view-${vid}`); 
-                    t.classList.add('active'); 
-                    gsap.fromTo(t, { opacity: 0, y: 15 }, { opacity: 1, y: 0, duration: 0.3, ease: "power2.out" }); 
+                    if(t) {
+                        t.classList.add('active'); 
+                        if (typeof gsap !== 'undefined') gsap.fromTo(t, { opacity: 0, y: 15 }, { opacity: 1, y: 0, duration: 0.3, ease: "power2.out" }); 
+                    }
                     
-                    document.getElementById('main-scroll-area').scrollTo({top: 0, behavior: 'smooth'});
+                    const scrollArea = document.getElementById('main-scroll-area');
+                    if(scrollArea) scrollArea.scrollTo({top: 0, behavior: 'smooth'});
+                    
                     state.currentView = vid; 
                 }
             },
@@ -860,34 +877,39 @@
                 },
                 setFilterSubject: (val) => {
                     state.filters.subject = val;
-                    document.getElementById('filter-subject-text').textContent = val === 'all' ? '所有科目' : val;
+                    const el = document.getElementById('filter-subject-text');
+                    if(el) el.textContent = val === 'all' ? '所有科目' : val;
                     UI.sheet.close();
                     app.renders.tasks();
                 },
                 toggleIncompleteFilter: () => {
                     state.filters.incompleteOnly = !state.filters.incompleteOnly;
                     const btn = document.getElementById('filter-incomplete');
-                    if (state.filters.incompleteOnly) {
-                        btn.classList.replace('text-theme-muted', 'text-brand-500');
-                        btn.classList.replace('bg-theme-card', 'bg-brand-500/10');
-                        btn.classList.replace('border-theme-border', 'border-brand-500/30');
-                        btn.querySelector('i').classList.replace('text-theme-muted', 'text-brand-500');
-                    } else {
-                        btn.classList.replace('text-brand-500', 'text-theme-muted');
-                        btn.classList.replace('bg-brand-500/10', 'bg-theme-card');
-                        btn.classList.replace('border-brand-500/30', 'border-theme-border');
-                        btn.querySelector('i').classList.replace('text-brand-500', 'text-theme-muted');
+                    if(btn) {
+                        if (state.filters.incompleteOnly) {
+                            btn.classList.replace('text-theme-muted', 'text-brand-500');
+                            btn.classList.replace('bg-theme-card', 'bg-brand-500/10');
+                            btn.classList.replace('border-theme-border', 'border-brand-500/30');
+                            btn.querySelector('i').classList.replace('text-theme-muted', 'text-brand-500');
+                        } else {
+                            btn.classList.replace('text-brand-500', 'text-theme-muted');
+                            btn.classList.replace('bg-brand-500/10', 'bg-theme-card');
+                            btn.classList.replace('border-brand-500/30', 'border-theme-border');
+                            btn.querySelector('i').classList.replace('text-brand-500', 'text-theme-muted');
+                        }
                     }
                     app.renders.tasks();
                 },
                 toggleSortFilter: () => {
                     state.filters.sortDesc = !state.filters.sortDesc;
                     const btn = document.getElementById('filter-sort');
-                    const icon = btn.querySelector('i');
-                    if (state.filters.sortDesc) {
-                        icon.classList.replace('fa-arrow-down-short-wide', 'fa-arrow-up-wide-short');
-                    } else {
-                        icon.classList.replace('fa-arrow-up-wide-short', 'fa-arrow-down-short-wide');
+                    if(btn) {
+                        const icon = btn.querySelector('i');
+                        if (state.filters.sortDesc) {
+                            icon.classList.replace('fa-arrow-down-short-wide', 'fa-arrow-up-wide-short');
+                        } else {
+                            icon.classList.replace('fa-arrow-up-wide-short', 'fa-arrow-down-short-wide');
+                        }
                     }
                     app.renders.tasks();
                 },
@@ -898,34 +920,60 @@
                     document.getElementById('form-date').value = API.getWorkingDay(); 
                     app.tasks.setRepeat('none', '不重複');
                     app.tasks.setTarget('self', '私人任務 (僅自己可見)');
-                    document.getElementById('broadcast-toggle').checked = false;
-                    document.getElementById('broadcast-toggle').disabled = false;
+                    
+                    const toggle = document.getElementById('broadcast-toggle');
+                    if(toggle) {
+                        toggle.checked = false;
+                        toggle.disabled = false;
+                    }
+                    
                     app.tasks.setFormType('task'); 
                     app.tasks.checkStress(); 
                     document.getElementById('form-header-title').textContent = '新增任務';
                     
-                    document.getElementById('form-image-preview').classList.add('hidden');
-                    document.getElementById('form-image-preview').src = '';
+                    const imgPreview = document.getElementById('form-image-preview');
+                    if(imgPreview) {
+                        imgPreview.classList.add('hidden');
+                        imgPreview.src = '';
+                    }
                     state.tempImageBase64 = null;
                     app.renders.subjectsPills();
                 },
                 setFormType: (type) => { 
-                    document.getElementById('form-type').value = type; 
+                    const typeEl = document.getElementById('form-type');
+                    if(typeEl) typeEl.value = type; 
+                    
                     const bt = document.getElementById('type-btn-task'), be = document.getElementById('type-btn-exam'); 
                     
-                    const activeClass = 'flex-1 py-3 text-[15px] font-bold rounded-xl bg-theme-card text-brand-600 shadow-sm border border-theme-border transition-all flex justify-center items-center gap-2';
+                    const activeClass = 'flex-1 py-3 text-[15px] font-bold rounded-xl bg-theme-card text-brand-600 dark:text-brand-400 shadow-sm border border-theme-border transition-all flex justify-center items-center gap-2';
                     const activeClassExam = 'flex-1 py-3 text-[15px] font-bold rounded-xl bg-theme-card text-pink-600 shadow-sm border border-theme-border transition-all flex justify-center items-center gap-2';
                     const inactiveClass = 'flex-1 py-3 text-[15px] font-semibold rounded-xl text-theme-muted border border-transparent hover:text-theme-text transition-all flex justify-center items-center gap-2';
                     
-                    if(type === 'task') { 
-                        bt.className = activeClass; 
-                        be.className = inactiveClass; 
-                    } else { 
-                        be.className = activeClassExam; 
-                        bt.className = inactiveClass; 
-                    } 
+                    if(bt && be) {
+                        if(type === 'task') { 
+                            bt.className = activeClass; 
+                            be.className = inactiveClass; 
+                        } else { 
+                            be.className = activeClassExam; 
+                            bt.className = inactiveClass; 
+                        } 
+                    }
                 },
-                checkStress: () => { const di = document.getElementById('form-date'); if(!di) return; const check = () => { const c = state.tasks.filter(t => t.dueDate === di.value && t.status !== 'completed').length; const w = document.getElementById('form-warning-msg'); if(c >= 5) { document.getElementById('form-warning-count').textContent = c; w.classList.remove('hidden'); } else { w.classList.add('hidden'); } }; di.addEventListener('change', check); check(); },
+                checkStress: () => { 
+                    const di = document.getElementById('form-date'); 
+                    if(!di) return; 
+                    const c = state.tasks.filter(t => t.dueDate === di.value && t.status !== 'completed').length; 
+                    const w = document.getElementById('form-warning-msg');
+                    const wc = document.getElementById('form-warning-count');
+                    if(w && wc) {
+                        if(c >= 5) { 
+                            wc.textContent = c; 
+                            w.classList.remove('hidden'); 
+                        } else { 
+                            w.classList.add('hidden'); 
+                        } 
+                    }
+                },
                 handleImageUpload: (e) => {
                     const file = e.target.files[0];
                     if(!file) return;
@@ -949,8 +997,10 @@
                             state.tempImageBase64 = dataUrl;
                             
                             const preview = document.getElementById('form-image-preview');
-                            preview.src = dataUrl;
-                            preview.classList.remove('hidden');
+                            if(preview) {
+                                preview.src = dataUrl;
+                                preview.classList.remove('hidden');
+                            }
                         };
                         img.src = event.target.result;
                     };
@@ -972,8 +1022,10 @@
                     UI.sheet.open(html);
                 },
                 setRepeat: (val, label) => {
-                    document.getElementById('form-repeat').value = val;
-                    document.getElementById('form-repeat-text').textContent = label;
+                    const rep = document.getElementById('form-repeat');
+                    const repText = document.getElementById('form-repeat-text');
+                    if(rep) rep.value = val;
+                    if(repText) repText.textContent = label;
                     UI.sheet.close();
                 },
                 handleBroadcastToggle: (checkbox) => {
@@ -995,7 +1047,7 @@
                     const isSelf = currentVal === 'self';
                     html += `<button onclick="app.tasks.setTarget('self', '私人任務 (僅自己可見)')" class="w-full text-left p-4 rounded-xl border ${isSelf ? 'bg-pink-500/10 border-pink-500/40 text-pink-600 font-bold shadow-sm' : 'bg-theme-input border-theme-border text-theme-text font-semibold hover:bg-theme-border'} transition-all">私人任務 (僅自己可見)</button>`;
 
-                    if (state.profile.role === 'provider') {
+                    if (state.profile && state.profile.role === 'provider') {
                         state.groups.forEach(g => {
                             if (g.providerId === state.user.uid) {
                                 const isGroup = currentVal === g.id;
@@ -1007,10 +1059,14 @@
                     UI.sheet.open(html);
                 },
                 setTarget: (val, label) => {
-                    document.getElementById('form-target').value = val;
-                    document.getElementById('form-target-text').textContent = val === 'self' ? '私人任務 (僅自己可見)' : label;
+                    const tgt = document.getElementById('form-target');
+                    const tgtText = document.getElementById('form-target-text');
+                    if(tgt) tgt.value = val;
+                    if(tgtText) tgtText.textContent = val === 'self' ? '私人任務 (僅自己可見)' : label;
+                    
                     const toggle = document.getElementById('broadcast-toggle');
                     if(toggle) toggle.checked = val !== 'self';
+                    
                     UI.sheet.close();
                 },
                 save: async () => {
@@ -1068,20 +1124,27 @@
                     document.getElementById('form-date').value = task.dueDate || '';
                     
                     const inp = document.getElementById('form-subject-value');
-                    inp.value = task.subject || state.subjects[0];
-                    if(!state.subjects.includes(inp.value)) { state.subjects.unshift(inp.value); }
+                    if(inp) {
+                        inp.value = task.subject || state.subjects[0];
+                        if(!state.subjects.includes(inp.value)) { state.subjects.unshift(inp.value); }
+                    }
                     app.renders.subjectsPills();
 
                     app.tasks.setRepeat('none', '不重複');
                     
+                    const toggle = document.getElementById('broadcast-toggle');
                     if(task.groupId) {
                         app.tasks.setTarget(task.groupId, '群組任務 (已派發無法更改)');
-                        document.getElementById('broadcast-toggle').checked = true;
-                        document.getElementById('broadcast-toggle').disabled = true;
+                        if(toggle) {
+                            toggle.checked = true;
+                            toggle.disabled = true;
+                        }
                     } else {
                         app.tasks.setTarget('self', '私人任務 (僅自己可見)');
-                        document.getElementById('broadcast-toggle').checked = false;
-                        document.getElementById('broadcast-toggle').disabled = false;
+                        if(toggle) {
+                            toggle.checked = false;
+                            toggle.disabled = false;
+                        }
                     }
                     
                     app.tasks.setFormType(task.type || 'task');
@@ -1090,7 +1153,10 @@
                     if(task.attachment) {
                         state.tempImageBase64 = task.attachment;
                         const p = document.getElementById('form-image-preview');
-                        p.src = task.attachment; p.classList.remove('hidden');
+                        if(p) {
+                            p.src = task.attachment; 
+                            p.classList.remove('hidden');
+                        }
                     }
                 },
                 markComplete: (id, el) => { 
@@ -1135,9 +1201,19 @@
                         }
 
                         const tt = document.getElementById('widget-class-title'), tm = document.getElementById('widget-class-timer');
+                        if(!tt || !tm) return;
+
                         if(slots.length === 0) { tt.textContent = '今日無行程'; tm.textContent = '--:--:--'; return; }
-                        let c = null, n = null, nt = now.getHours() * 60 + now.getMinutes() + now.getSeconds()/60;
-                        for(let i=0; i<slots.length; i++) { const [sH,sM]=slots[i].start.split(':').map(Number), [eH,eM]=slots[i].end.split(':').map(Number); const s=sH*60+sM, e=eH*60+eM; if(nt>=s && nt<e) { c=slots[i]; c.em=e; } else if(nt<s && !n) { n=slots[i]; n.sm=s; } }
+                        let c = null, n = null;
+                        const now = new Date();
+                        const nt = now.getHours() * 60 + now.getMinutes() + now.getSeconds()/60;
+                        for(let i=0; i<slots.length; i++) { 
+                            const [sH,sM]=slots[i].start.split(':').map(Number);
+                            const [eH,eM]=slots[i].end.split(':').map(Number); 
+                            const s=sH*60+sM, e=eH*60+eM; 
+                            if(nt>=s && nt<e) { c=slots[i]; c.em=e; } 
+                            else if(nt<s && !n) { n=slots[i]; n.sm=s; } 
+                        }
                         if (c) { 
                             tt.textContent = c.subject || c.label; 
                             const d = c.em - nt, m = Math.floor(d), sec = Math.floor((d-m)*60); 
@@ -1223,8 +1299,8 @@
                     } else {
                         html += `<div class="mt-2 flex flex-col gap-2 px-1 animate-[fadeIn_0.3s_ease-out]">`;
                         html += slots.map(s => `
-                            <div class="flex items-center gap-3 p-3 bg-theme-input border border-theme-border rounded-xl hover:shadow-md transition-all shadow-sm">
-                                <div class="flex flex-col text-right w-[50px] shrink-0 border-r border-theme-border pr-3">
+                            <div class="flex items-center gap-3 p-3 bg-theme-input/30 border border-theme-border rounded-xl hover:bg-theme-input/60 transition-colors shadow-sm">
+                                <div class="flex flex-col text-right w-[50px] shrink-0 border-r border-theme-border/50 pr-3">
                                     <span class="text-[13px] font-mono font-bold text-theme-text">${s.start}</span>
                                     <span class="text-[10px] font-mono text-theme-muted mt-0.5">${s.end}</span>
                                 </div>
@@ -1296,7 +1372,7 @@
                     state.timetableConfig[state.currentDayTab].push({ id: API.genId(), start: defaultStart, end: defaultEnd, label: defaultLabel, type: 'class', subject: '' });
                     app.timetable.saveConfig();
                     app.timetable.renderDaySelector();
-                    setTimeout(() => { const c = document.getElementById('timetable-slots'); c.scrollTop = c.scrollHeight; }, 50);
+                    setTimeout(() => { const c = document.getElementById('timetable-slots'); if(c) c.scrollTop = c.scrollHeight; }, 50);
                 }
             },
             groups: {
@@ -1337,6 +1413,10 @@
                     } catch(e) { UI.notify('發佈失敗', 'error'); }
                 }
             }
+        };
+
+        app.tasks.populateFilterSubjects = () => {
+            // Nothing to do here since we moved to pure Modal
         };
 
         window.app = app; window.app.UI = UI;

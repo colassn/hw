@@ -48,7 +48,7 @@
     <style>
         :root { 
             --safe-area-inset-bottom: env(safe-area-inset-bottom, 20px);
-            /* 🌟 淺色模式極致純淨 */
+            /* 🌟 淺色模式黃金比例配階 */
             --bg: #f8fafc;
             --text: #0f172a;
             --text-muted: #64748b;
@@ -59,7 +59,7 @@
         }
 
         .dark {
-            /* 🌟 深色模式高級石板灰 */
+            /* 🌟 深色模式科技感石板灰 */
             --bg: #050505;
             --text: #f8fafc;
             --text-muted: #9ca3af;
@@ -75,9 +75,9 @@
             -webkit-font-smoothing: antialiased;
             -webkit-tap-highlight-color: transparent;
             transition: background-color 0.5s ease, color 0.5s ease;
-            /* 全域解鎖滾動 */
             overflow-x: hidden;
             overflow-y: auto;
+            scroll-behavior: smooth;
         }
 
         h1, h2, h3, h4, .font-display { font-family: 'Plus Jakarta Sans', 'Noto Sans HK', sans-serif; }
@@ -96,7 +96,7 @@
             100% { transform: translate(0, 0) rotate(360deg) scale(1); }
         }
 
-        /* --- 💎 全新黃金比例卡片設計 --- */
+        /* --- 💎 黃金比例毛玻璃卡片 --- */
         .glass-card { 
             background: var(--card); 
             border: 1px solid var(--border); 
@@ -116,20 +116,17 @@
             content: '';
             position: absolute;
             inset: 0;
-            background: radial-gradient(circle at 100% 0%, var(--subj-color-soft, transparent), transparent 70%);
-            opacity: 0.4;
+            background: radial-gradient(circle at 100% 0%, var(--subj-color-soft, transparent), transparent 75%);
+            opacity: 0.3;
             z-index: -1;
             transition: opacity 0.5s ease;
             animation: breatheGlow 5s alternate infinite ease-in-out;
             pointer-events: none;
         }
-        .task-card-anim:hover::before {
-            opacity: 0.8;
-            transform: scale(1.1);
-        }
+        .task-card-anim:hover::before { opacity: 0.7; transform: scale(1.05); }
         @keyframes breatheGlow {
-            0% { opacity: 0.3; transform: scale(1) translate(0, 0); }
-            100% { opacity: 0.6; transform: scale(1.05) translate(-2%, 2%); }
+            0% { opacity: 0.2; transform: scale(1) translate(0, 0); }
+            100% { opacity: 0.5; transform: scale(1.05) translate(-2%, 2%); }
         }
 
         /* --- 精緻輸入框 --- */
@@ -175,7 +172,7 @@
         <div class="orb orb-3"></div>
     </div>
 
-    <!-- 🌟 系統跑馬燈橫幅 (對接後台發佈) -->
+    <!-- 🌟 系統跑馬燈橫幅 -->
     <div id="global-marquee-banner" class="hidden fixed top-0 left-0 right-0 w-full bg-gradient-to-r from-orange-500 to-yellow-500 text-white font-bold text-[13px] px-6 py-2.5 flex items-center gap-4 shadow-lg z-[100]">
         <i class="fa-solid fa-bullhorn animate-pulse text-lg drop-shadow-sm"></i>
         <span class="tracking-widest uppercase shrink-0 bg-black/20 px-2 py-0.5 rounded text-[10px]">最新公告</span>
@@ -237,11 +234,11 @@
     <!-- 3. 主系統核心 -->
     <div id="app-core" class="hidden flex-col min-h-screen w-full relative">
         
-        <!-- 🌟 絕美懸浮標題 (Floating Glass Island) -->
-        <header id="main-header" class="fixed top-4 left-4 right-4 md:max-w-5xl lg:max-w-6xl md:mx-auto z-50 bg-white/60 dark:bg-[#0a0a0c]/60 backdrop-blur-2xl border border-theme-border rounded-[28px] px-6 py-4 flex justify-between items-center shadow-[0_10px_40px_rgba(0,0,0,0.08)] dark:shadow-[0_10px_40px_rgba(0,0,0,0.5)] transition-all duration-300">
-            <div class="flex flex-col">
-                <h1 class="text-2xl md:text-3xl font-black tracking-wide text-theme-text font-literary drop-shadow-sm leading-tight">電子手冊</h1>
-                <p id="header-date" class="text-[10px] md:text-xs text-brand-500 font-mono tracking-widest font-bold uppercase mt-0.5">載入中...</p>
+        <!-- 🌟 智慧收縮懸浮標題 (Smart Shrink Header) -->
+        <header id="main-header" class="fixed top-4 left-4 right-4 md:max-w-5xl lg:max-w-6xl md:mx-auto z-50 bg-white/70 dark:bg-[#0a0a0c]/70 backdrop-blur-2xl border border-theme-border rounded-[28px] px-6 py-5 flex justify-between items-center shadow-[0_10px_40px_rgba(0,0,0,0.08)] dark:shadow-[0_10px_40px_rgba(0,0,0,0.5)] transition-all duration-300 transform-gpu">
+            <div class="flex flex-col transition-all duration-300">
+                <h1 id="header-title-text" class="text-3xl md:text-4xl font-black tracking-wide text-theme-text font-literary drop-shadow-sm leading-tight transition-all duration-300">電子手冊</h1>
+                <p id="header-date" class="text-[10px] md:text-xs text-brand-500 font-mono tracking-widest font-bold uppercase mt-0.5 transition-all duration-300">載入中...</p>
             </div>
             <div class="flex items-center gap-3 md:gap-5">
                 <div id="offline-badge" class="hidden bg-yellow-500/10 text-yellow-600 dark:text-yellow-400 text-[10px] font-bold px-3 py-1.5 rounded-full border border-yellow-500/20 flex items-center gap-1 shadow-sm"><i class="fa-solid fa-bolt-slash"></i> 離線</div>
@@ -257,12 +254,12 @@
             </div>
         </header>
 
-        <!-- 主內容區域 (配合頂部懸浮留出空間) -->
-        <main id="main-content-area" class="flex-1 w-full relative z-10 pt-[110px] pb-32">
+        <!-- 主內容區域 -->
+        <main id="main-content-area" class="flex-1 w-full relative z-10 pt-[120px] pb-32 transition-all duration-300">
             
             <!-- 浮空膠囊導航 (Sticky) -->
-            <div id="main-nav-bar" class="sticky top-[104px] z-40 px-4 shrink-0 pointer-events-none transition-all duration-500 mb-6">
-                <div class="flex gap-1.5 p-1.5 bg-white/70 dark:bg-[#0a0a0c]/70 backdrop-blur-xl rounded-2xl border border-theme-border shadow-lg overflow-x-auto no-scrollbar max-w-full md:max-w-2xl mx-auto pointer-events-auto">
+            <div id="main-nav-bar" class="sticky top-[110px] z-40 px-4 shrink-0 pointer-events-none transition-all duration-300 mb-6">
+                <div class="flex gap-1.5 p-1.5 bg-white/80 dark:bg-[#0a0a0c]/80 backdrop-blur-xl rounded-2xl border border-theme-border shadow-lg overflow-x-auto no-scrollbar max-w-full md:max-w-2xl mx-auto pointer-events-auto">
                     <button onclick="app.nav.switch('home')" id="nav-home" class="top-nav-item flex-1 py-2.5 px-4 text-[13px] font-bold rounded-xl active bg-theme-card text-brand-600 dark:text-white shadow-sm border border-theme-border whitespace-nowrap flex items-center justify-center gap-2">
                         <i class="fa-solid fa-layer-group"></i> 任務
                     </button>
@@ -313,7 +310,7 @@
             <!-- 各頁面內容容器 -->
             <div class="px-4 md:px-6 w-full md:max-w-5xl lg:max-w-6xl md:mx-auto">
                 
-                <!-- 🏠 HOME 頁面 (套用全新排版卡片) -->
+                <!-- 🏠 HOME 頁面 (黃金比例卡片) -->
                 <section id="view-home" class="view-section active w-full">
                     <div id="home-announcements" class="mb-6 space-y-3 md:max-w-3xl md:mx-auto hidden"></div>
 
@@ -322,18 +319,17 @@
                     </div>
 
                     <div class="flex gap-2.5 mb-8 px-1 overflow-x-auto no-scrollbar md:max-w-3xl md:mx-auto items-center">
-                        <button id="filter-subject-btn" onclick="app.tasks.openFilterSubjectModal()" class="bg-theme-card text-theme-text text-[13px] font-bold px-5 py-2.5 rounded-full border border-theme-border outline-none transition-all flex items-center gap-2 shrink-0 hover:shadow-md active:scale-95 shadow-sm">
+                        <button id="filter-subject-btn" onclick="app.tasks.openFilterSubjectModal()" class="bg-theme-card text-theme-text text-[12px] font-bold px-5 py-2.5 rounded-full border border-theme-border outline-none transition-all flex items-center gap-2 shrink-0 hover:shadow-md active:scale-95 shadow-sm">
                             <span id="filter-subject-text">所有科目</span> <i class="fa-solid fa-chevron-down text-[10px] opacity-50"></i>
                         </button>
-                        <button id="filter-incomplete" onclick="app.tasks.toggleIncompleteFilter()" class="bg-theme-card text-theme-muted text-[13px] font-bold px-5 py-2.5 rounded-full border border-theme-border whitespace-nowrap transition-all flex items-center gap-2 shrink-0 hover:shadow-md active:scale-95 shadow-sm">
+                        <button id="filter-incomplete" onclick="app.tasks.toggleIncompleteFilter()" class="bg-theme-card text-theme-muted text-[12px] font-bold px-5 py-2.5 rounded-full border border-theme-border whitespace-nowrap transition-all flex items-center gap-2 shrink-0 hover:shadow-md active:scale-95 shadow-sm">
                             <i class="fa-solid fa-circle-check"></i> <span>僅未完成</span>
                         </button>
-                        <button id="filter-sort" onclick="app.tasks.toggleSortFilter()" class="bg-theme-card text-brand-500 text-[13px] font-bold px-5 py-2.5 rounded-full border border-theme-border whitespace-nowrap transition-all flex items-center gap-2 shrink-0 hover:shadow-md active:scale-95 shadow-sm">
+                        <button id="filter-sort" onclick="app.tasks.toggleSortFilter()" class="bg-theme-card text-brand-500 text-[12px] font-bold px-5 py-2.5 rounded-full border border-theme-border whitespace-nowrap transition-all flex items-center gap-2 shrink-0 hover:shadow-md active:scale-95 shadow-sm">
                             <i class="fa-solid fa-arrow-down-short-wide"></i> <span>繳交日期</span>
                         </button>
                     </div>
 
-                    <!-- 🌟 任務卡片網格 -->
                     <div id="todo-list" class="grid grid-cols-1 lg:grid-cols-2 gap-6"></div>
                     
                     <div id="todo-empty" class="hidden flex-col items-center justify-center py-32 text-theme-muted">
@@ -350,7 +346,6 @@
                     <div class="flex justify-between items-end mb-4 px-1 md:px-0 md:max-w-3xl md:mx-auto">
                         <h2 class="text-2xl font-black text-theme-text tracking-tight font-display">時間表 <span class="text-brand-500">Timetable</span></h2>
                     </div>
-                    <!-- 支援自訂日別 -->
                     <div id="timetable-day-selector" class="flex gap-2.5 overflow-x-auto no-scrollbar pb-4 mb-4 snap-x md:justify-center md:max-w-3xl md:mx-auto items-center"></div>
                     <div class="glass-card p-3 shadow-lg border-theme-border flex flex-col md:max-w-3xl md:mx-auto">
                         <div class="flex justify-between items-center p-4 mb-2 border-b border-theme-border shrink-0 bg-theme-input/50 rounded-[20px]">
@@ -406,13 +401,12 @@
                     </div>
                 </section>
 
-                <!-- ⚙️ SETTINGS 頁面 (加入科目與顏色管理) -->
+                <!-- ⚙️ SETTINGS 頁面 -->
                 <section id="view-settings" class="view-section w-full">
                     <div class="flex justify-between items-end mb-6 px-1 md:px-0 md:max-w-2xl md:mx-auto">
                         <h2 class="text-2xl font-black text-theme-text tracking-tight font-display">個人化設定 <span class="text-brand-500">Settings</span></h2>
                     </div>
                     
-                    <!-- 基礎設定卡片 -->
                     <div class="grid grid-cols-2 gap-4 mb-6 md:max-w-2xl md:mx-auto">
                         <button onclick="app.settings.toggleTheme()" class="glass-card p-6 flex flex-col items-center justify-center gap-3 hover:-translate-y-1 hover:shadow-lg transition-all active:scale-95 text-theme-text group">
                             <div class="w-14 h-14 rounded-2xl bg-brand-500/10 flex items-center justify-center group-hover:bg-brand-500 group-hover:text-white transition-colors">
@@ -428,11 +422,9 @@
                         </button>
                     </div>
 
-                    <!-- 🌟 升級：科目與顏色管理區塊 -->
                     <div class="glass-card p-6 md:p-8 mb-6 relative overflow-hidden shadow-sm hover:shadow-lg transition-all duration-500 md:max-w-2xl md:mx-auto border-t-4 border-t-brand-500">
                         <h3 class="text-lg font-bold text-theme-text mb-6 font-literary tracking-wide flex items-center"><i class="fa-solid fa-palette text-brand-500 mr-3 text-xl"></i>科目與專屬顏色管理</h3>
                         
-                        <!-- 科目列表展示區 -->
                         <div id="settings-subjects-list" class="flex flex-wrap gap-3 mb-8"></div>
                         
                         <div class="bg-theme-input/50 p-5 rounded-2xl border border-theme-border shadow-inner">
@@ -447,7 +439,6 @@
                         </div>
                     </div>
 
-                    <!-- 匯出行事曆 -->
                     <div class="md:max-w-2xl md:mx-auto mb-6">
                         <button onclick="app.settings.exportCalendar()" class="w-full glass-card p-6 flex items-center justify-center gap-4 hover:-translate-y-1 hover:shadow-lg transition-all active:scale-95 text-emerald-500 border-emerald-500/30 bg-emerald-500/5 group">
                             <div class="w-12 h-12 rounded-full bg-emerald-500/20 flex items-center justify-center group-hover:bg-emerald-500 group-hover:text-white transition-colors">
@@ -468,7 +459,7 @@
                     </div>
                 </section>
 
-                <!-- ➕ ADD 頁面 (無標題、沉浸式、超美排版) -->
+                <!-- ➕ ADD 頁面 (無標題純淨輸入) -->
                 <section id="view-add" class="view-section w-full">
                     <div class="flex items-center justify-between mb-8 px-1 md:px-0 md:max-w-4xl md:mx-auto">
                         <div class="flex items-center">
@@ -483,7 +474,6 @@
                         <div class="absolute top-[-20%] right-[-10%] w-64 h-64 bg-brand-500/10 blur-[80px] rounded-full pointer-events-none z-0"></div>
                         <input type="hidden" id="form-task-id">
                         
-                        <!-- 頂級分段切換器 (Task / Exam Toggle) -->
                         <div class="flex bg-theme-input p-2 rounded-2xl mb-8 relative z-10 border border-theme-border shadow-inner">
                             <button id="type-btn-task" onclick="app.tasks.setFormType('task')" class="flex-1 py-4 text-[16px] font-bold rounded-xl bg-theme-card text-brand-600 shadow-md border border-theme-border transition-all flex justify-center items-center gap-2">
                                 <i class="fa-solid fa-book-open"></i> 新增功課
@@ -495,7 +485,6 @@
                         </div>
                         
                         <div class="space-y-8 relative z-10">
-                            <!-- 精美科目水平選擇列 (套用自訂顏色) -->
                             <div class="flex flex-col gap-3">
                                 <p class="text-[11px] font-bold text-theme-muted uppercase tracking-widest pl-1">選擇科目 Subject</p>
                                 <div class="flex items-center gap-2">
@@ -504,21 +493,18 @@
                                 </div>
                             </div>
 
-                            <!-- 桌面/平板雙欄網格設計 -->
                             <div class="flex flex-col lg:flex-row gap-8">
-                                <!-- 左側：無標題純內容輸入區 (超大圓角與沉浸發光) -->
                                 <div class="flex-1 flex flex-col gap-4">
                                     <div class="relative flex-1 flex flex-col group">
                                         <textarea id="form-content" class="w-full flex-1 px-8 py-6 bg-theme-input/50 border border-theme-border/50 hover:border-brand-500/50 focus:border-brand-500 focus:bg-theme-card focus:ring-4 focus:ring-brand-500/10 rounded-[32px] text-[18px] leading-relaxed text-theme-text placeholder-theme-muted resize-none min-h-[250px] shadow-inner focus:shadow-xl transition-all duration-500 outline-none" placeholder="在此輸入功課詳細內容... (必填)"></textarea>
                                         
-                                        <div class="absolute bottom-5 right-5 flex gap-3">
+                                        <div class="absolute bottom-5 right-5 flex gap-2">
                                             <input type="file" id="form-image" accept="image/*" class="hidden" onchange="app.tasks.handleImageUpload(event)">
                                             <button onclick="document.getElementById('form-image').click()" class="w-12 h-12 rounded-full bg-theme-card text-theme-muted hover:text-brand-500 hover:bg-brand-500/10 flex items-center justify-center backdrop-blur-xl transition-all duration-300 border border-theme-border shadow-md hover:shadow-lg hover:-translate-y-1 active:scale-90 group-focus-within:border-brand-500/50" title="附加圖片">
                                                 <i class="fa-solid fa-camera text-lg"></i>
                                             </button>
                                         </div>
                                     </div>
-                                    <!-- 🌟 特殊獨立圖片展廳設計 -->
                                     <div id="form-image-preview-container" class="hidden relative mt-2 group">
                                         <img id="form-image-preview" class="w-full h-56 object-cover rounded-[32px] border border-theme-border shadow-md transition-all duration-500">
                                         <div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-[32px] pointer-events-none"></div>
@@ -526,7 +512,6 @@
                                     </div>
                                 </div>
 
-                                <!-- 右側：日期、重複、提交 -->
                                 <div class="w-full lg:w-[300px] flex flex-col gap-6 shrink-0">
                                     <div class="relative group">
                                         <label class="block text-[11px] font-bold text-theme-muted uppercase tracking-widest mb-2 pl-1">繳交日期 Due Date</label>
@@ -542,7 +527,6 @@
                                         </button>
                                     </div>
 
-                                    <!-- 加入清單按鈕 (含 GSAP 處理動畫) -->
                                     <button id="btn-save-task" onclick="app.tasks.save()" class="w-full mt-auto h-20 bg-gradient-to-r from-brand-600 to-brand-500 hover:from-brand-500 hover:to-brand-400 text-white rounded-[24px] font-black shadow-[0_10px_30px_rgba(99,102,241,0.4)] hover:-translate-y-1 hover:shadow-[0_15px_40px_rgba(99,102,241,0.6)] active:scale-95 transition-all duration-300 flex justify-center items-center gap-3 text-[18px] tracking-wider border border-transparent overflow-hidden relative group">
                                         <div class="absolute inset-0 bg-white/20 transform -skew-x-12 -translate-x-full group-hover:animate-[shine_1.5s_ease-in-out_infinite]"></div>
                                         <i class="fa-solid fa-paper-plane text-xl drop-shadow-md"></i> 發佈任務
@@ -645,18 +629,16 @@
             console.error("Firebase 初始化失敗:", error);
         }
 
-        // 預設科目與顏色
         const defaultSubjects = [
-            { name: '中文', color: '#ef4444' }, // Red
-            { name: '英文', color: '#3b82f6' }, // Blue
-            { name: '數學', color: '#f59e0b' }, // Amber
-            { name: '通識教育', color: '#10b981' }, // Emerald
-            { name: '科學', color: '#8b5cf6' }, // Violet
-            { name: '物理', color: '#06b6d4' }, // Teal
-            { name: '歷史', color: '#ec4899' }  // Pink
+            { name: '中文', color: '#ef4444' }, 
+            { name: '英文', color: '#3b82f6' }, 
+            { name: '數學', color: '#f59e0b' }, 
+            { name: '通識教育', color: '#10b981' }, 
+            { name: '科學', color: '#8b5cf6' }, 
+            { name: '物理', color: '#06b6d4' }, 
+            { name: '歷史', color: '#ec4899' }  
         ];
 
-        // 顏色轉換工具 (Hex to Rgba)
         const hexToRgba = (hex, alpha) => {
             if(!hex) return `rgba(99, 102, 241, ${alpha})`; 
             let r = parseInt(hex.slice(1, 3), 16), g = parseInt(hex.slice(3, 5), 16), b = parseInt(hex.slice(5, 7), 16);
@@ -679,7 +661,7 @@
             );
         };
 
-        // 🌟 日期格式精準轉換工具
+        // 🌟 日期格式與過期判定 (精準版)
         const formatDateExact = (dateStr) => {
             if(!dateStr) return { full: '無期限', diff: '', isOverdue: false, statusClass: 'bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-400' };
             const d = new Date(dateStr);
@@ -701,7 +683,7 @@
             else if(diffDays > 1) { diffStr = `${diffDays} 天後`; statusClass = 'bg-emerald-100 text-emerald-700 dark:bg-emerald-500/20 dark:text-emerald-400 border border-emerald-500/30'; }
             else { diffStr = '已逾期'; isOverdue = true; statusClass = 'bg-red-100 text-red-700 dark:bg-red-500/20 dark:text-red-400 border border-red-500/30'; }
 
-            return { full, diff: diffStr, isOverdue, statusClass };
+            return { full, diff: diffStr, isOverdue, diffDays, statusClass };
         };
 
         const UI = {
@@ -749,6 +731,7 @@
                 document.getElementById('blocker-title').textContent = t; document.getElementById('blocker-message').textContent = m;
                 document.getElementById('blocker-icon').className = `fa-solid ${banned ? 'fa-ban text-red-500' : 'fa-triangle-exclamation text-yellow-500'} text-7xl mb-8 animate-pulse drop-shadow-[0_0_20px_rgba(239,68,68,0.5)]`;
                 document.getElementById('system-blocker').classList.remove('hidden'); document.getElementById('system-blocker').classList.add('flex');
+                document.body.style.overflow = 'hidden';
             }
         };
 
@@ -806,6 +789,34 @@
                     console.error("Init Error:", e);
                     hideLoader();
                 }
+                
+                // 🌟 Smart Shrink Header on Scroll
+                window.addEventListener('scroll', () => {
+                    const header = document.getElementById('main-header');
+                    const titleText = document.getElementById('header-title-text');
+                    const avatar = document.getElementById('header-avatar');
+                    const avatarFallback = document.getElementById('header-avatar-fallback');
+                    const avatarBtn = avatar?.parentElement;
+
+                    if(!header || !titleText) return;
+                    if (window.scrollY > 40) {
+                        header.classList.replace('py-4', 'py-2');
+                        header.classList.replace('bg-white/60', 'bg-white/90');
+                        header.classList.replace('dark:bg-[#0a0a0c]/60', 'dark:bg-[#0a0a0c]/90');
+                        titleText.classList.replace('md:text-3xl', 'md:text-2xl');
+                        titleText.classList.replace('text-2xl', 'text-xl');
+                        if(avatarBtn) { avatarBtn.style.width = '36px'; avatarBtn.style.height = '36px'; }
+                        if(avatarFallback) avatarFallback.style.fontSize = '14px';
+                    } else {
+                        header.classList.replace('py-2', 'py-4');
+                        header.classList.replace('bg-white/90', 'bg-white/60');
+                        header.classList.replace('dark:bg-[#0a0a0c]/90', 'dark:bg-[#0a0a0c]/60');
+                        titleText.classList.replace('md:text-2xl', 'md:text-3xl');
+                        titleText.classList.replace('text-xl', 'text-2xl');
+                        if(avatarBtn) { avatarBtn.style.width = ''; avatarBtn.style.height = ''; }
+                        if(avatarFallback) avatarFallback.style.fontSize = '';
+                    }
+                }, { passive: true });
             },
             startSystem: async () => {
                 try {
@@ -814,7 +825,6 @@
                             state.profile = docSnap.data();
                             if (state.profile.isBanned) AdminService.triggerBlocker('帳號已停權', '您的帳號已被封鎖，無法存取系統。', true);
                             
-                            // 更新最新名字與頭像給後台
                             if (state.profile.displayName !== state.user.displayName || state.profile.photoURL !== state.user.photoURL || state.profile.email !== state.user.email) {
                                 updateDoc(docSnap.ref, {
                                     displayName: state.user.displayName || '',
@@ -941,10 +951,36 @@
             },
             setupListeners: () => {
                 try {
+                    // 🌟 自動刪除機制的實作在 onSnapshot 內部
                     state.unsubscribers.push(onSnapshot(collection(db, API.paths.tasks()), (s) => { 
-                        state.tasks = []; s.forEach(d => state.tasks.push(d.data())); 
-                        app.renders.tasks(); app.updateWidgets(); 
+                        state.tasks = []; 
+                        const batch = writeBatch(db);
+                        let hasDeletes = false;
+                        
+                        s.forEach(d => { 
+                            const t = d.data();
+                            // 執行過期 1 天以上自動刪除
+                            if (t.dueDate && t.status !== 'completed') {
+                                const dateInfo = formatDateExact(t.dueDate);
+                                // diffDays < 0 代表已逾期， <= -1 代表過期一天或以上
+                                if (dateInfo.diffDays <= -1) {
+                                    batch.delete(d.ref);
+                                    hasDeletes = true;
+                                    return; // 不加入 state.tasks
+                                }
+                            }
+                            state.tasks.push(t); 
+                        }); 
+                        
+                        if (hasDeletes) {
+                            batch.commit().catch(console.error);
+                            // 自動清理發生在背景，無需打擾用戶
+                        }
+
+                        app.renders.tasks(); 
+                        app.updateWidgets(); 
                     }));
+
                     state.unsubscribers.push(onSnapshot(collection(db, API.paths.groups()), (s) => { 
                         state.groups = []; s.forEach(d => { if(d.data().members.includes(state.user.uid) || d.data().providerId === state.user.uid) state.groups.push(d.data()); }); 
                         app.renders.groups(); app.renders.announcements();
@@ -963,35 +999,27 @@
                                 AdminService.triggerBlocker(data.maintTitle || '系統維護中', data.message || '超級管理員正在進行升級。', false);
                             } else {
                                 const blocker = document.getElementById('system-blocker');
-                                const appCore = document.getElementById('app-core');
                                 if (blocker && !blocker.classList.contains('hidden') && state.profile && !state.profile.isBanned) {
                                     blocker.classList.add('hidden');
                                     blocker.classList.remove('flex');
-                                    if(appCore) {
-                                        appCore.classList.remove('hidden');
-                                        appCore.classList.add('flex');
-                                    }
+                                    document.body.style.overflow = '';
                                 }
                             }
                             
-                            // 🌟 全域跑馬燈接收
                             const marqueeBanner = document.getElementById('global-marquee-banner');
                             const marqueeText = document.getElementById('global-marquee-text');
                             const header = document.getElementById('main-header');
                             const navBar = document.getElementById('main-nav-bar');
-                            const contentArea = document.getElementById('main-content-area');
                             
                             if (data.marqueeMsg) {
                                 if(marqueeBanner) marqueeBanner.classList.remove('hidden');
                                 if(marqueeText) marqueeText.textContent = data.marqueeMsg;
                                 if(header) header.style.top = '48px'; 
                                 if(navBar) navBar.style.top = '148px';
-                                if(contentArea) contentArea.style.paddingTop = '154px';
                             } else {
                                 if(marqueeBanner) marqueeBanner.classList.add('hidden');
                                 if(header) header.style.top = '16px';
                                 if(navBar) navBar.style.top = '104px';
-                                if(contentArea) contentArea.style.paddingTop = '110px';
                             }
                         }
                     }));
@@ -1205,7 +1233,7 @@
                         return state.filters.sortDesc ? d2.localeCompare(d1) : d1.localeCompare(d2);
                     });
 
-                    // 🌟 極致黃金比例卡片渲染
+                    // 🌟 完美比例卡片渲染
                     let newHtmlTodo = '';
                     let newHtmlHist = '';
 
@@ -1234,7 +1262,7 @@
 
                         const cHtml = escapeHTML(t.content || '').replace(/\n/g, '<br>');
                         
-                        // 🖼️ 圖片特別版型設計 (Elegant full-width banner)
+                        // 🖼️ 獨立藝術畫廊預覽圖
                         const imgHtml = t.attachment ? `
                             <div class="mt-4 relative rounded-2xl overflow-hidden shadow-sm border border-theme-border group/img cursor-pointer bg-theme-input" onclick="window.open('${t.attachment}', '_blank')">
                                 <div class="absolute inset-0 bg-black/40 opacity-0 group-hover/img:opacity-100 transition-opacity duration-300 flex items-center justify-center z-10">
@@ -1244,9 +1272,8 @@
                             </div>
                         ` : '';
 
-                        // ⭕ 完成按鈕邏輯
                         const checkBtn = !done ? `
-                            <button class="w-7 h-7 rounded-full border-2 border-theme-border hover:border-brand-500 flex items-center justify-center text-transparent hover:text-white transition-all duration-300 group shadow-sm bg-theme-bg/50" onclick="app.tasks.markComplete('${t.id}', this.closest('.task-card-anim'))">
+                            <button class="w-7 h-7 rounded-full border-2 border-theme-border hover:border-brand-500 flex items-center justify-center text-transparent hover:text-white transition-all duration-300 group shadow-sm bg-theme-bg/50" onclick="app.tasks.markComplete('${t.id}', this.closest('.task-card-anim'))" title="標記完成">
                                 <div class="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity rounded-full bg-brand-500"></div>
                                 <i class="fa-solid fa-check text-[12px] relative z-10 transform scale-50 group-hover:scale-100 transition-transform duration-300"></i>
                             </button>
@@ -1284,6 +1311,7 @@
                                                     <button class="w-8 h-8 rounded-full text-theme-muted hover:text-brand-500 hover:bg-theme-input transition-all active:scale-90 flex items-center justify-center" title="編輯" onclick="app.tasks.edit('${t.id}')"><i class="fa-solid fa-pen text-[13px]"></i></button>
                                                     <button class="w-8 h-8 rounded-full text-theme-muted hover:text-red-500 hover:bg-red-500/10 transition-all active:scale-90 flex items-center justify-center" title="刪除" onclick="app.tasks.confirmDelete('${t.id}')"><i class="fa-regular fa-trash-can text-[14px]"></i></button>
                                                 ` : `
+                                                    <button class="w-8 h-8 rounded-full text-theme-muted hover:text-brand-500 hover:bg-brand-500/10 transition-all active:scale-90 flex items-center justify-center" title="取消完成 / 移回清單" onclick="app.tasks.undoComplete('${t.id}')"><i class="fa-solid fa-rotate-left text-[14px]"></i></button>
                                                     <button class="w-8 h-8 rounded-full text-theme-muted hover:text-red-500 hover:bg-red-500/10 transition-all active:scale-90 flex items-center justify-center" title="刪除" onclick="app.tasks.confirmDelete('${t.id}')"><i class="fa-regular fa-trash-can text-[14px]"></i></button>
                                                 `}
                                             </div>
@@ -1301,7 +1329,7 @@
                     const elE1 = document.getElementById('todo-empty'); if(elE1) elE1.style.display = tc===0?'flex':'none';
                     const elE2 = document.getElementById('history-empty'); if(elE2) elE2.style.display = hc===0?'flex':'none';
 
-                    // 🌟 骨牌式載入動畫
+                    // 🌟 骨牌動畫
                     if (typeof gsap !== 'undefined') {
                         gsap.fromTo(".task-card-anim", 
                             { opacity: 0, y: 30, scale: 0.95 }, 
@@ -1655,7 +1683,7 @@
                         if (saveBtn) {
                             if(typeof gsap !== 'undefined') gsap.killTweensOf(saveBtn);
                             saveBtn.innerHTML = '<i class="fa-solid fa-check text-2xl"></i> <span class="tracking-widest">SUCCESS!</span>';
-                            saveBtn.className = 'w-full mt-auto h-20 bg-gradient-to-r from-emerald-500 to-emerald-400 text-white rounded-3xl font-black shadow-[0_10px_30px_rgba(16,185,129,0.5)] transition-all duration-300 flex justify-center items-center gap-3 text-[18px] tracking-wider border border-transparent';
+                            saveBtn.className = 'w-full mt-auto h-20 bg-gradient-to-r from-emerald-500 to-emerald-400 text-white rounded-2xl font-black shadow-[0_10px_30px_rgba(16,185,129,0.5)] transition-all duration-300 flex justify-center items-center gap-3 text-[18px] tracking-wider border border-transparent';
                             if(typeof gsap !== 'undefined') gsap.fromTo(saveBtn, { scale: 0.9 }, { scale: 1.05, duration: 0.6, ease: "elastic.out(1, 0.4)" });
                         }
                         
@@ -1752,6 +1780,16 @@
                     } else {
                         if(el) el.style.display = 'none';
                         doComplete();
+                    }
+                },
+                // 🌟 新增：反悔/取消完成功能
+                undoComplete: async (id) => {
+                    try {
+                        await updateDoc(doc(db, API.paths.tasks(), id), { status: 'pending', completedAt: null });
+                        AdminService.log('TASK_UNDO_COMPLETED', { taskId: id });
+                        UI.notify('已取消完成，移回待辦清單', 'info');
+                    } catch(e) {
+                        UI.notify('操作失敗', 'error');
                     }
                 },
                 confirmDelete: (id) => { UI.modal.open(`<div class="text-center"><div class="w-20 h-20 bg-red-500/10 rounded-full flex items-center justify-center mx-auto mb-6 shadow-inner"><i class="fa-solid fa-trash-can text-red-500 text-4xl drop-shadow-md"></i></div><h3 class="text-2xl font-black text-theme-text mb-3 tracking-tight">刪除任務？</h3><p class="text-theme-muted text-[15px] mb-8 font-medium">刪除後將無法從歷史紀錄中找回。</p><div class="flex gap-4"><button onclick="app.UI.modal.close()" class="flex-1 glass-card py-4 font-bold text-theme-text hover:-translate-y-1 hover:bg-theme-input active:scale-95 transition-all duration-300 text-[15px]">取消</button><button onclick="app.tasks.doDelete('${id}')" class="flex-1 bg-red-600 hover:bg-red-500 rounded-2xl py-4 font-bold text-white shadow-[0_5px_20px_rgba(239,68,68,0.4)] hover:-translate-y-1 active:scale-95 transition-all duration-300 text-[15px] border border-transparent">確認刪除</button></div></div>`); },
@@ -1941,7 +1979,7 @@
                             
                             html += `
                                 <div class="relative mb-8 last:mb-2 group tt-slot-anim">
-                                    <div class="absolute -left-[27px] top-1.5 w-4 h-4 rounded-full ring-4 ring-theme-card transition-colors duration-500 z-10" style="background-color: var(--theme-border); group-hover: background-color: ${hexColor}"></div>
+                                    <div class="absolute -left-[27px] top-1.5 w-4 h-4 rounded-full ring-4 ring-theme-card transition-colors duration-500 z-10" style="background-color: var(--border); group-hover: background-color: ${hexColor}"></div>
                                     <div class="flex flex-col gap-1 pr-2">
                                         <p class="text-[12px] text-theme-muted font-mono font-bold tracking-wide flex items-center gap-2">${timeStr} <span class="px-2 py-0.5 bg-theme-input rounded-md text-[10px] font-sans text-brand-500 border border-theme-border/50">${escapeHTML(s.label)}</span></p>
                                         <div class="flex justify-between items-center mt-1">

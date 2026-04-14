@@ -188,11 +188,14 @@
         <button onclick="app.auth.logout()" class="mt-8 px-6 py-2 rounded-full border border-theme-border text-xs text-theme-muted hover:bg-theme-input transition">安全登出</button>
     </div>
 
-    <!-- 3. 主系統核心 -->
+    <!-- 3. 主系統核心 (已重構為全局滾動) -->
     <div id="app-core" class="hidden flex-col h-full w-full relative">
-        <header class="shrink-0 pt-10 md:pt-12 pb-4 z-40 bg-transparent">
-            <!-- iPad/Desktop Responsive Wrapper -->
-            <div class="flex justify-between items-center mb-6 px-6 md:max-w-5xl lg:max-w-6xl md:mx-auto w-full">
+        
+        <!-- 整個可滾動區域 -->
+        <main id="main-scroll-area" class="flex-1 overflow-y-auto w-full relative z-10 no-scrollbar">
+            
+            <!-- 第一層：上方標題加圖標頭像 -->
+            <div class="pt-10 md:pt-12 pb-4 flex justify-between items-center px-6 md:max-w-5xl lg:max-w-6xl md:mx-auto w-full">
                 <div>
                     <h1 class="text-3xl md:text-4xl font-bold tracking-wide text-theme-text font-literary drop-shadow-sm">電子手冊</h1>
                     <p id="header-date" class="text-xs text-brand-500 font-mono mt-1 tracking-wider font-semibold">載入中...</p>
@@ -211,8 +214,27 @@
                 </div>
             </div>
 
-            <!-- iPad/Desktop Responsive Wrapper -->
-            <div class="grid grid-cols-2 md:grid-cols-4 gap-3 px-6 md:max-w-5xl lg:max-w-6xl md:mx-auto w-full">
+            <!-- 浮空膠囊導航 (Sticky: 往下滾動時會自動吸附在螢幕頂端) -->
+            <div class="sticky top-0 z-40 py-2 px-4 shrink-0 pointer-events-none transition-colors duration-500">
+                <!-- max-w-full on mobile, bounded on tablet/desktop -->
+                <div class="flex gap-1.5 p-1.5 bg-white/60 dark:bg-[#030305]/60 backdrop-blur-2xl rounded-2xl border border-theme-border shadow-[0_8px_30px_rgba(0,0,0,0.12)] dark:shadow-[0_8px_30px_rgba(0,0,0,0.5)] overflow-x-auto no-scrollbar max-w-full md:max-w-lg mx-auto pointer-events-auto">
+                    <button onclick="app.nav.switch('home')" id="nav-home" class="top-nav-item flex-1 py-2 px-4 text-[13px] font-bold rounded-xl active bg-white dark:bg-white/10 text-brand-600 dark:text-white shadow-md whitespace-nowrap flex items-center justify-center gap-1.5">
+                        <i class="fa-solid fa-layer-group"></i> 任務
+                    </button>
+                    <button onclick="app.nav.switch('timetable')" id="nav-timetable" class="top-nav-item flex-1 py-2 px-4 text-[13px] font-bold rounded-xl text-theme-muted whitespace-nowrap flex items-center justify-center gap-1.5">
+                        <i class="fa-solid fa-calendar-week"></i> 課表
+                    </button>
+                    <button onclick="app.nav.switch('history')" id="nav-history" class="top-nav-item flex-1 py-2 px-4 text-[13px] font-bold rounded-xl text-theme-muted whitespace-nowrap flex items-center justify-center gap-1.5">
+                        <i class="fa-solid fa-clock-rotate-left"></i> 歷史
+                    </button>
+                    <button onclick="app.nav.switch('settings')" id="nav-settings" class="top-nav-item flex-1 py-2 px-4 text-[13px] font-bold rounded-xl text-theme-muted whitespace-nowrap flex items-center justify-center gap-1.5">
+                        <i class="fa-solid fa-gear"></i> 設定
+                    </button>
+                </div>
+            </div>
+
+            <!-- 第二層：動態欄 (Widgets) -->
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-3 px-6 md:max-w-5xl lg:max-w-6xl md:mx-auto w-full mt-3 mb-6">
                 <div class="glass-card p-3.5 shadow-[0_0_15px_rgba(99,102,241,0.15)] hover:shadow-[0_0_25px_rgba(99,102,241,0.3)] transition-all">
                     <div class="flex justify-between items-center mb-1">
                         <span class="text-[10px] text-theme-muted font-semibold uppercase tracking-wider"><i class="fa-solid fa-satellite-dish mr-1 text-emerald-500 animate-pulse"></i>實時課堂</span>
@@ -239,32 +261,10 @@
                     <h3 class="text-sm font-bold text-theme-text mt-1"><span id="widget-exam-count" class="text-xl text-pink-500 mr-1">0</span>項</h3>
                 </div>
             </div>
-        </header>
 
-        <!-- 頂部膠囊導航 (Sticky Floating Segmented Control) -->
-        <div class="sticky top-0 z-40 py-3 px-4 shrink-0 pointer-events-none">
-            <!-- max-w-full on mobile, bounded on tablet/desktop -->
-            <div class="flex gap-1.5 p-1.5 bg-white/60 dark:bg-[#030305]/60 backdrop-blur-2xl rounded-2xl border border-theme-border shadow-[0_8px_30px_rgba(0,0,0,0.12)] dark:shadow-[0_8px_30px_rgba(0,0,0,0.5)] overflow-x-auto no-scrollbar max-w-full md:max-w-lg mx-auto transition-colors duration-500 pointer-events-auto">
-                <button onclick="app.nav.switch('home')" id="nav-home" class="top-nav-item flex-1 py-2 px-4 text-[13px] font-bold rounded-xl active bg-white dark:bg-white/10 text-brand-600 dark:text-white shadow-md whitespace-nowrap flex items-center justify-center gap-1.5">
-                    <i class="fa-solid fa-layer-group"></i> 任務
-                </button>
-                <button onclick="app.nav.switch('timetable')" id="nav-timetable" class="top-nav-item flex-1 py-2 px-4 text-[13px] font-bold rounded-xl text-theme-muted whitespace-nowrap flex items-center justify-center gap-1.5">
-                    <i class="fa-solid fa-calendar-week"></i> 課表
-                </button>
-                <button onclick="app.nav.switch('history')" id="nav-history" class="top-nav-item flex-1 py-2 px-4 text-[13px] font-bold rounded-xl text-theme-muted whitespace-nowrap flex items-center justify-center gap-1.5">
-                    <i class="fa-solid fa-clock-rotate-left"></i> 歷史
-                </button>
-                <button onclick="app.nav.switch('settings')" id="nav-settings" class="top-nav-item flex-1 py-2 px-4 text-[13px] font-bold rounded-xl text-theme-muted whitespace-nowrap flex items-center justify-center gap-1.5">
-                    <i class="fa-solid fa-gear"></i> 設定
-                </button>
-            </div>
-        </div>
-
-        <main id="main-scroll-area" class="flex-1 overflow-y-auto pt-6 pb-32 px-4 md:px-6 md:max-w-5xl lg:max-w-6xl md:mx-auto w-full relative z-10 no-scrollbar">
-            
-            <section id="view-home" class="view-section active w-full">
-                <!-- Group Announcements Container -->
-                <div id="home-announcements" class="mb-4 space-y-2 md:max-w-3xl md:mx-auto hidden"></div>
+            <!-- 第三層：各頁面內容容器 (功課記錄等) -->
+            <div class="px-4 md:px-6 w-full pb-32 md:max-w-5xl lg:max-w-6xl md:mx-auto">
+                <section id="view-home" class="view-section active w-full">
 
                 <div class="flex justify-between items-end mb-4 px-2 md:px-0">
                     <h2 class="text-xl font-bold text-theme-text tracking-tight">待辦任務</h2>

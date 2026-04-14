@@ -38,7 +38,7 @@
         }
     </script>
 
-    <!-- FontAwesome & Google Fonts (Added Noto Sans HK & LXGW WenKai TC) -->
+    <!-- FontAwesome & Google Fonts -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -168,13 +168,14 @@
             </div>
 
             <div class="space-y-3 mb-6">
-                <input type="email" id="auth-email" placeholder="電子郵件" class="premium-input py-3 text-sm">
-                <input type="password" id="auth-password" placeholder="密碼" class="premium-input py-3 text-sm">
+                <input type="text" id="auth-name" placeholder="您的姓名 Name" class="premium-input py-3 text-sm hidden">
+                <input type="email" id="auth-email" placeholder="電子郵件 Email" class="premium-input py-3 text-sm">
+                <input type="password" id="auth-password" placeholder="密碼 Password" class="premium-input py-3 text-sm">
             </div>
 
-            <div class="flex gap-3">
-                <button onclick="app.auth.loginWithEmail()" class="flex-1 bg-brand-600/20 border border-brand-500/50 text-brand-500 dark:text-brand-300 py-3 rounded-xl font-bold text-sm hover:-translate-y-1 hover:bg-brand-600/30 hover:shadow-lg active:scale-95 transition-all duration-300">登入</button>
-                <button onclick="app.auth.registerWithEmail()" class="flex-1 bg-brand-600 text-white py-3 rounded-xl font-bold text-sm shadow-lg shadow-brand-500/30 hover:-translate-y-1 hover:shadow-brand-500/50 hover:shadow-xl active:scale-95 transition-all duration-300">註冊</button>
+            <div class="flex flex-col gap-3">
+                <button id="auth-main-btn" onclick="app.auth.submit()" class="w-full bg-brand-600 text-white py-3 rounded-xl font-bold text-sm shadow-lg shadow-brand-500/30 hover:-translate-y-1 hover:shadow-brand-500/50 hover:shadow-xl active:scale-95 transition-all duration-300">登入 Login</button>
+                <button id="auth-toggle-btn" onclick="app.auth.toggleMode()" class="w-full bg-transparent border border-theme-border text-theme-muted py-3 rounded-xl font-bold text-sm hover:-translate-y-1 hover:bg-theme-input active:scale-95 transition-all duration-300">還沒有帳號？點此註冊</button>
             </div>
         </div>
     </section>
@@ -283,15 +284,16 @@
                     <button class="tt-day-btn pill-btn snap-center" data-day="6">星期六</button>
                     <button class="tt-day-btn pill-btn snap-center" data-day="0">星期日</button>
                 </div>
-                <div class="glass-card p-2 shadow-xl border-theme-border">
-                    <div class="flex justify-between items-center p-3 border-b border-theme-border">
-                        <h3 class="font-bold text-sm text-theme-text"><i class="fa-solid fa-clock text-brand-500 mr-2"></i>時間軸設定</h3>
+                <div class="glass-card p-2 shadow-xl border-theme-border flex flex-col max-h-[70vh]">
+                    <div class="flex justify-between items-center p-3 border-b border-theme-border shrink-0">
+                        <h3 class="font-bold text-sm text-theme-text"><i class="fa-solid fa-clock text-brand-500 mr-2"></i>可視化表格</h3>
                         <div class="flex gap-2">
                             <button onclick="app.timetable.copyToAllWeekModal()" class="text-[10px] sm:text-xs text-emerald-500 font-bold bg-emerald-500/10 px-3 py-1.5 rounded-full hover:bg-emerald-500/20 hover:scale-105 active:scale-95 transition-all"><i class="fa-solid fa-copy"></i> 套用全週</button>
-                            <button onclick="app.timetable.addSlotModal()" class="text-[10px] sm:text-xs text-brand-500 font-bold bg-brand-500/10 px-3 py-1.5 rounded-full hover:bg-brand-500/30 hover:scale-105 active:scale-95 transition-all"><i class="fa-solid fa-plus"></i> 新增時段</button>
+                            <button onclick="app.timetable.addSlotDirect()" class="text-[10px] sm:text-xs text-brand-500 font-bold bg-brand-500/10 px-3 py-1.5 rounded-full hover:bg-brand-500/30 hover:scale-105 active:scale-95 transition-all"><i class="fa-solid fa-plus"></i> 新增時段</button>
                         </div>
                     </div>
-                    <div id="timetable-slots" class="flex flex-col py-2"></div>
+                    <!-- Inline Editable Table Slots Container -->
+                    <div id="timetable-slots" class="flex-1 overflow-y-auto no-scrollbar p-2"></div>
                 </div>
             </section>
 
@@ -348,8 +350,8 @@
                                 <label class="block text-xs font-mono font-bold text-theme-muted uppercase tracking-wider mb-2"><i class="fa-solid fa-repeat mr-1"></i>自動重複 Repeat</label>
                                 <select id="form-repeat" class="premium-input py-3 text-sm font-semibold text-theme-text bg-theme-input">
                                     <option value="none">不重複</option>
-                                    <option value="daily">每天 (自動產生連續5天)</option>
-                                    <option value="weekly">每週 (自動產生連續4週)</option>
+                                    <option value="daily">每天 (連續5天)</option>
+                                    <option value="weekly">每週 (連續4週)</option>
                                 </select>
                             </div>
                             
@@ -464,7 +466,7 @@
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-        import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, signInWithPopup, GoogleAuthProvider, onAuthStateChanged, signOut, setPersistence, browserLocalPersistence } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, signInWithPopup, GoogleAuthProvider, onAuthStateChanged, signOut, setPersistence, browserLocalPersistence, updateProfile } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
         import { getFirestore, collection, doc, setDoc, getDoc, updateDoc, deleteDoc, onSnapshot, writeBatch, query, where, getDocs, enableIndexedDbPersistence } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
         const firebaseConfig = {
@@ -486,7 +488,6 @@
             auth = getAuth(firebaseApp);
             db = getFirestore(firebaseApp);
             
-            // 啟用 PWA 離線持久化支援
             enableIndexedDbPersistence(db).catch(err => console.warn("Offline persistence issue:", err));
             
             googleProvider = new GoogleAuthProvider();
@@ -500,7 +501,7 @@
             tasks: [], groups: [], notifications: [],
             subjects: ['中文 (中國語文)', '英文 (英國語文)', '數學', '通識教育', '科學', '體育', '物理', '化學', '生物', '歷史', '中史', '地理', '音樂', '視覺藝術', 'ICT', '設計與應用科技', '旅遊與款待', '經濟', 'BAFS', '公民教育', '科技與生活', '中文文學', '英文文學'],
             currentDayTab: new Date().getDay(), timetableConfig: {}, classTimerInterval: null, unsubscribers: [],
-            tempImageBase64: null // 暫存拍照圖片
+            tempImageBase64: null 
         };
 
         const UI = {
@@ -533,7 +534,7 @@
             sheet: {
                 open: (html) => { UI.overlay.show(); document.getElementById('bottom-sheet-body').innerHTML = html; document.getElementById('bottom-sheet').classList.remove('hidden'); if(typeof gsap !== 'undefined') gsap.fromTo(document.getElementById('bottom-sheet-content'), { y: '100%' }, { y: '0%', duration: 0.4, ease: "power3.out" }); },
                 close: () => { 
-                    if(app.pomodoro.isRunning) app.pomodoro.stop(); // 關閉時若番茄鐘在跑，強制停止
+                    if(app.pomodoro.isRunning) app.pomodoro.stop(); 
                     if(typeof gsap !== 'undefined') gsap.to(document.getElementById('bottom-sheet-content'), { y: '100%', duration: 0.3, ease: "power3.in", onComplete: () => { document.getElementById('bottom-sheet').classList.add('hidden'); UI.overlay.hide(); }}); 
                     else { document.getElementById('bottom-sheet').classList.add('hidden'); UI.overlay.hide(); } 
                 }
@@ -630,9 +631,43 @@
                 if(state.currentDayTab === 0 || state.currentDayTab === 6) { state.currentDayTab = 1; app.timetable.renderDaySelector(); }
             },
             auth: {
+                mode: 'login',
+                toggleMode: () => {
+                    const nameInput = document.getElementById('auth-name');
+                    const mainBtn = document.getElementById('auth-main-btn');
+                    const toggleBtn = document.getElementById('auth-toggle-btn');
+                    if (app.auth.mode === 'login') {
+                        app.auth.mode = 'register';
+                        nameInput.classList.remove('hidden');
+                        mainBtn.textContent = '註冊並登入 Sign Up';
+                        toggleBtn.textContent = '已有帳號？點此登入';
+                    } else {
+                        app.auth.mode = 'login';
+                        nameInput.classList.add('hidden');
+                        mainBtn.textContent = '登入 Login';
+                        toggleBtn.textContent = '還沒有帳號？點此註冊';
+                    }
+                },
+                submit: () => {
+                    if (app.auth.mode === 'login') app.auth.loginWithEmail();
+                    else app.auth.registerWithEmail();
+                },
                 loginWithGoogle: async () => { try { await signInWithPopup(auth, googleProvider); } catch(e) { UI.notify('登入失敗，可能被攔截', 'error'); } },
                 loginWithEmail: async () => { const e = document.getElementById('auth-email').value, p = document.getElementById('auth-password').value; if(!e||!p) return UI.notify('請輸入完整', 'error'); try { await signInWithEmailAndPassword(auth, e, p); } catch(err) { UI.notify('帳號或密碼錯誤', 'error'); } },
-                registerWithEmail: async () => { const e = document.getElementById('auth-email').value, p = document.getElementById('auth-password').value; if(p.length<6) return UI.notify('密碼至少6位', 'error'); try { await createUserWithEmailAndPassword(auth, e, p); UI.notify('註冊成功', 'success'); } catch(err) { UI.notify('註冊失敗', 'error'); } },
+                registerWithEmail: async () => { 
+                    const n = document.getElementById('auth-name').value.trim();
+                    const e = document.getElementById('auth-email').value.trim();
+                    const p = document.getElementById('auth-password').value; 
+                    if(!n || !e || !p) return UI.notify('請填寫完整資訊 (包含姓名)', 'error'); 
+                    if(p.length<6) return UI.notify('密碼至少6位', 'error'); 
+                    try { 
+                        const userCredential = await createUserWithEmailAndPassword(auth, e, p); 
+                        // 將輸入的姓名更新到 Firebase Auth Profile 中
+                        await updateProfile(userCredential.user, { displayName: n });
+                        state.user = userCredential.user; 
+                        UI.notify('註冊成功', 'success'); 
+                    } catch(err) { UI.notify('註冊失敗，可能信箱已存在', 'error'); } 
+                },
                 logout: async () => { UI.sheet.close(); AdminService.log('USER_LOGOUT'); clearInterval(state.classTimerInterval); state.unsubscribers.forEach(f=>f()); state.unsubscribers=[]; await signOut(auth); document.getElementById('system-blocker').classList.add('hidden'); }
             },
             profile: {
@@ -673,7 +708,7 @@
                 interval: null, timeLeft: 1500, isRunning: false, currentTaskId: null,
                 open: (taskId, title) => {
                     app.pomodoro.currentTaskId = taskId;
-                    app.pomodoro.timeLeft = 1500; // 25 mins
+                    app.pomodoro.timeLeft = 1500; 
                     app.pomodoro.isRunning = false;
                     clearInterval(app.pomodoro.interval);
                     
@@ -908,16 +943,51 @@
                 },
                 renderDaySelector: () => {
                     document.querySelectorAll('.tt-day-btn').forEach(b => { b.classList.remove('active'); if(parseInt(b.dataset.day) === state.currentDayTab) { b.classList.add('active'); b.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' }); } b.onclick = () => { state.currentDayTab = parseInt(b.dataset.day); app.timetable.renderDaySelector(); }; });
-                    const c = document.getElementById('timetable-slots'), slots = state.timetableConfig[state.currentDayTab] || [];
-                    if(slots.length === 0) { c.innerHTML = `<div class="py-12 text-center"><div class="w-12 h-12 bg-theme-input rounded-full flex items-center justify-center mx-auto mb-3"><i class="fa-solid fa-calendar-xmark text-theme-muted text-xl"></i></div><p class="text-theme-muted text-sm mb-4 font-bold tracking-wide">此日尚未設定</p><button onclick="app.timetable.generateDefault(${state.currentDayTab})" class="text-xs font-bold bg-brand-500 px-5 py-2.5 rounded-full text-white shadow-lg hover:-translate-y-1 hover:shadow-brand-500/40 active:scale-95 transition-all duration-300">套用預設</button></div>`; return; }
+                    const c = document.getElementById('timetable-slots');
+                    let slots = state.timetableConfig[state.currentDayTab] || [];
+                    
+                    if(slots.length === 0) { 
+                        c.innerHTML = `<div class="py-12 text-center"><div class="w-12 h-12 bg-theme-input rounded-full flex items-center justify-center mx-auto mb-3"><i class="fa-solid fa-calendar-xmark text-theme-muted text-xl"></i></div><p class="text-theme-muted text-sm mb-4 font-bold tracking-wide">此日尚未設定</p><button onclick="app.timetable.generateDefault(${state.currentDayTab})" class="text-xs font-bold bg-brand-500 px-5 py-2.5 rounded-full text-white shadow-lg hover:-translate-y-1 hover:shadow-brand-500/40 active:scale-95 transition-all duration-300">套用預設</button></div>`; 
+                        return; 
+                    }
+                    
                     slots.sort((a,b) => a.start.localeCompare(b.start));
-                    c.innerHTML = slots.map(s => `<div class="time-slot p-3 border-b border-theme-border flex items-center justify-between hover:bg-theme-input transition cursor-pointer ${s.type==='special'?'special':''}" onclick="app.timetable.editSlotModal('${s.id}')"><div class="flex items-center gap-4"><div class="text-xs font-mono text-theme-muted w-12 text-right"><div class="font-bold text-theme-text">${s.start}</div><div class="opacity-60 text-[10px] mt-0.5">${s.end}</div></div><div><p class="text-[10px] font-bold text-brand-500 mb-0.5 uppercase">${s.label}</p><p class="text-sm font-bold text-theme-text">${s.subject || '<span class="text-theme-muted border border-dashed border-theme-border px-2 py-0.5 rounded text-[10px]">點擊設定</span>'}</p></div></div><i class="fa-solid fa-chevron-right text-theme-muted text-xs"></i></div>`).join('');
+                    
+                    let html = `<div class="flex text-[10px] font-bold text-theme-muted mb-2 px-1 uppercase tracking-wider">
+                        <div class="w-[75px] shrink-0">時間 Time</div>
+                        <div class="flex-1">標籤與科目 Subject</div>
+                        <div class="w-8 shrink-0 text-center"></div>
+                    </div>`;
+
+                    html += slots.map(s => `
+                        <div class="flex items-center gap-2.5 p-2 mb-2 bg-theme-input/50 border border-theme-border rounded-xl transition-colors hover:border-brand-500/40 focus-within:border-brand-500/80 focus-within:bg-theme-bg shadow-sm">
+                            <div class="flex flex-col gap-1.5 w-[75px] shrink-0">
+                                <input type="time" value="${s.start}" onchange="app.timetable.updateSlotInline('${s.id}', 'start', this.value)" class="bg-transparent text-[12px] font-mono font-bold text-theme-text outline-none border-b border-transparent focus:border-brand-500 pb-0.5 dark:[color-scheme:dark]">
+                                <input type="time" value="${s.end}" onchange="app.timetable.updateSlotInline('${s.id}', 'end', this.value)" class="bg-transparent text-[11px] font-mono text-theme-muted outline-none border-b border-transparent focus:border-brand-500 pb-0.5 dark:[color-scheme:dark]">
+                            </div>
+                            <div class="flex flex-col gap-1.5 flex-1 min-w-0">
+                                <input type="text" value="${s.label}" placeholder="標籤 (例: 第1節)" onchange="app.timetable.updateSlotInline('${s.id}', 'label', this.value)" class="bg-transparent text-[11px] font-bold text-brand-500 outline-none border-b border-transparent focus:border-brand-500 pb-0.5 w-full">
+                                <select onchange="app.timetable.updateSlotInline('${s.id}', 'subject', this.value)" class="bg-theme-bg border border-theme-border text-[13px] font-bold text-theme-text rounded-lg p-1.5 w-full outline-none focus:border-brand-500 font-literary">
+                                    <option value="">-- 空堂 / 休息 --</option>
+                                    ${state.subjects.map(sub => `<option value="${sub}" ${s.subject === sub ? 'selected' : ''}>${sub}</option>`).join('')}
+                                </select>
+                            </div>
+                            <button onclick="app.timetable.deleteSlot('${s.id}')" class="w-8 h-8 flex items-center justify-center shrink-0 text-theme-muted hover:text-red-500 hover:bg-red-500/10 rounded-full transition-all active:scale-95">
+                                <i class="fa-solid fa-xmark text-lg"></i>
+                            </button>
+                        </div>
+                    `).join('');
+                    c.innerHTML = html;
                 },
-                generateDefault: (d) => { state.timetableConfig[d] = [{id:API.genId(),start:'08:00',end:'08:40',label:'第1節',type:'class',subject:''},{id:API.genId(),start:'08:40',end:'09:20',label:'第2節',type:'class',subject:''},{id:API.genId(),start:'09:20',end:'09:40',label:'小息',type:'special',subject:'☕️ 休息'},{id:API.genId(),start:'09:40',end:'10:20',label:'第3節',type:'class',subject:''},{id:API.genId(),start:'10:20',end:'11:00',label:'第4節',type:'class',subject:''},{id:API.genId(),start:'11:00',end:'11:20',label:'小息',type:'special',subject:'☕️ 休息'},{id:API.genId(),start:'11:20',end:'12:00',label:'第5節',type:'class',subject:''},{id:API.genId(),start:'12:00',end:'13:00',label:'午膳',type:'special',subject:'🍱 午餐'},{id:API.genId(),start:'13:00',end:'13:40',label:'第6節',type:'class',subject:''},{id:API.genId(),start:'13:40',end:'14:20',label:'第7節',type:'class',subject:''}]; app.timetable.saveConfig(); app.timetable.renderDaySelector(); },
+                updateSlotInline: (id, k, v) => { 
+                    const s = state.timetableConfig[state.currentDayTab].find(x => x.id === id); 
+                    if(s) s[k] = v; 
+                    app.timetable.saveConfig(); 
+                    if (k === 'start' || k === 'end') app.timetable.renderDaySelector();
+                },
+                generateDefault: (d) => { state.timetableConfig[d] = [{id:API.genId(),start:'08:00',end:'08:40',label:'第1節',type:'class',subject:''},{id:API.genId(),start:'08:40',end:'09:20',label:'第2節',type:'class',subject:''},{id:API.genId(),start:'09:20',end:'09:40',label:'小息',type:'special',subject:''},{id:API.genId(),start:'09:40',end:'10:20',label:'第3節',type:'class',subject:''},{id:API.genId(),start:'10:20',end:'11:00',label:'第4節',type:'class',subject:''},{id:API.genId(),start:'11:00',end:'11:20',label:'小息',type:'special',subject:''},{id:API.genId(),start:'11:20',end:'12:00',label:'第5節',type:'class',subject:''},{id:API.genId(),start:'12:00',end:'13:00',label:'午膳',type:'special',subject:''},{id:API.genId(),start:'13:00',end:'13:40',label:'第6節',type:'class',subject:''},{id:API.genId(),start:'13:40',end:'14:20',label:'第7節',type:'class',subject:''}]; app.timetable.saveConfig(); app.timetable.renderDaySelector(); },
                 saveConfig: () => { localStorage.setItem(`lumina_tt_${state.user.uid}`, JSON.stringify(state.timetableConfig)); AdminService.log('TIMETABLE_UPDATED'); },
-                editSlotModal: (id) => { const s = state.timetableConfig[state.currentDayTab].find(x => x.id === id); const btns = state.subjects.map(sub => `<button onclick="app.timetable.updateSlot('${id}', 'subject', '${sub}')" class="w-full text-left p-4 border-b border-theme-border text-sm font-bold text-theme-text hover:bg-theme-input transition">${sub}</button>`).join(''); UI.sheet.open(`<div class="flex justify-between items-center mb-6"><div><h3 class="font-bold text-theme-text text-xl">${s.label}</h3><p class="text-sm text-brand-500 font-mono mt-1">${s.start} - ${s.end}</p></div><button onclick="app.timetable.deleteSlot('${id}')" class="text-red-500 text-xs font-bold bg-red-500/10 px-4 py-2 rounded-full hover:bg-red-500/20 hover:scale-105 transition-all">移除時段</button></div><p class="text-xs text-theme-muted mb-3 uppercase font-mono font-bold">快速選擇科目</p><div class="max-h-64 overflow-y-auto bg-theme-input rounded-2xl border border-theme-border no-scrollbar">${btns}<button onclick="app.timetable.updateSlot('${id}', 'subject', '')" class="w-full text-left p-4 text-sm font-bold text-theme-muted hover:bg-theme-border transition-colors">清除科目 (空堂)</button></div>`); },
-                updateSlot: (id, k, v) => { const s = state.timetableConfig[state.currentDayTab].find(x => x.id === id); if(s) s[k] = v; app.timetable.saveConfig(); UI.sheet.close(); app.timetable.renderDaySelector(); },
-                deleteSlot: (id) => { state.timetableConfig[state.currentDayTab] = state.timetableConfig[state.currentDayTab].filter(s => s.id !== id); app.timetable.saveConfig(); UI.sheet.close(); app.timetable.renderDaySelector(); },
+                deleteSlot: (id) => { state.timetableConfig[state.currentDayTab] = state.timetableConfig[state.currentDayTab].filter(s => s.id !== id); app.timetable.saveConfig(); app.timetable.renderDaySelector(); UI.notify('已移除時段', 'info'); },
                 copyToAllWeekModal: () => {
                     const currentSlots = state.timetableConfig[state.currentDayTab] || [];
                     if (currentSlots.length === 0) return UI.notify('請先建立今日時間軸再進行複製', 'error');
@@ -933,7 +1003,7 @@
                     UI.modal.close();
                     UI.notify('已成功套用時間軸到全週！', 'success');
                 },
-                addSlotModal: () => { 
+                addSlotDirect: () => { 
                     const slots = state.timetableConfig[state.currentDayTab] || [];
                     let defaultStart = '08:00', defaultEnd = '08:40', defaultLabel = `第${slots.length + 1}節`;
                     if (slots.length > 0) {
@@ -943,9 +1013,12 @@
                         const d = new Date(); d.setHours(h, m + 40, 0, 0);
                         defaultEnd = d.toTimeString().substring(0, 5);
                     }
-                    UI.modal.open(`<h3 class="text-xl font-bold text-theme-text mb-6">新增時間軸</h3><div class="space-y-4"><div><label class="block text-xs font-mono font-bold text-theme-muted uppercase mb-2">標籤 Label</label><input type="text" id="slot-label" class="premium-input font-bold" value="${defaultLabel}" placeholder="例: 補課"></div><div class="grid grid-cols-2 gap-4"><div><label class="block text-xs font-mono font-bold text-theme-muted uppercase mb-2">開始 Start</label><input type="time" id="slot-start" class="premium-input font-mono font-bold dark:[color-scheme:dark]" value="${defaultStart}"></div><div><label class="block text-xs font-mono font-bold text-theme-muted uppercase mb-2">結束 End</label><input type="time" id="slot-end" class="premium-input font-mono font-bold dark:[color-scheme:dark]" value="${defaultEnd}"></div></div></div><div class="mt-8 flex gap-3"><button onclick="app.UI.modal.close()" class="flex-1 glass-card py-3.5 text-sm font-bold text-theme-text hover:-translate-y-1 hover:bg-theme-input active:scale-95 transition-all duration-300">取消</button><button onclick="app.timetable.doAddSlot()" class="flex-1 bg-brand-600 hover:bg-brand-500 rounded-xl py-3.5 text-sm font-bold text-white shadow-lg hover:-translate-y-1 hover:shadow-brand-500/40 active:scale-95 transition-all duration-300">新增</button></div>`); 
-                },
-                doAddSlot: () => { const l = document.getElementById('slot-label').value, s = document.getElementById('slot-start').value, e = document.getElementById('slot-end').value; if(!l||!s||!e) return UI.notify('請填寫完整', 'error'); if(!state.timetableConfig[state.currentDayTab]) state.timetableConfig[state.currentDayTab] = []; state.timetableConfig[state.currentDayTab].push({ id: API.genId(), start:s, end:e, label:l, type: 'class', subject: '' }); app.timetable.saveConfig(); UI.modal.close(); app.timetable.renderDaySelector(); }
+                    if(!state.timetableConfig[state.currentDayTab]) state.timetableConfig[state.currentDayTab] = [];
+                    state.timetableConfig[state.currentDayTab].push({ id: API.genId(), start: defaultStart, end: defaultEnd, label: defaultLabel, type: 'class', subject: '' });
+                    app.timetable.saveConfig();
+                    app.timetable.renderDaySelector();
+                    setTimeout(() => { const c = document.getElementById('timetable-slots'); c.scrollTop = c.scrollHeight; }, 50);
+                }
             },
             groups: {
                 create: async () => { 

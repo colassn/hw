@@ -47,7 +47,7 @@
     <style>
         :root { 
             --safe-bottom: env(safe-area-inset-bottom, 20px);
-            /* 🌟 極致純淨淺色模式 */
+            /* 🌟 淺色模式：現代蘋果風 */
             --bg: #f4f4f5;
             --text: #0f172a;
             --text-muted: #64748b;
@@ -57,7 +57,7 @@
         }
 
         .dark {
-            /* 🌟 頂級深空暗色模式 */
+            /* 🌟 深色模式：深空紫藍科技風 */
             --bg: #09090b;
             --text: #f8fafc;
             --text-muted: #94a3b8;
@@ -66,7 +66,7 @@
             --nav: rgba(9, 9, 11, 0.9);
         }
 
-        /* 🌟 全域平滑過渡 */
+        /* 全域平滑過渡 */
         html.theme-transition, html.theme-transition *, html.theme-transition *:before, html.theme-transition *:after {
             transition: all 0.5s ease !important;
         }
@@ -103,12 +103,11 @@
         .glass-card:hover { transform: translateY(-3px); box-shadow: 0 15px 30px -10px rgba(0,0,0,0.08); }
         .dark .glass-card:hover { box-shadow: 0 15px 40px -10px rgba(0,0,0,0.8); }
 
-        /* --- 🌈 升級：科目光暈與彩帶邊框 --- */
+        /* --- 🌈 科目光暈與彩帶邊框 --- */
         .task-card-anim {
             position: relative;
             overflow: hidden;
             z-index: 1;
-            /* 預留左側彩帶空間 */
             border-left-width: 6px;
             border-left-style: solid;
             border-left-color: var(--subj-color-soft, #6366f1);
@@ -121,6 +120,17 @@
         }
         .dark .task-card-anim::before { opacity: 0.3; }
         .task-card-anim:hover::before { opacity: 0.4; }
+
+        /* --- 圓形完成按鈕 (互動優化) --- */
+        .checkbox-circle {
+            width: 32px; height: 32px; border-radius: 50%; border: 2px solid var(--border);
+            display: flex; align-items: center; justify-content: center; cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); background: var(--input); z-index: 10; flex-shrink: 0;
+        }
+        .checkbox-circle:hover { border-color: var(--subj-color-soft); transform: scale(1.1); box-shadow: 0 0 10px var(--subj-color-alpha); }
+        .checkbox-circle i { opacity: 0; transform: scale(0.5); transition: all 0.3s; color: white; font-size: 14px; }
+        .checkbox-circle.completed { background: var(--subj-color-soft); border-color: var(--subj-color-soft); box-shadow: 0 0 15px var(--subj-color-alpha); }
+        .checkbox-circle.completed i { opacity: 1; transform: scale(1); }
 
         /* --- 精緻輸入框 --- */
         .input-base {
@@ -136,7 +146,7 @@
 
         /* --- 標籤系統 --- */
         .task-badge {
-            padding: 5px 12px; border-radius: 10px; font-size: 11px; font-weight: 800; letter-spacing: 0.05em; text-transform: uppercase; white-space: nowrap; display: flex; items-center; gap: 6px;
+            padding: 5px 12px; border-radius: 10px; font-size: 11px; font-weight: 800; letter-spacing: 0.05em; text-transform: uppercase; white-space: nowrap; display: flex; align-items: center; gap: 6px;
         }
 
         /* --- 底部導航 Dock (人體工學) --- */
@@ -188,9 +198,9 @@
     </div>
 
     <!-- 📢 全域跑馬燈 -->
-    <div id="global-marquee-banner" class="hidden w-full bg-gradient-to-r from-orange-500 to-amber-500 text-white font-bold text-[13px] px-6 py-2.5 flex items-center gap-4 shadow-sm z-50 shrink-0">
+    <div id="global-marquee-banner" class="hidden fixed top-0 left-0 right-0 w-full bg-gradient-to-r from-orange-500 to-amber-500 text-white font-bold text-[13px] px-6 py-2.5 flex items-center gap-4 shadow-sm z-[200]">
         <i class="fa-solid fa-bullhorn animate-pulse text-lg drop-shadow-sm"></i>
-        <span class="tracking-widest uppercase shrink-0 bg-black/20 px-2 py-0.5 rounded text-[10px]">最新公告</span>
+        <span class="tracking-widest uppercase shrink-0 bg-black/20 px-2 py-0.5 rounded text-[10px] font-black">最新公告</span>
         <marquee scrollamount="5" class="flex-1 font-medium tracking-wide text-[14px]" id="global-marquee-text"></marquee>
     </div>
 
@@ -244,13 +254,13 @@
     <div id="app-core" class="hidden flex-col h-full w-full relative overflow-hidden">
         
         <!-- 🌟 乾淨的頂部標題列 -->
-        <header class="w-full px-6 pt-10 md:pt-14 pb-2 flex justify-between items-center bg-transparent shrink-0 md:max-w-3xl lg:max-w-5xl mx-auto transition-all duration-500" id="main-header">
+        <header class="w-full px-6 pt-12 pb-4 flex justify-between items-center bg-transparent shrink-0 md:max-w-3xl lg:max-w-5xl mx-auto transition-all duration-500" id="main-header">
             <div>
                 <h1 class="text-3xl font-black tracking-tight text-theme-text font-display transition-all duration-300" id="header-title-text">電子手冊</h1>
                 <p id="header-date" class="text-[11px] text-theme-muted font-bold tracking-widest uppercase mt-1">載入中...</p>
             </div>
             <div class="flex items-center gap-3">
-                <div id="offline-badge" class="hidden bg-yellow-500/10 text-yellow-600 dark:text-yellow-500 text-[10px] font-bold px-3 py-1.5 rounded-xl border border-yellow-500/20 flex items-center gap-1 shadow-sm"><i class="fa-solid fa-bolt-slash"></i></div>
+                <div id="offline-badge" class="hidden bg-yellow-500/10 text-yellow-600 dark:text-yellow-500 text-[10px] font-bold px-3 py-1.5 rounded-xl border border-yellow-500/20 flex items-center gap-1 shadow-sm"><i class="fa-solid fa-bolt-slash"></i> 離線</div>
                 <button onclick="app.notifications.toggle()" class="relative w-10 h-10 rounded-full flex items-center justify-center text-theme-text bg-theme-input hover:bg-theme-border active:scale-90 transition-all border border-theme-border shadow-sm">
                     <i class="fa-solid fa-bell text-[18px]"></i>
                     <span id="notif-badge" class="hidden absolute top-0 right-0 w-3 h-3 bg-pink-500 rounded-full border-2 border-theme-bg shadow-sm"></span>
@@ -296,7 +306,7 @@
                             </div>
                         </div>
 
-                        <div id="todo-list" class="flex flex-col gap-4"></div>
+                        <div id="todo-list" class="flex flex-col gap-5"></div>
                         
                         <div id="todo-empty" class="hidden flex-col items-center justify-center py-20 text-theme-muted">
                             <i class="fa-regular fa-face-smile-wink text-6xl mb-4 opacity-30 text-brand-500"></i>
@@ -308,7 +318,7 @@
 
                 <!-- 🕒 TIMETABLE 頁面 -->
                 <section id="view-timetable" class="view-section w-full space-y-6">
-                    <h2 class="text-2xl font-black text-theme-text font-display tracking-tight px-1">時間表</h2>
+                    <h2 class="text-3xl font-black text-theme-text font-display tracking-tight px-1">時間表</h2>
                     
                     <div id="timetable-day-selector" class="flex gap-3 overflow-x-auto no-scrollbar pb-2 snap-x items-center px-1"></div>
                     
@@ -329,19 +339,19 @@
                 <!-- 📚 HISTORY 頁面 -->
                 <section id="view-history" class="view-section w-full space-y-6">
                     <div class="flex justify-between items-end px-1">
-                        <h2 class="text-2xl font-black text-theme-text font-display tracking-tight">歷史記錄</h2>
+                        <h2 class="text-3xl font-black text-theme-text font-display tracking-tight">歷史記錄</h2>
                         <span class="text-[10px] font-black text-emerald-500 tracking-widest uppercase bg-emerald-500/10 px-3 py-1.5 rounded-lg">Archived</span>
                     </div>
-                    <div id="history-list" class="flex flex-col gap-4"></div>
+                    <div id="history-list" class="flex flex-col gap-5"></div>
                     <div id="history-empty" class="hidden flex-col items-center justify-center py-32 text-theme-muted">
                         <i class="fa-solid fa-box-archive text-5xl mb-4 opacity-30 text-emerald-500"></i>
-                        <p class="text-[15px] font-black tracking-widest uppercase text-theme-text">No History</p>
+                        <p class="text-[15px] font-black tracking-widest uppercase">No History</p>
                     </div>
                 </section>
 
                 <!-- 👥 GROUPS 頁面 -->
                 <section id="view-groups" class="view-section w-full space-y-6">
-                    <h2 class="text-2xl font-black text-theme-text font-display tracking-tight px-1">學習群組</h2>
+                    <h2 class="text-3xl font-black text-theme-text font-display tracking-tight px-1">學習群組</h2>
                     
                     <div class="glass-card p-6 md:p-8 relative overflow-hidden">
                         <h3 class="text-[15px] font-bold text-theme-text mb-4 relative z-10 flex items-center"><i class="fa-solid fa-users text-brand-500 mr-2"></i> 加入群組</h3>
@@ -366,7 +376,7 @@
 
                 <!-- ⚙️ SETTINGS 頁面 -->
                 <section id="view-settings" class="view-section w-full space-y-6">
-                    <h2 class="text-2xl font-black text-theme-text font-display tracking-tight px-1">設定</h2>
+                    <h2 class="text-3xl font-black text-theme-text font-display tracking-tight px-1">設定</h2>
                     
                     <div class="grid grid-cols-2 gap-4">
                         <button onclick="app.settings.toggleTheme()" class="glass-card p-5 flex flex-col items-center justify-center gap-3 hover:-translate-y-1 active:scale-95 transition-all group">
@@ -407,7 +417,7 @@
                     </div>
                 </section>
 
-                <!-- ➕ 沉浸式 ADD 頁面 (Zen Mode) -->
+                <!-- ➕ 沉浸式 ADD 頁面 -->
                 <section id="view-add" class="view-section w-full min-h-[80vh] flex flex-col">
                     <div class="flex items-center justify-between mb-6 px-1">
                         <button onclick="app.nav.toggleAdd()" class="w-10 h-10 rounded-full bg-theme-input flex items-center justify-center text-theme-text active:scale-90 transition-all shadow-sm border border-theme-border">
@@ -421,13 +431,11 @@
                     </div>
                     
                     <div class="flex-1 flex flex-col gap-5 px-1">
-                        <!-- 科目藥丸 -->
                         <div class="flex items-center gap-2 overflow-x-auto no-scrollbar pb-2 mask-edges" id="form-subjects-scroll"></div>
                         <input type="hidden" id="form-subject-value">
 
-                        <!-- 無干擾畫布 -->
                         <div class="relative flex-1 flex flex-col min-h-[250px]">
-                            <textarea id="form-content" class="w-full flex-1 bg-transparent border-0 text-[24px] leading-relaxed text-theme-text placeholder-theme-muted/50 resize-none outline-none font-medium" placeholder="寫下功課細節... (必填)"></textarea>
+                            <textarea id="form-content" class="w-full flex-1 bg-transparent border-0 text-[24px] leading-relaxed text-theme-text placeholder-theme-muted/50 resize-none outline-none font-medium" placeholder="寫下任務細節..."></textarea>
                         </div>
                         
                         <div id="form-image-preview-container" class="hidden relative mt-2 mb-4 group w-fit">
@@ -435,11 +443,9 @@
                             <button onclick="app.tasks.removeImage()" class="absolute -top-3 -right-3 w-8 h-8 bg-red-500 text-white rounded-full flex items-center justify-center shadow-md active:scale-90 transition-transform"><i class="fa-solid fa-xmark text-xs"></i></button>
                         </div>
 
-                        <!-- 底部工具列 -->
                         <div class="mt-auto bg-theme-card border border-theme-border rounded-[24px] p-4 flex flex-col gap-4 shadow-lg mb-8">
                             <div class="flex items-center justify-between gap-3">
                                 <input type="date" id="form-date" onchange="app.tasks.checkStress()" class="input-base py-3 px-4 rounded-xl flex-1 text-[14px] font-bold text-center dark:[color-scheme:dark] shadow-none bg-theme-input/50 border-transparent">
-                                
                                 <input type="file" id="form-image" accept="image/*" class="hidden" onchange="app.tasks.handleImageUpload(event)">
                                 <button onclick="document.getElementById('form-image').click()" class="w-12 h-12 rounded-xl bg-theme-input/50 text-theme-muted hover:text-brand-500 flex items-center justify-center transition-all active:scale-95 shrink-0 border border-transparent hover:border-theme-border"><i class="fa-solid fa-camera"></i></button>
                             </div>
@@ -461,7 +467,7 @@
                             
                             <div id="form-warning-msg" class="hidden bg-yellow-500/10 border border-yellow-500/20 p-3 rounded-xl flex items-center justify-center gap-2">
                                 <i class="fa-solid fa-triangle-exclamation text-yellow-600 dark:text-yellow-500"></i>
-                                <span class="text-[12px] font-bold text-yellow-700 dark:text-yellow-400">該日已有 <span id="form-warning-count"></span> 項任務，請注意時間分配。</span>
+                                <span class="text-[12px] font-bold text-yellow-700 dark:text-yellow-400">該日已有 <span id="form-warning-count"></span> 項任務，請注意時間。</span>
                             </div>
 
                             <button id="btn-save-task" onclick="app.tasks.save()" class="w-full py-4 bg-brand-600 text-white rounded-xl font-black shadow-[0_5px_15px_rgba(99,102,241,0.4)] active:scale-95 transition-all text-[15px] tracking-wide flex justify-center items-center gap-2 mt-2">
@@ -474,7 +480,7 @@
             </div>
         </main>
 
-        <!-- 📱 人體工學底部導航 (Bottom Tab Bar) -->
+        <!-- 📱 底部導航 Dock -->
         <nav id="main-nav-dock" class="fixed bottom-0 left-0 right-0 z-50 bottom-dock flex justify-around items-center px-2 pt-2 md:max-w-md md:mx-auto md:bottom-6 md:rounded-full md:border md:shadow-2xl">
             <button onclick="app.nav.switch('home')" id="dock-home" class="nav-btn active">
                 <i class="fa-solid fa-layer-group"></i><span>任務</span>
@@ -483,7 +489,6 @@
                 <i class="fa-solid fa-calendar-week"></i><span>課表</span>
             </button>
             
-            <!-- 中央浮動新增按鈕 (FAB) -->
             <div class="relative w-[60px] h-[56px] flex justify-center">
                 <button onclick="app.nav.toggleAdd()" id="global-fab" class="absolute fab-center z-50">
                     <i class="fa-solid fa-plus" id="add-icon"></i>
@@ -500,11 +505,17 @@
 
     </div>
 
-    <!-- 全域組件 -->
+    <!-- 🖼️ 獨立圖片檢視器 (Lightbox) -->
+    <div id="image-lightbox" onclick="app.UI.hideImage()" class="fixed inset-0 bg-black/90 backdrop-blur-xl z-[1000] hidden flex flex-col items-center justify-center opacity-0 transition-opacity duration-300 p-4 sm:p-8 cursor-zoom-out">
+        <img id="lightbox-img" src="" class="max-w-full max-h-full object-contain rounded-2xl shadow-2xl transform scale-95 transition-transform duration-300" onclick="event.stopPropagation()">
+        <button onclick="app.UI.hideImage()" class="absolute top-6 right-6 w-12 h-12 rounded-full bg-white/10 hover:bg-white/20 text-white flex items-center justify-center transition-colors backdrop-blur-md z-10"><i class="fa-solid fa-xmark text-xl"></i></button>
+    </div>
+
+    <!-- 全域 Modal 組件 -->
     <div id="global-overlay" onclick="if(app.UI) { app.UI.sheet.close(); app.UI.modal.close(); }" class="fixed inset-0 bg-black/20 dark:bg-black/60 backdrop-blur-sm z-[600] hidden opacity-0 transition-opacity duration-300 cursor-pointer"></div>
     
     <div id="center-modal" class="fixed inset-0 z-[610] hidden flex items-center justify-center p-6 pointer-events-none">
-        <div id="center-modal-content" class="glass-card w-full max-w-sm p-6 md:p-8 transform scale-95 opacity-0 pointer-events-auto shadow-2xl"></div>
+        <div id="center-modal-content" class="glass-card w-full max-w-sm p-8 transform scale-95 opacity-0 pointer-events-auto shadow-2xl"></div>
     </div>
     
     <div id="bottom-sheet" class="fixed inset-x-0 bottom-0 z-[610] hidden flex flex-col justify-end pointer-events-none">
@@ -514,14 +525,6 @@
         </div>
     </div>
     
-    <div id="notif-panel" class="fixed inset-y-0 right-0 w-full md:w-[380px] bg-theme-bg/95 backdrop-blur-2xl z-[610] hidden transform translate-x-full border-l border-theme-border flex flex-col shadow-2xl">
-        <div class="p-6 border-b border-theme-border flex justify-between items-center bg-theme-input/50">
-            <h3 class="text-xl font-black text-theme-text font-display flex items-center gap-2"><i class="fa-solid fa-bell text-brand-500"></i> 通知</h3>
-            <button onclick="app.notifications.toggle()" class="w-8 h-8 rounded-full bg-theme-card flex items-center justify-center text-theme-muted hover:text-brand-500 shadow-sm border border-theme-border active:scale-90 transition-all"><i class="fa-solid fa-xmark text-sm"></i></button>
-        </div>
-        <div id="notif-list" class="flex-1 overflow-y-auto p-4 space-y-3 no-scrollbar bg-theme-bg"></div>
-    </div>
-    
     <div id="toast-root" class="fixed top-16 left-1/2 -translate-x-1/2 z-[700] flex flex-col items-center gap-3 pointer-events-none px-4 w-full md:w-auto"></div>
 
     <script type="module">
@@ -529,7 +532,6 @@
         import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, signInWithPopup, GoogleAuthProvider, onAuthStateChanged, signOut, setPersistence, browserLocalPersistence, updateProfile } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
         import { getFirestore, collection, doc, setDoc, getDoc, updateDoc, deleteDoc, onSnapshot, writeBatch, query, where, getDocs } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
-        // ⚠️ Firebase Config
         const firebaseConfig = {
             apiKey: "AIzaSyByPLZqByFtsFbCXBaIz53psLcdKoXBouY",
             authDomain: "newhw-daf31.firebaseapp.com",
@@ -566,7 +568,6 @@
             return `rgba(${r}, ${g}, ${b}, ${alpha})`;
         };
 
-        // 🌟 智慧判斷科目圖示
         const getSubjectIcon = (name) => {
             if(!name) return 'fa-bookmark';
             const n = name.toLowerCase();
@@ -592,7 +593,6 @@
 
         const escapeHTML = (str) => (str || '').toString().replace(/[&<>'"]/g, tag => ({'&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;'}[tag]));
 
-        // 精準日期與狀態類別
         const formatDateExact = (dateStr) => {
             if(!dateStr) return { full: '無期限', diff: '', isOverdue: false, diffDays: null, statusClass: 'bg-theme-input text-theme-muted' };
             const d = new Date(dateStr);
@@ -618,7 +618,7 @@
                 const root = document.getElementById('toast-root');
                 const t = document.createElement('div');
                 const styles = { success: 'bg-emerald-500 text-white', error: 'bg-red-500 text-white', info: 'bg-brand-500 text-white', warning: 'bg-amber-500 text-white' };
-                t.className = `px-5 py-3 rounded-full text-[13px] font-bold shadow-xl flex items-center gap-2 w-max ${styles[type]}`;
+                t.className = `px-5 py-3 rounded-2xl text-[13px] font-bold shadow-xl flex items-center gap-2.5 w-max ${styles[type]}`;
                 const icons = { success: 'fa-check', error: 'fa-triangle-exclamation', info: 'fa-info-circle', warning: 'fa-fire' };
                 t.innerHTML = `<i class="fa-solid ${icons[type]} text-sm"></i> <span>${msg}</span>`;
                 root.appendChild(t);
@@ -627,6 +627,25 @@
                     gsap.fromTo(t, { y: -40, opacity: 0, scale: 0.9 }, { y: 0, opacity: 1, scale: 1, duration: 0.4, ease: "back.out(1.5)" });
                     setTimeout(() => gsap.to(t, { opacity: 0, y: -20, scale: 0.9, duration: 0.3, ease: "power2.in", onComplete: ()=>t.remove() }), 3000);
                 } else setTimeout(() => t.remove(), 3000);
+            },
+            showImage: (src) => {
+                const lb = document.getElementById('image-lightbox');
+                const img = document.getElementById('lightbox-img');
+                img.src = src;
+                lb.classList.remove('hidden');
+                setTimeout(() => {
+                    lb.classList.remove('opacity-0');
+                    img.classList.remove('scale-95');
+                    img.classList.add('scale-100');
+                }, 10);
+            },
+            hideImage: () => {
+                const lb = document.getElementById('image-lightbox');
+                const img = document.getElementById('lightbox-img');
+                lb.classList.add('opacity-0');
+                img.classList.remove('scale-100');
+                img.classList.add('scale-95');
+                setTimeout(() => { lb.classList.add('hidden'); img.src = ''; }, 300);
             },
             overlay: {
                 show: () => { document.getElementById('global-overlay').classList.remove('hidden'); setTimeout(() => document.getElementById('global-overlay').classList.remove('opacity-0'), 10); },
@@ -678,7 +697,6 @@
 
                 try {
                     try { app.settings.initTheme(); } catch(e){}
-                    try { app.system.initOfflineDetection(); } catch(e){}
 
                     hideLoader();
 
@@ -698,26 +716,6 @@
                         });
                     }
                 } catch(e) { hideLoader(); }
-                
-                // 動態頭像列縮放
-                window.addEventListener('scroll', () => {
-                    const header = document.getElementById('main-header');
-                    const titleText = document.getElementById('header-title-text');
-                    const avatarBtn = document.getElementById('header-avatar-btn');
-
-                    if(!header || !titleText) return;
-                    if (window.scrollY > 40) {
-                        header.classList.replace('pt-10', 'pt-4');
-                        header.classList.replace('md:pt-14', 'md:pt-4');
-                        titleText.classList.replace('text-3xl', 'text-2xl');
-                        header.classList.add('bg-theme-bg/80', 'backdrop-blur-xl', 'shadow-sm', 'border-b', 'border-theme-border');
-                    } else {
-                        header.classList.replace('pt-4', 'pt-10');
-                        header.classList.replace('md:pt-4', 'md:pt-14');
-                        titleText.classList.replace('text-2xl', 'text-3xl');
-                        header.classList.remove('bg-theme-bg/80', 'backdrop-blur-xl', 'shadow-sm', 'border-b', 'border-theme-border');
-                    }
-                }, { passive: true });
             },
             startSystem: async () => {
                 try {
@@ -730,30 +728,23 @@
                                 updateDoc(docSnap.ref, { displayName: state.user.displayName || '', photoURL: state.user.photoURL || '' }).catch(e=>{});
                             }
                             
-                            document.getElementById('header-name').textContent = (state.user.displayName || 'Student').split(' ')[0];
                             if(state.profile.role === 'provider') {
                                 const sec = document.getElementById('provider-create-group');
                                 if(sec) sec.classList.replace('hidden', 'flex');
-                                const bc = document.getElementById('provider-target-section');
-                                if(bc) bc.classList.remove('hidden');
                             }
                         } else {
                             setDoc(docSnap.ref, { role: 'student', isBanned: false, createdAt: new Date().toISOString(), displayName: state.user.displayName || '', photoURL: state.user.photoURL || '' });
-                            document.getElementById('header-name').textContent = (state.user.displayName || 'Student').split(' ')[0];
                         }
                     }));
                 } catch (e) {}
-
-                const d = new Date(); const days = ['星期日','星期一','星期二','星期三','星期四','星期五','星期六'];
-                document.getElementById('header-date').textContent = `${d.getMonth()+1}月${d.getDate()}日, ${days[d.getDay()]}`;
-                
-                if (state.user.photoURL) { document.getElementById('header-avatar').src = state.user.photoURL; document.getElementById('header-avatar').classList.remove('hidden'); document.getElementById('header-avatar-fallback').classList.add('hidden'); }
                 
                 try { state.timetableConfig = JSON.parse(localStorage.getItem(`lumina_tt_${state.user.uid}`)) || {}; } catch(e) { state.timetableConfig = {}; }
                 try { state.customDays = JSON.parse(localStorage.getItem(`lumina_tt_days_${state.user.uid}`)) || ['星期一', '星期二', '星期三', '星期四', '星期五']; } catch(e) { state.customDays = ['星期一', '星期二', '星期三', '星期四', '星期五']; }
                 try { state.subjects = JSON.parse(localStorage.getItem(`lumina_subj_${state.user.uid}`)) || defaultSubjects; } catch(e) { state.subjects = defaultSubjects; }
 
-                state.currentDayTab = state.customDays.includes(days[d.getDay()]) ? days[d.getDay()] : (state.customDays[0] || '');
+                const days = ['星期日','星期一','星期二','星期三','星期四','星期五','星期六'];
+                const todayZh = days[new Date().getDay()];
+                state.currentDayTab = state.customDays.includes(todayZh) ? todayZh : (state.customDays[0] || '');
 
                 if(state.classTimerInterval) clearInterval(state.classTimerInterval);
                 
@@ -769,12 +760,6 @@
                     gsap.fromTo("header", {y: -20, opacity: 0}, {y: 0, opacity: 1, duration: 0.6, ease: "power2.out"});
                     gsap.fromTo(".glass-card", {y: 20, opacity: 0}, {y: 0, opacity: 1, duration: 0.5, stagger: 0.05, ease: "power2.out", delay: 0.1});
                     gsap.fromTo(".bottom-dock", {y: 80, opacity: 0}, {y: 0, opacity: 1, duration: 0.5, ease: "back.out(1.2)", delay: 0.3});
-                }
-            },
-            system: {
-                initOfflineDetection: () => {
-                    window.addEventListener('offline', () => { document.getElementById('offline-badge').classList.remove('hidden'); UI.notify('離線模式', 'warning'); });
-                    window.addEventListener('online', () => { document.getElementById('offline-badge').classList.add('hidden'); UI.notify('網路已恢復', 'success'); });
                 }
             },
             auth: {
@@ -809,7 +794,7 @@
                         </div>
                     `);
                 },
-                demoRole: async () => { try { await updateDoc(doc(db, API.paths.userProfile(), 'main'), { role: 'provider' }); state.profile.role = 'provider'; UI.sheet.close(); document.getElementById('provider-create-group').classList.replace('hidden', 'flex'); document.getElementById('provider-target-section').classList.remove('hidden'); app.renders.groups(); UI.notify('升級成功', 'success'); } catch(e) {} }
+                demoRole: async () => { try { await updateDoc(doc(db, API.paths.userProfile(), 'main'), { role: 'provider' }); state.profile.role = 'provider'; UI.sheet.close(); document.getElementById('provider-create-group').classList.replace('hidden', 'flex'); app.renders.groups(); UI.notify('升級成功', 'success'); } catch(e) {} }
             },
             setupListeners: () => {
                 try {
@@ -817,29 +802,23 @@
                         state.tasks = []; 
                         const batch = writeBatch(db);
                         let hasDeletes = false;
-                        
                         s.forEach(d => { 
                             const t = d.data();
                             if (t.dueDate && t.status !== 'completed') {
                                 const dateInfo = formatDateExact(t.dueDate);
-                                if (dateInfo.diffDays <= -1) {
-                                    batch.delete(d.ref);
-                                    hasDeletes = true;
-                                    return; 
-                                }
+                                if (dateInfo.diffDays <= -1) { batch.delete(d.ref); hasDeletes = true; return; }
                             }
                             state.tasks.push(t); 
                         }); 
-                        
                         if (hasDeletes) batch.commit().catch(()=>{});
-                        app.renders.tasks(); 
-                        app.updateWidgets(); 
+                        app.renders.tasks(); app.updateWidgets(); 
                     }));
 
                     state.unsubscribers.push(onSnapshot(collection(db, API.paths.groups()), (s) => { 
                         state.groups = []; s.forEach(d => { if(d.data().members.includes(state.user.uid) || d.data().providerId === state.user.uid) state.groups.push(d.data()); }); 
                         app.renders.groups(); app.renders.announcements();
                     }));
+
                     state.unsubscribers.push(onSnapshot(collection(db, API.paths.notifs()), (s) => { 
                         state.notifications = []; s.forEach(d => state.notifications.push(d.data())); 
                         state.notifications.sort((a,b) => new Date(b.timestamp) - new Date(a.timestamp)); 
@@ -860,7 +839,6 @@
                             
                             const marqueeBanner = document.getElementById('global-marquee-banner');
                             const marqueeText = document.getElementById('global-marquee-text');
-                            
                             if (data.marqueeMsg) {
                                 if(marqueeBanner) marqueeBanner.classList.remove('hidden');
                                 if(marqueeText) marqueeText.textContent = data.marqueeMsg;
@@ -873,7 +851,6 @@
             },
             updateWidgets: () => {
                 const today = new Date().toISOString().split('T')[0]; let t=0, tm=0, f=0, e=0;
-                
                 const tomorrowDate = new Date(); tomorrowDate.setDate(tomorrowDate.getDate() + 1);
                 const tomorrowStr = tomorrowDate.toISOString().split('T')[0];
 
@@ -889,15 +866,9 @@
                 
                 const updateCounter = (id, val) => {
                     const el = document.getElementById(id);
-                    if(el && el.textContent !== String(val)) { 
-                        el.textContent = val; 
-                        if(typeof gsap !== 'undefined') gsap.fromTo(el, {scale: 0.5, opacity: 0}, {scale: 1, opacity: 1, duration: 0.5, ease: "back.out(2)"}); 
-                    }
+                    if(el && el.textContent !== String(val)) { el.textContent = val; if(typeof gsap !== 'undefined') gsap.fromTo(el, {scale: 0.5, opacity: 0}, {scale: 1, opacity: 1, duration: 0.5, ease: "back.out(2)"}); }
                 }
-                
-                updateCounter('widget-today-count', t);
-                updateCounter('widget-future-count', f);
-                updateCounter('widget-exam-count', e);
+                updateCounter('widget-today-count', t); updateCounter('widget-future-count', f); updateCounter('widget-exam-count', e);
             },
             notifications: {
                 toggle: () => { const p = document.getElementById('notif-panel'), b = document.getElementById('notif-badge'); if(p.classList.contains('hidden')) { UI.overlay.show(); p.classList.remove('hidden'); if(typeof gsap!=='undefined') gsap.fromTo(p, { x: '100%' }, { x: '0%', duration: 0.4, ease: "power3.out" }); b.classList.add('hidden'); } else { if(typeof gsap!=='undefined') gsap.to(p, { x: '100%', duration: 0.3, ease: "power3.in", onComplete: () => { p.classList.add('hidden'); UI.overlay.hide(); }}); else { p.classList.add('hidden'); UI.overlay.hide(); } } },
@@ -1000,6 +971,21 @@
                 }
             },
             renders: {
+                announcements: () => {
+                    const c = document.getElementById('home-announcements');
+                    if(!c) return;
+                    let html = '';
+                    state.groups.forEach(g => {
+                        if (g.announcement) {
+                            html += `
+                            <div class="bg-gradient-to-r from-blue-500/10 to-brand-500/5 border border-blue-500/20 p-4 rounded-2xl flex items-start gap-3">
+                                <div class="w-8 h-8 rounded-xl bg-blue-500/20 flex items-center justify-center shrink-0"><i class="fa-solid fa-bullhorn text-blue-500 text-sm"></i></div>
+                                <div><p class="text-[10px] font-bold text-blue-500 uppercase tracking-widest mb-1">${escapeHTML(g.name)}</p><p class="text-[13px] font-bold leading-relaxed">${escapeHTML(g.announcement)}</p></div>
+                            </div>`;
+                        }
+                    });
+                    if(html) { c.innerHTML = html; c.classList.remove('hidden'); } else { c.classList.add('hidden'); }
+                },
                 tasks: () => {
                     const todo = document.getElementById('todo-list'), hist = document.getElementById('history-list'); 
                     if(!todo || !hist) return;
@@ -1020,18 +1006,19 @@
                         const hexColor = exam ? '#ec4899' : subjObj.color;
                         const subjIcon = getSubjectIcon(t.subject);
                         
-                        const cStyle = `style="--subject-color: ${hexColor}; --subject-color-alpha: ${hexToRgba(hexColor, 0.4)}; --subj-color-soft: ${hexToRgba(hexColor, 1)}; border-left-color: ${hexColor};"`;
+                        const cStyle = `style="--subj-color-soft: ${hexColor}; --subj-color-alpha: ${hexToRgba(hexColor, 0.4)}; border-left-color: ${hexColor};"`;
                         const cClass = `glass-card task-card task-card-anim p-5 md:p-6 ${done?'opacity-50 grayscale-[40%]':''} ${dateInfo.isOverdue && !done?'ring-1 ring-red-500/50':''}`; 
                         
                         let bTagHtml = exam ? `<span class="task-badge bg-pink-500/10 text-pink-600 dark:text-pink-400 border border-pink-500/20"><i class="fa-solid fa-triangle-exclamation"></i> 測驗</span>` : `<span class="task-badge" style="background: ${hexToRgba(hexColor, 0.15)}; color: ${hexColor}; border: 1px solid ${hexToRgba(hexColor, 0.2)};"><i class="fa-solid ${subjIcon}"></i> ${escapeHTML(t.subject)}</span>`;
                         const broadcastTag = t.groupId ? `<span class="task-badge bg-indigo-500/10 text-indigo-600 border border-indigo-500/20 ml-2"><i class="fa-solid fa-bullhorn"></i> 廣播</span>` : '';
-                        const dateTagHtml = !done && dateInfo.diff ? `<span class="task-badge absolute right-5 top-5 ${dateInfo.statusClass}">${dateInfo.diff}</span>` : '';
+                        const dateTagHtml = !done && dateInfo.diff ? `<span class="task-badge ${dateInfo.statusClass}">${dateInfo.diff}</span>` : '';
                         const cHtml = escapeHTML(t.content || '').replace(/\n/g, '<br>');
                         
+                        // 🌟 獨立藝術畫廊預覽圖
                         const imgHtml = t.attachment ? `
-                            <div class="mt-4 relative rounded-[20px] overflow-hidden border border-theme-border cursor-pointer bg-black/5 group/img" onclick="window.open('${t.attachment}', '_blank')">
+                            <div class="mt-4 relative rounded-[20px] overflow-hidden border border-theme-border cursor-pointer bg-black/5 group/img" onclick="app.UI.showImage('${t.attachment}')">
                                 <div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover/img:opacity-100 transition-opacity flex items-center justify-center z-10">
-                                    <i class="fa-solid fa-expand text-white text-3xl transform scale-50 group-hover/img:scale-100 transition-transform"></i>
+                                    <i class="fa-solid fa-magnifying-glass-plus text-white text-3xl transform scale-50 group-hover/img:scale-100 transition-transform"></i>
                                 </div>
                                 <img src="${t.attachment}" class="w-full aspect-[16/9] object-cover opacity-90 group-hover/img:opacity-100 group-hover/img:scale-105 transition-all duration-500">
                             </div>
@@ -1039,28 +1026,51 @@
 
                         const checkBtn = !done ? `<div class="checkbox-circle" onclick="app.tasks.markComplete('${t.id}', this.closest('.task-card-anim'))"><i class="fa-solid fa-check"></i></div>` : `<div class="checkbox-circle completed" style="background:${hexColor}; border-color:${hexColor}"><i class="fa-solid fa-check"></i></div>`;
 
+                        // 🌟 歷史紀錄圖層 (Overlay)
+                        const overlayHtml = done ? `
+                            <div class="absolute inset-0 bg-theme-bg/60 backdrop-blur-[2px] flex items-center justify-center gap-6 z-20 rounded-[28px] opacity-0 hover:opacity-100 transition-opacity duration-300 group/overlay" onclick="this.classList.toggle('opacity-100')">
+                                <div class="absolute inset-0 bg-theme-bg/40 backdrop-blur-md rounded-[28px]"></div>
+                                <button onclick="event.stopPropagation(); app.tasks.undoComplete('${t.id}')" class="relative w-16 h-16 rounded-full bg-theme-card border border-theme-border text-brand-500 shadow-xl flex flex-col items-center justify-center gap-1 transform scale-90 group-hover/overlay:scale-100 hover:!scale-110 hover:!bg-brand-500 hover:text-white transition-all active:scale-95 duration-300">
+                                    <i class="fa-solid fa-rotate-left text-xl"></i>
+                                    <span class="text-[10px] font-bold">復原</span>
+                                </button>
+                                <button onclick="event.stopPropagation(); app.tasks.confirmDelete('${t.id}')" class="relative w-16 h-16 rounded-full bg-theme-card border border-theme-border text-red-500 shadow-xl flex flex-col items-center justify-center gap-1 transform scale-90 group-hover/overlay:scale-100 hover:!scale-110 hover:!bg-red-500 hover:text-white transition-all active:scale-95 duration-300">
+                                    <i class="fa-solid fa-trash text-xl"></i>
+                                    <span class="text-[10px] font-bold">刪除</span>
+                                </button>
+                            </div>
+                        ` : '';
+
                         const cardHTML = `
                             <div class="${cClass}" id="task-${t.id}" ${cStyle}>
-                                <div class="pt-0.5">${checkBtn}</div>
-                                <div class="flex-1 min-w-0">
-                                    <div class="flex flex-wrap items-center mb-2.5 gap-2 pr-16">${bTagHtml}${broadcastTag}</div>
-                                    ${dateTagHtml}
+                                ${overlayHtml}
+                                <div class="flex gap-4 relative z-10">
+                                    <div class="pt-0.5">${checkBtn}</div>
                                     
-                                    ${t.title ? `<h3 class="text-[18px] font-bold text-theme-text leading-snug mb-1 ${done?'line-through opacity-70':''}">${escapeHTML(t.title)}</h3>` : ''}
-                                    ${cHtml ? `<p class="${t.title ? 'text-[14px] text-theme-muted' : 'text-[16px] font-medium text-theme-text'} font-mono line-clamp-4 leading-relaxed ${done&&!t.title?'line-through opacity-70':''}">${cHtml}</p>` : ''}
-                                    ${imgHtml}
-                                    
-                                    <div class="flex justify-between items-end mt-4 pt-4 border-t border-theme-border/50">
-                                        <div class="text-[12px] font-bold ${dateInfo.isOverdue && !done ?'text-red-500':'text-theme-muted'} flex items-center gap-1.5"><i class="fa-regular fa-calendar"></i> ${dateInfo.full}</div>
-                                        <div class="flex gap-1 shrink-0">
-                                            ${!done ? `
+                                    <div class="flex-1 min-w-0 flex flex-col">
+                                        <div class="flex justify-between items-start mb-2.5 gap-2 pr-16">
+                                            <div class="flex flex-wrap items-center gap-2">${bTagHtml}${broadcastTag}</div>
+                                            ${dateTagHtml}
+                                        </div>
+                                        
+                                        ${t.title ? `<h3 class="text-[18px] font-bold text-theme-text leading-snug mb-1 ${done?'line-through opacity-70':''}">${escapeHTML(t.title)}</h3>` : ''}
+                                        ${cHtml ? `<p class="${t.title ? 'text-[14px] text-theme-muted' : 'text-[16px] font-medium text-theme-text'} font-mono line-clamp-4 leading-relaxed ${done&&!t.title?'line-through opacity-70':''}">${cHtml}</p>` : ''}
+                                        
+                                        ${imgHtml}
+                                        
+                                        ${!done ? `
+                                        <div class="flex justify-between items-end mt-4 pt-4 border-t border-theme-border/50">
+                                            <div class="text-[12px] font-bold ${dateInfo.isOverdue && !done ?'text-red-500':'text-theme-muted'} flex items-center gap-1.5"><i class="fa-regular fa-calendar"></i> ${dateInfo.full}</div>
+                                            <div class="flex gap-1 shrink-0">
                                                 <button class="w-8 h-8 rounded-full text-theme-muted hover:text-brand-500 bg-theme-input/50 hover:bg-brand-500/10 transition-colors flex items-center justify-center active:scale-90" onclick="app.tasks.edit('${t.id}')"><i class="fa-solid fa-pen text-[12px]"></i></button>
                                                 <button class="w-8 h-8 rounded-full text-theme-muted hover:text-red-500 bg-theme-input/50 hover:bg-red-500/10 transition-colors flex items-center justify-center active:scale-90" onclick="app.tasks.confirmDelete('${t.id}')"><i class="fa-solid fa-trash text-[12px]"></i></button>
-                                            ` : `
-                                                <button class="w-8 h-8 rounded-full text-theme-muted hover:text-brand-500 bg-theme-input/50 hover:bg-brand-500/10 transition-colors flex items-center justify-center active:scale-90" onclick="app.tasks.undoComplete('${t.id}')" title="移回待辦"><i class="fa-solid fa-rotate-left text-[12px]"></i></button>
-                                                <button class="w-8 h-8 rounded-full text-theme-muted hover:text-red-500 bg-theme-input/50 hover:bg-red-500/10 transition-colors flex items-center justify-center active:scale-90" onclick="app.tasks.confirmDelete('${t.id}')"><i class="fa-solid fa-trash text-[12px]"></i></button>
-                                            `}
+                                            </div>
                                         </div>
+                                        ` : `
+                                        <div class="flex justify-between items-end mt-4 pt-4 border-t border-theme-border/50">
+                                            <div class="text-[12px] font-bold text-theme-muted flex items-center gap-1.5"><i class="fa-regular fa-calendar"></i> ${dateInfo.full}</div>
+                                        </div>
+                                        `}
                                     </div>
                                 </div>
                             </div>`;
@@ -1074,7 +1084,7 @@
                     const elE1 = document.getElementById('todo-empty'); if(elE1) elE1.style.display = tc===0?'flex':'none';
                     const elE2 = document.getElementById('history-empty'); if(elE2) elE2.style.display = hc===0?'flex':'none';
 
-                    if (typeof gsap !== 'undefined') gsap.fromTo(".task-card-anim", { opacity: 0, y: 20, scale: 0.95 }, { opacity: 1, y: 0, scale: 1, duration: 0.5, stagger: 0.05, ease: "power2.out", clearProps: "all" });
+                    if (typeof gsap !== 'undefined') gsap.fromTo(".task-card-anim", { opacity: 0, y: 20, scale: 0.98 }, { opacity: 1, y: 0, scale: 1, duration: 0.4, stagger: 0.04, ease: "power2.out", clearProps: "all" });
                 },
                 subjectsPills: () => {
                     const renderPills = (containerId, inputId) => {
@@ -1113,13 +1123,12 @@
                 groups: () => {
                     const l = document.getElementById('groups-tab-list');
                     if(l) l.innerHTML = ''; 
-                    if(state.groups.length === 0 && l) { l.innerHTML = '<div class="text-center py-10 text-xs text-theme-muted font-mono font-bold border border-dashed border-theme-border rounded-2xl">尚未加入任何群組</div>'; }
+                    if(state.groups.length === 0 && l) { l.innerHTML = '<div class="text-center py-10 text-sm text-theme-muted font-mono font-bold border-2 border-dashed border-theme-border rounded-3xl">尚未加入任何群組</div>'; }
                     else {
                         state.groups.forEach(g => { 
                             const isAdmin = state.user && g.providerId === state.user.uid;
-                            const actionBtn = isAdmin ? `<button onclick="app.groups.setAnnouncementModal('${g.id}', decodeURIComponent('${safeStr(g.announcement || '')}'))" class="w-8 h-8 rounded-xl bg-blue-500/10 text-blue-500 flex items-center justify-center hover:bg-blue-500 hover:text-white transition-all active:scale-90 ml-2 shadow-sm"><i class="fa-solid fa-bullhorn text-xs"></i></button>` : '';
-                            
-                            if(l) l.innerHTML += `<div class="bg-theme-input/50 p-4 rounded-2xl border border-theme-border flex justify-between items-center hover:shadow-md transition-all"><div class="flex-1 min-w-0"><p class="text-[15px] font-bold truncate">${escapeHTML(g.name)} ${isAdmin?'<span class="bg-pink-500/10 text-pink-500 text-[9px] px-2 py-0.5 rounded ml-1 align-text-bottom">ADMIN</span>':''}</p><p class="text-[11px] text-theme-muted font-mono mt-1 font-bold">代碼: ${g.code} | 成員: ${g.members.length}</p></div>${actionBtn}</div>`; 
+                            const actionBtn = isAdmin ? `<button onclick="app.groups.setAnnouncementModal('${g.id}', decodeURIComponent('${safeStr(g.announcement || '')}'))" class="w-10 h-10 rounded-xl bg-blue-500/10 text-blue-500 flex items-center justify-center hover:bg-blue-500 hover:text-white transition-all active:scale-90 ml-3 shadow-sm"><i class="fa-solid fa-bullhorn text-sm"></i></button>` : '';
+                            if(l) l.innerHTML += `<div class="bg-theme-input/50 p-5 rounded-3xl border border-theme-border flex justify-between items-center hover:shadow-md transition-all hover:-translate-y-1"><div class="flex-1 min-w-0"><p class="text-[17px] font-black truncate tracking-tight">${escapeHTML(g.name)} ${isAdmin?'<span class="bg-pink-500/10 text-pink-500 text-[10px] px-2 py-0.5 rounded-md ml-2 border border-pink-500/20 align-text-bottom">ADMIN</span>':''}</p><p class="text-[12px] text-theme-muted font-mono mt-1 font-bold tracking-wide">代碼: ${g.code} <span class="mx-2 opacity-30">|</span> 成員: ${g.members.length}</p></div>${actionBtn}</div>`; 
                         });
                     }
                 }
@@ -1251,6 +1260,7 @@
                     if(task.attachment) { state.tempImageBase64 = task.attachment; const pc = document.getElementById('form-image-preview-container'); const pi = document.getElementById('form-image-preview'); if(pc && pi) { pi.src = task.attachment; pc.classList.remove('hidden'); } } 
                     else { app.tasks.removeImage(); }
                 },
+                // 🌟 圓形核取方塊的完成動畫邏輯
                 markComplete: (id, el) => { 
                     const doComplete = async () => {
                         try {
@@ -1258,16 +1268,28 @@
                             AdminService.log('TASK_COMPLETED'); 
                             const t = state.tasks.find(x => x.id === id);
                             if (t && t.groupId && t.originalTaskId) { try { await setDoc(doc(db, API.paths.groups(), t.groupId), { completions: { [t.originalTaskId]: { [state.user.uid]: true } } }, { merge: true }); } catch(e) {} }
-                            UI.notify('已完成', 'success');
+                            UI.notify('任務已完成', 'success');
                         } catch(e) {}
                     };
+                    
                     if(typeof gsap !== 'undefined') { 
                         const circle = el.querySelector('.checkbox-circle'); 
-                        if(circle) circle.classList.add('completed'); 
-                        gsap.to(el, { scale: 0.8, opacity: 0, x: 50, duration: 0.4, ease: "power2.in", delay: 0.15, onComplete: doComplete }); 
+                        if(circle) {
+                            circle.classList.add('completed'); 
+                            gsap.fromTo(circle, { scale: 1 }, { scale: 1.2, duration: 0.2, yoyo: true, repeat: 1, ease: "power1.inOut" });
+                        }
+                        gsap.to(el, { opacity: 0, x: 50, scale: 0.9, duration: 0.4, ease: "power2.in", delay: 0.4, onComplete: () => {
+                            gsap.to(el, { height: 0, marginTop: 0, marginBottom: 0, padding: 0, border: 0, duration: 0.3, ease: "power2.out", onComplete: doComplete });
+                        }}); 
                     } else doComplete();
                 },
-                undoComplete: async (id) => { try { await updateDoc(doc(db, API.paths.tasks(), id), { status: 'pending', completedAt: null }); UI.notify('已移回待辦', 'info'); } catch(e) {} },
+                // 🌟 新增：復原歷史任務
+                undoComplete: async (id) => { 
+                    try { 
+                        await updateDoc(doc(db, API.paths.tasks(), id), { status: 'pending', completedAt: null }); 
+                        UI.notify('已移回待辦', 'info'); 
+                    } catch(e) {} 
+                },
                 confirmDelete: (id) => { UI.modal.open(`<div class="text-center"><div class="w-16 h-16 bg-red-500/10 rounded-full flex items-center justify-center mx-auto mb-4 shadow-inner"><i class="fa-solid fa-trash-can text-red-500 text-3xl"></i></div><h3 class="text-xl font-black text-theme-text mb-2">刪除任務？</h3><p class="text-theme-muted text-[13px] mb-6">無法復原。</p><div class="flex gap-3"><button onclick="app.UI.modal.close()" class="flex-1 bg-theme-input py-3 font-bold rounded-xl text-[14px]">取消</button><button onclick="app.tasks.doDelete('${id}')" class="flex-1 bg-red-600 text-white rounded-xl py-3 font-bold text-[14px] shadow-md">刪除</button></div></div>`); },
                 doDelete: async (id) => { try { await deleteDoc(doc(db, API.paths.tasks(), id)); AdminService.log('TASK_DELETED'); UI.modal.close(); UI.notify('已刪除'); } catch(e) {} }
             },
@@ -1307,8 +1329,8 @@
                     let ttMode = localStorage.getItem('lumina_tt_mode') || 'week';
                     let useDays = ttMode === 'week' ? ['星期一', '星期二', '星期三', '星期四', '星期五'] : state.customDays;
                     
-                    let dayHtml = useDays.map(d => `<button class="whitespace-nowrap px-5 py-2.5 rounded-xl font-bold text-[13px] transition-all border shadow-sm snap-center shrink-0 ${state.currentDayTab===d?'bg-theme-card text-brand-600 border-brand-500/50 scale-105 ring-2 ring-brand-500/20':'bg-theme-input text-theme-muted border-transparent'}" onclick="app.timetable.changeDay('${safeStr(d)}')">${escapeHTML(d)}</button>`).join('');
-                    if (ttMode !== 'week') dayHtml += `<button class="w-10 h-10 shrink-0 flex items-center justify-center rounded-xl bg-theme-input text-theme-muted border border-transparent snap-center active:scale-95" onclick="app.timetable.openManageDaysModal()"><i class="fa-solid fa-gear"></i></button>`;
+                    let dayHtml = useDays.map(d => `<button class="whitespace-nowrap px-5 py-2.5 rounded-xl font-bold text-[13px] transition-all border shadow-sm snap-center shrink-0 ${state.currentDayTab===d?'bg-theme-card text-brand-600 border-brand-500/50 scale-105 ring-2 ring-brand-500/20':'bg-theme-input/50 text-theme-muted border-transparent hover:bg-theme-border opacity-80 hover:opacity-100'}" onclick="app.timetable.changeDay('${safeStr(d)}')">${escapeHTML(d)}</button>`).join('');
+                    if (ttMode !== 'week') dayHtml += `<button class="w-10 h-10 shrink-0 flex items-center justify-center rounded-xl bg-theme-input/50 text-theme-muted hover:text-brand-500 shadow-sm border border-transparent hover:border-theme-border snap-center" onclick="app.timetable.openManageDaysModal()"><i class="fa-solid fa-gear"></i></button>`;
                     if(sel) sel.innerHTML = dayHtml;
 
                     let slots = state.timetableConfig[state.currentDayTab] || [];
@@ -1316,8 +1338,8 @@
                     if(btnEdit) { if(app.timetable.isEditMode) { btnEdit.classList.add('hidden'); btnCopy.classList.remove('hidden'); btnAdd.classList.remove('hidden'); btnDone.classList.remove('hidden'); } else { btnEdit.classList.remove('hidden'); btnCopy.classList.add('hidden'); btnAdd.classList.add('hidden'); btnDone.classList.add('hidden'); } }
 
                     if(slots.length === 0) { 
-                        if (app.timetable.isEditMode) { c.innerHTML = `<div class="py-16 text-center flex flex-col items-center"><div class="w-16 h-16 bg-theme-input text-theme-muted rounded-full flex items-center justify-center mb-4"><i class="fa-solid fa-calendar-plus text-2xl"></i></div><button onclick="app.timetable.generateDefault(decodeURIComponent('${safeStr(state.currentDayTab)}'))" class="px-6 py-3 rounded-xl bg-brand-500 text-white font-bold text-[14px] shadow-md">自動生成時段</button></div>`; } 
-                        else { c.innerHTML = `<div class="py-16 text-center flex flex-col items-center"><div class="w-16 h-16 bg-theme-input text-theme-muted rounded-full flex items-center justify-center mb-4"><i class="fa-solid fa-calendar-xmark text-2xl"></i></div><button onclick="app.timetable.toggleEditMode()" class="px-6 py-3 rounded-xl bg-brand-500/10 text-brand-600 font-bold text-[14px]">開始編輯</button></div>`; }
+                        if (app.timetable.isEditMode) { c.innerHTML = `<div class="py-20 text-center flex flex-col items-center"><div class="w-16 h-16 bg-theme-input text-theme-muted rounded-full flex items-center justify-center mb-4"><i class="fa-solid fa-calendar-plus text-2xl"></i></div><button onclick="app.timetable.generateDefault(decodeURIComponent('${safeStr(state.currentDayTab)}'))" class="px-6 py-3 rounded-xl bg-brand-500 text-white font-bold text-[14px] shadow-md">自動生成時段</button></div>`; } 
+                        else { c.innerHTML = `<div class="py-20 text-center flex flex-col items-center"><div class="w-16 h-16 bg-theme-input text-theme-muted rounded-full flex items-center justify-center mb-4"><i class="fa-solid fa-calendar-xmark text-2xl"></i></div><button onclick="app.timetable.toggleEditMode()" class="px-6 py-3 rounded-xl bg-brand-500/10 text-brand-600 font-bold text-[14px]">開始編輯</button></div>`; }
                         return; 
                     }
                     
@@ -1325,7 +1347,6 @@
 
                     if (app.timetable.isEditMode) {
                         html += slots.map(s => {
-                            // 🌟 編輯模式：自動套用科目專屬淡色背景
                             const subjObj = state.subjects.find(sub => sub.name === s.subject); 
                             const hexColor = subjObj ? subjObj.color : '#6366f1';
                             const dynamicBg = s.subject ? `background-color: ${hexToRgba(hexColor, 0.05)}; border-left: 4px solid ${hexColor};` : '';
@@ -1347,31 +1368,32 @@
                         html += `<div class="relative pl-6 py-4 mt-2"><div class="absolute left-[15px] top-6 bottom-6 w-[2px] bg-theme-border rounded-full"></div>`;
                         slots.forEach((s) => {
                             const timeFormat = (time) => { if(!time) return ''; let [h, m] = time.split(':').map(Number); let ampm = h >= 12 ? '下午' : '上午'; let hh = h % 12; if(hh===0) hh=12; return `${ampm} ${hh.toString().padStart(2,'0')}:${m.toString().padStart(2,'0')}`; };
-                            const subjObj = state.subjects.find(sub => sub.name === s.subject); 
-                            const hexColor = subjObj ? subjObj.color : '#6366f1';
+                            const subjObj = state.subjects.find(sub => sub.name === s.subject); const hexColor = subjObj ? subjObj.color : '#6366f1';
                             const icon = getSubjectIcon(s.subject);
                             
                             html += `
                                 <div class="relative mb-6 last:mb-2 group tt-slot-anim">
-                                    <div class="absolute -left-[23px] top-1.5 w-3 h-3 rounded-full ring-4 ring-theme-card" style="background-color: ${hexColor}"></div>
+                                    <div class="absolute -left-[23px] top-1.5 w-4 h-4 rounded-full ring-4 ring-theme-card transition-colors duration-500 z-10" style="background-color: var(--theme-border); group-hover: background-color: ${hexColor}"></div>
                                     <div class="flex flex-col gap-1 pr-2">
-                                        <p class="text-[11px] text-theme-muted font-mono font-bold tracking-wide">${timeFormat(s.start)} - ${timeFormat(s.end)} <span class="ml-1 opacity-60">${escapeHTML(s.label)}</span></p>
-                                        <div class="flex justify-between items-center mt-0.5">
-                                            <h4 class="text-[18px] font-black text-theme-text font-literary"><i class="fa-solid ${icon} text-sm opacity-70 mr-1.5" style="color: ${hexColor}"></i> ${escapeHTML(s.subject) || '<span class="opacity-30">空堂 / 休息</span>'}</h4>
+                                        <p class="text-[12px] text-theme-muted font-mono font-bold tracking-wide flex items-center gap-2">${timeFormat(s.start)} - ${timeFormat(s.end)} <span class="px-2 py-0.5 bg-theme-input rounded-md text-[10px] font-sans text-brand-500 border border-theme-border/50">${escapeHTML(s.label)}</span></p>
+                                        <div class="flex justify-between items-center mt-1">
+                                            <h4 class="text-[20px] font-black text-theme-text font-literary tracking-wide group-hover:translate-x-1 transition-transform duration-300" style="group-hover: color: ${hexColor}"><i class="fa-solid ${icon} text-sm opacity-70 mr-1.5"></i> ${escapeHTML(s.subject) || '<span class="opacity-30">空堂 / 休息</span>'}</h4>
+                                            <i class="fa-solid fa-check text-[10px] text-theme-muted opacity-30 group-hover:opacity-100 transition-opacity"></i>
                                         </div>
                                     </div>
                                 </div>`;
                         });
                         html += `</div>`;
+                        setTimeout(() => { document.querySelectorAll('.tt-slot-anim').forEach(el => { const h4 = el.querySelector('h4'); const dot = el.querySelector('.ring-4'); const color = h4.style.color || '#6366f1'; el.addEventListener('mouseenter', () => { dot.style.backgroundColor = color; }); el.addEventListener('mouseleave', () => { dot.style.backgroundColor = ''; }); }); }, 100);
                     }
-                    if(c) c.innerHTML = html;
+                    if(c) { c.innerHTML = html; if(typeof gsap !== 'undefined' && !app.timetable.isEditMode) { gsap.fromTo(".tt-slot-anim", { opacity: 0, x: -20 }, { opacity: 1, x: 0, duration: 0.5, stagger: 0.05, ease: "power2.out" }); } }
                 },
                 openSubjectSelectModal: (slotId) => {
                     let html = `<h3 class="text-xl font-black mb-4">設定科目</h3><div class="flex flex-wrap gap-2 max-h-[50vh] overflow-y-auto no-scrollbar pb-6"><button onclick="app.timetable.updateSlotInline('${slotId}', 'subject', ''); UI.sheet.close();" class="px-4 py-2 rounded-xl font-bold text-[13px] border bg-theme-input text-theme-muted">-- 空堂 / 休息 --</button>`;
                     state.subjects.forEach(sub => { html += `<button onclick="app.timetable.updateSlotInline('${slotId}', 'subject', decodeURIComponent('${safeStr(sub.name)}')); UI.sheet.close();" class="px-4 py-2 rounded-xl font-bold text-[13px] border bg-theme-input text-theme-muted"><i class="fa-solid ${getSubjectIcon(sub.name)} mr-1"></i> ${escapeHTML(sub.name)}</button>`; });
                     html += `</div>`; UI.sheet.open(html);
                 },
-                updateSlotInline: (id, k, v) => { const s = state.timetableConfig[state.currentDayTab].find(x => x.id === id); if(s) s[k] = v; app.timetable.saveConfig(); /* Remove renderDaySelector here to prevent losing focus while typing */ },
+                updateSlotInline: (id, k, v) => { const s = state.timetableConfig[state.currentDayTab].find(x => x.id === id); if(s) s[k] = v; app.timetable.saveConfig(); },
                 generateDefault: (d) => { state.timetableConfig[d] = [{id:API.genId(),start:'08:00',end:'08:40',label:'第1節',type:'class',subject:''},{id:API.genId(),start:'08:40',end:'09:20',label:'第2節',type:'class',subject:''},{id:API.genId(),start:'09:20',end:'09:40',label:'小息',type:'special',subject:''},{id:API.genId(),start:'09:40',end:'10:20',label:'第3節',type:'class',subject:''},{id:API.genId(),start:'10:20',end:'11:00',label:'第4節',type:'class',subject:''},{id:API.genId(),start:'11:00',end:'11:20',label:'小息',type:'special',subject:''},{id:API.genId(),start:'11:20',end:'12:00',label:'第5節',type:'class',subject:''},{id:API.genId(),start:'12:00',end:'13:00',label:'午膳',type:'special',subject:''},{id:API.genId(),start:'13:00',end:'13:40',label:'第6節',type:'class',subject:''},{id:API.genId(),start:'13:40',end:'14:20',label:'第7節',type:'class',subject:''}]; app.timetable.saveConfig(); app.timetable.renderDaySelector(); },
                 saveConfig: () => { try { localStorage.setItem(`lumina_tt_${state.user.uid}`, JSON.stringify(state.timetableConfig)); } catch(e){} },
                 deleteSlot: (id) => { state.timetableConfig[state.currentDayTab] = state.timetableConfig[state.currentDayTab].filter(s => s.id !== id); app.timetable.saveConfig(); app.timetable.renderDaySelector(); },

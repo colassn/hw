@@ -1271,6 +1271,7 @@
                         return state.filters.sortDesc ? d2.localeCompare(d1) : d1.localeCompare(d2);
                     });
 
+                    // 🌟 極簡單行卡片渲染 (Compact 1-Line Design)
                     let newHtmlTodo = '';
                     let newHtmlHist = '';
 
@@ -1282,68 +1283,78 @@
                         const hexColor = exam ? '#ec4899' : subjObj.color;
                         
                         const cStyle = `style="--subj-color-soft: ${hexToRgba(hexColor, 1)};"`;
-                        const cClass = `glass-card task-card-anim p-4 relative flex items-center hover:shadow-md transition-all duration-300 gap-4 w-full ${done?'opacity-60 grayscale-[20%]':''} ${dateInfo.isOverdue && !done?'ring-2 ring-red-500/50 shadow-[0_0_20px_rgba(239,68,68,0.15)]':''}`; 
                         
-                        const tagBaseClass = "px-2 py-0.5 rounded-[8px] text-[10px] font-bold tracking-widest uppercase border flex items-center shrink-0";
+                        // 🌟 縮減 Padding，改為純橫向 Flex 排版
+                        const cClass = `glass-card task-card-anim px-4 py-3 md:px-5 md:py-3.5 relative flex items-center hover:shadow-md transition-all duration-300 w-full ${done?'opacity-60 grayscale-[20%]':''} ${dateInfo.isOverdue && !done?'ring-2 ring-red-500/50 shadow-[0_0_20px_rgba(239,68,68,0.15)]':''}`; 
+                        
+                        const tagBaseClass = "px-2.5 py-1.5 rounded-[10px] text-[11px] font-bold tracking-widest uppercase border flex items-center shrink-0 whitespace-nowrap gap-1.5";
                         
                         let bTagHtml = '';
                         if (exam) {
-                            bTagHtml = `<span class="${tagBaseClass} bg-pink-500/10 text-pink-600 dark:text-pink-400 border-pink-500/20">測驗</span>`;
+                            bTagHtml = `<span class="${tagBaseClass} bg-pink-500/10 text-pink-600 dark:text-pink-400 border-pink-500/20"><i class="fa-solid fa-triangle-exclamation"></i> 測驗</span>`;
                         } else {
-                            bTagHtml = `<span class="${tagBaseClass}" style="background: ${hexToRgba(hexColor, 0.15)}; color: ${hexColor}; border-color: ${hexToRgba(hexColor, 0.3)};">${escapeHTML(t.subject)}</span>`;
+                            bTagHtml = `<span class="${tagBaseClass}" style="background: ${hexToRgba(hexColor, 0.15)}; color: ${hexColor}; border-color: ${hexToRgba(hexColor, 0.3)};"><i class="fa-solid fa-book-bookmark"></i> ${escapeHTML(t.subject)}</span>`;
                         }
                         
-                        const broadcastTag = t.groupId ? `<span class="${tagBaseClass} bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 border-indigo-500/20"><i class="fa-solid fa-bullhorn mr-1"></i> 廣播</span>` : '';
+                        const broadcastTag = t.groupId ? `<span class="${tagBaseClass} bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 border-indigo-500/20"><i class="fa-solid fa-bullhorn"></i> 廣播</span>` : '';
                         
                         const cHtmlText = escapeHTML(t.content || '').replace(/\n/g, ' '); 
                         
+                        // 🌟 圖片改為精緻的圖標按鈕，避免破壞單行排版
                         const imgHtml = t.attachment ? `
-                            <div class="shrink-0 w-[44px] h-[44px] rounded-[12px] overflow-hidden shadow-sm border border-theme-border cursor-pointer group/img relative ml-2" onclick="window.open('${t.attachment}', '_blank')">
-                                <div class="absolute inset-0 bg-black/40 opacity-0 group-hover/img:opacity-100 transition-opacity flex items-center justify-center z-10"><i class="fa-solid fa-magnifying-glass-plus text-white text-[12px]"></i></div>
-                                <img src="${t.attachment}" class="w-full h-full object-cover">
-                            </div>
+                            <button class="shrink-0 w-10 h-10 rounded-[12px] bg-brand-500/10 text-brand-600 flex items-center justify-center hover:bg-brand-500 hover:text-white transition-all duration-300 shadow-sm border border-brand-500/20 group/img relative" onclick="window.open('${t.attachment}', '_blank')" title="查看圖片附件">
+                                <i class="fa-regular fa-image text-[16px]"></i>
+                            </button>
                         ` : '';
 
                         const checkBtn = !done ? `
-                            <button class="w-[44px] h-[44px] rounded-full border-2 border-theme-border hover:border-brand-500 flex items-center justify-center text-transparent hover:text-white transition-all duration-300 group shadow-sm bg-theme-bg/50 shrink-0" onclick="app.tasks.markComplete('${t.id}', this.closest('.task-card-anim'))" title="標記完成">
+                            <button class="w-10 h-10 rounded-full border-2 border-theme-border hover:border-brand-500 flex items-center justify-center text-transparent hover:text-white transition-all duration-300 group shadow-sm bg-theme-bg/50 shrink-0" onclick="app.tasks.markComplete('${t.id}', this.closest('.task-card-anim'))" title="標記完成">
                                 <div class="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity rounded-full bg-brand-500"></div>
-                                <i class="fa-solid fa-check text-[16px] relative z-10 transform scale-50 group-hover:scale-100 transition-transform duration-300"></i>
+                                <i class="fa-solid fa-check text-[14px] relative z-10 transform scale-50 group-hover:scale-100 transition-transform duration-300"></i>
                             </button>
                         ` : `
-                            <div class="w-[44px] h-[44px] rounded-full flex items-center justify-center text-white shadow-inner bg-emerald-500 shrink-0">
-                                <i class="fa-solid fa-check text-[16px]"></i>
+                            <div class="w-10 h-10 rounded-full flex items-center justify-center text-white shadow-inner bg-emerald-500 shrink-0">
+                                <i class="fa-solid fa-check text-[14px]"></i>
                             </div>
                         `;
 
+                        // 🌟 絕對單行佈局
                         const cardHTML = `
                             <div class="${cClass}" id="task-${t.id}" ${cStyle}>
-                                <div class="shrink-0">${checkBtn}</div>
-                                
-                                <div class="flex-1 min-w-0 flex flex-col justify-center">
-                                    <div class="flex items-center gap-2 mb-1 w-full">
+                                <div class="flex items-center w-full gap-3 md:gap-4">
+                                    <!-- 1. Checkbox -->
+                                    <div class="shrink-0">${checkBtn}</div>
+                                    
+                                    <!-- 2. Tags (隱藏於極窄螢幕) -->
+                                    <div class="shrink-0 hidden sm:flex items-center gap-2">
                                         ${bTagHtml}
                                         ${broadcastTag}
-                                        ${t.title ? `<h3 class="text-[16px] font-black text-theme-text truncate font-display ${done?'line-through opacity-50':''}">${escapeHTML(t.title)}</h3>` : ''}
                                     </div>
                                     
-                                    ${cHtmlText ? `<p class="text-[14px] ${t.title ? 'text-theme-muted' : 'font-bold text-theme-text'} truncate w-full font-mono ${done&&!t.title?'line-through opacity-50':''}">${cHtmlText}</p>` : ''}
-                                </div>
-                                
-                                ${imgHtml}
-                                
-                                <div class="shrink-0 flex items-center gap-2 border-l border-theme-border/50 pl-3 ml-1">
-                                    <div class="text-[12px] font-bold ${dateInfo.isOverdue && !done ?'text-red-500':'text-theme-muted'} flex flex-col items-center justify-center tracking-wide min-w-[40px] hidden sm:flex mr-1">
-                                        <span class="uppercase text-[9px] opacity-70 mb-0.5">DUE</span>
-                                        <span>${dateInfo.diff || dateInfo.full.split(' ')[0]}</span>
+                                    <!-- 3. Title & Content (單行截斷) -->
+                                    <div class="flex-1 min-w-0 flex items-baseline gap-2 truncate">
+                                        ${t.title ? `<span class="text-[16px] font-bold text-theme-text truncate font-display ${done?'line-through opacity-50':''}">${escapeHTML(t.title)}</span>` : ''}
+                                        ${cHtmlText ? `<span class="text-[13px] ${t.title ? 'text-theme-muted hidden lg:inline-block' : 'font-bold text-theme-text'} truncate font-mono ${done&&!t.title?'line-through opacity-50':''}">${cHtmlText}</span>` : ''}
                                     </div>
                                     
-                                    <div class="flex items-center gap-1 shrink-0">
+                                    <!-- 4. Date Badge & Image Icon -->
+                                    <div class="shrink-0 flex items-center gap-2">
+                                        ${imgHtml}
+                                        <div class="text-[12px] font-bold ${dateInfo.isOverdue && !done ?'text-red-500 bg-red-500/10 border-red-500/20':'text-theme-muted bg-theme-input/50 border-theme-border/50'} border px-3 py-1.5 rounded-[12px] flex items-center gap-1.5 whitespace-nowrap">
+                                            <i class="fa-regular fa-calendar"></i>
+                                            <span class="hidden md:inline">${dateInfo.full.split(' ')[0]}</span>
+                                            <span class="md:hidden">${dateInfo.diff || dateInfo.full.split(' ')[0].slice(5)}</span>
+                                        </div>
+                                    </div>
+                                    
+                                    <!-- 5. Actions -->
+                                    <div class="shrink-0 flex items-center gap-1.5 border-l border-theme-border/50 pl-3 ml-1">
                                         ${!done ? `
-                                            <button class="w-[44px] h-[44px] rounded-[14px] text-theme-muted hover:text-brand-500 hover:bg-theme-input transition-all active:scale-90 flex items-center justify-center" title="編輯" onclick="app.tasks.edit('${t.id}')"><i class="fa-solid fa-pen text-[15px]"></i></button>
+                                            <button class="w-[38px] h-[38px] rounded-[12px] text-theme-muted hover:text-brand-500 hover:bg-theme-input transition-all active:scale-90 flex items-center justify-center border border-transparent hover:border-theme-border" title="編輯" onclick="app.tasks.edit('${t.id}')"><i class="fa-solid fa-pen text-[14px]"></i></button>
                                         ` : `
-                                            <button class="w-[44px] h-[44px] rounded-[14px] text-theme-muted hover:text-brand-500 hover:bg-brand-500/10 transition-all active:scale-90 flex items-center justify-center" title="取消完成" onclick="app.tasks.undoComplete('${t.id}')"><i class="fa-solid fa-rotate-left text-[15px]"></i></button>
+                                            <button class="w-[38px] h-[38px] rounded-[12px] text-theme-muted hover:text-brand-500 hover:bg-brand-500/10 transition-all active:scale-90 flex items-center justify-center border border-transparent hover:border-brand-500/20" title="取消完成" onclick="app.tasks.undoComplete('${t.id}')"><i class="fa-solid fa-rotate-left text-[14px]"></i></button>
                                         `}
-                                        <button class="w-[44px] h-[44px] rounded-[14px] text-theme-muted hover:text-red-500 hover:bg-red-500/10 transition-all active:scale-90 flex items-center justify-center" title="刪除" onclick="app.tasks.confirmDelete('${t.id}')"><i class="fa-regular fa-trash-can text-[16px]"></i></button>
+                                        <button class="w-[38px] h-[38px] rounded-[12px] text-theme-muted hover:text-red-500 hover:bg-red-500/10 transition-all active:scale-90 flex items-center justify-center border border-transparent hover:border-red-500/20" title="刪除" onclick="app.tasks.confirmDelete('${t.id}')"><i class="fa-regular fa-trash-can text-[15px]"></i></button>
                                     </div>
                                 </div>
                             </div>`;

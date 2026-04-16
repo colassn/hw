@@ -2,7 +2,7 @@
 <html lang="zh-HK" id="html-root" class="dark">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <meta name="theme-color" content="#6366f1">
     <title>電子手冊 Homework Record | Lumina Task</title>
     
@@ -32,6 +32,9 @@
                         display: ['Plus Jakarta Sans', 'Noto Sans HK', 'sans-serif'],
                         serif: ['LXGW WenKai TC', 'Noto Serif HK', 'serif'],
                         mono: ['JetBrains Mono', 'Menlo', 'monospace']
+                    },
+                    spacing: {
+                        'safe': 'env(safe-area-inset-bottom, 20px)',
                     }
                 }
             }
@@ -42,35 +45,30 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&family=LXGW+WenKai+TC:wght@400;700&family=Noto+Sans+HK:wght@400;500;700&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet">
     
-    <!-- GSAP Animation Library -->
+    <!-- GSAP Animation Library, Chart.js & SortableJS -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
-
-    <!-- 🌟 Chart.js 數據視覺化與 SortableJS 拖曳庫 -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.min.js"></script>
     
     <style>
         :root { 
-            --safe-area-inset-bottom: env(safe-area-inset-bottom, 20px);
-            /* 🌟 淺色模式黃金比例配階 */
             --bg: #f4f4f9;
             --text: #1e1e24;
             --text-muted: #64748b;
             --border: rgba(0,0,0,0.06);
             --card: #ffffff;
-            --input: #f1f5f9;
+            --input: #f8fafc;
             --orb-opacity: 0.5;
         }
 
         .dark {
-            /* 🌟 深色模式科技感石板灰 */
             --bg: #09090b;
             --text: #f8fafc;
             --text-muted: #8b949e;
             --border: rgba(255,255,255,0.06);
             --card: #121214;
             --input: rgba(255,255,255,0.03);
-            --orb-opacity: 0.2;
+            --orb-opacity: 0.15;
         }
 
         body {
@@ -89,7 +87,7 @@
 
         /* --- 流體背景特效 --- */
         .ambient-bg { position: fixed; inset: 0; z-index: -1; overflow: hidden; background-color: var(--bg); transition: background-color 0.5s; }
-        .orb { position: absolute; border-radius: 50%; filter: blur(100px); opacity: var(--orb-opacity); will-change: transform; animation: fluidOrb 30s infinite linear alternate; transition: opacity 0.5s; }
+        .orb { position: absolute; border-radius: 50%; filter: blur(100px); opacity: var(--orb-opacity); will-change: transform; animation: fluidOrb 30s infinite linear alternate; transition: opacity 0.5s; pointer-events: none; }
         .orb-1 { width: 70vw; height: 70vw; background: radial-gradient(circle, #6366f1, transparent 60%); top: -10%; left: -10%; }
         .orb-2 { width: 60vw; height: 60vw; background: radial-gradient(circle, #db2777, transparent 60%); bottom: -10%; right: -20%; animation-duration: 35s; animation-direction: reverse; }
         .orb-3 { width: 50vw; height: 50vw; background: radial-gradient(circle, #0ea5e9, transparent 60%); top: 40%; left: 40%; animation-duration: 40s; }
@@ -99,78 +97,63 @@
             100% { transform: translate(-10vw, -5vh) scale(0.9); }
         }
 
-        /* --- 💎 黃金比例毛玻璃卡片 (34px Padding 柔和邊緣) --- */
+        /* --- 💎 黃金比例毛玻璃卡片 --- */
         .glass-card { 
             background: var(--card); 
             border: 1px solid var(--border); 
             border-radius: 32px; 
-            box-shadow: 0 10px 40px -10px rgba(0,0,0,0.03); 
+            box-shadow: 0 10px 40px -10px rgba(0,0,0,0.04); 
             transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); 
         }
-        .dark .glass-card { box-shadow: 0 10px 40px -10px rgba(0,0,0,0.4); border: 1px solid rgba(255,255,255,0.04); }
+        .dark .glass-card { box-shadow: 0 10px 40px -10px rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.05); }
         
-        /* 🌈 科目專屬動態光暈背景 (效能優化版) */
-        .task-card-anim {
-            position: relative;
-            overflow: hidden;
-            z-index: 1;
-            will-change: transform, opacity;
-            border-radius: 28px;
-        }
+        /* 🌈 科目專屬動態光暈背景 */
+        .task-card-anim { position: relative; overflow: hidden; z-index: 1; border-radius: 28px; }
         .task-card-anim::before {
-            content: '';
-            position: absolute;
-            inset: 0;
+            content: ''; position: absolute; inset: 0;
             background: radial-gradient(circle at 100% 0%, var(--subj-color-soft, transparent), transparent 75%);
-            opacity: 0.15; 
-            z-index: -1;
-            transition: opacity 0.3s ease, transform 0.3s ease;
-            pointer-events: none;
+            opacity: 0.15; z-index: -1; transition: opacity 0.3s ease, transform 0.3s ease; pointer-events: none;
         }
-        .task-card-anim:hover::before { opacity: 0.4; transform: scale(1.05) translate(-2%, 2%); }
+        .task-card-anim:hover::before { opacity: 0.3; transform: scale(1.05) translate(-2%, 2%); }
 
-        /* 🌟 拖曳排序專用樣式 */
-        .sortable-ghost-class { opacity: 0.4; background: var(--input); border: 2px dashed #6366f1; border-radius: 24px; transform: scale(0.98); }
-        .sortable-drag-class { cursor: grabbing !important; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.3); transform: scale(1.02); z-index: 100; }
+        /* 🌟 拖曳排序專用樣式與效能修復 */
+        .drag-handle { touch-action: none; } /* 防止手機拖曳時畫面跟著滑動 */
+        .sortable-ghost-class { opacity: 0.3; background: var(--input); border: 2px dashed #6366f1; border-radius: 24px; transform: scale(0.98); }
+        .sortable-drag-class { cursor: grabbing !important; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.3); transform: scale(1.03); z-index: 100; background: var(--card); }
 
         /* --- 精緻輸入框 --- */
         .premium-input { 
-            background: var(--input); 
-            border: 1px solid transparent; 
-            color: var(--text); 
-            padding: 1rem 1.25rem; 
-            border-radius: 20px; 
-            width: 100%; 
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); 
-            box-shadow: inset 0 2px 4px rgba(0,0,0,0.02);
+            background: var(--input); border: 1px solid transparent; color: var(--text); 
+            padding: 1rem 1.25rem; border-radius: 20px; width: 100%; 
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); box-shadow: inset 0 2px 4px rgba(0,0,0,0.02);
         }
         .dark .premium-input { box-shadow: inset 0 2px 4px rgba(0,0,0,0.2); border-color: rgba(255,255,255,0.02); }
-        .premium-input:focus { 
-            outline: none; 
-            border-color: #6366f1; 
-            background: var(--card); 
-            box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.15); 
-            transform: translateY(-2px);
-        }
+        .premium-input:focus { outline: none; border-color: #6366f1; background: var(--card); box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.15); transform: translateY(-2px); }
 
         /* --- 跑馬燈重構 --- */
         .marquee-container { overflow: hidden; white-space: nowrap; flex: 1; display: flex; align-items: center; }
         .marquee-content { display: inline-block; padding-left: 100%; animation: marquee-scroll 20s linear infinite; }
         @keyframes marquee-scroll { 0% { transform: translateX(0); } 100% { transform: translateX(-100%); } }
 
-        /* --- 導航膠囊 (人體工學底部設計) --- */
-        .bottom-nav-item { cursor: pointer; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; padding: 8px 0; border-radius: 20px; }
+        /* --- 導航膠囊 (底部與側邊) --- */
+        .nav-item { cursor: pointer; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
+        /* 手機底部樣式 */
+        .bottom-nav-item { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; padding: 10px 0; border-radius: 20px; color: var(--text-muted); }
         .bottom-nav-item i { font-size: 20px; transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
-        .bottom-nav-item span { font-size: 10px; font-weight: 700; }
-        .bottom-nav-item:hover:not(.active) { color: var(--text); transform: translateY(-2px); }
-        .bottom-nav-item.active { color: var(--card); background: #6366f1; box-shadow: 0 10px 20px -5px rgba(99,102,241,0.5); transform: translateY(-4px); }
-        .bottom-nav-item.active i { transform: scale(1.1); }
+        .bottom-nav-item span { font-size: 10px; font-weight: 700; opacity: 0; height: 0; overflow: hidden; transition: all 0.3s ease; }
+        .bottom-nav-item.active { color: #fff; background: #6366f1; box-shadow: 0 8px 20px -5px rgba(99,102,241,0.5); transform: translateY(-4px); }
+        .bottom-nav-item.active span { opacity: 1; height: 12px; margin-top: 2px; }
+        /* iPad 側邊樣式 */
+        .side-nav-item { width: 56px; height: 56px; border-radius: 20px; display: flex; align-items: center; justify-content: center; font-size: 20px; color: var(--text-muted); background: var(--input); transition: all 0.3s ease; border: 1px solid transparent; }
+        .side-nav-item:hover { background: var(--card); color: var(--text); transform: translateY(-2px); shadow: md; }
+        .side-nav-item.active { background: var(--card); color: #6366f1; border-color: rgba(99,102,241,0.4); box-shadow: 0 10px 20px -5px rgba(99,102,241,0.2); }
 
-        .view-section { display: none; opacity: 0; min-h: 60vh; }
+        .view-section { display: none; opacity: 0; min-h: 60vh; animation: fadeIn 0.5s ease forwards; }
         .view-section.active { display: block; opacity: 1; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
 
         /* 🌟 滑動優化 (磁吸效果) */
-        .snap-container { scroll-snap-type: x mandatory; scroll-padding: 1rem; }
+        .snap-container { scroll-snap-type: x mandatory; scroll-padding: 1rem; -webkit-overflow-scrolling: touch; }
         .snap-item { scroll-snap-align: center; }
 
         .no-scrollbar::-webkit-scrollbar { display: none; }
@@ -180,11 +163,15 @@
         input[type="color"]::-webkit-color-swatch-wrapper { padding: 0; }
         input[type="color"]::-webkit-color-swatch { border: none; border-radius: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.2); }
         
-        /* 🌟 修復底部安全邊距 (iOS 條狀導航防擋) */
-        .pb-safe { padding-bottom: env(safe-area-inset-bottom, 20px); }
+        /* 🌟 CSS 狀態控制動畫 (極致效能，不依賴 JS 操作 style) */
+        #main-header { transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1); }
+        body.is-scrolled #main-header { padding-top: 0.75rem; padding-bottom: 0.75rem; background-color: rgba(255,255,255,0.85); box-shadow: 0 10px 30px rgba(0,0,0,0.08); }
+        body.dark.is-scrolled #main-header { background-color: rgba(18,18,20,0.85); box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+        body.is-scrolled #header-title-text { font-size: 1.5rem; }
+        body.is-scrolled .header-avatar-btn { width: 40px; height: 40px; }
     </style>
 </head>
-<body class="w-full relative font-sans no-scrollbar">
+<body class="w-full relative font-sans no-scrollbar pb-[env(safe-area-inset-bottom)]">
 
     <div class="ambient-bg">
         <div class="orb orb-1"></div>
@@ -209,7 +196,7 @@
         </div>
     </div>
 
-    <!-- 1. 登入頁面 (微調間距) -->
+    <!-- 1. 登入頁面 -->
     <section id="view-auth" class="fixed inset-0 z-[100] flex flex-col items-center justify-center px-6 hidden bg-theme-bg/80 backdrop-blur-2xl">
         <div class="w-full max-w-sm glass-card p-8 md:p-10 text-center relative overflow-hidden shadow-2xl border border-theme-border">
             <div class="absolute -top-20 -right-20 w-40 h-40 bg-brand-500/20 blur-3xl rounded-full pointer-events-none"></div>
@@ -221,7 +208,7 @@
             <h1 class="text-[28px] font-black text-theme-text mb-2 font-literary tracking-widest">電子手冊</h1>
             <p class="text-xs text-theme-muted mb-10 font-mono tracking-wide">HOMEWORK RECORD SYSTEM</p>
 
-            <button onclick="app.auth.loginWithGoogle()" class="w-full h-[52px] bg-theme-text text-theme-bg rounded-2xl font-bold text-[15px] hover:-translate-y-1 hover:shadow-xl active:scale-95 transition-all duration-300 flex items-center justify-center gap-3 mb-6 min-h-[48px]">
+            <button onclick="app.auth.loginWithGoogle()" class="w-full h-[56px] bg-theme-text text-theme-bg rounded-2xl font-bold text-[15px] hover:-translate-y-1 hover:shadow-xl active:scale-95 transition-all duration-300 flex items-center justify-center gap-3 mb-6 min-h-[48px]">
                 <img src="https://www.svgrepo.com/show/475656/google-color.svg" class="w-5 h-5" alt="Google">
                 使用 Google 帳號登入
             </button>
@@ -233,14 +220,14 @@
             </div>
 
             <div class="space-y-4 mb-8">
-                <input type="text" id="auth-name" placeholder="您的姓名 Name" class="premium-input h-[52px] text-[15px] hidden">
-                <input type="email" id="auth-email" placeholder="電子郵件 Email" class="premium-input h-[52px] text-[15px]">
-                <input type="password" id="auth-password" placeholder="密碼 Password" class="premium-input h-[52px] text-[15px]" onkeydown="if(event.key === 'Enter') app.auth.submit()">
+                <input type="text" id="auth-name" placeholder="您的姓名 Name" class="premium-input h-[56px] text-[15px] hidden">
+                <input type="email" id="auth-email" placeholder="電子郵件 Email" class="premium-input h-[56px] text-[15px]">
+                <input type="password" id="auth-password" placeholder="密碼 Password" class="premium-input h-[56px] text-[15px]" onkeydown="if(event.key === 'Enter') app.auth.submit()">
             </div>
 
             <div class="flex flex-col gap-4">
-                <button id="auth-main-btn" onclick="app.auth.submit()" class="w-full h-[52px] bg-brand-600 text-white rounded-2xl font-bold text-[15px] shadow-[0_8px_20px_rgba(99,102,241,0.4)] hover:-translate-y-1 hover:shadow-brand-500/60 active:scale-95 transition-all duration-300 min-h-[48px]">登入 Login</button>
-                <button id="auth-toggle-btn" onclick="app.auth.toggleMode()" class="w-full h-[52px] bg-transparent border border-theme-border text-theme-muted rounded-2xl font-bold text-[14px] hover:-translate-y-1 hover:bg-theme-input active:scale-95 transition-all duration-300 min-h-[48px]">還沒有帳號？點此註冊</button>
+                <button id="auth-main-btn" onclick="app.auth.submit()" class="w-full h-[56px] bg-brand-600 text-white rounded-2xl font-bold text-[15px] shadow-[0_8px_20px_rgba(99,102,241,0.4)] hover:-translate-y-1 hover:shadow-brand-500/60 active:scale-95 transition-all duration-300 min-h-[48px]">登入 Login</button>
+                <button id="auth-toggle-btn" onclick="app.auth.toggleMode()" class="w-full h-[56px] bg-transparent border border-theme-border text-theme-muted rounded-2xl font-bold text-[14px] hover:-translate-y-1 hover:bg-theme-input active:scale-95 transition-all duration-300 min-h-[48px]">還沒有帳號？點此註冊</button>
             </div>
         </div>
     </section>
@@ -250,17 +237,17 @@
         <i id="blocker-icon" class="fa-solid fa-triangle-exclamation text-7xl text-yellow-500 mb-8 animate-pulse drop-shadow-[0_0_20px_rgba(234,179,8,0.5)]"></i>
         <h2 id="blocker-title" class="text-4xl font-black text-theme-text mb-4 tracking-tight font-display">系統維護中</h2>
         <p id="blocker-message" class="text-theme-muted text-[15px] max-w-sm leading-relaxed font-medium">超級管理員正在進行系統升級，請稍後再試。感謝您的耐心等候。</p>
-        <button onclick="app.auth.logout()" class="mt-10 px-8 h-[52px] rounded-full border border-theme-border text-[15px] font-bold text-theme-muted hover:bg-theme-input hover:text-theme-text active:scale-95 transition-all shadow-sm min-h-[48px]">安全登出</button>
+        <button onclick="app.auth.logout()" class="mt-10 px-8 h-[56px] rounded-full border border-theme-border text-[15px] font-bold text-theme-muted hover:bg-theme-input hover:text-theme-text active:scale-95 transition-all shadow-sm min-h-[48px]">安全登出</button>
     </div>
 
     <!-- 3. 主系統核心 -->
     <div id="app-core" class="hidden flex-col min-h-screen w-full relative">
         
-        <!-- 🌟 頂部狀態列 (更通透、留白更多) -->
-        <header id="main-header" class="fixed top-4 left-4 right-4 md:max-w-5xl lg:max-w-6xl md:mx-auto z-40 bg-white/50 dark:bg-[#0a0a0c]/50 backdrop-blur-2xl border border-theme-border rounded-[32px] px-6 py-4 flex justify-between items-center shadow-[0_10px_40px_rgba(0,0,0,0.05)] dark:shadow-[0_10px_40px_rgba(0,0,0,0.3)] transition-all duration-500 transform-gpu">
+        <!-- 🌟 頂部狀態列 (適配 iPad 左側邊距) -->
+        <header id="main-header" class="fixed top-4 left-4 right-4 md:left-[112px] md:right-8 z-40 bg-white/50 dark:bg-[#0a0a0c]/50 backdrop-blur-2xl border border-theme-border rounded-[32px] px-6 py-4 flex justify-between items-center shadow-sm transition-all duration-500 transform-gpu">
             <div class="flex flex-col">
-                <h1 id="header-title-text" class="text-2xl md:text-3xl font-black tracking-wide text-theme-text font-literary drop-shadow-sm leading-tight transition-all duration-300">電子手冊</h1>
-                <p id="header-date" class="text-[11px] md:text-xs text-brand-500 font-mono tracking-widest font-bold uppercase mt-1 transition-all duration-300 opacity-80">載入中...</p>
+                <h1 id="header-title-text" class="text-[26px] md:text-[28px] font-black tracking-wide text-theme-text font-literary drop-shadow-sm leading-tight transition-all duration-300">電子手冊</h1>
+                <p id="header-date" class="text-[11px] md:text-[12px] text-brand-500 font-mono tracking-widest font-bold uppercase mt-1 transition-all duration-300 opacity-80">載入中...</p>
             </div>
             <div class="flex items-center gap-3 md:gap-4">
                 <div id="offline-badge" class="hidden bg-yellow-500/10 text-yellow-600 dark:text-yellow-400 text-[10px] font-bold px-3 py-1.5 rounded-full border border-yellow-500/20 flex items-center gap-1 shadow-sm"><i class="fa-solid fa-bolt-slash"></i> 離線</div>
@@ -269,18 +256,27 @@
                     <i class="fa-solid fa-bell text-[22px]"></i>
                     <span id="notif-badge" class="hidden absolute top-2 right-2 w-3.5 h-3.5 bg-pink-500 rounded-full border-[3px] border-theme-bg shadow-sm"></span>
                 </button>
-                <button onclick="app.profile.toggle()" class="w-12 h-12 rounded-full bg-theme-input flex items-center justify-center overflow-hidden border border-theme-border hover:border-brand-500 shadow-md hover:shadow-brand-500/30 active:scale-90 transition-all duration-300 min-h-[48px] min-w-[48px]">
+                <button onclick="app.profile.toggle()" class="header-avatar-btn w-12 h-12 rounded-full bg-theme-input flex items-center justify-center overflow-hidden border border-theme-border hover:border-brand-500 shadow-md hover:shadow-brand-500/30 active:scale-90 transition-all duration-300 min-h-[48px] min-w-[48px]">
                     <img id="header-avatar" src="" alt="Profile" class="w-full h-full object-cover hidden">
                     <i id="header-avatar-fallback" class="fa-solid fa-user text-theme-muted text-[18px]"></i>
                 </button>
             </div>
         </header>
 
-        <!-- 主內容區域 (加大 padding-bottom 預留底部空間) -->
-        <main id="main-content-area" class="flex-1 w-full relative z-10 pt-[110px] pb-[130px] md:pb-[100px] transition-all duration-300">
+        <!-- 🌟 iPad / Desktop 左側懸浮島嶼導航 -->
+        <nav id="main-nav-bar-desktop" class="hidden md:flex fixed top-1/2 -translate-y-1/2 left-6 z-40 bg-white/70 dark:bg-[#121214]/70 backdrop-blur-2xl border border-theme-border p-3 rounded-[32px] shadow-[0_10px_40px_rgba(0,0,0,0.05)] dark:shadow-[0_10px_40px_rgba(0,0,0,0.4)] flex-col gap-3">
+            <button onclick="app.nav.switch('home')" id="nav-home-d" class="side-nav-item active"><i class="fa-solid fa-layer-group"></i></button>
+            <button onclick="app.nav.switch('timetable')" id="nav-timetable-d" class="side-nav-item"><i class="fa-solid fa-calendar-week"></i></button>
+            <button onclick="app.nav.switch('history')" id="nav-history-d" class="side-nav-item"><i class="fa-solid fa-clock-rotate-left"></i></button>
+            <button onclick="app.nav.switch('groups')" id="nav-groups-d" class="side-nav-item"><i class="fa-solid fa-users"></i></button>
+            <button onclick="app.nav.switch('settings')" id="nav-settings-d" class="side-nav-item"><i class="fa-solid fa-gear"></i></button>
+        </nav>
+
+        <!-- 主內容區域 (適配 iPad 邊距與 Mobile 底部空間) -->
+        <main id="main-content-area" class="flex-1 w-full relative z-10 pt-[120px] pb-[140px] md:pl-[112px] md:pb-[80px] transition-all duration-300 max-w-[1400px] mx-auto">
             
             <!-- 動態欄 (Widgets) -->
-            <div class="grid grid-cols-2 md:grid-cols-4 gap-4 px-4 md:px-6 md:max-w-5xl lg:max-w-6xl md:mx-auto w-full mb-10">
+            <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 px-4 md:px-8 w-full mb-10">
                 <div class="glass-card p-5 hover:shadow-xl hover:-translate-y-1 transition-all duration-300 group">
                     <div class="flex justify-between items-center mb-3">
                         <span class="text-[11px] text-theme-muted font-bold uppercase tracking-wider"><i class="fa-solid fa-satellite-dish mr-1.5 text-emerald-500 animate-pulse"></i>實時課堂</span>
@@ -309,56 +305,56 @@
             </div>
 
             <!-- 各頁面內容容器 -->
-            <div class="px-4 md:px-6 w-full md:max-w-5xl lg:max-w-6xl md:mx-auto">
+            <div class="px-4 md:px-8 w-full max-w-5xl mx-auto">
                 
                 <!-- 🏠 HOME 頁面 -->
                 <section id="view-home" class="view-section active w-full">
-                    <div id="home-announcements" class="mb-8 space-y-4 md:max-w-3xl md:mx-auto hidden"></div>
+                    <div id="home-announcements" class="mb-8 space-y-4 w-full hidden"></div>
 
                     <div class="flex justify-between items-end mb-6 px-2">
-                        <h2 class="text-[28px] font-black text-theme-text tracking-tight font-display">待辦清單 <span class="text-brand-500 opacity-80 text-xl ml-1">Tasks</span></h2>
+                        <h2 class="text-[28px] md:text-[32px] font-black text-theme-text tracking-tight font-display">待辦清單 <span class="text-brand-500 opacity-80 text-xl ml-1">Tasks</span></h2>
                     </div>
 
                     <!-- 🌟 磁吸滑動的篩選器 -->
-                    <div class="flex gap-3 mb-8 px-2 overflow-x-auto no-scrollbar snap-container md:max-w-3xl md:mx-auto items-center">
-                        <button id="filter-subject-btn" onclick="app.tasks.openFilterSubjectModal()" class="snap-item bg-theme-card text-theme-text text-[13px] font-bold px-6 py-3 rounded-full border border-theme-border outline-none transition-all flex items-center gap-2 shrink-0 hover:shadow-md active:scale-95 shadow-sm min-h-[48px]">
+                    <div class="flex gap-3 mb-8 px-2 overflow-x-auto no-scrollbar snap-container w-full items-center">
+                        <button id="filter-subject-btn" onclick="app.tasks.openFilterSubjectModal()" class="snap-item bg-theme-card text-theme-text text-[14px] font-bold px-6 py-3 rounded-[20px] border border-theme-border outline-none transition-all flex items-center gap-2 shrink-0 hover:shadow-md active:scale-95 shadow-sm min-h-[48px]">
                             <span id="filter-subject-text">所有科目</span> <i class="fa-solid fa-chevron-down text-[10px] opacity-50 ml-1"></i>
                         </button>
-                        <button id="filter-incomplete" onclick="app.tasks.toggleIncompleteFilter()" class="snap-item bg-theme-card text-theme-muted text-[13px] font-bold px-6 py-3 rounded-full border border-theme-border whitespace-nowrap transition-all flex items-center gap-2 shrink-0 hover:shadow-md active:scale-95 shadow-sm min-h-[48px]">
+                        <button id="filter-incomplete" onclick="app.tasks.toggleIncompleteFilter()" class="snap-item bg-theme-card text-theme-muted text-[14px] font-bold px-6 py-3 rounded-[20px] border border-theme-border whitespace-nowrap transition-all flex items-center gap-2 shrink-0 hover:shadow-md active:scale-95 shadow-sm min-h-[48px]">
                             <i class="fa-solid fa-circle-check text-lg"></i> <span>僅未完成</span>
                         </button>
-                        <button id="filter-sort" onclick="app.tasks.toggleSortFilter()" class="snap-item bg-theme-card text-brand-500 text-[13px] font-bold px-6 py-3 rounded-full border border-theme-border whitespace-nowrap transition-all flex items-center gap-2 shrink-0 hover:shadow-md active:scale-95 shadow-sm min-h-[48px]">
+                        <button id="filter-sort" onclick="app.tasks.toggleSortFilter()" class="snap-item bg-theme-card text-brand-500 text-[14px] font-bold px-6 py-3 rounded-[20px] border border-theme-border whitespace-nowrap transition-all flex items-center gap-2 shrink-0 hover:shadow-md active:scale-95 shadow-sm min-h-[48px]">
                             <i class="fa-solid fa-arrow-down-short-wide text-lg"></i> <span>繳交日期</span>
                         </button>
                     </div>
 
                     <div id="todo-list" class="grid grid-cols-1 lg:grid-cols-2 gap-6 md:gap-8"></div>
                     
-                    <div id="todo-empty" class="hidden flex-col items-center justify-center py-20 mt-10 text-theme-muted glass-card">
+                    <div id="todo-empty" class="hidden flex-col items-center justify-center py-24 mt-10 text-theme-muted glass-card">
                         <div class="w-24 h-24 mb-6 rounded-[32px] bg-brand-500/10 flex items-center justify-center border border-brand-500/20 shadow-inner">
                             <i class="fa-solid fa-mug-hot text-4xl text-brand-500 opacity-80"></i>
                         </div>
-                        <p class="text-[18px] font-black tracking-widest uppercase text-theme-text font-display">Great Job!</p>
-                        <p class="text-[14px] mt-2 opacity-70 font-mono">所有任務已清空</p>
+                        <p class="text-[20px] font-black tracking-widest uppercase text-theme-text font-display">Great Job!</p>
+                        <p class="text-[15px] mt-2 opacity-70 font-mono">所有任務已清空</p>
                     </div>
                 </section>
 
                 <!-- 🕒 TIMETABLE 頁面 -->
                 <section id="view-timetable" class="view-section w-full">
-                    <div class="flex justify-between items-end mb-6 px-2 md:px-0 md:max-w-3xl md:mx-auto">
-                        <h2 class="text-[28px] font-black text-theme-text tracking-tight font-display">時間表 <span class="text-brand-500 opacity-80 text-xl ml-1">Timetable</span></h2>
+                    <div class="flex justify-between items-end mb-6 px-2 md:px-0">
+                        <h2 class="text-[28px] md:text-[32px] font-black text-theme-text tracking-tight font-display">時間表 <span class="text-brand-500 opacity-80 text-xl ml-1">Timetable</span></h2>
                     </div>
                     <!-- 🌟 磁吸滑動的日期選擇器 -->
-                    <div id="timetable-day-selector" class="flex gap-3 overflow-x-auto no-scrollbar pb-6 mb-2 snap-container md:justify-center md:max-w-3xl md:mx-auto items-center px-2"></div>
+                    <div id="timetable-day-selector" class="flex gap-3 overflow-x-auto no-scrollbar pb-6 mb-2 snap-container md:justify-center w-full items-center px-2"></div>
                     
-                    <div class="glass-card p-4 shadow-lg border-theme-border flex flex-col md:max-w-3xl md:mx-auto">
-                        <div class="flex justify-between items-center p-5 mb-4 border-b border-theme-border shrink-0 bg-theme-input/50 rounded-[24px]">
+                    <div class="glass-card p-4 shadow-lg border-theme-border flex flex-col w-full">
+                        <div class="flex justify-between items-center p-5 mb-4 border-b border-theme-border shrink-0 bg-theme-input/50 rounded-[28px]">
                             <h3 class="font-bold text-[18px] text-theme-text font-literary tracking-wide flex items-center"><i class="fa-solid fa-clock text-brand-500 mr-3 text-xl"></i> 每日課表</h3>
                             <div class="flex gap-3">
-                                <button id="tt-btn-edit" onclick="app.timetable.toggleEditMode()" class="text-[13px] text-brand-500 font-bold bg-brand-500/10 px-5 py-2.5 rounded-xl hover:bg-brand-500 hover:text-white active:scale-95 transition-all min-h-[48px]"><i class="fa-solid fa-pen mr-1"></i> 編輯</button>
-                                <button id="tt-btn-copy" onclick="app.timetable.copyToAllWeekModal()" class="hidden text-[13px] text-emerald-500 font-bold bg-emerald-500/10 px-5 py-2.5 rounded-xl hover:bg-emerald-500 hover:text-white active:scale-95 transition-all min-h-[48px]"><i class="fa-solid fa-copy mr-1"></i> 複製全週</button>
-                                <button id="tt-btn-add" onclick="app.timetable.addSlotDirect()" class="hidden text-[13px] text-brand-500 font-bold bg-brand-500/10 px-5 py-2.5 rounded-xl hover:bg-brand-500 hover:text-white active:scale-95 transition-all min-h-[48px]"><i class="fa-solid fa-plus mr-1"></i> 新增</button>
-                                <button id="tt-btn-done" onclick="app.timetable.toggleEditMode()" class="hidden text-[13px] text-white font-bold bg-brand-500 px-6 py-2.5 rounded-xl hover:bg-brand-600 active:scale-95 transition-all shadow-[0_5px_15px_rgba(99,102,241,0.4)] min-h-[48px]"><i class="fa-solid fa-check mr-1"></i> 完成</button>
+                                <button id="tt-btn-edit" onclick="app.timetable.toggleEditMode()" class="text-[14px] text-brand-500 font-bold bg-brand-500/10 px-6 py-2.5 rounded-[16px] hover:bg-brand-500 hover:text-white active:scale-95 transition-all min-h-[48px]"><i class="fa-solid fa-pen mr-1.5"></i> 編輯</button>
+                                <button id="tt-btn-copy" onclick="app.timetable.copyToAllWeekModal()" class="hidden text-[14px] text-emerald-500 font-bold bg-emerald-500/10 px-6 py-2.5 rounded-[16px] hover:bg-emerald-500 hover:text-white active:scale-95 transition-all min-h-[48px]"><i class="fa-solid fa-copy mr-1.5"></i> 複製全週</button>
+                                <button id="tt-btn-add" onclick="app.timetable.addSlotDirect()" class="hidden text-[14px] text-brand-500 font-bold bg-brand-500/10 px-6 py-2.5 rounded-[16px] hover:bg-brand-500 hover:text-white active:scale-95 transition-all min-h-[48px]"><i class="fa-solid fa-plus mr-1.5"></i> 新增</button>
+                                <button id="tt-btn-done" onclick="app.timetable.toggleEditMode()" class="hidden text-[14px] text-white font-bold bg-brand-500 px-6 py-2.5 rounded-[16px] hover:bg-brand-600 active:scale-95 transition-all shadow-[0_5px_15px_rgba(99,102,241,0.4)] min-h-[48px]"><i class="fa-solid fa-check mr-1.5"></i> 完成</button>
                             </div>
                         </div>
                         <div id="timetable-slots" class="w-full p-2"></div>
@@ -368,12 +364,12 @@
                 <!-- 📚 HISTORY 頁面 -->
                 <section id="view-history" class="view-section w-full">
                     <div class="flex justify-between items-end mb-6 px-2 md:px-0">
-                        <h2 class="text-[28px] font-black text-theme-text tracking-tight font-display">歷史記錄 <span class="text-emerald-500 opacity-80 text-xl ml-1">History</span></h2>
-                        <span class="text-xs font-bold text-emerald-500 tracking-wider bg-emerald-500/10 px-3 py-1.5 rounded-lg border border-emerald-500/20">已歸檔任務</span>
+                        <h2 class="text-[28px] md:text-[32px] font-black text-theme-text tracking-tight font-display">歷史記錄 <span class="text-emerald-500 opacity-80 text-xl ml-1">History</span></h2>
+                        <span class="text-[13px] font-bold text-emerald-500 tracking-wider bg-emerald-500/10 px-4 py-2 rounded-xl border border-emerald-500/20">已歸檔任務</span>
                     </div>
 
                     <!-- 🌟 數據視覺化儀表板 -->
-                    <div class="glass-card p-6 md:p-8 mb-8 md:max-w-3xl md:mx-auto hidden border-t-4 border-t-emerald-500" id="history-chart-container">
+                    <div class="glass-card p-6 md:p-8 mb-8 w-full hidden border-t-4 border-t-emerald-500" id="history-chart-container">
                         <h3 class="text-[18px] font-bold text-theme-text mb-6 font-literary tracking-wide flex items-center"><i class="fa-solid fa-chart-pie text-emerald-500 mr-3 text-2xl"></i>學習數據分析 (Completed)</h3>
                         <div class="relative h-64 w-full flex justify-center">
                             <canvas id="historyChart"></canvas>
@@ -381,32 +377,32 @@
                     </div>
 
                     <div id="history-list" class="grid grid-cols-1 lg:grid-cols-2 gap-6 md:gap-8"></div>
-                    <div id="history-empty" class="hidden flex-col items-center justify-center py-20 mt-10 text-theme-muted glass-card">
+                    <div id="history-empty" class="hidden flex-col items-center justify-center py-24 mt-10 text-theme-muted glass-card">
                         <i class="fa-solid fa-clock-rotate-left text-5xl mb-6 opacity-30 text-emerald-500"></i>
-                        <p class="text-[18px] font-black tracking-widest uppercase text-theme-text font-display">No History</p>
+                        <p class="text-[20px] font-black tracking-widest uppercase text-theme-text font-display">No History</p>
                     </div>
                 </section>
 
                 <!-- 👥 GROUPS 頁面 -->
                 <section id="view-groups" class="view-section w-full">
-                    <div class="flex justify-between items-end mb-6 px-2 md:px-0 md:max-w-2xl md:mx-auto">
-                        <h2 class="text-[28px] font-black text-theme-text tracking-tight font-display">群組連線 <span class="text-blue-500 opacity-80 text-xl ml-1">Groups</span></h2>
+                    <div class="flex justify-between items-end mb-6 px-2 md:px-0">
+                        <h2 class="text-[28px] md:text-[32px] font-black text-theme-text tracking-tight font-display">群組連線 <span class="text-blue-500 opacity-80 text-xl ml-1">Groups</span></h2>
                     </div>
                     
-                    <div class="glass-card p-8 mb-8 relative overflow-hidden shadow-sm hover:shadow-lg transition-all duration-500 md:max-w-2xl md:mx-auto border-t-4 border-t-blue-500">
+                    <div class="glass-card p-8 mb-8 relative overflow-hidden shadow-sm hover:shadow-lg transition-all duration-500 w-full border-t-4 border-t-blue-500">
                         <div class="absolute top-0 right-0 w-40 h-40 bg-blue-500/10 blur-3xl rounded-full pointer-events-none"></div>
-                        <h3 class="text-[18px] font-bold text-theme-text mb-6 font-literary tracking-wide flex items-center relative z-10"><i class="fa-solid fa-users text-blue-500 mr-3 text-2xl"></i>加入學習群組</h3>
+                        <h3 class="text-[20px] font-bold text-theme-text mb-6 font-literary tracking-wide flex items-center relative z-10"><i class="fa-solid fa-users text-blue-500 mr-3 text-2xl"></i>加入學習群組</h3>
                         
-                        <div class="flex gap-4 mb-8 relative z-10">
-                            <input type="text" id="join-group-code" class="premium-input h-[56px] px-6 text-[17px] font-mono font-bold uppercase placeholder-theme-muted transition-colors shadow-inner" placeholder="輸入 6 位邀請碼..." maxlength="6">
-                            <button onclick="app.groups.join()" class="bg-blue-600 hover:bg-blue-500 px-8 rounded-2xl text-white font-bold text-[16px] hover:-translate-y-1 transition-all shadow-[0_5px_20px_rgba(59,130,246,0.4)] active:scale-95 flex items-center gap-2 shrink-0 min-h-[56px]"><i class="fa-solid fa-right-to-bracket"></i> 加入</button>
+                        <div class="flex flex-col sm:flex-row gap-4 mb-8 relative z-10">
+                            <input type="text" id="join-group-code" class="premium-input h-[60px] px-6 text-[18px] font-mono font-bold uppercase placeholder-theme-muted transition-colors shadow-inner flex-1" placeholder="輸入 6 位邀請碼..." maxlength="6">
+                            <button onclick="app.groups.join()" class="bg-blue-600 hover:bg-blue-500 px-8 rounded-[20px] text-white font-bold text-[16px] hover:-translate-y-1 transition-all shadow-[0_5px_20px_rgba(59,130,246,0.4)] active:scale-95 flex items-center justify-center gap-2 shrink-0 min-h-[60px]"><i class="fa-solid fa-right-to-bracket"></i> 加入</button>
                         </div>
 
                         <div id="provider-create-group" class="hidden border-t border-theme-border pt-8 mb-4 relative z-10">
-                            <p class="text-[12px] font-bold text-pink-500 mb-4 uppercase tracking-widest flex items-center gap-2"><i class="fa-solid fa-crown"></i> 建立教學群組 (Provider Only)</p>
-                            <div class="flex gap-4">
-                                <input type="text" id="create-group-name" class="premium-input h-[56px] px-6 text-[17px] font-bold transition-colors shadow-inner" placeholder="為新群組命名...">
-                                <button onclick="app.groups.create()" class="bg-pink-600 hover:bg-pink-500 px-8 rounded-2xl text-white font-bold text-[16px] hover:-translate-y-1 transition-all shadow-[0_5px_20px_rgba(236,72,153,0.4)] active:scale-95 flex items-center gap-2 shrink-0 min-h-[56px]"><i class="fa-solid fa-plus"></i> 建立</button>
+                            <p class="text-[13px] font-bold text-pink-500 mb-4 uppercase tracking-widest flex items-center gap-2"><i class="fa-solid fa-crown"></i> 建立教學群組 (Provider Only)</p>
+                            <div class="flex flex-col sm:flex-row gap-4">
+                                <input type="text" id="create-group-name" class="premium-input h-[60px] px-6 text-[18px] font-bold transition-colors shadow-inner flex-1" placeholder="為新群組命名...">
+                                <button onclick="app.groups.create()" class="bg-pink-600 hover:bg-pink-500 px-8 rounded-[20px] text-white font-bold text-[16px] hover:-translate-y-1 transition-all shadow-[0_5px_20px_rgba(236,72,153,0.4)] active:scale-95 flex items-center justify-center gap-2 shrink-0 min-h-[60px]"><i class="fa-solid fa-plus"></i> 建立</button>
                             </div>
                         </div>
 
@@ -416,44 +412,44 @@
 
                 <!-- ⚙️ SETTINGS 頁面 -->
                 <section id="view-settings" class="view-section w-full">
-                    <div class="flex justify-between items-end mb-6 px-2 md:px-0 md:max-w-2xl md:mx-auto">
-                        <h2 class="text-[28px] font-black text-theme-text tracking-tight font-display">個人化設定 <span class="text-brand-500 opacity-80 text-xl ml-1">Settings</span></h2>
+                    <div class="flex justify-between items-end mb-6 px-2 md:px-0">
+                        <h2 class="text-[28px] md:text-[32px] font-black text-theme-text tracking-tight font-display">個人化設定 <span class="text-brand-500 opacity-80 text-xl ml-1">Settings</span></h2>
                     </div>
                     
-                    <div class="grid grid-cols-2 gap-5 mb-8 md:max-w-2xl md:mx-auto">
-                        <button onclick="app.settings.toggleTheme()" class="glass-card p-6 flex flex-col items-center justify-center gap-4 hover:-translate-y-1 hover:shadow-lg transition-all active:scale-95 text-theme-text group min-h-[140px]">
+                    <div class="grid grid-cols-2 gap-5 mb-8 w-full">
+                        <button onclick="app.settings.toggleTheme()" class="glass-card p-6 flex flex-col items-center justify-center gap-4 hover:-translate-y-1 hover:shadow-lg transition-all active:scale-95 text-theme-text group min-h-[160px]">
                             <div class="w-16 h-16 rounded-[20px] bg-brand-500/10 flex items-center justify-center group-hover:bg-brand-500 group-hover:text-white transition-colors">
                                 <i class="fa-solid fa-circle-half-stroke text-3xl text-brand-500 group-hover:text-white transition-colors"></i>
                             </div>
-                            <span class="text-[15px] font-bold mt-1">外觀主題切換</span>
+                            <span class="text-[16px] font-bold mt-1">外觀主題切換</span>
                         </button>
-                        <button onclick="app.settings.toggleTimetableMode()" class="glass-card p-6 flex flex-col items-center justify-center gap-4 hover:-translate-y-1 hover:shadow-lg transition-all active:scale-95 text-theme-text group min-h-[140px]">
+                        <button onclick="app.settings.toggleTimetableMode()" class="glass-card p-6 flex flex-col items-center justify-center gap-4 hover:-translate-y-1 hover:shadow-lg transition-all active:scale-95 text-theme-text group min-h-[160px]">
                             <div class="w-16 h-16 rounded-[20px] bg-blue-500/10 flex items-center justify-center group-hover:bg-blue-500 group-hover:text-white transition-colors">
                                 <i class="fa-solid fa-calendar-days text-3xl text-blue-500 group-hover:text-white transition-colors"></i>
                             </div>
-                            <span class="text-[15px] font-bold mt-1" id="setting-tt-mode-text">課表：星期制</span>
+                            <span class="text-[16px] font-bold mt-1" id="setting-tt-mode-text">課表：星期制</span>
                         </button>
                     </div>
 
-                    <div class="glass-card p-8 mb-8 relative overflow-hidden shadow-sm hover:shadow-lg transition-all duration-500 md:max-w-2xl md:mx-auto border-t-4 border-t-brand-500">
-                        <h3 class="text-[18px] font-bold text-theme-text mb-6 font-literary tracking-wide flex items-center"><i class="fa-solid fa-palette text-brand-500 mr-3 text-2xl"></i>科目與專屬顏色管理</h3>
+                    <div class="glass-card p-8 mb-8 relative overflow-hidden shadow-sm hover:shadow-lg transition-all duration-500 w-full border-t-4 border-t-brand-500">
+                        <h3 class="text-[20px] font-bold text-theme-text mb-6 font-literary tracking-wide flex items-center"><i class="fa-solid fa-palette text-brand-500 mr-3 text-2xl"></i>科目與專屬顏色管理</h3>
                         
                         <div id="settings-subjects-list" class="flex flex-wrap gap-3 mb-8"></div>
                         
-                        <div class="bg-theme-input/50 p-6 rounded-[24px] border border-theme-border shadow-inner">
-                            <p class="text-[12px] font-bold text-theme-muted uppercase tracking-widest mb-4">新增自訂科目</p>
+                        <div class="bg-theme-input/50 p-6 rounded-[28px] border border-theme-border shadow-inner">
+                            <p class="text-[13px] font-bold text-theme-muted uppercase tracking-widest mb-4">新增自訂科目</p>
                             <div class="flex gap-4 items-center">
-                                <input type="text" id="new-subj-name" placeholder="科目名稱 (如: 物理)" class="premium-input h-[56px] px-6 text-[16px] font-bold flex-1 shadow-sm">
-                                <input type="color" id="new-subj-color" value="#6366f1" class="w-14 h-[56px] rounded-xl cursor-pointer border-0 bg-transparent p-0 shrink-0 hover:scale-105 transition-transform shadow-sm" title="選擇專屬顏色">
-                                <button onclick="app.settings.addSubject()" class="bg-brand-600 hover:bg-brand-500 h-[56px] w-[56px] rounded-xl text-white font-bold transition-all shadow-[0_5px_15px_rgba(99,102,241,0.4)] active:scale-90 flex items-center justify-center shrink-0">
-                                    <i class="fa-solid fa-plus text-xl"></i>
+                                <input type="text" id="new-subj-name" placeholder="科目名稱 (如: 物理)" class="premium-input h-[60px] px-6 text-[16px] font-bold flex-1 shadow-sm">
+                                <input type="color" id="new-subj-color" value="#6366f1" class="w-16 h-[60px] rounded-xl cursor-pointer border-0 bg-transparent p-0 shrink-0 hover:scale-105 transition-transform shadow-sm" title="選擇專屬顏色">
+                                <button onclick="app.settings.addSubject()" class="bg-brand-600 hover:bg-brand-500 h-[60px] w-[60px] rounded-xl text-white font-bold transition-all shadow-[0_5px_15px_rgba(99,102,241,0.4)] active:scale-90 flex items-center justify-center shrink-0">
+                                    <i class="fa-solid fa-plus text-2xl"></i>
                                 </button>
                             </div>
                         </div>
                     </div>
 
-                    <div class="md:max-w-2xl md:mx-auto mb-10">
-                        <button onclick="app.settings.exportCalendar()" class="w-full glass-card p-6 flex items-center justify-center gap-4 hover:-translate-y-1 hover:shadow-lg transition-all active:scale-95 text-emerald-500 border-emerald-500/30 bg-emerald-500/5 group min-h-[64px]">
+                    <div class="w-full mb-10">
+                        <button onclick="app.settings.exportCalendar()" class="w-full glass-card p-6 flex items-center justify-center gap-4 hover:-translate-y-1 hover:shadow-lg transition-all active:scale-95 text-emerald-500 border-emerald-500/30 bg-emerald-500/5 group min-h-[72px]">
                             <div class="w-12 h-12 rounded-full bg-emerald-500/20 flex items-center justify-center group-hover:bg-emerald-500 group-hover:text-white transition-colors">
                                 <i class="fa-solid fa-download text-xl"></i>
                             </div>
@@ -461,7 +457,7 @@
                         </button>
                     </div>
 
-                    <div class="mt-20 mb-8 text-center opacity-30 hover:opacity-100 transition duration-500 cursor-default md:max-w-2xl md:mx-auto">
+                    <div class="mt-24 mb-8 text-center opacity-30 hover:opacity-100 transition duration-500 cursor-default w-full">
                         <div class="w-14 h-14 border border-theme-border rounded-[20px] flex items-center justify-center mx-auto mb-5 hover:bg-theme-input hover:scale-110 transition-all shadow-sm">
                             <i class="fa-solid fa-code text-theme-text text-xl"></i>
                         </div>
@@ -475,11 +471,11 @@
                 <!-- ➕ ADD 頁面 -->
                 <section id="view-add" class="view-section w-full">
                     <div class="flex items-center justify-between mb-8 px-2 md:px-0 md:max-w-4xl md:mx-auto">
-                        <div class="flex items-center gap-2">
-                            <button onclick="app.nav.toggleAdd()" class="w-14 h-14 mr-2 rounded-[20px] bg-theme-card flex items-center justify-center text-theme-text hover:bg-theme-input active:scale-90 transition-all border border-theme-border shadow-sm hover:shadow-md min-w-[56px]">
-                                <i class="fa-solid fa-arrow-left text-[18px]"></i>
+                        <div class="flex items-center gap-3">
+                            <button onclick="app.nav.toggleAdd()" class="w-14 h-14 rounded-[20px] bg-theme-card flex items-center justify-center text-theme-text hover:bg-theme-input active:scale-90 transition-all border border-theme-border shadow-sm hover:shadow-md min-w-[56px]">
+                                <i class="fa-solid fa-arrow-left text-[20px]"></i>
                             </button>
-                            <h2 id="form-header-title" class="text-[28px] font-black text-theme-text tracking-tight font-literary drop-shadow-sm">新增任務</h2>
+                            <h2 id="form-header-title" class="text-[28px] md:text-[32px] font-black text-theme-text tracking-tight font-literary drop-shadow-sm">新增任務</h2>
                         </div>
                     </div>
                     
@@ -487,21 +483,20 @@
                         <div class="absolute top-[-20%] right-[-10%] w-80 h-80 bg-brand-500/10 blur-[100px] rounded-full pointer-events-none z-0"></div>
                         <input type="hidden" id="form-task-id">
                         
-                        <div class="flex bg-theme-input p-2 rounded-[24px] mb-8 relative z-10 border border-theme-border shadow-inner">
-                            <button id="type-btn-task" onclick="app.tasks.setFormType('task')" class="flex-1 py-4 text-[16px] font-bold rounded-[18px] bg-theme-card text-brand-600 shadow-md border border-theme-border transition-all flex justify-center items-center gap-2 min-h-[56px]">
-                                <i class="fa-solid fa-book-open text-lg"></i> 新增功課
+                        <div class="flex flex-col sm:flex-row bg-theme-input p-2.5 rounded-[28px] mb-8 relative z-10 border border-theme-border shadow-inner gap-2">
+                            <button id="type-btn-task" onclick="app.tasks.setFormType('task')" class="flex-1 py-4 text-[17px] font-bold rounded-[20px] bg-theme-card text-brand-600 shadow-md border border-theme-border transition-all flex justify-center items-center gap-2 min-h-[60px]">
+                                <i class="fa-solid fa-book-open text-xl"></i> 新增功課
                             </button>
-                            <button id="type-btn-exam" onclick="app.tasks.setFormType('exam')" class="flex-1 py-4 text-[16px] font-bold rounded-[18px] text-theme-muted hover:text-theme-text transition-all flex justify-center items-center gap-2 border border-transparent min-h-[56px]">
-                                <i class="fa-regular fa-circle-question text-lg"></i> 新增測驗
+                            <button id="type-btn-exam" onclick="app.tasks.setFormType('exam')" class="flex-1 py-4 text-[17px] font-bold rounded-[20px] text-theme-muted hover:text-theme-text transition-all flex justify-center items-center gap-2 border border-transparent min-h-[60px]">
+                                <i class="fa-regular fa-circle-question text-xl"></i> 新增測驗
                             </button>
                             <input type="hidden" id="form-type" value="task">
                         </div>
                         
                         <div class="space-y-8 relative z-10">
                             <div class="flex flex-col gap-3">
-                                <p class="text-[12px] font-bold text-theme-muted uppercase tracking-widest pl-1">選擇科目 Subject</p>
+                                <p class="text-[13px] font-bold text-theme-muted uppercase tracking-widest pl-1">選擇科目 Subject</p>
                                 <div class="flex items-center gap-2">
-                                    <!-- 🌟 磁吸滑動的科目選擇 -->
                                     <div id="form-subjects-scroll" class="flex flex-1 gap-3 overflow-x-auto no-scrollbar py-2 snap-container items-center px-2"></div>
                                     <input type="hidden" id="form-subject-value">
                                 </div>
@@ -528,42 +523,42 @@
 
                                 <div class="w-full lg:w-[320px] flex flex-col gap-6 shrink-0">
                                     <div class="relative group">
-                                        <label class="block text-[12px] font-bold text-theme-muted uppercase tracking-widest mb-2 pl-1">繳交日期 Due Date</label>
-                                        <input type="date" id="form-date" onchange="app.tasks.checkStress()" class="w-full h-[60px] px-6 bg-theme-input/50 border border-theme-border hover:border-brand-500/50 rounded-[20px] text-[17px] font-bold text-theme-text text-center transition-all shadow-sm outline-none focus:border-brand-500 focus:bg-theme-card focus:ring-4 focus:ring-brand-500/10 dark:[color-scheme:dark] min-h-[48px]">
+                                        <label class="block text-[13px] font-bold text-theme-muted uppercase tracking-widest mb-2 pl-1">繳交日期 Due Date</label>
+                                        <input type="date" id="form-date" onchange="app.tasks.checkStress()" class="w-full h-[64px] px-6 bg-theme-input/50 border border-theme-border hover:border-brand-500/50 rounded-[20px] text-[18px] font-bold text-theme-text text-center transition-all shadow-sm outline-none focus:border-brand-500 focus:bg-theme-card focus:ring-4 focus:ring-brand-500/10 dark:[color-scheme:dark] min-h-[56px]">
                                     </div>
                                     
                                     <div class="relative group">
-                                        <label class="block text-[12px] font-bold text-theme-muted uppercase tracking-widest mb-2 pl-1">自動重複 Repeat</label>
+                                        <label class="block text-[13px] font-bold text-theme-muted uppercase tracking-widest mb-2 pl-1">自動重複 Repeat</label>
                                         <input type="hidden" id="form-repeat" value="none">
-                                        <button type="button" onclick="app.tasks.openRepeatModal()" class="w-full h-[60px] px-6 bg-theme-input/50 border border-theme-border hover:border-brand-500/50 rounded-[20px] text-[16px] font-bold text-theme-text flex justify-between items-center transition-all shadow-sm outline-none active:scale-95 focus:border-brand-500 focus:bg-theme-card min-h-[48px]">
+                                        <button type="button" onclick="app.tasks.openRepeatModal()" class="w-full h-[64px] px-6 bg-theme-input/50 border border-theme-border hover:border-brand-500/50 rounded-[20px] text-[17px] font-bold text-theme-text flex justify-between items-center transition-all shadow-sm outline-none active:scale-95 focus:border-brand-500 focus:bg-theme-card min-h-[56px]">
                                             <span class="flex items-center gap-3"><i class="fa-solid fa-repeat text-theme-muted text-lg"></i><span id="form-repeat-text">不重複</span></span>
-                                            <i class="fa-solid fa-chevron-down text-[12px] text-theme-muted"></i>
+                                            <i class="fa-solid fa-chevron-down text-[14px] text-theme-muted"></i>
                                         </button>
                                     </div>
 
-                                    <button id="btn-save-task" onclick="app.tasks.save()" class="w-full mt-auto h-[72px] bg-gradient-to-r from-brand-600 to-brand-500 hover:from-brand-500 hover:to-brand-400 text-white rounded-[24px] font-black shadow-[0_10px_30px_rgba(99,102,241,0.4)] hover:-translate-y-1 hover:shadow-[0_15px_40px_rgba(99,102,241,0.6)] active:scale-95 transition-all duration-300 flex justify-center items-center gap-3 text-[18px] tracking-wider border border-transparent overflow-hidden relative group min-h-[56px]">
+                                    <button id="btn-save-task" onclick="app.tasks.save()" class="w-full mt-auto h-[76px] bg-gradient-to-r from-brand-600 to-brand-500 hover:from-brand-500 hover:to-brand-400 text-white rounded-[24px] font-black shadow-[0_10px_30px_rgba(99,102,241,0.4)] hover:-translate-y-1 hover:shadow-[0_15px_40px_rgba(99,102,241,0.6)] active:scale-95 transition-all duration-300 flex justify-center items-center gap-3 text-[20px] tracking-wider border border-transparent overflow-hidden relative group min-h-[60px]">
                                         <div class="absolute inset-0 bg-white/20 transform -skew-x-12 -translate-x-full group-hover:animate-[shine_1.5s_ease-in-out_infinite]"></div>
                                         <i class="fa-solid fa-paper-plane text-2xl drop-shadow-md"></i> 發佈任務
                                     </button>
                                 </div>
                             </div>
                             
-                            <div id="form-warning-msg" class="hidden mt-4 bg-yellow-500/10 border border-yellow-500/30 p-6 rounded-3xl flex items-center gap-5 shadow-inner">
+                            <div id="form-warning-msg" class="hidden mt-4 bg-yellow-500/10 border border-yellow-500/30 p-6 rounded-[28px] flex items-center gap-5 shadow-inner">
                                 <i class="fa-solid fa-triangle-exclamation text-yellow-600 dark:text-yellow-500 text-4xl animate-pulse"></i>
                                 <div>
-                                    <p class="text-[16px] font-bold text-yellow-700 dark:text-yellow-400">注意！任務量警報</p>
+                                    <p class="text-[17px] font-bold text-yellow-700 dark:text-yellow-400">注意！任務量警報</p>
                                     <p class="text-[14px] text-yellow-700/80 dark:text-yellow-200/80 font-medium mt-1">該日已有 <span id="form-warning-count" class="font-black text-xl px-1"></span> 項任務，建議提早規劃時間。</p>
                                 </div>
                             </div>
 
                             <div id="provider-target-section" class="hidden pt-8 border-t border-theme-border/50 mt-6">
-                                <div class="flex items-center justify-between p-6 bg-theme-input/30 border border-theme-border rounded-[28px] transition-colors hover:border-pink-500/40 hover:bg-pink-500/5 group cursor-pointer shadow-sm min-h-[56px]" onclick="document.getElementById('broadcast-toggle').click()">
+                                <div class="flex items-center justify-between p-6 bg-theme-input/30 border border-theme-border rounded-[28px] transition-colors hover:border-pink-500/40 hover:bg-pink-500/5 group cursor-pointer shadow-sm min-h-[60px]" onclick="document.getElementById('broadcast-toggle').click()">
                                     <div class="flex items-center gap-5">
                                         <div class="w-16 h-16 rounded-[20px] bg-pink-500/10 flex items-center justify-center text-pink-500 shadow-inner group-hover:scale-110 transition-transform">
                                             <i class="fa-solid fa-bullhorn text-2xl"></i>
                                         </div>
                                         <div>
-                                            <p class="text-[17px] font-bold text-theme-text leading-tight tracking-wide">廣播至學習群組 (Broadcast)</p>
+                                            <p class="text-[18px] font-bold text-theme-text leading-tight tracking-wide">廣播至學習群組</p>
                                             <p class="text-[14px] text-theme-muted font-bold mt-1.5" id="form-target-text">私人任務 (僅自己可見)</p>
                                         </div>
                                     </div>
@@ -581,8 +576,8 @@
             </div>
         </main>
 
-        <!-- 🌟 浮空中心化新增按鈕 (FAB) -->
-        <button onclick="app.nav.toggleAdd()" id="global-fab" class="fixed bottom-[calc(6.5rem+env(safe-area-inset-bottom,0px))] right-6 md:bottom-12 md:right-12 lg:right-16 w-[68px] h-[68px] bg-gradient-to-tr from-brand-600 to-pink-500 rounded-full flex items-center justify-center text-white text-2xl shadow-[0_10px_30px_rgba(99,102,241,0.5)] hover:shadow-[0_15px_40px_rgba(99,102,241,0.8)] hover:scale-110 active:scale-90 transition-all duration-500 z-50 overflow-hidden group">
+        <!-- 🌟 浮空中心化新增按鈕 (FAB) (防擋系統條設計) -->
+        <button onclick="app.nav.toggleAdd()" id="global-fab" class="fixed bottom-[calc(6.5rem+env(safe-area-inset-bottom,0px))] right-6 md:bottom-12 md:right-12 w-[68px] h-[68px] bg-gradient-to-tr from-brand-600 to-pink-500 rounded-full flex items-center justify-center text-white text-2xl shadow-[0_10px_30px_rgba(99,102,241,0.5)] hover:shadow-[0_15px_40px_rgba(99,102,241,0.8)] hover:scale-110 active:scale-90 transition-all duration-500 z-50 overflow-hidden group">
             <div class="absolute inset-0 bg-white/20 transform -translate-y-full group-hover:translate-y-0 transition-transform duration-300 rounded-full"></div>
             <i class="fa-solid fa-plus transition-transform duration-500 relative z-10 drop-shadow-md text-3xl" id="add-icon"></i>
         </button>
@@ -590,33 +585,33 @@
         <!-- 🌟 底部島嶼式導航列 (人體工學 Thumb Zone Design) -->
         <nav id="main-nav-bar" class="fixed bottom-0 left-0 right-0 z-40 pb-safe pointer-events-none transition-transform duration-500 md:hidden">
             <div class="mx-auto w-full px-4 mb-4">
-                <div class="flex items-center justify-around p-2 bg-white/85 dark:bg-[#121214]/85 backdrop-blur-2xl border border-theme-border shadow-[0_-10px_40px_rgba(0,0,0,0.05)] dark:shadow-[0_-10px_40px_rgba(0,0,0,0.4)] rounded-[28px] pointer-events-auto relative">
-                    <button onclick="app.nav.switch('home')" id="nav-home" class="bottom-nav-item active min-h-[56px]">
+                <div class="flex items-center justify-around p-2 bg-white/85 dark:bg-[#121214]/85 backdrop-blur-2xl border border-theme-border shadow-[0_-10px_40px_rgba(0,0,0,0.05)] dark:shadow-[0_-10px_40px_rgba(0,0,0,0.4)] rounded-[32px] pointer-events-auto relative">
+                    <button onclick="app.nav.switch('home')" id="nav-home" class="bottom-nav-item active min-h-[60px]">
                         <i class="fa-solid fa-layer-group"></i> <span>任務</span>
                     </button>
-                    <button onclick="app.nav.switch('timetable')" id="nav-timetable" class="bottom-nav-item text-theme-muted min-h-[56px]">
+                    <button onclick="app.nav.switch('timetable')" id="nav-timetable" class="bottom-nav-item text-theme-muted min-h-[60px]">
                         <i class="fa-solid fa-calendar-week"></i> <span>課表</span>
                     </button>
-                    <button onclick="app.nav.switch('history')" id="nav-history" class="bottom-nav-item text-theme-muted min-h-[56px]">
+                    <button onclick="app.nav.switch('history')" id="nav-history" class="bottom-nav-item text-theme-muted min-h-[60px]">
                         <i class="fa-solid fa-clock-rotate-left"></i> <span>歷史</span>
                     </button>
-                    <button onclick="app.nav.switch('groups')" id="nav-groups" class="bottom-nav-item text-theme-muted min-h-[56px]">
+                    <button onclick="app.nav.switch('groups')" id="nav-groups" class="bottom-nav-item text-theme-muted min-h-[60px]">
                         <i class="fa-solid fa-users"></i> <span>群組</span>
                     </button>
-                    <button onclick="app.nav.switch('settings')" id="nav-settings" class="bottom-nav-item text-theme-muted min-h-[56px]">
+                    <button onclick="app.nav.switch('settings')" id="nav-settings" class="bottom-nav-item text-theme-muted min-h-[60px]">
                         <i class="fa-solid fa-gear"></i> <span>設定</span>
                     </button>
                 </div>
             </div>
         </nav>
         
-        <!-- Desktop Sidebar/Top nav handling (for larger screens) -->
-        <div id="main-nav-bar-desktop" class="hidden md:flex fixed top-[110px] left-6 lg:left-12 flex-col gap-3 z-40">
-            <button onclick="app.nav.switch('home')" id="nav-home-d" class="w-14 h-14 rounded-2xl flex items-center justify-center text-xl transition-all shadow-sm border bg-theme-card text-brand-600 border-brand-500/50 hover:-translate-y-1"><i class="fa-solid fa-layer-group"></i></button>
-            <button onclick="app.nav.switch('timetable')" id="nav-timetable-d" class="w-14 h-14 rounded-2xl flex items-center justify-center text-xl transition-all border border-transparent bg-theme-input/50 text-theme-muted hover:text-theme-text hover:bg-theme-card hover:shadow-sm hover:-translate-y-1"><i class="fa-solid fa-calendar-week"></i></button>
-            <button onclick="app.nav.switch('history')" id="nav-history-d" class="w-14 h-14 rounded-2xl flex items-center justify-center text-xl transition-all border border-transparent bg-theme-input/50 text-theme-muted hover:text-theme-text hover:bg-theme-card hover:shadow-sm hover:-translate-y-1"><i class="fa-solid fa-clock-rotate-left"></i></button>
-            <button onclick="app.nav.switch('groups')" id="nav-groups-d" class="w-14 h-14 rounded-2xl flex items-center justify-center text-xl transition-all border border-transparent bg-theme-input/50 text-theme-muted hover:text-theme-text hover:bg-theme-card hover:shadow-sm hover:-translate-y-1"><i class="fa-solid fa-users"></i></button>
-            <button onclick="app.nav.switch('settings')" id="nav-settings-d" class="w-14 h-14 rounded-2xl flex items-center justify-center text-xl transition-all border border-transparent bg-theme-input/50 text-theme-muted hover:text-theme-text hover:bg-theme-card hover:shadow-sm hover:-translate-y-1"><i class="fa-solid fa-gear"></i></button>
+        <!-- 🌟 iPad / Desktop 左側懸浮島嶼導航 -->
+        <div id="main-nav-bar-desktop" class="hidden md:flex fixed top-1/2 -translate-y-1/2 left-6 z-40 flex-col gap-4">
+            <button onclick="app.nav.switch('home')" id="nav-home-d" class="side-nav-item active"><i class="fa-solid fa-layer-group"></i></button>
+            <button onclick="app.nav.switch('timetable')" id="nav-timetable-d" class="side-nav-item"><i class="fa-solid fa-calendar-week"></i></button>
+            <button onclick="app.nav.switch('history')" id="nav-history-d" class="side-nav-item"><i class="fa-solid fa-clock-rotate-left"></i></button>
+            <button onclick="app.nav.switch('groups')" id="nav-groups-d" class="side-nav-item"><i class="fa-solid fa-users"></i></button>
+            <button onclick="app.nav.switch('settings')" id="nav-settings-d" class="side-nav-item"><i class="fa-solid fa-gear"></i></button>
         </div>
 
     </div>
@@ -629,15 +624,15 @@
     </div>
     
     <div id="bottom-sheet" class="fixed inset-x-0 bottom-0 z-[210] hidden flex flex-col justify-end pointer-events-none">
-        <div id="bottom-sheet-content" class="glass-card bg-theme-bg w-full md:max-w-md md:mx-auto rounded-b-none md:rounded-t-[40px] p-6 md:p-8 pb-safe transform translate-y-full pointer-events-auto border md:border-b-theme-border border-t-theme-border shadow-[0_-20px_60px_rgba(0,0,0,0.15)] dark:shadow-[0_-20px_60px_rgba(0,0,0,0.8)] flex flex-col max-h-[85vh]">
+        <div id="bottom-sheet-content" class="glass-card bg-theme-bg w-full md:max-w-lg md:mx-auto rounded-b-none md:rounded-t-[40px] p-6 md:p-10 pb-safe transform translate-y-full pointer-events-auto border md:border-b-theme-border border-t-theme-border shadow-[0_-20px_60px_rgba(0,0,0,0.15)] dark:shadow-[0_-20px_60px_rgba(0,0,0,0.8)] flex flex-col max-h-[85vh]">
             <div class="w-16 h-1.5 bg-gray-300 dark:bg-white/20 rounded-full mx-auto mb-8 shrink-0"></div>
             <div id="bottom-sheet-body" class="flex-1 overflow-y-auto no-scrollbar"></div>
         </div>
     </div>
     
-    <div id="notif-panel" class="fixed inset-y-0 right-0 w-full md:w-[400px] bg-theme-bg/95 backdrop-blur-3xl z-[210] hidden transform translate-x-full border-l border-theme-border flex flex-col shadow-2xl">
+    <div id="notif-panel" class="fixed inset-y-0 right-0 w-full md:w-[420px] bg-theme-bg/95 backdrop-blur-3xl z-[210] hidden transform translate-x-full border-l border-theme-border flex flex-col shadow-2xl">
         <div class="p-6 md:p-8 border-b border-theme-border flex justify-between items-center bg-theme-input/50">
-            <h3 class="text-2xl font-black text-theme-text font-display flex items-center gap-3"><i class="fa-solid fa-bell text-brand-500"></i> 通知中心</h3>
+            <h3 class="text-[26px] font-black text-theme-text font-display flex items-center gap-3"><i class="fa-solid fa-bell text-brand-500"></i> 通知中心</h3>
             <button onclick="app.notifications.toggle()" class="w-12 h-12 rounded-full bg-theme-card flex items-center justify-center text-theme-muted hover:text-brand-500 hover:shadow-md border border-theme-border shadow-sm active:scale-90 transition-all min-h-[48px] min-w-[48px]"><i class="fa-solid fa-xmark text-xl"></i></button>
         </div>
         <div id="notif-list" class="flex-1 overflow-y-auto p-4 md:p-6 space-y-4 no-scrollbar bg-theme-bg"></div>
@@ -743,7 +738,7 @@
                 const root = document.getElementById('toast-root');
                 const t = document.createElement('div');
                 const styles = { success: 'bg-emerald-500/90 border-emerald-400 text-white', error: 'bg-red-500/90 border-red-400 text-white', info: 'bg-brand-500/90 border-brand-400 text-white', warning: 'bg-amber-500/90 border-amber-400 text-white' };
-                t.className = `px-6 py-4 rounded-[20px] text-[15px] font-bold border backdrop-blur-xl flex items-center gap-3 w-max shadow-[0_10px_40px_rgba(0,0,0,0.3)] ${styles[type]}`;
+                t.className = `px-6 py-4 rounded-[20px] text-[16px] font-bold border backdrop-blur-xl flex items-center gap-3 w-max shadow-[0_10px_40px_rgba(0,0,0,0.3)] ${styles[type]}`;
                 const icons = { success: 'fa-check-circle', error: 'fa-triangle-exclamation', info: 'fa-info-circle', warning: 'fa-fire' };
                 t.innerHTML = `<i class="fa-solid ${icons[type]} text-2xl drop-shadow-md"></i> <span class="drop-shadow-sm tracking-wide">${msg}</span>`;
                 root.appendChild(t);
@@ -861,32 +856,13 @@
                     hideLoader(true);
                 }
                 
-                // 🌟 Smart Shrink Header on Scroll (修正對底部導航無影響)
+                // 🌟 優化版 Scroll 事件 (避免 JS 操作 style 引致卡頓)
                 window.addEventListener('scroll', () => {
-                    const header = document.getElementById('main-header');
-                    const titleText = document.getElementById('header-title-text');
-                    const avatar = document.getElementById('header-avatar');
-                    const avatarFallback = document.getElementById('header-avatar-fallback');
-                    const avatarBtn = avatar?.parentElement;
-                    const isMarquee = !document.getElementById('global-marquee-banner')?.classList.contains('hidden');
-
-                    if(!header || !titleText) return;
+                    const body = document.body;
                     if (window.scrollY > 40) {
-                        header.classList.replace('py-4', 'py-2.5');
-                        header.classList.replace('bg-white/50', 'bg-white/90');
-                        header.classList.replace('dark:bg-[#0a0a0c]/50', 'dark:bg-[#0a0a0c]/90');
-                        titleText.classList.replace('md:text-3xl', 'md:text-[26px]');
-                        titleText.classList.replace('text-2xl', 'text-xl');
-                        if(avatarBtn) { avatarBtn.style.width = '40px'; avatarBtn.style.height = '40px'; }
-                        if(avatarFallback) avatarFallback.style.fontSize = '14px';
+                        if (!body.classList.contains('is-scrolled')) body.classList.add('is-scrolled');
                     } else {
-                        header.classList.replace('py-2.5', 'py-4');
-                        header.classList.replace('bg-white/90', 'bg-white/50');
-                        header.classList.replace('dark:bg-[#0a0a0c]/90', 'dark:bg-[#0a0a0c]/50');
-                        titleText.classList.replace('md:text-[26px]', 'md:text-3xl');
-                        titleText.classList.replace('text-xl', 'text-2xl');
-                        if(avatarBtn) { avatarBtn.style.width = ''; avatarBtn.style.height = ''; }
-                        if(avatarFallback) avatarFallback.style.fontSize = '';
+                        if (body.classList.contains('is-scrolled')) body.classList.remove('is-scrolled');
                     }
                 }, { passive: true });
             },
@@ -945,9 +921,11 @@
                     gsap.fromTo("header", {y: -30, opacity: 0}, {y: 0, opacity: 1, duration: 0.5, ease: "power2.out"});
                     gsap.fromTo(".glass-card:not(.task-card-anim)", {y: 20, opacity: 0}, {y: 0, opacity: 1, duration: 0.4, stagger: 0.03, ease: "power2.out", delay: 0.1});
                     
-                    // Nav Bar animation
-                    const navBar = document.getElementById('main-nav-bar');
-                    if(navBar) gsap.fromTo(navBar, {y: 50, opacity: 0}, {y: 0, opacity: 1, duration: 0.6, ease: "back.out(1.2)", delay: 0.2});
+                    const navBarDesktop = document.getElementById('main-nav-bar-desktop');
+                    if(navBarDesktop) gsap.fromTo(navBarDesktop, {x: -50, opacity: 0}, {x: 0, opacity: 1, duration: 0.6, ease: "back.out(1.2)", delay: 0.2});
+                    
+                    const navBarMobile = document.getElementById('main-nav-bar');
+                    if(navBarMobile) gsap.fromTo(navBarMobile, {y: 50, opacity: 0}, {y: 0, opacity: 1, duration: 0.6, ease: "back.out(1.2)", delay: 0.2});
                 }
             },
             system: {
@@ -1004,20 +982,20 @@
             },
             profile: {
                 toggle: () => {
-                    const rb = state.profile.role === 'provider' ? `<span class="bg-pink-500/20 text-pink-500 text-[10px] px-2 py-1 rounded-md font-bold ml-2 border border-pink-500/30">Provider</span>` : `<span class="bg-brand-500/20 text-brand-500 text-[10px] px-2 py-1 rounded-md font-bold ml-2 border border-brand-500/30">Student</span>`;
-                    const src = state.user.photoURL ? `<img src="${state.user.photoURL}" class="w-24 h-24 rounded-full border-4 border-theme-bg shadow-2xl object-cover mx-auto hover:scale-105 transition-transform duration-500">` : `<div class="w-24 h-24 rounded-full bg-theme-input flex items-center justify-center border-4 border-theme-bg shadow-2xl mx-auto"><i class="fa-solid fa-user text-4xl text-theme-muted"></i></div>`;
+                    const rb = state.profile.role === 'provider' ? `<span class="bg-pink-500/20 text-pink-500 text-[10px] px-3 py-1.5 rounded-lg font-bold ml-2 border border-pink-500/30">Provider</span>` : `<span class="bg-brand-500/20 text-brand-500 text-[10px] px-3 py-1.5 rounded-lg font-bold ml-2 border border-brand-500/30">Student</span>`;
+                    const src = state.user.photoURL ? `<img src="${state.user.photoURL}" class="w-28 h-28 rounded-[24px] border border-theme-border shadow-xl object-cover mx-auto hover:scale-105 transition-transform duration-500">` : `<div class="w-28 h-28 rounded-[24px] bg-theme-input flex items-center justify-center border border-theme-border shadow-xl mx-auto"><i class="fa-solid fa-user text-5xl text-theme-muted"></i></div>`;
 
                     UI.sheet.open(`
                         <div class="relative text-center">
-                            <button onclick="app.UI.sheet.close()" class="absolute -top-2 right-0 w-12 h-12 rounded-full bg-theme-input flex items-center justify-center text-theme-muted hover:text-theme-text border border-theme-border active:scale-90 transition-all z-10 shadow-sm"><i class="fa-solid fa-xmark text-xl"></i></button>
+                            <button onclick="app.UI.sheet.close()" class="absolute -top-2 right-0 w-12 h-12 rounded-[16px] bg-theme-input flex items-center justify-center text-theme-muted hover:text-theme-text border border-theme-border active:scale-90 transition-all z-10 shadow-sm min-h-[48px] min-w-[48px]"><i class="fa-solid fa-xmark text-xl"></i></button>
                             
                             <div class="relative inline-block">${src}</div>
-                            <h3 class="text-[28px] font-black text-theme-text mt-5 flex justify-center items-center font-display tracking-tight">${escapeHTML(state.user.displayName || 'Lumina User')} ${rb}</h3>
-                            <p class="text-[14px] text-theme-muted font-mono mt-1 mb-8">${escapeHTML(state.user.email || 'Anonymous')}</p>
+                            <h3 class="text-[30px] font-black text-theme-text mt-6 flex justify-center items-center font-display tracking-tight">${escapeHTML(state.user.displayName || 'Lumina User')} ${rb}</h3>
+                            <p class="text-[15px] text-theme-muted font-mono mt-1.5 mb-10">${escapeHTML(state.user.email || 'Anonymous')}</p>
                             
                             <div class="space-y-4">
-                                ${state.profile.role === 'provider' ? '' : `<button onclick="app.profile.demoRole()" class="w-full h-[56px] glass-card text-[16px] font-bold text-brand-500 hover:bg-theme-input hover:-translate-y-1 active:scale-95 transition-all duration-300 flex justify-center items-center gap-2 shadow-sm min-h-[48px]"><i class="fa-solid fa-crown text-lg"></i> 申請升級 Provider</button>`}
-                                <button onclick="app.auth.logout()" class="w-full h-[56px] bg-red-500/10 border border-red-500/20 text-red-500 rounded-[20px] text-[16px] font-bold hover:bg-red-500/20 hover:-translate-y-1 active:scale-95 transition-all duration-300 shadow-sm flex items-center justify-center gap-2 min-h-[48px]"><i class="fa-solid fa-right-from-bracket text-lg"></i> 安全登出 Sign Out</button>
+                                ${state.profile.role === 'provider' ? '' : `<button onclick="app.profile.demoRole()" class="w-full h-[60px] glass-card text-[17px] font-bold text-brand-500 hover:bg-theme-input hover:-translate-y-1 active:scale-95 transition-all duration-300 flex justify-center items-center gap-3 shadow-sm min-h-[56px]"><i class="fa-solid fa-crown text-xl"></i> 申請升級 Provider</button>`}
+                                <button onclick="app.auth.logout()" class="w-full h-[60px] bg-red-500/10 border border-red-500/20 text-red-500 rounded-[24px] text-[17px] font-bold hover:bg-red-500/20 hover:-translate-y-1 active:scale-95 transition-all duration-300 shadow-sm flex items-center justify-center gap-3 min-h-[56px]"><i class="fa-solid fa-right-from-bracket text-xl"></i> 安全登出 Sign Out</button>
                             </div>
                         </div>
                     `);
@@ -1079,15 +1057,12 @@
                             
                             const marqueeBanner = document.getElementById('global-marquee-banner');
                             const marqueeText = document.getElementById('global-marquee-text');
-                            const header = document.getElementById('main-header');
                             
                             if (data.marqueeMsg) {
                                 if(marqueeBanner) marqueeBanner.classList.remove('hidden');
                                 if(marqueeText) marqueeText.textContent = data.marqueeMsg;
-                                if(header) header.style.top = '48px'; 
                             } else {
                                 if(marqueeBanner) marqueeBanner.classList.add('hidden');
-                                if(header) header.style.top = '16px';
                             }
                         }
                     }));
@@ -1118,13 +1093,13 @@
                     if(!l) return; 
                     l.innerHTML = ''; 
                     if(state.notifications.length === 0) { 
-                        l.innerHTML = '<div class="text-center py-20 text-theme-muted text-[15px] font-bold"><i class="fa-regular fa-bell-slash text-5xl mb-5 opacity-40"></i><br>無新通知</div>'; 
+                        l.innerHTML = '<div class="text-center py-20 text-theme-muted text-[16px] font-bold"><i class="fa-regular fa-bell-slash text-6xl mb-6 opacity-40"></i><br>無新通知</div>'; 
                         return; 
                     } 
                     if(b && document.getElementById('notif-panel').classList.contains('hidden')) b.classList.remove('hidden'); 
                     state.notifications.forEach(n => { 
                         let i = n.type==='warning'?'fa-triangle-exclamation text-yellow-500':(n.type==='task'?'fa-paper-plane text-brand-500':'fa-info-circle text-blue-500'); 
-                        l.innerHTML += `<div class="p-6 bg-theme-input/50 rounded-3xl border border-theme-border shadow-sm hover:shadow-md hover:-translate-y-1 transition-all duration-300"><div class="flex items-start gap-4"><div class="w-12 h-12 rounded-full bg-theme-card flex items-center justify-center shrink-0 border border-theme-border shadow-sm"><i class="fa-solid ${i} text-[20px]"></i></div><div><p class="text-[15px] text-theme-text font-bold leading-relaxed">${escapeHTML(n.message)}</p><p class="text-[12px] text-theme-muted mt-2 font-mono font-bold tracking-wide">${new Date(n.timestamp).toLocaleString('zh-HK')}</p></div></div></div>`; 
+                        l.innerHTML += `<div class="p-6 bg-theme-input/50 rounded-[24px] border border-theme-border shadow-sm hover:shadow-md hover:-translate-y-1 transition-all duration-300"><div class="flex items-start gap-4"><div class="w-12 h-12 rounded-[16px] bg-theme-card flex items-center justify-center shrink-0 border border-theme-border shadow-sm"><i class="fa-solid ${i} text-[22px]"></i></div><div><p class="text-[15px] text-theme-text font-bold leading-relaxed">${escapeHTML(n.message)}</p><p class="text-[12px] text-theme-muted mt-2 font-mono font-bold tracking-wide">${new Date(n.timestamp).toLocaleString('zh-HK')}</p></div></div></div>`; 
                     }); 
                 },
                 send: async (uid, m, t='info') => { try { const id = API.genId(); await setDoc(doc(db, `artifacts/${internalAppId}/users/${uid}/notifications`, id), { id, message: m, type: t, timestamp: new Date().toISOString() }); } catch(e) {} }
@@ -1138,27 +1113,19 @@
                     if (vid === state.currentView) return; 
                     
                     if(vid !== 'add') {
-                        // Desktop
-                        document.querySelectorAll('#main-nav-bar-desktop button').forEach(n => {
-                            n.classList.remove('bg-theme-card', 'text-brand-600', 'border-brand-500/50', 'shadow-sm');
-                            n.classList.add('text-theme-muted', 'bg-theme-input/50', 'border-transparent');
+                        // Desktop Nav Update
+                        document.querySelectorAll('.side-nav-item').forEach(n => {
+                            n.classList.remove('active');
                         });
                         const activeDesktopNav = document.getElementById(`nav-${vid}-d`);
-                        if(activeDesktopNav) {
-                            activeDesktopNav.classList.remove('text-theme-muted', 'bg-theme-input/50', 'border-transparent');
-                            activeDesktopNav.classList.add('bg-theme-card', 'text-brand-600', 'border-brand-500/50', 'shadow-sm');
-                        }
+                        if(activeDesktopNav) activeDesktopNav.classList.add('active');
 
-                        // Mobile Bottom
+                        // Mobile Bottom Nav Update
                         document.querySelectorAll('.bottom-nav-item').forEach(n => {
                             n.classList.remove('active');
-                            n.classList.add('text-theme-muted');
                         });
                         const activeMobileNav = document.getElementById(`nav-${vid}`);
-                        if(activeMobileNav) {
-                            activeMobileNav.classList.remove('text-theme-muted');
-                            activeMobileNav.classList.add('active');
-                        }
+                        if(activeMobileNav) activeMobileNav.classList.add('active');
                     }
 
                     const fabIcon = document.getElementById('add-icon');
@@ -1188,11 +1155,10 @@
                     const t = document.getElementById(`view-${vid}`); 
                     if(t) {
                         t.classList.add('active'); 
-                        if (typeof gsap !== 'undefined') gsap.fromTo(t, { opacity: 0, y: 30, scale: 0.98 }, { opacity: 1, y: 0, scale: 1, duration: 0.5, ease: "expo.out" }); 
+                        // Trigger standard CSS animation fallback or use GSAP
                     }
                     
                     window.scrollTo({top: 0, behavior: 'smooth'});
-                    
                     state.currentView = vid; 
                 }
             },
@@ -1266,7 +1232,7 @@
                             <div class="flex items-center gap-3 bg-theme-card border border-theme-border rounded-[16px] pl-5 pr-2 py-2 shadow-sm transition-transform hover:scale-105 duration-300 group">
                                 <div class="w-3.5 h-3.5 rounded-full shadow-inner ring-2 ring-theme-bg" style="background-color: ${hex}"></div>
                                 <span class="text-[15px] font-bold text-theme-text font-literary tracking-wide mr-2">${escapeHTML(s.name)}</span>
-                                <button onclick="app.settings.deleteSubject(${index})" class="w-10 h-10 flex items-center justify-center rounded-xl text-theme-muted hover:bg-red-500/10 hover:text-red-500 transition-colors opacity-0 group-hover:opacity-100 focus:opacity-100"><i class="fa-solid fa-xmark text-[15px]"></i></button>
+                                <button onclick="app.settings.deleteSubject(${index})" class="w-10 h-10 flex items-center justify-center rounded-[14px] text-theme-muted hover:bg-red-500/10 hover:text-red-500 transition-colors opacity-0 group-hover:opacity-100 focus:opacity-100 min-h-[44px] min-w-[44px]"><i class="fa-solid fa-xmark text-[16px]"></i></button>
                             </div>
                         `;
                     });
@@ -1303,12 +1269,12 @@
                     state.groups.forEach(g => {
                         if (g.announcement) {
                             html += `
-                            <div class="bg-gradient-to-r from-blue-500/10 to-brand-500/10 border border-blue-500/30 p-6 rounded-3xl shadow-sm">
+                            <div class="bg-gradient-to-r from-blue-500/10 to-brand-500/10 border border-blue-500/30 p-6 rounded-[28px] shadow-sm">
                                 <div class="flex items-start gap-5">
                                     <div class="w-14 h-14 rounded-[20px] bg-blue-500/20 flex items-center justify-center shrink-0">
                                         <i class="fa-solid fa-bullhorn text-blue-500 text-2xl"></i>
                                     </div>
-                                    <div class="flex-1 mt-1">
+                                    <div class="flex-1 mt-1.5">
                                         <p class="text-[12px] font-bold text-blue-500 uppercase tracking-widest mb-2">${escapeHTML(g.name)} 公告</p>
                                         <p class="text-[16px] text-theme-text font-bold leading-relaxed whitespace-pre-wrap">${escapeHTML(g.announcement)}</p>
                                     </div>
@@ -1351,7 +1317,7 @@
                         const cStyle = `style="--subj-color-soft: ${hexToRgba(hexColor, 1)};"`;
                         const cClass = `glass-card task-card-anim p-7 relative flex flex-col hover:shadow-xl transition-all duration-300 ${done?'opacity-60 grayscale-[20%]':''} ${dateInfo.isOverdue && !done?'ring-2 ring-red-500/50 shadow-[0_0_20px_rgba(239,68,68,0.15)]':''}`; 
                         
-                        const tagBaseClass = "px-3.5 py-1.5 rounded-xl text-[12px] font-bold tracking-widest uppercase border flex items-center h-[30px]";
+                        const tagBaseClass = "px-3.5 py-1.5 rounded-[12px] text-[12px] font-bold tracking-widest uppercase border flex items-center h-[32px]";
                         
                         let bTagHtml = '';
                         if (exam) {
@@ -1372,17 +1338,17 @@
                                 <div class="absolute inset-0 bg-black/40 opacity-0 group-hover/img:opacity-100 transition-opacity duration-300 flex items-center justify-center z-10">
                                     <i class="fa-solid fa-magnifying-glass-plus text-white text-4xl transform scale-50 group-hover/img:scale-100 transition-transform duration-300"></i>
                                 </div>
-                                <img src="${t.attachment}" class="w-full h-40 object-cover transform group-hover/img:scale-105 transition-transform duration-500">
+                                <img src="${t.attachment}" class="w-full h-44 object-cover transform group-hover/img:scale-105 transition-transform duration-500">
                             </div>
                         ` : '';
 
                         const checkBtn = !done ? `
-                            <button class="w-12 h-12 rounded-full border-2 border-theme-border hover:border-brand-500 flex items-center justify-center text-transparent hover:text-white transition-all duration-300 group shadow-sm bg-theme-bg/50 shrink-0" onclick="app.tasks.markComplete('${t.id}', this.closest('.task-card-anim'))" title="標記完成">
+                            <button class="w-12 h-12 rounded-full border-2 border-theme-border hover:border-brand-500 flex items-center justify-center text-transparent hover:text-white transition-all duration-300 group shadow-sm bg-theme-bg/50 shrink-0 min-h-[48px] min-w-[48px]" onclick="app.tasks.markComplete('${t.id}', this.closest('.task-card-anim'))" title="標記完成">
                                 <div class="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity rounded-full bg-brand-500"></div>
                                 <i class="fa-solid fa-check text-[18px] relative z-10 transform scale-50 group-hover:scale-100 transition-transform duration-300"></i>
                             </button>
                         ` : `
-                            <div class="w-12 h-12 rounded-full flex items-center justify-center text-white shadow-inner bg-emerald-500 shrink-0">
+                            <div class="w-12 h-12 rounded-full flex items-center justify-center text-white shadow-inner bg-emerald-500 shrink-0 min-h-[48px] min-w-[48px]">
                                 <i class="fa-solid fa-check text-[18px]"></i>
                             </div>
                         `;
@@ -1412,11 +1378,11 @@
                                             </div>
                                             <div class="flex items-center gap-2 shrink-0">
                                                 ${!done ? `
-                                                    <button class="w-12 h-12 rounded-[16px] text-theme-muted hover:text-brand-500 hover:bg-theme-input transition-all active:scale-90 flex items-center justify-center border border-transparent hover:border-theme-border" title="編輯" onclick="app.tasks.edit('${t.id}')"><i class="fa-solid fa-pen text-[16px]"></i></button>
-                                                    <button class="w-12 h-12 rounded-[16px] text-theme-muted hover:text-red-500 hover:bg-red-500/10 transition-all active:scale-90 flex items-center justify-center border border-transparent hover:border-red-500/20" title="刪除" onclick="app.tasks.confirmDelete('${t.id}')"><i class="fa-regular fa-trash-can text-[18px]"></i></button>
+                                                    <button class="w-12 h-12 rounded-[16px] text-theme-muted hover:text-brand-500 hover:bg-theme-input transition-all active:scale-90 flex items-center justify-center border border-transparent hover:border-theme-border min-h-[48px] min-w-[48px]" title="編輯" onclick="app.tasks.edit('${t.id}')"><i class="fa-solid fa-pen text-[17px]"></i></button>
+                                                    <button class="w-12 h-12 rounded-[16px] text-theme-muted hover:text-red-500 hover:bg-red-500/10 transition-all active:scale-90 flex items-center justify-center border border-transparent hover:border-red-500/20 min-h-[48px] min-w-[48px]" title="刪除" onclick="app.tasks.confirmDelete('${t.id}')"><i class="fa-regular fa-trash-can text-[18px]"></i></button>
                                                 ` : `
-                                                    <button class="w-12 h-12 rounded-[16px] text-theme-muted hover:text-brand-500 hover:bg-brand-500/10 transition-all active:scale-90 flex items-center justify-center border border-transparent hover:border-brand-500/20" title="取消完成 / 移回清單" onclick="app.tasks.undoComplete('${t.id}')"><i class="fa-solid fa-rotate-left text-[16px]"></i></button>
-                                                    <button class="w-12 h-12 rounded-[16px] text-theme-muted hover:text-red-500 hover:bg-red-500/10 transition-all active:scale-90 flex items-center justify-center border border-transparent hover:border-red-500/20" title="刪除" onclick="app.tasks.confirmDelete('${t.id}')"><i class="fa-regular fa-trash-can text-[18px]"></i></button>
+                                                    <button class="w-12 h-12 rounded-[16px] text-theme-muted hover:text-brand-500 hover:bg-brand-500/10 transition-all active:scale-90 flex items-center justify-center border border-transparent hover:border-brand-500/20 min-h-[48px] min-w-[48px]" title="取消完成 / 移回清單" onclick="app.tasks.undoComplete('${t.id}')"><i class="fa-solid fa-rotate-left text-[17px]"></i></button>
+                                                    <button class="w-12 h-12 rounded-[16px] text-theme-muted hover:text-red-500 hover:bg-red-500/10 transition-all active:scale-90 flex items-center justify-center border border-transparent hover:border-red-500/20 min-h-[48px] min-w-[48px]" title="刪除" onclick="app.tasks.confirmDelete('${t.id}')"><i class="fa-regular fa-trash-can text-[18px]"></i></button>
                                                 `}
                                             </div>
                                         </div>
@@ -1457,7 +1423,7 @@
                                 options: {
                                     responsive: true, maintainAspectRatio: false,
                                     plugins: {
-                                        legend: { position: 'right', labels: { color: isDark ? '#9ca3af' : '#64748b', font: { family: 'Inter', weight: 'bold' } } }
+                                        legend: { position: 'right', labels: { color: isDark ? '#9ca3af' : '#64748b', font: { family: 'Inter', weight: 'bold' }, padding: 20 } }
                                     },
                                     layout: { padding: 10 }
                                 }
@@ -1487,7 +1453,7 @@
                         const hex = s.color || '#6366f1';
                         const rgbaBg = hexToRgba(hex, 0.15);
                         
-                        b.className = `snap-item shrink-0 px-8 h-[52px] rounded-2xl font-bold text-[15px] transition-all duration-400 font-literary tracking-wider border shadow-sm flex items-center justify-center min-w-[80px] ${isActive ? 'scale-105' : 'border-transparent hover:bg-theme-border opacity-70 hover:opacity-100'}`; 
+                        b.className = `snap-item shrink-0 px-8 h-[56px] rounded-[20px] font-bold text-[16px] transition-all duration-400 font-literary tracking-wider border shadow-sm flex items-center justify-center min-w-[80px] min-h-[48px] ${isActive ? 'scale-105' : 'border-transparent hover:bg-theme-border opacity-70 hover:opacity-100'}`; 
                         
                         if(isActive) {
                             b.style.backgroundColor = rgbaBg;
@@ -1519,7 +1485,7 @@
                     else {
                         state.groups.forEach(g => { 
                             const isAdmin = state.user && g.providerId === state.user.uid;
-                            const actionBtn = isAdmin ? `<button onclick="app.groups.setAnnouncementModal('${g.id}', decodeURIComponent('${safeStr(g.announcement || '')}'))" class="w-12 h-12 rounded-[16px] bg-blue-500/10 text-blue-500 flex items-center justify-center hover:bg-blue-500 hover:text-white transition-all active:scale-90 ml-4 shrink-0 shadow-sm min-w-[48px]"><i class="fa-solid fa-bullhorn text-[18px]"></i></button>` : '';
+                            const actionBtn = isAdmin ? `<button onclick="app.groups.setAnnouncementModal('${g.id}', decodeURIComponent('${safeStr(g.announcement || '')}'))" class="w-14 h-14 rounded-[20px] bg-blue-500/10 text-blue-500 flex items-center justify-center hover:bg-blue-500 hover:text-white transition-all active:scale-90 ml-4 shrink-0 shadow-sm min-w-[56px] min-h-[56px]"><i class="fa-solid fa-bullhorn text-[20px]"></i></button>` : '';
                             
                             if(isAdmin) {
                                 const pt = document.getElementById('provider-target-section');
@@ -1528,7 +1494,7 @@
                                 if(pc) pc.classList.remove('hidden');
                             }
                             
-                            if(l) l.innerHTML += `<div class="bg-theme-input/50 p-6 rounded-[28px] border border-theme-border flex justify-between items-center hover:border-brand-500/30 hover:shadow-md transition-all duration-300 hover:-translate-y-1"><div class="flex-1 min-w-0"><p class="text-[18px] font-black text-theme-text truncate tracking-tight">${escapeHTML(g.name)} ${isAdmin?'<span class="bg-pink-500/10 text-pink-500 text-[11px] px-3 py-1.5 rounded-xl ml-3 border border-pink-500/20 align-text-bottom tracking-widest">ADMIN</span>':''}</p><p class="text-[13px] text-theme-muted font-mono mt-2.5 font-bold tracking-wide">代碼: <span class="text-brand-500 bg-brand-500/10 px-2 py-0.5 rounded-lg">${g.code}</span> <span class="mx-3 opacity-30">|</span> 成員: ${g.members.length}</p></div>${actionBtn}</div>`; 
+                            if(l) l.innerHTML += `<div class="bg-theme-input/50 p-6 rounded-[28px] border border-theme-border flex justify-between items-center hover:border-brand-500/30 hover:shadow-md transition-all duration-300 hover:-translate-y-1"><div class="flex-1 min-w-0"><p class="text-[20px] font-black text-theme-text truncate tracking-tight">${escapeHTML(g.name)} ${isAdmin?'<span class="bg-pink-500/10 text-pink-500 text-[11px] px-3 py-1.5 rounded-[10px] ml-3 border border-pink-500/20 align-text-bottom tracking-widest">ADMIN</span>':''}</p><p class="text-[14px] text-theme-muted font-mono mt-2.5 font-bold tracking-wide">代碼: <span class="text-brand-500 bg-brand-500/10 px-2.5 py-1 rounded-lg">${g.code}</span> <span class="mx-3 opacity-30">|</span> 成員: ${g.members.length}</p></div>${actionBtn}</div>`; 
                         });
                     }
                 }
@@ -1536,13 +1502,13 @@
             tasks: {
                 openFilterSubjectModal: () => {
                     const currentVal = state.filters.subject;
-                    let html = `<h3 class="text-[28px] font-black text-theme-text mb-8">選擇篩選科目</h3><div class="flex flex-wrap gap-3 max-h-[60vh] overflow-y-auto no-scrollbar pb-6">`;
-                    html += `<button onclick="app.tasks.setFilterSubject('all')" class="whitespace-nowrap px-6 h-[52px] rounded-2xl font-bold text-[15px] transition-all duration-300 font-literary tracking-wide border shadow-sm flex items-center justify-center min-w-[48px] ${currentVal === 'all' ? 'bg-theme-card text-brand-600 border-brand-500/50 scale-105 ring-2 ring-brand-500/20' : 'bg-theme-input text-theme-muted border-transparent hover:bg-theme-border'}">所有科目</button>`;
+                    let html = `<h3 class="text-[28px] font-black text-theme-text mb-8">選擇篩選科目</h3><div class="flex flex-wrap gap-4 max-h-[60vh] overflow-y-auto no-scrollbar pb-6">`;
+                    html += `<button onclick="app.tasks.setFilterSubject('all')" class="whitespace-nowrap px-6 h-[56px] rounded-2xl font-bold text-[16px] transition-all duration-300 font-literary tracking-wide border shadow-sm flex items-center justify-center min-w-[48px] min-h-[48px] ${currentVal === 'all' ? 'bg-theme-card text-brand-600 border-brand-500/50 scale-105 ring-2 ring-brand-500/20' : 'bg-theme-input text-theme-muted border-transparent hover:bg-theme-border'}">所有科目</button>`;
                     state.subjects.forEach(s => {
                         const hex = s.color || '#6366f1';
                         const isActive = currentVal === s.name;
                         const dynamicBg = isActive ? `background: ${hex}20; color: ${hex}; border-color: ${hex}50;` : '';
-                        html += `<button onclick="app.tasks.setFilterSubject(decodeURIComponent('${safeStr(s.name)}'))" class="whitespace-nowrap px-6 h-[52px] rounded-2xl font-bold text-[15px] transition-all duration-300 font-literary tracking-wide border shadow-sm flex items-center justify-center min-w-[48px] ${isActive ? 'scale-105 ring-2' : 'bg-theme-input text-theme-muted border-transparent hover:bg-theme-border'}" style="${dynamicBg}">${escapeHTML(s.name)}</button>`;
+                        html += `<button onclick="app.tasks.setFilterSubject(decodeURIComponent('${safeStr(s.name)}'))" class="whitespace-nowrap px-6 h-[56px] rounded-2xl font-bold text-[16px] transition-all duration-300 font-literary tracking-wide border shadow-sm flex items-center justify-center min-w-[48px] min-h-[48px] ${isActive ? 'scale-105 ring-2' : 'bg-theme-input text-theme-muted border-transparent hover:bg-theme-border'}" style="${dynamicBg}">${escapeHTML(s.name)}</button>`;
                     });
                     html += `</div>`;
                     UI.sheet.open(html);
@@ -1615,9 +1581,9 @@
                     if(typeEl) typeEl.value = type; 
                     
                     const bt = document.getElementById('type-btn-task'), be = document.getElementById('type-btn-exam'); 
-                    const activeClass = 'flex-1 py-4 text-[17px] font-bold rounded-[18px] bg-theme-card text-brand-600 shadow-md border border-theme-border transition-all flex justify-center items-center gap-2 min-h-[56px]';
-                    const activeClassExam = 'flex-1 py-4 text-[17px] font-bold rounded-[18px] bg-theme-card text-pink-600 shadow-md border border-theme-border transition-all flex justify-center items-center gap-2 min-h-[56px]';
-                    const inactiveClass = 'flex-1 py-4 text-[17px] font-semibold rounded-[18px] text-theme-muted border border-transparent hover:text-theme-text transition-all flex justify-center items-center gap-2 min-h-[56px]';
+                    const activeClass = 'flex-1 py-4 text-[17px] font-bold rounded-[20px] bg-theme-card text-brand-600 shadow-md border border-theme-border transition-all flex justify-center items-center gap-2 min-h-[60px]';
+                    const activeClassExam = 'flex-1 py-4 text-[17px] font-bold rounded-[20px] bg-theme-card text-pink-600 shadow-md border border-theme-border transition-all flex justify-center items-center gap-2 min-h-[60px]';
+                    const inactiveClass = 'flex-1 py-4 text-[17px] font-semibold rounded-[20px] text-theme-muted border border-transparent hover:text-theme-text transition-all flex justify-center items-center gap-2 min-h-[60px]';
                     
                     if(bt && be) {
                         if(type === 'task') { bt.className = activeClass; be.className = inactiveClass; } 
@@ -1703,7 +1669,7 @@
                     let html = `<h3 class="text-[28px] font-black text-theme-text mb-8">自動重複設定</h3><div class="flex flex-col gap-4">`;
                     options.forEach(o => {
                         const isActive = currentVal === o.val;
-                        html += `<button onclick="app.tasks.setRepeat('${o.val}', '${o.label}')" class="w-full text-left px-6 h-[64px] rounded-2xl border ${isActive ? 'bg-brand-500/10 border-brand-500/40 text-brand-600 font-bold shadow-md scale-[1.02]' : 'bg-theme-input/50 border-theme-border text-theme-text font-bold hover:bg-theme-border'} transition-all duration-300 text-[16px] min-h-[48px]"><div class="flex items-center justify-between"><span>${o.label}</span> ${isActive ? '<i class="fa-solid fa-circle-check text-brand-500 text-xl"></i>' : ''}</div></button>`;
+                        html += `<button onclick="app.tasks.setRepeat('${o.val}', '${o.label}')" class="w-full text-left px-6 h-[64px] rounded-[20px] border ${isActive ? 'bg-brand-500/10 border-brand-500/40 text-brand-600 font-bold shadow-md scale-[1.02]' : 'bg-theme-input/50 border-theme-border text-theme-text font-bold hover:bg-theme-border'} transition-all duration-300 text-[17px] min-h-[48px]"><div class="flex items-center justify-between"><span>${o.label}</span> ${isActive ? '<i class="fa-solid fa-circle-check text-brand-500 text-xl"></i>' : ''}</div></button>`;
                     });
                     html += `</div>`;
                     UI.sheet.open(html);
@@ -1733,12 +1699,12 @@
                     let html = `<h3 class="text-[28px] font-black text-theme-text mb-8">選擇發放對象</h3><div class="flex flex-col gap-4 max-h-[60vh] overflow-y-auto no-scrollbar pb-6">`;
                     
                     const isSelf = currentVal === 'self';
-                    html += `<button onclick="app.tasks.setTarget('self', '私人任務 (僅自己可見)')" class="w-full text-left p-6 rounded-[24px] border ${isSelf ? 'bg-pink-500/10 border-pink-500/40 text-pink-600 font-bold shadow-md scale-[1.02]' : 'bg-theme-input/50 border-theme-border text-theme-text font-bold hover:bg-theme-border'} transition-all duration-300 text-[16px] min-h-[56px]"><div class="flex items-center justify-between"><span>私人任務 (僅自己可見)</span> ${isSelf ? '<i class="fa-solid fa-circle-check text-pink-500 text-xl"></i>' : ''}</div></button>`;
+                    html += `<button onclick="app.tasks.setTarget('self', '私人任務 (僅自己可見)')" class="w-full text-left p-6 rounded-[24px] border ${isSelf ? 'bg-pink-500/10 border-pink-500/40 text-pink-600 font-bold shadow-md scale-[1.02]' : 'bg-theme-input/50 border-theme-border text-theme-text font-bold hover:bg-theme-border'} transition-all duration-300 text-[17px] min-h-[56px]"><div class="flex items-center justify-between"><span>私人任務 (僅自己可見)</span> ${isSelf ? '<i class="fa-solid fa-circle-check text-pink-500 text-xl"></i>' : ''}</div></button>`;
 
                     state.groups.forEach(g => {
                         if (g.providerId === state.user.uid) {
                             const isGroup = currentVal === g.id;
-                            html += `<button onclick="app.tasks.setTarget('${g.id}', decodeURIComponent('${safeStr('群組: ' + g.name)}'))" class="w-full text-left p-6 rounded-[24px] border ${isGroup ? 'bg-pink-500/10 border-pink-500/40 text-pink-600 font-bold shadow-md scale-[1.02]' : 'bg-theme-input/50 border-theme-border text-theme-text font-bold hover:bg-theme-border'} transition-all duration-300 text-[16px] min-h-[56px]"><div class="flex items-center justify-between"><span>群組: ${escapeHTML(g.name)}</span> ${isGroup ? '<i class="fa-solid fa-circle-check text-pink-500 text-xl"></i>' : ''}</div></button>`;
+                            html += `<button onclick="app.tasks.setTarget('${g.id}', decodeURIComponent('${safeStr('群組: ' + g.name)}'))" class="w-full text-left p-6 rounded-[24px] border ${isGroup ? 'bg-pink-500/10 border-pink-500/40 text-pink-600 font-bold shadow-md scale-[1.02]' : 'bg-theme-input/50 border-theme-border text-theme-text font-bold hover:bg-theme-border'} transition-all duration-300 text-[17px] min-h-[56px]"><div class="flex items-center justify-between"><span>群組: ${escapeHTML(g.name)}</span> ${isGroup ? '<i class="fa-solid fa-circle-check text-pink-500 text-xl"></i>' : ''}</div></button>`;
                         }
                     });
                     
@@ -1826,7 +1792,7 @@
                         if (saveBtn) {
                             if(typeof gsap !== 'undefined') gsap.killTweensOf(saveBtn);
                             saveBtn.innerHTML = '<i class="fa-solid fa-check text-3xl"></i> <span class="tracking-widest">SUCCESS!</span>';
-                            saveBtn.className = 'w-full mt-auto h-[72px] bg-gradient-to-r from-emerald-500 to-emerald-400 text-white rounded-[24px] font-black shadow-[0_10px_30px_rgba(16,185,129,0.5)] transition-all duration-300 flex justify-center items-center gap-3 text-[18px] tracking-wider border border-transparent min-h-[56px]';
+                            saveBtn.className = 'w-full mt-auto h-[76px] bg-gradient-to-r from-emerald-500 to-emerald-400 text-white rounded-[24px] font-black shadow-[0_10px_30px_rgba(16,185,129,0.5)] transition-all duration-300 flex justify-center items-center gap-3 text-[20px] tracking-wider border border-transparent min-h-[60px]';
                             if(typeof gsap !== 'undefined') gsap.fromTo(saveBtn, { scale: 0.9 }, { scale: 1.05, duration: 0.6, ease: "elastic.out(1, 0.4)" });
                         }
                         
@@ -1835,7 +1801,7 @@
                             setTimeout(() => {
                                 if(saveBtn) {
                                     saveBtn.innerHTML = originalBtnHtml;
-                                    saveBtn.className = 'w-full mt-auto h-[72px] bg-gradient-to-r from-brand-600 to-brand-500 hover:from-brand-500 hover:to-brand-400 text-white rounded-[24px] font-black shadow-[0_10px_30px_rgba(99,102,241,0.4)] hover:-translate-y-1 hover:shadow-[0_15px_40px_rgba(99,102,241,0.6)] active:scale-95 transition-all duration-300 flex justify-center items-center gap-3 text-[18px] tracking-wider border border-transparent overflow-hidden relative group min-h-[56px]';
+                                    saveBtn.className = 'w-full mt-auto h-[76px] bg-gradient-to-r from-brand-600 to-brand-500 hover:from-brand-500 hover:to-brand-400 text-white rounded-[24px] font-black shadow-[0_10px_30px_rgba(99,102,241,0.4)] hover:-translate-y-1 hover:shadow-[0_15px_40px_rgba(99,102,241,0.6)] active:scale-95 transition-all duration-300 flex justify-center items-center gap-3 text-[20px] tracking-wider border border-transparent overflow-hidden relative group min-h-[60px]';
                                 }
                             }, 500);
                         }, 800);
@@ -1845,7 +1811,7 @@
                         if(saveBtn) {
                             if(typeof gsap !== 'undefined') gsap.killTweensOf(saveBtn);
                             saveBtn.innerHTML = originalBtnHtml;
-                            saveBtn.className = 'w-full mt-auto h-[72px] bg-gradient-to-r from-brand-600 to-brand-500 hover:from-brand-500 hover:to-brand-400 text-white rounded-[24px] font-black shadow-[0_10px_30px_rgba(99,102,241,0.4)] hover:-translate-y-1 hover:shadow-[0_15px_40px_rgba(99,102,241,0.6)] active:scale-95 transition-all duration-300 flex justify-center items-center gap-3 text-[18px] tracking-wider border border-transparent overflow-hidden relative group min-h-[56px]';
+                            saveBtn.className = 'w-full mt-auto h-[76px] bg-gradient-to-r from-brand-600 to-brand-500 hover:from-brand-500 hover:to-brand-400 text-white rounded-[24px] font-black shadow-[0_10px_30px_rgba(99,102,241,0.4)] hover:-translate-y-1 hover:shadow-[0_15px_40px_rgba(99,102,241,0.6)] active:scale-95 transition-all duration-300 flex justify-center items-center gap-3 text-[20px] tracking-wider border border-transparent overflow-hidden relative group min-h-[60px]';
                         }
                     }
                 },
@@ -1934,7 +1900,7 @@
                         UI.notify('操作失敗', 'error');
                     }
                 },
-                confirmDelete: (id) => { UI.modal.open(`<div class="text-center"><div class="w-24 h-24 bg-red-500/10 rounded-[32px] flex items-center justify-center mx-auto mb-8 shadow-inner border border-red-500/20"><i class="fa-solid fa-trash-can text-red-500 text-5xl drop-shadow-md"></i></div><h3 class="text-[28px] font-black text-theme-text mb-4 tracking-tight">刪除任務？</h3><p class="text-theme-muted text-[16px] mb-10 font-medium">刪除後將無法從歷史紀錄中找回。</p><div class="flex gap-4"><button onclick="app.UI.modal.close()" class="flex-1 glass-card py-4 font-bold text-theme-text hover:-translate-y-1 hover:bg-theme-input active:scale-95 transition-all duration-300 text-[16px] min-h-[56px]">取消</button><button onclick="app.tasks.doDelete('${id}')" class="flex-1 bg-red-600 hover:bg-red-500 rounded-[20px] py-4 font-bold text-white shadow-[0_5px_20px_rgba(239,68,68,0.4)] hover:-translate-y-1 active:scale-95 transition-all duration-300 text-[16px] border border-transparent min-h-[56px]">確認刪除</button></div></div>`); },
+                confirmDelete: (id) => { UI.modal.open(`<div class="text-center"><div class="w-24 h-24 bg-red-500/10 rounded-[32px] flex items-center justify-center mx-auto mb-8 shadow-inner border border-red-500/20"><i class="fa-solid fa-trash-can text-red-500 text-5xl drop-shadow-md"></i></div><h3 class="text-[28px] font-black text-theme-text mb-4 tracking-tight">刪除任務？</h3><p class="text-[16px] text-theme-muted mb-10 font-medium">刪除後將無法從歷史紀錄中找回。</p><div class="flex gap-4"><button onclick="app.UI.modal.close()" class="flex-1 glass-card py-4 font-bold text-theme-text hover:-translate-y-1 hover:bg-theme-input active:scale-95 transition-all duration-300 text-[16px] min-h-[56px]">取消</button><button onclick="app.tasks.doDelete('${id}')" class="flex-1 bg-red-600 hover:bg-red-500 rounded-[20px] py-4 font-bold text-white shadow-[0_5px_20px_rgba(239,68,68,0.4)] hover:-translate-y-1 active:scale-95 transition-all duration-300 text-[16px] border border-transparent min-h-[56px]">確認刪除</button></div></div>`); },
                 doDelete: async (id) => { try { await deleteDoc(doc(db, API.paths.tasks(), id)); AdminService.log('TASK_DELETED', { taskId: id }); UI.modal.close(); UI.notify('已永久刪除'); } catch(e) { UI.notify('刪除失敗', 'error'); } }
             },
             timetable: {
@@ -1952,14 +1918,14 @@
                     html += `<p class="text-[14px] text-theme-muted mb-8 font-medium">您可以自訂專屬的循環日，如「Day A」或「第一週星期一」。</p>`;
                     
                     html += `<div class="flex gap-4 mb-8">
-                        <input type="text" id="new-day-input" class="premium-input px-6 text-[16px] shadow-sm h-[60px]" placeholder="輸入新日別...">
+                        <input type="text" id="new-day-input" class="premium-input px-6 text-[17px] shadow-sm h-[60px]" placeholder="輸入新日別...">
                         <button onclick="app.timetable.addCustomDay()" class="bg-brand-600 hover:bg-brand-500 text-white w-[60px] h-[60px] rounded-[20px] font-bold transition-all shadow-[0_5px_15px_rgba(99,102,241,0.3)] active:scale-90 flex items-center justify-center shrink-0"><i class="fa-solid fa-plus text-2xl"></i></button>
                     </div>`;
 
                     html += `<div class="flex flex-col gap-4 max-h-[40vh] overflow-y-auto no-scrollbar">`;
                     state.customDays.forEach((day, index) => {
                         html += `<div class="flex justify-between items-center bg-theme-input/50 p-5 rounded-[24px] border border-theme-border shadow-sm hover:shadow-md transition-all">
-                            <span class="font-bold text-[17px] text-theme-text tracking-wide font-display pl-2">${escapeHTML(day)}</span>
+                            <span class="font-bold text-[18px] text-theme-text tracking-wide font-display pl-2">${escapeHTML(day)}</span>
                             <button onclick="app.timetable.deleteCustomDay(${index})" class="text-red-500 hover:text-white w-12 h-12 flex items-center justify-center bg-red-500/10 hover:bg-red-500 rounded-[16px] transition-all active:scale-90 min-h-[48px] min-w-[48px]"><i class="fa-solid fa-trash text-[18px]"></i></button>
                         </div>`;
                     });
@@ -2040,10 +2006,10 @@
                     let dayHtml = '';
                     let useDays = ttMode === 'week' ? ['星期一', '星期二', '星期三', '星期四', '星期五'] : state.customDays;
                     
-                    dayHtml = useDays.map(d => `<button class="snap-item whitespace-nowrap px-7 h-[52px] rounded-2xl font-bold text-[15px] transition-all duration-300 font-literary tracking-wide border shadow-sm shrink-0 flex items-center justify-center ${state.currentDayTab===d?'bg-theme-card text-brand-600 border-brand-500/50 scale-105 ring-2 ring-brand-500/20':'bg-theme-input text-theme-muted border-transparent hover:bg-theme-border opacity-80 hover:opacity-100'}" onclick="app.timetable.changeDay('${safeStr(d)}')">${escapeHTML(d)}</button>`).join('');
+                    dayHtml = useDays.map(d => `<button class="snap-item whitespace-nowrap px-8 h-[56px] rounded-[20px] font-bold text-[16px] transition-all duration-300 font-literary tracking-wide border shadow-sm shrink-0 flex items-center justify-center min-w-[60px] ${state.currentDayTab===d?'bg-theme-card text-brand-600 border-brand-500/50 scale-105 ring-2 ring-brand-500/20':'bg-theme-input text-theme-muted border-transparent hover:bg-theme-border opacity-80 hover:opacity-100'}" onclick="app.timetable.changeDay('${safeStr(d)}')">${escapeHTML(d)}</button>`).join('');
                     
                     if (ttMode !== 'week') {
-                        dayHtml += `<button class="snap-item w-14 h-[52px] shrink-0 flex items-center justify-center rounded-2xl bg-theme-input text-theme-muted hover:text-brand-500 transition-colors shadow-sm border border-transparent hover:border-theme-border active:scale-95 min-w-[56px]" onclick="app.timetable.openManageDaysModal()"><i class="fa-solid fa-gear text-lg"></i></button>`;
+                        dayHtml += `<button class="snap-item w-[56px] h-[56px] shrink-0 flex items-center justify-center rounded-[20px] bg-theme-input text-theme-muted hover:text-brand-500 transition-colors shadow-sm border border-transparent hover:border-theme-border active:scale-95 min-w-[56px]" onclick="app.timetable.openManageDaysModal()"><i class="fa-solid fa-gear text-xl"></i></button>`;
                     }
                     if(selectorContainer) selectorContainer.innerHTML = dayHtml;
 
@@ -2066,9 +2032,9 @@
 
                     if(slots.length === 0) { 
                         if (app.timetable.isEditMode) {
-                            if(c) c.innerHTML = `<div class="py-24 text-center flex flex-col items-center justify-center"><div class="w-24 h-24 bg-theme-input text-theme-muted rounded-[32px] flex items-center justify-center mb-6 shadow-inner border border-theme-border"><i class="fa-solid fa-calendar-plus text-4xl"></i></div><p class="text-theme-text text-[18px] font-bold tracking-wide mb-8 font-display">此日尚未設定</p><button onclick="app.timetable.generateDefault(decodeURIComponent('${safeStr(state.currentDayTab)}'))" class="px-8 h-[56px] rounded-[20px] bg-brand-500 hover:bg-brand-600 text-white font-bold text-[16px] shadow-[0_5px_15px_rgba(99,102,241,0.4)] active:scale-95 transition-all duration-300 flex items-center justify-center min-h-[48px]">自動生成預設時段</button></div>`; 
+                            if(c) c.innerHTML = `<div class="py-24 text-center flex flex-col items-center justify-center"><div class="w-24 h-24 bg-theme-input text-theme-muted rounded-[32px] flex items-center justify-center mb-6 shadow-inner border border-theme-border"><i class="fa-solid fa-calendar-plus text-4xl"></i></div><p class="text-theme-text text-[20px] font-bold tracking-wide mb-8 font-display">此日尚未設定</p><button onclick="app.timetable.generateDefault(decodeURIComponent('${safeStr(state.currentDayTab)}'))" class="px-10 h-[60px] rounded-[24px] bg-brand-500 hover:bg-brand-600 text-white font-bold text-[17px] shadow-[0_5px_15px_rgba(99,102,241,0.4)] active:scale-95 transition-all duration-300 flex items-center justify-center min-h-[48px]">自動生成預設時段</button></div>`; 
                         } else {
-                            if(c) c.innerHTML = `<div class="py-24 text-center flex flex-col items-center justify-center"><div class="w-24 h-24 bg-theme-input text-theme-muted rounded-[32px] flex items-center justify-center mb-6 shadow-inner border border-theme-border"><i class="fa-solid fa-calendar-xmark text-4xl"></i></div><p class="text-theme-text text-[18px] font-bold tracking-wide mb-8 font-display">此日尚未設定</p><button onclick="app.timetable.toggleEditMode()" class="px-8 h-[56px] rounded-[20px] bg-brand-500/10 text-brand-600 dark:text-brand-400 font-bold text-[16px] hover:bg-brand-500/20 active:scale-95 transition-all duration-300 flex items-center justify-center min-h-[48px]">開始編輯</button></div>`; 
+                            if(c) c.innerHTML = `<div class="py-24 text-center flex flex-col items-center justify-center"><div class="w-24 h-24 bg-theme-input text-theme-muted rounded-[32px] flex items-center justify-center mb-6 shadow-inner border border-theme-border"><i class="fa-solid fa-calendar-xmark text-4xl"></i></div><p class="text-theme-text text-[20px] font-bold tracking-wide mb-8 font-display">此日尚未設定</p><button onclick="app.timetable.toggleEditMode()" class="px-10 h-[60px] rounded-[24px] bg-brand-500/10 text-brand-600 dark:text-brand-400 font-bold text-[17px] hover:bg-brand-500/20 active:scale-95 transition-all duration-300 flex items-center justify-center min-h-[48px]">開始編輯</button></div>`; 
                         }
                         return; 
                     }
@@ -2077,45 +2043,45 @@
                     let html = '';
 
                     if (app.timetable.isEditMode) {
-                        html += `<div class="flex text-[12px] font-bold text-theme-muted mb-4 px-2 uppercase tracking-widest">
+                        html += `<div class="flex text-[13px] font-bold text-theme-muted mb-4 px-2 uppercase tracking-widest">
                             <div class="w-8 shrink-0"></div>
-                            <div class="w-[85px] shrink-0 text-center">時間段</div>
-                            <div class="flex-1 pl-3">科目細節</div>
+                            <div class="w-[90px] shrink-0 text-center">時間段</div>
+                            <div class="flex-1 pl-4">科目細節</div>
                             <div class="w-12 shrink-0"></div>
                         </div>`;
 
                         html += `<div id="timetable-sortable-list" class="space-y-4">`;
 
                         html += slots.map((s, index) => `
-                            <div class="flex items-center gap-3 p-4 md:p-5 bg-theme-card border border-theme-border rounded-[28px] transition-all hover:border-brand-500/40 focus-within:border-brand-500/80 shadow-sm relative group" data-id="${s.id}">
-                                <div class="drag-handle w-6 flex items-center justify-center cursor-grab text-theme-muted hover:text-brand-500 shrink-0 text-2xl active:cursor-grabbing">
+                            <div class="flex items-center gap-4 p-4 md:p-6 bg-theme-card border border-theme-border rounded-[28px] transition-all hover:border-brand-500/40 focus-within:border-brand-500/80 shadow-sm relative group" data-id="${s.id}">
+                                <div class="drag-handle w-8 h-10 flex items-center justify-center cursor-grab text-theme-muted hover:text-brand-500 shrink-0 text-2xl active:cursor-grabbing min-w-[32px] min-h-[40px]">
                                     <i class="fa-solid fa-grip-vertical"></i>
                                 </div>
                                 
-                                <div class="flex flex-col gap-1.5 w-[85px] shrink-0 bg-theme-input/50 py-3 px-2 rounded-2xl border border-theme-border/50">
-                                    <input type="time" value="${s.start}" onchange="app.timetable.updateSlotInline('${s.id}', 'start', this.value)" class="bg-transparent text-[15px] font-mono font-bold text-brand-600 dark:text-brand-400 outline-none w-full text-center tracking-tighter dark:[color-scheme:dark]">
+                                <div class="flex flex-col gap-2 w-[90px] shrink-0 bg-theme-input/50 py-3 px-2 rounded-2xl border border-theme-border/50">
+                                    <input type="time" value="${s.start}" onchange="app.timetable.updateSlotInline('${s.id}', 'start', this.value)" class="bg-transparent text-[16px] font-mono font-bold text-brand-600 dark:text-brand-400 outline-none w-full text-center tracking-tighter dark:[color-scheme:dark] min-h-[30px]">
                                     <div class="h-[2px] w-1/3 mx-auto bg-theme-border rounded-full"></div>
-                                    <input type="time" value="${s.end}" onchange="app.timetable.updateSlotInline('${s.id}', 'end', this.value)" class="bg-transparent text-[13px] font-mono text-theme-muted outline-none w-full text-center tracking-tighter dark:[color-scheme:dark]">
+                                    <input type="time" value="${s.end}" onchange="app.timetable.updateSlotInline('${s.id}', 'end', this.value)" class="bg-transparent text-[14px] font-mono text-theme-muted outline-none w-full text-center tracking-tighter dark:[color-scheme:dark] min-h-[30px]">
                                 </div>
                                 
                                 <div class="flex flex-col gap-3 flex-1 min-w-0">
-                                    <button onclick="app.timetable.openSubjectSelectModal('${s.id}')" class="bg-theme-input/50 border border-theme-border hover:border-brand-500 text-[16px] font-bold text-theme-text rounded-2xl px-4 py-3 w-full outline-none transition-colors font-literary text-left flex justify-between items-center shadow-inner min-h-[48px]">
-                                        <span class="truncate">${escapeHTML(s.subject) || '<span class="opacity-50 font-sans text-[14px]">-- 選擇科目 --</span>'}</span>
-                                        <i class="fa-solid fa-chevron-down text-[12px] opacity-50 ml-2 shrink-0"></i>
+                                    <button onclick="app.timetable.openSubjectSelectModal('${s.id}')" class="bg-theme-input/50 border border-theme-border hover:border-brand-500 text-[17px] font-bold text-theme-text rounded-[20px] px-4 py-3.5 w-full outline-none transition-colors font-literary text-left flex justify-between items-center shadow-inner min-h-[52px]">
+                                        <span class="truncate">${escapeHTML(s.subject) || '<span class="opacity-50 font-sans text-[15px]">-- 選擇科目 --</span>'}</span>
+                                        <i class="fa-solid fa-chevron-down text-[13px] opacity-50 ml-2 shrink-0"></i>
                                     </button>
-                                    <input type="text" value="${escapeHTML(s.label)}" placeholder="標籤 (例: 第1節)" onchange="app.timetable.updateSlotInline('${s.id}', 'label', this.value)" class="bg-transparent text-[14px] font-bold text-theme-muted placeholder-theme-border outline-none px-2 w-full focus:text-brand-500 transition-colors">
+                                    <input type="text" value="${escapeHTML(s.label)}" placeholder="標籤 (例: 第1節)" onchange="app.timetable.updateSlotInline('${s.id}', 'label', this.value)" class="bg-transparent text-[15px] font-bold text-theme-muted placeholder-theme-border outline-none px-3 w-full focus:text-brand-500 transition-colors min-h-[30px]">
                                 </div>
                                 
-                                <button onclick="app.timetable.deleteSlot('${s.id}')" class="absolute -top-3 -right-3 w-10 h-10 flex items-center justify-center text-red-400 hover:text-white bg-theme-bg hover:bg-red-500 border border-theme-border rounded-[16px] transition-all active:scale-90 shadow-lg opacity-0 group-hover:opacity-100 md:opacity-100 z-10 min-w-[44px] min-h-[44px]">
-                                    <i class="fa-solid fa-xmark text-[16px]"></i>
+                                <button onclick="app.timetable.deleteSlot('${s.id}')" class="absolute -top-3 -right-3 w-12 h-12 flex items-center justify-center text-red-400 hover:text-white bg-theme-bg hover:bg-red-500 border border-theme-border rounded-[20px] transition-all active:scale-90 shadow-lg opacity-0 group-hover:opacity-100 md:opacity-100 z-10 min-w-[48px] min-h-[48px]">
+                                    <i class="fa-solid fa-xmark text-[18px]"></i>
                                 </button>
                             </div>
                         `).join('');
 
                         html += `</div>`;
                     } else {
-                        html += `<div class="relative pl-10 py-6 mt-4">`;
-                        html += `<div class="absolute left-[23px] top-8 bottom-8 w-[3px] bg-theme-border/80 rounded-full"></div>`;
+                        html += `<div class="relative pl-12 py-6 mt-4">`;
+                        html += `<div class="absolute left-[27px] top-8 bottom-8 w-[4px] bg-theme-border/80 rounded-full"></div>`;
                         
                         slots.forEach((s) => {
                             const timeFormat = (time) => {
@@ -2131,13 +2097,13 @@
                             const hexColor = subjObj ? subjObj.color : '#6366f1';
                             
                             html += `
-                                <div class="relative mb-10 last:mb-2 group tt-slot-anim">
-                                    <div class="absolute -left-[32px] top-1.5 w-5 h-5 rounded-full ring-4 ring-theme-card transition-colors duration-500 z-10" style="background-color: var(--border); group-hover: background-color: ${hexColor}"></div>
-                                    <div class="flex flex-col gap-1.5 pr-2 pl-2">
-                                        <p class="text-[13px] text-theme-muted font-mono font-bold tracking-wide flex items-center gap-3">${timeStr} <span class="px-2.5 py-0.5 bg-theme-input rounded-[8px] text-[11px] font-sans text-brand-500 border border-theme-border/50">${escapeHTML(s.label)}</span></p>
+                                <div class="relative mb-12 last:mb-2 group tt-slot-anim">
+                                    <div class="absolute -left-[36px] top-2 w-6 h-6 rounded-full ring-4 ring-theme-card transition-colors duration-500 z-10" style="background-color: var(--border); group-hover: background-color: ${hexColor}"></div>
+                                    <div class="flex flex-col gap-2 pr-2 pl-3">
+                                        <p class="text-[14px] text-theme-muted font-mono font-bold tracking-wide flex items-center gap-3">${timeStr} <span class="px-3 py-1 bg-theme-input rounded-[10px] text-[12px] font-sans text-brand-500 border border-theme-border/50">${escapeHTML(s.label)}</span></p>
                                         <div class="flex justify-between items-center mt-1">
-                                            <h4 class="text-[22px] font-black text-theme-text font-literary tracking-wide group-hover:translate-x-2 transition-transform duration-300" style="group-hover: color: ${hexColor}">${escapeHTML(s.subject) || '<span class="opacity-30">空堂 / 休息</span>'}</h4>
-                                            <i class="fa-solid fa-check text-[14px] text-theme-muted opacity-30 group-hover:opacity-100 transition-opacity"></i>
+                                            <h4 class="text-[24px] font-black text-theme-text font-literary tracking-wide group-hover:translate-x-2 transition-transform duration-300" style="group-hover: color: ${hexColor}">${escapeHTML(s.subject) || '<span class="opacity-30">空堂 / 休息</span>'}</h4>
+                                            <i class="fa-solid fa-check text-[16px] text-theme-muted opacity-30 group-hover:opacity-100 transition-opacity"></i>
                                         </div>
                                     </div>
                                 </div>
@@ -2190,14 +2156,14 @@
                     const s = state.timetableConfig[state.currentDayTab].find(x => x.id === slotId);
                     if(!s) return;
                     const currentVal = s.subject || '';
-                    let html = `<h3 class="text-[28px] font-black text-theme-text mb-8">設定時間表科目</h3><div class="flex flex-wrap gap-3 max-h-[60vh] overflow-y-auto no-scrollbar pb-6">`;
+                    let html = `<h3 class="text-[28px] font-black text-theme-text mb-8">設定時間表科目</h3><div class="flex flex-wrap gap-4 max-h-[60vh] overflow-y-auto no-scrollbar pb-6">`;
                     
-                    html += `<button onclick="app.timetable.updateSlotInline('${slotId}', 'subject', ''); UI.sheet.close();" class="whitespace-nowrap px-6 h-[52px] rounded-[20px] font-bold text-[15px] transition-all duration-300 font-literary tracking-wide border shadow-sm flex items-center justify-center min-w-[48px] ${currentVal === '' ? 'bg-theme-card text-brand-600 border-brand-500/50 scale-105 ring-2 ring-brand-500/20' : 'bg-theme-input text-theme-muted border-transparent hover:bg-theme-border'}">-- 空堂 / 休息 --</button>`;
+                    html += `<button onclick="app.timetable.updateSlotInline('${slotId}', 'subject', ''); UI.sheet.close();" class="whitespace-nowrap px-6 h-[56px] rounded-[20px] font-bold text-[16px] transition-all duration-300 font-literary tracking-wide border shadow-sm flex items-center justify-center min-w-[48px] ${currentVal === '' ? 'bg-theme-card text-brand-600 border-brand-500/50 scale-105 ring-2 ring-brand-500/20' : 'bg-theme-input text-theme-muted border-transparent hover:bg-theme-border'}">-- 空堂 / 休息 --</button>`;
                     state.subjects.forEach(sub => {
                         const hex = sub.color || '#6366f1';
                         const isActive = currentVal === sub.name;
                         const dynamicBg = isActive ? `background: ${hexToRgba(hex, 0.15)}; color: ${hex}; border-color: ${hexToRgba(hex, 0.4)};` : '';
-                        html += `<button onclick="app.timetable.updateSlotInline('${slotId}', 'subject', decodeURIComponent('${safeStr(sub.name)}')); UI.sheet.close();" class="whitespace-nowrap px-6 h-[52px] rounded-[20px] font-bold text-[15px] transition-all duration-300 font-literary tracking-wide border shadow-sm flex items-center justify-center min-w-[48px] ${isActive ? 'scale-105 ring-2' : 'bg-theme-input text-theme-muted border-transparent hover:bg-theme-border'}" style="${dynamicBg}">${escapeHTML(sub.name)}</button>`;
+                        html += `<button onclick="app.timetable.updateSlotInline('${slotId}', 'subject', decodeURIComponent('${safeStr(sub.name)}')); UI.sheet.close();" class="whitespace-nowrap px-6 h-[56px] rounded-[20px] font-bold text-[16px] transition-all duration-300 font-literary tracking-wide border shadow-sm flex items-center justify-center min-w-[48px] ${isActive ? 'scale-105 ring-2' : 'bg-theme-input text-theme-muted border-transparent hover:bg-theme-border'}" style="${dynamicBg}">${escapeHTML(sub.name)}</button>`;
                     });
                     
                     html += `</div>`;

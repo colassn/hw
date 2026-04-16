@@ -1271,9 +1271,11 @@
                         return state.filters.sortDesc ? d2.localeCompare(d1) : d1.localeCompare(d2);
                     });
 
-                    // 🌟 極簡單行卡片渲染 (Compact 1-Line Design)
+                    // 🌟 黃金比例重構：圖文分層結構 (參考草圖設計)
                     let newHtmlTodo = '';
                     let newHtmlHist = '';
+                    
+                    const isAdmin = state.profile && state.profile.role === 'provider';
 
                     displayTasks.forEach(t => {
                         const done = t.status === 'completed', exam = t.type === 'exam';
@@ -1281,80 +1283,104 @@
                         
                         const subjObj = state.subjects.find(s => s.name === t.subject) || { color: '#6366f1' };
                         const hexColor = exam ? '#ec4899' : subjObj.color;
+                        const isGroupTask = !!t.groupId;
                         
                         const cStyle = `style="--subj-color-soft: ${hexToRgba(hexColor, 1)};"`;
                         
-                        // 🌟 縮減 Padding，改為純橫向 Flex 排版
-                        const cClass = `glass-card task-card-anim px-4 py-3 md:px-5 md:py-3.5 relative flex items-center hover:shadow-md transition-all duration-300 w-full ${done?'opacity-60 grayscale-[20%]':''} ${dateInfo.isOverdue && !done?'ring-2 ring-red-500/50 shadow-[0_0_20px_rgba(239,68,68,0.15)]':''}`; 
+                        // 基礎卡片樣式
+                        const cClass = `glass-card task-card-anim p-4 md:p-5 relative flex items-stretch gap-3 md:gap-4 transition-all duration-300 w-full group ${done?'opacity-60 grayscale-[20%]':''} ${dateInfo.isOverdue && !done?'ring-2 ring-red-500/50 shadow-[0_0_20px_rgba(239,68,68,0.15)]':''}`; 
                         
-                        const tagBaseClass = "px-2.5 py-1.5 rounded-[10px] text-[11px] font-bold tracking-widest uppercase border flex items-center shrink-0 whitespace-nowrap gap-1.5";
-                        
+                        // 頂部標籤樣式 (對齊草圖)
+                        const tagBaseClass = "px-2 py-0.5 rounded-[6px] text-[10px] font-bold tracking-wider whitespace-nowrap border";
                         let bTagHtml = '';
                         if (exam) {
-                            bTagHtml = `<span class="${tagBaseClass} bg-pink-500/10 text-pink-600 dark:text-pink-400 border-pink-500/20"><i class="fa-solid fa-triangle-exclamation"></i> 測驗</span>`;
+                            bTagHtml = `<span class="${tagBaseClass} bg-pink-500/10 text-pink-600 dark:text-pink-400 border-pink-500/20">測驗</span>`;
                         } else {
-                            bTagHtml = `<span class="${tagBaseClass}" style="background: ${hexToRgba(hexColor, 0.15)}; color: ${hexColor}; border-color: ${hexToRgba(hexColor, 0.3)};"><i class="fa-solid fa-book-bookmark"></i> ${escapeHTML(t.subject)}</span>`;
+                            bTagHtml = `<span class="${tagBaseClass}" style="background: ${hexToRgba(hexColor, 0.1)}; color: ${hexColor}; border-color: ${hexToRgba(hexColor, 0.2)};">${escapeHTML(t.subject)}</span>`;
                         }
+                        const broadcastTag = isGroupTask ? `<span class="${tagBaseClass} bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 border-indigo-500/20">廣播</span>` : '';
                         
-                        const broadcastTag = t.groupId ? `<span class="${tagBaseClass} bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 border-indigo-500/20"><i class="fa-solid fa-bullhorn"></i> 廣播</span>` : '';
-                        
+                        // 標題與內容
                         const cHtmlText = escapeHTML(t.content || '').replace(/\n/g, ' '); 
+                        const titleDisplay = t.title ? t.title : (cHtmlText || '無標題任務');
                         
-                        // 🌟 圖片改為精緻的圖標按鈕，避免破壞單行排版
+                        // 圖片改為圖標按鈕
                         const imgHtml = t.attachment ? `
-                            <button class="shrink-0 w-10 h-10 rounded-[12px] bg-brand-500/10 text-brand-600 flex items-center justify-center hover:bg-brand-500 hover:text-white transition-all duration-300 shadow-sm border border-brand-500/20 group/img relative" onclick="window.open('${t.attachment}', '_blank')" title="查看圖片附件">
-                                <i class="fa-regular fa-image text-[16px]"></i>
+                            <button class="shrink-0 text-brand-500 bg-brand-500/10 hover:bg-brand-500 hover:text-white w-6 h-6 rounded-md flex items-center justify-center transition-colors" onclick="window.open('${t.attachment}', '_blank')" title="查看圖片附件">
+                                <i class="fa-regular fa-image text-[12px]"></i>
                             </button>
                         ` : '';
 
+                        // 極簡圓環 Checkbox (對齊草圖)
                         const checkBtn = !done ? `
-                            <button class="w-10 h-10 rounded-full border-2 border-theme-border hover:border-brand-500 flex items-center justify-center text-transparent hover:text-white transition-all duration-300 group shadow-sm bg-theme-bg/50 shrink-0" onclick="app.tasks.markComplete('${t.id}', this.closest('.task-card-anim'))" title="標記完成">
+                            <button class="w-[26px] h-[26px] rounded-full border-[2px] border-theme-muted/40 hover:border-brand-500 flex items-center justify-center text-transparent hover:text-white transition-all duration-300 group shadow-sm bg-transparent shrink-0 mt-0.5" onclick="app.tasks.markComplete('${t.id}', this.closest('.task-card-anim'))" title="標記完成">
                                 <div class="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity rounded-full bg-brand-500"></div>
-                                <i class="fa-solid fa-check text-[14px] relative z-10 transform scale-50 group-hover:scale-100 transition-transform duration-300"></i>
+                                <i class="fa-solid fa-check text-[11px] relative z-10 transform scale-50 group-hover:scale-100 transition-transform duration-300"></i>
                             </button>
                         ` : `
-                            <div class="w-10 h-10 rounded-full flex items-center justify-center text-white shadow-inner bg-emerald-500 shrink-0">
-                                <i class="fa-solid fa-check text-[14px]"></i>
+                            <div class="w-[26px] h-[26px] rounded-full flex items-center justify-center text-white shadow-inner bg-emerald-500 shrink-0 mt-0.5">
+                                <i class="fa-solid fa-check text-[11px]"></i>
                             </div>
                         `;
 
-                        // 🌟 絕對單行佈局
+                        // 狀態徽章 (右上角 5天後)
+                        let badgeColors = 'bg-slate-100 text-slate-500 dark:bg-slate-800 dark:text-slate-400';
+                        if (!done && dateInfo.diff) {
+                            if(dateInfo.diffDays === 0) badgeColors = 'bg-amber-100 text-amber-700 dark:bg-amber-500/20 dark:text-amber-400';
+                            else if(dateInfo.diffDays > 0) badgeColors = 'bg-emerald-100 text-emerald-700 dark:bg-emerald-500/20 dark:text-emerald-400';
+                            else badgeColors = 'bg-red-100 text-red-700 dark:bg-red-500/20 dark:text-red-400';
+                        }
+                        const statusBadgeHtml = `<span class="px-2 py-0.5 rounded-[6px] text-[10px] font-bold tracking-widest whitespace-nowrap ${badgeColors}">${done ? '已完成' : (dateInfo.diff || '無期限')}</span>`;
+
+                        // 組合卡片結構
                         const cardHTML = `
                             <div class="${cClass}" id="task-${t.id}" ${cStyle}>
-                                <div class="flex items-center w-full gap-3 md:gap-4">
-                                    <!-- 1. Checkbox -->
-                                    <div class="shrink-0">${checkBtn}</div>
-                                    
-                                    <!-- 2. Tags (隱藏於極窄螢幕) -->
-                                    <div class="shrink-0 hidden sm:flex items-center gap-2">
+                                <!-- 左側：Checkbox -->
+                                <div class="shrink-0 flex justify-center w-[30px]">
+                                    ${checkBtn}
+                                </div>
+                                
+                                <!-- 中間：標籤、標題、日期 (核心內容堆疊) -->
+                                <div class="flex-1 min-w-0 flex flex-col justify-start">
+                                    <!-- 第一行：Tags -->
+                                    <div class="flex items-center gap-1.5 mb-1 flex-wrap">
                                         ${bTagHtml}
                                         ${broadcastTag}
                                     </div>
                                     
-                                    <!-- 3. Title & Content (單行截斷) -->
-                                    <div class="flex-1 min-w-0 flex items-baseline gap-2 truncate">
-                                        ${t.title ? `<span class="text-[16px] font-bold text-theme-text truncate font-display ${done?'line-through opacity-50':''}">${escapeHTML(t.title)}</span>` : ''}
-                                        ${cHtmlText ? `<span class="text-[13px] ${t.title ? 'text-theme-muted hidden lg:inline-block' : 'font-bold text-theme-text'} truncate font-mono ${done&&!t.title?'line-through opacity-50':''}">${cHtmlText}</span>` : ''}
-                                    </div>
+                                    <!-- 第二行：Title -->
+                                    <h3 class="text-[17px] font-black text-theme-text leading-tight truncate mb-1.5 ${done?'line-through opacity-50':''}">${escapeHTML(titleDisplay)}</h3>
                                     
-                                    <!-- 4. Date Badge & Image Icon -->
-                                    <div class="shrink-0 flex items-center gap-2">
-                                        ${imgHtml}
-                                        <div class="text-[12px] font-bold ${dateInfo.isOverdue && !done ?'text-red-500 bg-red-500/10 border-red-500/20':'text-theme-muted bg-theme-input/50 border-theme-border/50'} border px-3 py-1.5 rounded-[12px] flex items-center gap-1.5 whitespace-nowrap">
-                                            <i class="fa-regular fa-calendar"></i>
-                                            <span class="hidden md:inline">${dateInfo.full.split(' ')[0]}</span>
-                                            <span class="md:hidden">${dateInfo.diff || dateInfo.full.split(' ')[0].slice(5)}</span>
+                                    <!-- 第三行：Date & Extras -->
+                                    <div class="flex items-center gap-2 mt-auto">
+                                        <div class="text-[12px] font-medium text-theme-muted flex items-center gap-1.5">
+                                            <i class="fa-regular fa-calendar opacity-70"></i> ${dateInfo.full.split(' ')[0]}
                                         </div>
+                                        ${imgHtml}
+                                    </div>
+                                </div>
+                                
+                                <!-- 右側：狀態與操作按鈕 (垂直分隔線區分) -->
+                                <div class="shrink-0 flex flex-col items-end justify-between ml-1 pl-3 border-l border-theme-border/60">
+                                    <!-- 右上：Badge -->
+                                    <div class="mb-2">
+                                        ${statusBadgeHtml}
                                     </div>
                                     
-                                    <!-- 5. Actions -->
-                                    <div class="shrink-0 flex items-center gap-1.5 border-l border-theme-border/50 pl-3 ml-1">
+                                    <!-- 右下：Action Icons -->
+                                    <div class="flex items-center gap-1 mt-auto">
                                         ${!done ? `
-                                            <button class="w-[38px] h-[38px] rounded-[12px] text-theme-muted hover:text-brand-500 hover:bg-theme-input transition-all active:scale-90 flex items-center justify-center border border-transparent hover:border-theme-border" title="編輯" onclick="app.tasks.edit('${t.id}')"><i class="fa-solid fa-pen text-[14px]"></i></button>
+                                            <button class="w-[32px] h-[32px] rounded-xl text-theme-muted hover:bg-theme-input hover:text-brand-500 transition-all flex items-center justify-center" title="編輯" onclick="app.tasks.edit('${t.id}')"><i class="fa-solid fa-pen text-[13px]"></i></button>
                                         ` : `
-                                            <button class="w-[38px] h-[38px] rounded-[12px] text-theme-muted hover:text-brand-500 hover:bg-brand-500/10 transition-all active:scale-90 flex items-center justify-center border border-transparent hover:border-brand-500/20" title="取消完成" onclick="app.tasks.undoComplete('${t.id}')"><i class="fa-solid fa-rotate-left text-[14px]"></i></button>
+                                            <button class="w-[32px] h-[32px] rounded-xl text-theme-muted hover:bg-theme-input hover:text-brand-500 transition-all flex items-center justify-center" title="取消完成" onclick="app.tasks.undoComplete('${t.id}')"><i class="fa-solid fa-rotate-left text-[13px]"></i></button>
                                         `}
-                                        <button class="w-[38px] h-[38px] rounded-[12px] text-theme-muted hover:text-red-500 hover:bg-red-500/10 transition-all active:scale-90 flex items-center justify-center border border-transparent hover:border-red-500/20" title="刪除" onclick="app.tasks.confirmDelete('${t.id}')"><i class="fa-regular fa-trash-can text-[15px]"></i></button>
+                                        
+                                        <button class="w-[32px] h-[32px] rounded-xl text-theme-muted hover:bg-theme-input hover:text-red-500 transition-all flex items-center justify-center" title="刪除 (僅本地)" onclick="app.tasks.confirmDelete('${t.id}')"><i class="fa-regular fa-trash-can text-[14px]"></i></button>
+                                        
+                                        <!-- 🌍 管理員全域刪除 -->
+                                        ${isAdmin && isGroupTask ? `
+                                            <button class="w-[32px] h-[32px] rounded-xl text-purple-500 bg-purple-500/10 hover:bg-purple-500 hover:text-white transition-all flex items-center justify-center shadow-sm" title="全域刪除 (移除所有人功課)" onclick="app.tasks.confirmGlobalDelete('${t.id}', '${t.originalTaskId || t.id}', '${t.groupId}')"><i class="fa-solid fa-globe text-[14px]"></i></button>
+                                        ` : ''}
                                     </div>
                                 </div>
                             </div>`;
@@ -1870,7 +1896,54 @@
                     }
                 },
                 confirmDelete: (id) => { UI.modal.open(`<div class="text-center"><div class="w-24 h-24 bg-red-500/10 rounded-[32px] flex items-center justify-center mx-auto mb-8 shadow-inner border border-red-500/20"><i class="fa-solid fa-trash-can text-red-500 text-5xl drop-shadow-md"></i></div><h3 class="text-[28px] font-black text-theme-text mb-4 tracking-tight">刪除任務？</h3><p class="text-[16px] text-theme-muted mb-10 font-medium">刪除後將無法從歷史紀錄中找回。</p><div class="flex gap-4"><button onclick="app.UI.modal.close()" class="flex-1 glass-card py-4 font-bold text-theme-text hover:-translate-y-1 hover:bg-theme-input active:scale-95 transition-all duration-300 text-[16px] min-h-[56px]">取消</button><button onclick="app.tasks.doDelete('${id}')" class="flex-1 bg-red-600 hover:bg-red-500 rounded-[20px] py-4 font-bold text-white shadow-[0_5px_20px_rgba(239,68,68,0.4)] hover:-translate-y-1 active:scale-95 transition-all duration-300 text-[16px] border border-transparent min-h-[56px]">確認刪除</button></div></div>`); },
-                doDelete: async (id) => { try { await deleteDoc(doc(db, API.paths.tasks(), id)); AdminService.log('TASK_DELETED', { taskId: id }); UI.modal.close(); UI.notify('已永久刪除'); } catch(e) { UI.notify('刪除失敗', 'error'); } }
+                doDelete: async (id) => { try { await deleteDoc(doc(db, API.paths.tasks(), id)); AdminService.log('TASK_DELETED', { taskId: id }); UI.modal.close(); UI.notify('已永久刪除'); } catch(e) { UI.notify('刪除失敗', 'error'); } },
+                
+                // 🌍 全域刪除邏輯
+                confirmGlobalDelete: (localId, originalId, groupId) => {
+                    UI.modal.open(`
+                        <div class="text-center">
+                            <div class="w-24 h-24 bg-purple-500/10 rounded-[32px] flex items-center justify-center mx-auto mb-8 shadow-inner border border-purple-500/20">
+                                <i class="fa-solid fa-globe text-purple-500 text-5xl drop-shadow-md"></i>
+                            </div>
+                            <h3 class="text-[28px] font-black text-theme-text mb-4 tracking-tight">全域刪除任務？</h3>
+                            <p class="text-[15px] text-theme-muted mb-8 font-medium leading-relaxed">您正在使用管理員權限。<br>這將嘗試從<strong class="text-purple-500">所有班級成員</strong>的清單中強制移除此功課。</p>
+                            <div class="flex gap-4">
+                                <button onclick="app.UI.modal.close()" class="flex-1 glass-card py-4 font-bold text-theme-text hover:-translate-y-1 hover:bg-theme-input active:scale-95 transition-all duration-300 text-[16px] min-h-[56px]">取消</button>
+                                <button onclick="app.tasks.doGlobalDelete('${localId}', '${originalId}', '${groupId}')" class="flex-1 bg-purple-600 hover:bg-purple-500 rounded-[20px] py-4 font-bold text-white shadow-[0_5px_20px_rgba(168,85,247,0.4)] hover:-translate-y-1 active:scale-95 transition-all duration-300 text-[16px] border border-transparent min-h-[56px]">全域刪除</button>
+                            </div>
+                        </div>
+                    `);
+                },
+                doGlobalDelete: async (localId, originalId, groupId) => {
+                    try {
+                        // 1. 先刪除自己的本地副本
+                        await deleteDoc(doc(db, API.paths.tasks(), localId));
+                        AdminService.log('TASK_GLOBAL_DELETED', { taskId: localId, originalId, groupId });
+                        UI.modal.close();
+                        
+                        UI.notify('已為您刪除。系統正嘗試同步至其他成員裝置。', 'success');
+                        
+                        // 2. Client-side Fan-out Delete (嘗試為每個成員刪除)
+                        // 注意：這依賴於 Firebase Security Rules 允許 Provider 讀寫成員的 Subcollection
+                        try {
+                            const gSnap = await getDoc(doc(db, API.paths.groups(), groupId));
+                            if(gSnap.exists()) {
+                                const members = gSnap.data().members || [];
+                                members.forEach(async uid => {
+                                    if(uid === state.user.uid) return; // 自己已經刪了
+                                    try {
+                                        const q = query(collection(db, `artifacts/${internalAppId}/users/${uid}/assignments`), where('originalTaskId', '==', originalId));
+                                        const snap = await getDocs(q);
+                                        snap.forEach(d => deleteDoc(d.ref).catch(e => console.warn("Permission denied for member subcollection delete", e)));
+                                    } catch(e) {}
+                                });
+                            }
+                        } catch(e) {}
+                        
+                    } catch(e) { 
+                        UI.notify('全域刪除過程發生錯誤', 'error'); 
+                    }
+                }
             },
             timetable: {
                 isEditMode: false,

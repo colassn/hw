@@ -101,14 +101,14 @@
         .glass-card { 
             background: var(--card); 
             border: 1px solid var(--border); 
-            border-radius: 32px; 
+            border-radius: 28px; 
             box-shadow: 0 10px 40px -10px rgba(0,0,0,0.04); 
             transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); 
         }
         .dark .glass-card { box-shadow: 0 10px 40px -10px rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.05); }
         
         /* 🌈 科目專屬動態光暈背景 */
-        .task-card-anim { position: relative; overflow: hidden; z-index: 1; border-radius: 28px; }
+        .task-card-anim { position: relative; overflow: hidden; z-index: 1; border-radius: 24px; }
         .task-card-anim::before {
             content: ''; position: absolute; inset: 0;
             background: radial-gradient(circle at 100% 0%, var(--subj-color-soft, transparent), transparent 75%);
@@ -117,7 +117,7 @@
         .task-card-anim:hover::before { opacity: 0.3; transform: scale(1.05) translate(-2%, 2%); }
 
         /* 🌟 拖曳排序專用樣式與效能修復 */
-        .drag-handle { touch-action: none; } /* 防止手機拖曳時畫面跟著滑動 */
+        .drag-handle { touch-action: none; }
         .sortable-ghost-class { opacity: 0.3; background: var(--input); border: 2px dashed #6366f1; border-radius: 24px; transform: scale(0.98); }
         .sortable-drag-class { cursor: grabbing !important; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.3); transform: scale(1.03); z-index: 100; background: var(--card); }
 
@@ -135,20 +135,26 @@
         .marquee-content { display: inline-block; padding-left: 100%; animation: marquee-scroll 20s linear infinite; }
         @keyframes marquee-scroll { 0% { transform: translateX(0); } 100% { transform: translateX(-100%); } }
 
-        /* --- 導航膠囊 (底部與頂部) --- */
-        .nav-item { cursor: pointer; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
+        /* --- 🌟 單行精緻導航列 (Universal Bottom Floating Island) --- */
+        .nav-item { cursor: pointer; transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1); }
         
-        /* 手機底部樣式 */
-        .bottom-nav-item { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; padding: 10px 0; border-radius: 20px; color: var(--text-muted); }
-        .bottom-nav-item i { font-size: 20px; transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
-        .bottom-nav-item span { font-size: 10px; font-weight: 700; opacity: 0; height: 0; overflow: hidden; transition: all 0.3s ease; }
-        .bottom-nav-item.active { color: #fff; background: #6366f1; box-shadow: 0 8px 20px -5px rgba(99,102,241,0.5); transform: translateY(-4px); }
-        .bottom-nav-item.active span { opacity: 1; height: 12px; margin-top: 2px; }
+        .bottom-nav-item { 
+            flex: 1; display: flex; flex-direction: row; align-items: center; justify-content: center; 
+            gap: 8px; padding: 12px 16px; border-radius: 100px; color: var(--text-muted); 
+            white-space: nowrap;
+        }
+        .bottom-nav-item i { font-size: 18px; transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
+        .bottom-nav-item span { font-size: 14px; font-weight: 800; display: none; }
         
-        /* iPad/Desktop 頂部樣式 */
-        .desktop-nav-item { color: var(--text-muted); transition: all 0.3s ease; }
-        .desktop-nav-item:hover:not(.active) { color: var(--text); background: var(--input); }
-        .desktop-nav-item.active { color: #fff; background: #6366f1; box-shadow: 0 4px 15px rgba(99,102,241,0.4); }
+        .bottom-nav-item.active { 
+            color: #fff; background: #6366f1; 
+            box-shadow: 0 8px 20px -5px rgba(99,102,241,0.5); 
+            flex: 1.8; /* 活動項目自動加長 */
+        }
+        .bottom-nav-item.active span { display: inline-block; animation: fadeInRight 0.3s ease forwards; }
+        @keyframes fadeInRight { from { opacity: 0; transform: translateX(-5px); } to { opacity: 1; transform: translateX(0); } }
+        
+        .bottom-nav-item:hover:not(.active) { color: var(--text); background: var(--border); transform: scale(1.05); }
 
         .view-section { display: none; opacity: 0; min-h: 60vh; animation: fadeIn 0.5s ease forwards; }
         .view-section.active { display: block; opacity: 1; }
@@ -171,8 +177,6 @@
         body.dark.is-scrolled #main-header { background-color: rgba(18,18,20,0.85); box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
         body.is-scrolled #header-title-text { font-size: 1.5rem; }
         body.is-scrolled .header-avatar-btn { width: 40px; height: 40px; }
-        
-        body.is-scrolled #main-nav-bar-desktop { top: 80px; padding: 0.5rem; }
     </style>
 </head>
 <body class="w-full relative font-sans no-scrollbar pb-[env(safe-area-inset-bottom)]">
@@ -247,7 +251,7 @@
     <!-- 3. 主系統核心 -->
     <div id="app-core" class="hidden flex-col min-h-screen w-full relative">
         
-        <!-- 🌟 頂部狀態列 (取消 Sidebar, 恢復全寬與置中) -->
+        <!-- 🌟 頂部狀態列 -->
         <header id="main-header" class="fixed top-4 left-4 right-4 md:max-w-5xl lg:max-w-6xl md:mx-auto z-50 bg-white/50 dark:bg-[#0a0a0c]/50 backdrop-blur-2xl border border-theme-border rounded-[32px] px-6 py-4 flex justify-between items-center shadow-sm transition-all duration-500 transform-gpu">
             <div class="flex flex-col">
                 <h1 id="header-title-text" class="text-[26px] md:text-[28px] font-black tracking-wide text-theme-text font-literary drop-shadow-sm leading-tight transition-all duration-300">電子手冊</h1>
@@ -267,17 +271,8 @@
             </div>
         </header>
 
-        <!-- 🌟 iPad / Desktop 頂部中央水平導航 -->
-        <nav id="main-nav-bar-desktop" class="hidden md:flex fixed top-[96px] left-1/2 -translate-x-1/2 z-40 bg-white/85 dark:bg-[#121214]/85 backdrop-blur-2xl border border-theme-border p-2 rounded-full shadow-[0_10px_40px_rgba(0,0,0,0.05)] dark:shadow-[0_10px_40px_rgba(0,0,0,0.4)] flex-row gap-2 transition-all duration-500">
-            <button onclick="app.nav.switch('home')" id="nav-home-d" class="desktop-nav-item active px-6 py-2.5 rounded-full font-bold text-[14px] flex items-center gap-2"><i class="fa-solid fa-layer-group text-lg"></i> 任務清單</button>
-            <button onclick="app.nav.switch('timetable')" id="nav-timetable-d" class="desktop-nav-item px-6 py-2.5 rounded-full font-bold text-[14px] flex items-center gap-2"><i class="fa-solid fa-calendar-week text-lg"></i> 課表時間</button>
-            <button onclick="app.nav.switch('history')" id="nav-history-d" class="desktop-nav-item px-6 py-2.5 rounded-full font-bold text-[14px] flex items-center gap-2"><i class="fa-solid fa-clock-rotate-left text-lg"></i> 歷史記錄</button>
-            <button onclick="app.nav.switch('groups')" id="nav-groups-d" class="desktop-nav-item px-6 py-2.5 rounded-full font-bold text-[14px] flex items-center gap-2"><i class="fa-solid fa-users text-lg"></i> 班級群組</button>
-            <button onclick="app.nav.switch('settings')" id="nav-settings-d" class="desktop-nav-item px-6 py-2.5 rounded-full font-bold text-[14px] flex items-center gap-2"><i class="fa-solid fa-gear text-lg"></i> 設定</button>
-        </nav>
-
-        <!-- 主內容區域 (適配 Mobile 底部空間及 Desktop 頂部空間) -->
-        <main id="main-content-area" class="flex-1 w-full relative z-10 pt-[120px] md:pt-[180px] pb-[140px] md:pb-[80px] transition-all duration-300 max-w-5xl lg:max-w-6xl mx-auto">
+        <!-- 主內容區域 -->
+        <main id="main-content-area" class="flex-1 w-full relative z-10 pt-[120px] md:pt-[130px] pb-[140px] transition-all duration-300 max-w-5xl lg:max-w-6xl mx-auto">
             
             <!-- 動態欄 (Widgets) -->
             <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 px-4 md:px-8 w-full mb-10">
@@ -332,7 +327,8 @@
                         </button>
                     </div>
 
-                    <div id="todo-list" class="grid grid-cols-1 lg:grid-cols-2 gap-6 md:gap-8"></div>
+                    <!-- 🌟 單行極簡列表佈局 (Flex Column) -->
+                    <div id="todo-list" class="flex flex-col gap-3 md:gap-4 w-full"></div>
                     
                     <div id="todo-empty" class="hidden flex-col items-center justify-center py-24 mt-10 text-theme-muted glass-card">
                         <div class="w-24 h-24 mb-6 rounded-[32px] bg-brand-500/10 flex items-center justify-center border border-brand-500/20 shadow-inner">
@@ -380,7 +376,9 @@
                         </div>
                     </div>
 
-                    <div id="history-list" class="grid grid-cols-1 lg:grid-cols-2 gap-6 md:gap-8"></div>
+                    <!-- 🌟 單行極簡列表佈局 (Flex Column) -->
+                    <div id="history-list" class="flex flex-col gap-3 md:gap-4 w-full"></div>
+                    
                     <div id="history-empty" class="hidden flex-col items-center justify-center py-24 mt-10 text-theme-muted glass-card">
                         <i class="fa-solid fa-clock-rotate-left text-5xl mb-6 opacity-30 text-emerald-500"></i>
                         <p class="text-[20px] font-black tracking-widest uppercase text-theme-text font-display">No History</p>
@@ -578,28 +576,29 @@
         </main>
 
         <!-- 🌟 浮空中心化新增按鈕 (FAB) -->
-        <button onclick="app.nav.toggleAdd()" id="global-fab" class="fixed bottom-[calc(6.5rem+env(safe-area-inset-bottom,0px))] right-6 md:bottom-12 md:right-12 w-[68px] h-[68px] bg-gradient-to-tr from-brand-600 to-pink-500 rounded-full flex items-center justify-center text-white text-2xl shadow-[0_10px_30px_rgba(99,102,241,0.5)] hover:shadow-[0_15px_40px_rgba(99,102,241,0.8)] hover:scale-110 active:scale-90 transition-all duration-500 z-50 overflow-hidden group">
+        <button onclick="app.nav.toggleAdd()" id="global-fab" class="fixed bottom-[calc(6.5rem+env(safe-area-inset-bottom,0px))] right-6 md:bottom-24 md:right-12 w-[68px] h-[68px] bg-gradient-to-tr from-brand-600 to-pink-500 rounded-full flex items-center justify-center text-white text-2xl shadow-[0_10px_30px_rgba(99,102,241,0.5)] hover:shadow-[0_15px_40px_rgba(99,102,241,0.8)] hover:scale-110 active:scale-90 transition-all duration-500 z-50 overflow-hidden group">
             <div class="absolute inset-0 bg-white/20 transform -translate-y-full group-hover:translate-y-0 transition-transform duration-300 rounded-full"></div>
             <i class="fa-solid fa-plus transition-transform duration-500 relative z-10 drop-shadow-md text-3xl" id="add-icon"></i>
         </button>
 
-        <!-- 🌟 手機專用底部導航列 -->
-        <nav id="main-nav-bar" class="fixed bottom-0 left-0 right-0 z-40 pb-safe pointer-events-none transition-transform duration-500 md:hidden">
-            <div class="mx-auto w-full px-4 mb-4">
-                <div class="flex items-center justify-around p-2 bg-white/85 dark:bg-[#121214]/85 backdrop-blur-2xl border border-theme-border shadow-[0_-10px_40px_rgba(0,0,0,0.05)] dark:shadow-[0_-10px_40px_rgba(0,0,0,0.4)] rounded-[32px] pointer-events-auto relative">
-                    <button onclick="app.nav.switch('home')" id="nav-home" class="bottom-nav-item active min-h-[60px]">
+        <!-- 🌟 全域底部懸浮島嶼導航列 (Universal Bottom Nav) -->
+        <nav id="main-nav-bar" class="fixed bottom-0 left-0 right-0 z-40 pb-safe pointer-events-none transition-transform duration-500 w-full">
+            <div class="mx-auto w-full max-w-2xl px-4 mb-4">
+                <div class="flex items-center justify-around p-2 bg-white/85 dark:bg-[#121214]/85 backdrop-blur-2xl border border-theme-border shadow-[0_-10px_40px_rgba(0,0,0,0.05)] dark:shadow-[0_-10px_40px_rgba(0,0,0,0.4)] rounded-[100px] pointer-events-auto relative">
+                    <!-- 單行圖文設計 (Flex Row) -->
+                    <button onclick="app.nav.switch('home')" id="nav-home" class="bottom-nav-item active min-h-[56px]">
                         <i class="fa-solid fa-layer-group"></i> <span>任務</span>
                     </button>
-                    <button onclick="app.nav.switch('timetable')" id="nav-timetable" class="bottom-nav-item text-theme-muted min-h-[60px]">
+                    <button onclick="app.nav.switch('timetable')" id="nav-timetable" class="bottom-nav-item min-h-[56px]">
                         <i class="fa-solid fa-calendar-week"></i> <span>課表</span>
                     </button>
-                    <button onclick="app.nav.switch('history')" id="nav-history" class="bottom-nav-item text-theme-muted min-h-[60px]">
+                    <button onclick="app.nav.switch('history')" id="nav-history" class="bottom-nav-item min-h-[56px]">
                         <i class="fa-solid fa-clock-rotate-left"></i> <span>歷史</span>
                     </button>
-                    <button onclick="app.nav.switch('groups')" id="nav-groups" class="bottom-nav-item text-theme-muted min-h-[60px]">
+                    <button onclick="app.nav.switch('groups')" id="nav-groups" class="bottom-nav-item min-h-[56px]">
                         <i class="fa-solid fa-users"></i> <span>班級</span>
                     </button>
-                    <button onclick="app.nav.switch('settings')" id="nav-settings" class="bottom-nav-item text-theme-muted min-h-[60px]">
+                    <button onclick="app.nav.switch('settings')" id="nav-settings" class="bottom-nav-item min-h-[56px]">
                         <i class="fa-solid fa-gear"></i> <span>設定</span>
                     </button>
                 </div>
@@ -848,7 +847,7 @@
                     hideLoader(true);
                 }
                 
-                // 🌟 優化版 Scroll 事件 (極致效能 CSS 觸發)
+                // 🌟 優化版 Scroll 事件
                 window.addEventListener('scroll', () => {
                     const body = document.body;
                     if (window.scrollY > 40) {
@@ -894,7 +893,7 @@
                 
                 try { state.timetableConfig = JSON.parse(localStorage.getItem(`lumina_tt_${state.user.uid}`)) || {}; } catch(e) { state.timetableConfig = {}; }
                 
-                // 強制套用星期一至星期五，不依賴以前的循環日邏輯
+                // 強制套用星期一至星期五，不再使用其他自訂日期循環
                 state.customDays = ['星期一', '星期二', '星期三', '星期四', '星期五'];
                 
                 try {
@@ -1104,14 +1103,12 @@
                     if (vid === state.currentView) return; 
                     
                     if(vid !== 'add') {
-                        // Desktop Nav Update
                         document.querySelectorAll('.desktop-nav-item').forEach(n => {
                             n.classList.remove('active');
                         });
                         const activeDesktopNav = document.getElementById(`nav-${vid}-d`);
                         if(activeDesktopNav) activeDesktopNav.classList.add('active');
 
-                        // Mobile Bottom Nav Update
                         document.querySelectorAll('.bottom-nav-item').forEach(n => {
                             n.classList.remove('active');
                         });
@@ -1274,7 +1271,6 @@
                         return state.filters.sortDesc ? d2.localeCompare(d1) : d1.localeCompare(d2);
                     });
 
-                    // 🌟 完美比例卡片渲染
                     let newHtmlTodo = '';
                     let newHtmlHist = '';
 
@@ -1286,9 +1282,9 @@
                         const hexColor = exam ? '#ec4899' : subjObj.color;
                         
                         const cStyle = `style="--subj-color-soft: ${hexToRgba(hexColor, 1)};"`;
-                        const cClass = `glass-card task-card-anim p-7 relative flex flex-col hover:shadow-xl transition-all duration-300 ${done?'opacity-60 grayscale-[20%]':''} ${dateInfo.isOverdue && !done?'ring-2 ring-red-500/50 shadow-[0_0_20px_rgba(239,68,68,0.15)]':''}`; 
+                        const cClass = `glass-card task-card-anim p-4 relative flex items-center hover:shadow-md transition-all duration-300 gap-4 w-full ${done?'opacity-60 grayscale-[20%]':''} ${dateInfo.isOverdue && !done?'ring-2 ring-red-500/50 shadow-[0_0_20px_rgba(239,68,68,0.15)]':''}`; 
                         
-                        const tagBaseClass = "px-3.5 py-1.5 rounded-[12px] text-[12px] font-bold tracking-widest uppercase border flex items-center h-[32px]";
+                        const tagBaseClass = "px-2 py-0.5 rounded-[8px] text-[10px] font-bold tracking-widest uppercase border flex items-center shrink-0";
                         
                         let bTagHtml = '';
                         if (exam) {
@@ -1297,66 +1293,57 @@
                             bTagHtml = `<span class="${tagBaseClass}" style="background: ${hexToRgba(hexColor, 0.15)}; color: ${hexColor}; border-color: ${hexToRgba(hexColor, 0.3)};">${escapeHTML(t.subject)}</span>`;
                         }
                         
-                        const broadcastTag = t.groupId ? `<span class="${tagBaseClass} bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 border-indigo-500/20">廣播</span>` : '';
+                        const broadcastTag = t.groupId ? `<span class="${tagBaseClass} bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 border-indigo-500/20"><i class="fa-solid fa-bullhorn mr-1"></i> 廣播</span>` : '';
                         
-                        const dateTagHtml = !done && dateInfo.diff ? `<span class="${tagBaseClass} ${dateInfo.statusClass}">${dateInfo.diff}</span>` : '';
-
-                        const cHtml = escapeHTML(t.content || '').replace(/\n/g, '<br>');
+                        const cHtmlText = escapeHTML(t.content || '').replace(/\n/g, ' '); 
                         
-                        // 🖼️ 獨立藝術畫廊預覽圖
                         const imgHtml = t.attachment ? `
-                            <div class="mt-5 relative rounded-[20px] overflow-hidden shadow-sm border border-theme-border group/img cursor-pointer bg-theme-input" onclick="window.open('${t.attachment}', '_blank')">
-                                <div class="absolute inset-0 bg-black/40 opacity-0 group-hover/img:opacity-100 transition-opacity duration-300 flex items-center justify-center z-10">
-                                    <i class="fa-solid fa-magnifying-glass-plus text-white text-4xl transform scale-50 group-hover/img:scale-100 transition-transform duration-300"></i>
-                                </div>
-                                <img src="${t.attachment}" class="w-full h-44 object-cover transform group-hover/img:scale-105 transition-transform duration-500">
+                            <div class="shrink-0 w-[44px] h-[44px] rounded-[12px] overflow-hidden shadow-sm border border-theme-border cursor-pointer group/img relative ml-2" onclick="window.open('${t.attachment}', '_blank')">
+                                <div class="absolute inset-0 bg-black/40 opacity-0 group-hover/img:opacity-100 transition-opacity flex items-center justify-center z-10"><i class="fa-solid fa-magnifying-glass-plus text-white text-[12px]"></i></div>
+                                <img src="${t.attachment}" class="w-full h-full object-cover">
                             </div>
                         ` : '';
 
                         const checkBtn = !done ? `
-                            <button class="w-12 h-12 rounded-full border-2 border-theme-border hover:border-brand-500 flex items-center justify-center text-transparent hover:text-white transition-all duration-300 group shadow-sm bg-theme-bg/50 shrink-0 min-h-[48px] min-w-[48px]" onclick="app.tasks.markComplete('${t.id}', this.closest('.task-card-anim'))" title="標記完成">
+                            <button class="w-[44px] h-[44px] rounded-full border-2 border-theme-border hover:border-brand-500 flex items-center justify-center text-transparent hover:text-white transition-all duration-300 group shadow-sm bg-theme-bg/50 shrink-0" onclick="app.tasks.markComplete('${t.id}', this.closest('.task-card-anim'))" title="標記完成">
                                 <div class="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity rounded-full bg-brand-500"></div>
-                                <i class="fa-solid fa-check text-[18px] relative z-10 transform scale-50 group-hover:scale-100 transition-transform duration-300"></i>
+                                <i class="fa-solid fa-check text-[16px] relative z-10 transform scale-50 group-hover:scale-100 transition-transform duration-300"></i>
                             </button>
                         ` : `
-                            <div class="w-12 h-12 rounded-full flex items-center justify-center text-white shadow-inner bg-emerald-500 shrink-0 min-h-[48px] min-w-[48px]">
-                                <i class="fa-solid fa-check text-[18px]"></i>
+                            <div class="w-[44px] h-[44px] rounded-full flex items-center justify-center text-white shadow-inner bg-emerald-500 shrink-0">
+                                <i class="fa-solid fa-check text-[16px]"></i>
                             </div>
                         `;
 
                         const cardHTML = `
                             <div class="${cClass}" id="task-${t.id}" ${cStyle}>
-                                <div class="flex gap-5 relative z-10">
-                                    <div class="pt-1.5 shrink-0">${checkBtn}</div>
+                                <div class="shrink-0">${checkBtn}</div>
+                                
+                                <div class="flex-1 min-w-0 flex flex-col justify-center">
+                                    <div class="flex items-center gap-2 mb-1 w-full">
+                                        ${bTagHtml}
+                                        ${broadcastTag}
+                                        ${t.title ? `<h3 class="text-[16px] font-black text-theme-text truncate font-display ${done?'line-through opacity-50':''}">${escapeHTML(t.title)}</h3>` : ''}
+                                    </div>
                                     
-                                    <div class="flex-1 min-w-0 flex flex-col">
-                                        <div class="flex justify-between items-start mb-4 gap-3">
-                                            <div class="flex flex-wrap items-center gap-2">
-                                                ${bTagHtml}
-                                                ${broadcastTag}
-                                            </div>
-                                            ${dateTagHtml}
-                                        </div>
-                                        
-                                        ${t.title ? `<h3 class="text-[20px] font-black text-theme-text leading-tight mb-2 tracking-tight font-display ${done?'line-through opacity-50':''}">${escapeHTML(t.title)}</h3>` : ''}
-                                        ${cHtml ? `<p class="${t.title ? 'text-[15px] text-theme-muted mt-1' : 'text-[18px] font-bold text-theme-text'} font-mono line-clamp-4 leading-relaxed ${done&&!t.title?'line-through opacity-50':''}">${cHtml}</p>` : ''}
-                                        
-                                        ${imgHtml}
-                                        
-                                        <div class="flex justify-between items-end mt-5 pt-5 border-t border-theme-border/50">
-                                            <div class="text-[13px] font-bold ${dateInfo.isOverdue && !done ?'text-red-500':'text-theme-muted'} flex items-center gap-2.5 tracking-wide">
-                                                <i class="fa-regular fa-calendar text-[16px]"></i> ${dateInfo.full}
-                                            </div>
-                                            <div class="flex items-center gap-2 shrink-0">
-                                                ${!done ? `
-                                                    <button class="w-12 h-12 rounded-[16px] text-theme-muted hover:text-brand-500 hover:bg-theme-input transition-all active:scale-90 flex items-center justify-center border border-transparent hover:border-theme-border min-h-[48px] min-w-[48px]" title="編輯" onclick="app.tasks.edit('${t.id}')"><i class="fa-solid fa-pen text-[17px]"></i></button>
-                                                    <button class="w-12 h-12 rounded-[16px] text-theme-muted hover:text-red-500 hover:bg-red-500/10 transition-all active:scale-90 flex items-center justify-center border border-transparent hover:border-red-500/20 min-h-[48px] min-w-[48px]" title="刪除" onclick="app.tasks.confirmDelete('${t.id}')"><i class="fa-regular fa-trash-can text-[18px]"></i></button>
-                                                ` : `
-                                                    <button class="w-12 h-12 rounded-[16px] text-theme-muted hover:text-brand-500 hover:bg-brand-500/10 transition-all active:scale-90 flex items-center justify-center border border-transparent hover:border-brand-500/20 min-h-[48px] min-w-[48px]" title="取消完成 / 移回清單" onclick="app.tasks.undoComplete('${t.id}')"><i class="fa-solid fa-rotate-left text-[17px]"></i></button>
-                                                    <button class="w-12 h-12 rounded-[16px] text-theme-muted hover:text-red-500 hover:bg-red-500/10 transition-all active:scale-90 flex items-center justify-center border border-transparent hover:border-red-500/20 min-h-[48px] min-w-[48px]" title="刪除" onclick="app.tasks.confirmDelete('${t.id}')"><i class="fa-regular fa-trash-can text-[18px]"></i></button>
-                                                `}
-                                            </div>
-                                        </div>
+                                    ${cHtmlText ? `<p class="text-[14px] ${t.title ? 'text-theme-muted' : 'font-bold text-theme-text'} truncate w-full font-mono ${done&&!t.title?'line-through opacity-50':''}">${cHtmlText}</p>` : ''}
+                                </div>
+                                
+                                ${imgHtml}
+                                
+                                <div class="shrink-0 flex items-center gap-2 border-l border-theme-border/50 pl-3 ml-1">
+                                    <div class="text-[12px] font-bold ${dateInfo.isOverdue && !done ?'text-red-500':'text-theme-muted'} flex flex-col items-center justify-center tracking-wide min-w-[40px] hidden sm:flex mr-1">
+                                        <span class="uppercase text-[9px] opacity-70 mb-0.5">DUE</span>
+                                        <span>${dateInfo.diff || dateInfo.full.split(' ')[0]}</span>
+                                    </div>
+                                    
+                                    <div class="flex items-center gap-1 shrink-0">
+                                        ${!done ? `
+                                            <button class="w-[44px] h-[44px] rounded-[14px] text-theme-muted hover:text-brand-500 hover:bg-theme-input transition-all active:scale-90 flex items-center justify-center" title="編輯" onclick="app.tasks.edit('${t.id}')"><i class="fa-solid fa-pen text-[15px]"></i></button>
+                                        ` : `
+                                            <button class="w-[44px] h-[44px] rounded-[14px] text-theme-muted hover:text-brand-500 hover:bg-brand-500/10 transition-all active:scale-90 flex items-center justify-center" title="取消完成" onclick="app.tasks.undoComplete('${t.id}')"><i class="fa-solid fa-rotate-left text-[15px]"></i></button>
+                                        `}
+                                        <button class="w-[44px] h-[44px] rounded-[14px] text-theme-muted hover:text-red-500 hover:bg-red-500/10 transition-all active:scale-90 flex items-center justify-center" title="刪除" onclick="app.tasks.confirmDelete('${t.id}')"><i class="fa-regular fa-trash-can text-[16px]"></i></button>
                                     </div>
                                 </div>
                             </div>`;
@@ -1370,7 +1357,7 @@
                     const elE1 = document.getElementById('todo-empty'); if(elE1) elE1.style.display = tc===0?'flex':'none';
                     const elE2 = document.getElementById('history-empty'); if(elE2) elE2.style.display = hc===0?'flex':'none';
 
-                    // 🌟 學習數據儀表板 (Chart.js) 更新
+                    // 🌟 學習數據儀表板 (Chart.js)
                     const chartContainer = document.getElementById('history-chart-container');
                     const completedTasks = displayTasks.filter(t => t.status === 'completed');
                     if (completedTasks.length > 0 && chartContainer) {
@@ -1452,7 +1439,7 @@
                     const l = document.getElementById('groups-tab-list');
                     if(l) l.innerHTML = ''; 
                     
-                    if(state.groups.length === 0 && l) { l.innerHTML = '<div class="text-center py-12 text-[15px] text-theme-muted font-mono font-bold border-2 border-dashed border-theme-border rounded-[32px]">尚未加入任何群組</div>'; }
+                    if(state.groups.length === 0 && l) { l.innerHTML = '<div class="text-center py-12 text-[15px] text-theme-muted font-mono font-bold border-2 border-dashed border-theme-border rounded-[32px]">尚未加入任何班級</div>'; }
                     else {
                         state.groups.forEach(g => { 
                             const isAdmin = state.user && g.providerId === state.user.uid;
@@ -1967,8 +1954,6 @@
                     let useDays = state.customDays;
                     
                     dayHtml = useDays.map(d => `<button class="snap-item whitespace-nowrap px-8 h-[56px] rounded-[20px] font-bold text-[16px] transition-all duration-300 font-literary tracking-wide border shadow-sm shrink-0 flex items-center justify-center min-w-[60px] ${state.currentDayTab===d?'bg-theme-card text-brand-600 border-brand-500/50 scale-105 ring-2 ring-brand-500/20':'bg-theme-input text-theme-muted border-transparent hover:bg-theme-border opacity-80 hover:opacity-100'}" onclick="app.timetable.changeDay('${safeStr(d)}')">${escapeHTML(d)}</button>`).join('');
-                    
-                    dayHtml += `<button class="snap-item w-[56px] h-[56px] shrink-0 flex items-center justify-center rounded-[20px] bg-theme-input text-theme-muted hover:text-brand-500 transition-colors shadow-sm border border-transparent hover:border-theme-border active:scale-95 min-w-[56px]" onclick="app.timetable.openManageDaysModal()"><i class="fa-solid fa-gear text-xl"></i></button>`;
                     
                     if(selectorContainer) selectorContainer.innerHTML = dayHtml;
 

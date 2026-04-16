@@ -167,6 +167,9 @@
         input[type="color"] { -webkit-appearance: none; border: none; padding: 0; }
         input[type="color"]::-webkit-color-swatch-wrapper { padding: 0; }
         input[type="color"]::-webkit-color-swatch { border: none; border-radius: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.2); }
+        
+        /* 🌟 修復底部安全邊距 (iOS 條狀導航防擋) */
+        .pb-safe { padding-bottom: env(safe-area-inset-bottom, 20px); }
     </style>
 </head>
 <body class="w-full relative font-sans no-scrollbar">
@@ -575,7 +578,8 @@
             </div>
         </main>
 
-        <button onclick="app.nav.toggleAdd()" id="global-fab" class="fixed bottom-8 right-6 md:bottom-12 md:right-12 lg:right-16 w-16 h-16 bg-gradient-to-tr from-brand-600 to-pink-500 rounded-full flex items-center justify-center text-white text-2xl shadow-[0_10px_30px_rgba(99,102,241,0.5)] hover:shadow-[0_15px_40px_rgba(99,102,241,0.8)] hover:scale-110 active:scale-90 transition-all duration-500 z-50 overflow-hidden group min-h-[44px] min-w-[44px]">
+        <!-- 🌟 修復 FAB 浮動按鈕位置，確保唔會被系統底部條擋住 -->
+        <button onclick="app.nav.toggleAdd()" id="global-fab" class="fixed bottom-[calc(2rem+env(safe-area-inset-bottom,0px))] right-6 md:bottom-12 md:right-12 lg:right-16 w-16 h-16 bg-gradient-to-tr from-brand-600 to-pink-500 rounded-full flex items-center justify-center text-white text-2xl shadow-[0_10px_30px_rgba(99,102,241,0.5)] hover:shadow-[0_15px_40px_rgba(99,102,241,0.8)] hover:scale-110 active:scale-90 transition-all duration-500 z-50 overflow-hidden group min-h-[44px] min-w-[44px]">
             <div class="absolute inset-0 bg-white/20 transform -translate-y-full group-hover:translate-y-0 transition-transform duration-300 rounded-full"></div>
             <i class="fa-solid fa-plus transition-transform duration-500 relative z-10 drop-shadow-md" id="add-icon"></i>
         </button>
@@ -819,13 +823,15 @@
                     hideLoader(true);
                 }
                 
-                // 🌟 Smart Shrink Header on Scroll
+                // 🌟 Smart Shrink Header on Scroll (修復與 Sticky Nav 的浮動空隙)
                 window.addEventListener('scroll', () => {
                     const header = document.getElementById('main-header');
                     const titleText = document.getElementById('header-title-text');
                     const avatar = document.getElementById('header-avatar');
                     const avatarFallback = document.getElementById('header-avatar-fallback');
                     const avatarBtn = avatar?.parentElement;
+                    const navBar = document.getElementById('main-nav-bar');
+                    const isMarquee = !document.getElementById('global-marquee-banner')?.classList.contains('hidden');
 
                     if(!header || !titleText) return;
                     if (window.scrollY > 40) {
@@ -836,6 +842,9 @@
                         titleText.classList.replace('text-2xl', 'text-xl');
                         if(avatarBtn) { avatarBtn.style.width = '36px'; avatarBtn.style.height = '36px'; }
                         if(avatarFallback) avatarFallback.style.fontSize = '14px';
+                        
+                        // 動態將導航列吸附上去，避免中間有明顯空位
+                        if(navBar) navBar.style.top = isMarquee ? '120px' : '80px';
                     } else {
                         header.classList.replace('py-2', 'py-4');
                         header.classList.replace('bg-white/90', 'bg-white/60');
@@ -844,6 +853,9 @@
                         titleText.classList.replace('text-xl', 'text-2xl');
                         if(avatarBtn) { avatarBtn.style.width = ''; avatarBtn.style.height = ''; }
                         if(avatarFallback) avatarFallback.style.fontSize = '';
+                        
+                        // 還原導航列位置
+                        if(navBar) navBar.style.top = isMarquee ? '148px' : '104px';
                     }
                 }, { passive: true });
             },
@@ -1041,15 +1053,18 @@
                             const header = document.getElementById('main-header');
                             const navBar = document.getElementById('main-nav-bar');
                             
+                            // 🌟 確保跑馬燈開關時，所有浮動元件都對齊正確嘅基準線
+                            const isScrolled = window.scrollY > 40;
+                            
                             if (data.marqueeMsg) {
                                 if(marqueeBanner) marqueeBanner.classList.remove('hidden');
                                 if(marqueeText) marqueeText.textContent = data.marqueeMsg;
                                 if(header) header.style.top = '48px'; 
-                                if(navBar) navBar.style.top = '148px';
+                                if(navBar) navBar.style.top = isScrolled ? '120px' : '148px';
                             } else {
                                 if(marqueeBanner) marqueeBanner.classList.add('hidden');
                                 if(header) header.style.top = '16px';
-                                if(navBar) navBar.style.top = '104px';
+                                if(navBar) navBar.style.top = isScrolled ? '80px' : '104px';
                             }
                         }
                     }));
@@ -1310,7 +1325,8 @@
                             bTagHtml = `<span class="${tagBaseClass}" style="background: ${hexToRgba(hexColor, 0.15)}; color: ${hexColor}; border-color: ${hexToRgba(hexColor, 0.3)};">${escapeHTML(t.subject)}</span>`;
                         }
                         
-                        const broadcastTag = t.groupId ? `<span class="${tagBaseClass} bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 border-indigo-500/20 ml-2">廣播</span>` : '';
+                        // 移除 ml-2，改用 gap-2 處理排版，防止標籤太多換行時重疊
+                        const broadcastTag = t.groupId ? `<span class="${tagBaseClass} bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 border-indigo-500/20">廣播</span>` : '';
                         
                         const dateTagHtml = !done && dateInfo.diff ? `<span class="${tagBaseClass} ${dateInfo.statusClass}">${dateInfo.diff}</span>` : '';
 
@@ -1345,7 +1361,8 @@
                                     
                                     <div class="flex-1 min-w-0 flex flex-col">
                                         <div class="flex justify-between items-start mb-3 gap-2">
-                                            <div class="flex flex-wrap items-center">
+                                            <!-- 🌟 改用 gap-2 解決自動換行浮動排版問題 -->
+                                            <div class="flex flex-wrap items-center gap-2">
                                                 ${bTagHtml}
                                                 ${broadcastTag}
                                             </div>

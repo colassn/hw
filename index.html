@@ -44,6 +44,10 @@
     
     <!-- GSAP Animation Library -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+
+    <!-- 🌟 Chart.js 數據視覺化與 SortableJS 拖曳庫 -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.min.js"></script>
     
     <style>
         :root { 
@@ -378,6 +382,15 @@
                         <h2 class="text-2xl font-black text-theme-text tracking-tight font-display">歷史記錄 <span class="text-emerald-500">History</span></h2>
                         <span class="text-xs font-bold text-emerald-500 tracking-wider bg-emerald-500/10 px-3 py-1.5 rounded-lg border border-emerald-500/20">已歸檔任務</span>
                     </div>
+
+                    <!-- 🌟 數據視覺化儀表板 -->
+                    <div class="glass-card p-6 mb-8 md:max-w-3xl md:mx-auto hidden border-t-4 border-t-emerald-500" id="history-chart-container">
+                        <h3 class="text-lg font-bold text-theme-text mb-4 font-literary tracking-wide flex items-center"><i class="fa-solid fa-chart-pie text-emerald-500 mr-3 text-xl"></i>學習數據分析 (Completed Tasks)</h3>
+                        <div class="relative h-56 w-full flex justify-center">
+                            <canvas id="historyChart"></canvas>
+                        </div>
+                    </div>
+
                     <div id="history-list" class="grid grid-cols-1 lg:grid-cols-2 gap-6"></div>
                     <div id="history-empty" class="hidden flex-col items-center justify-center py-32 text-theme-muted">
                         <i class="fa-solid fa-clock-rotate-left text-5xl mb-5 opacity-30 text-emerald-500"></i>
@@ -613,7 +626,7 @@
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
         import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, signInWithPopup, GoogleAuthProvider, onAuthStateChanged, signOut, setPersistence, browserLocalPersistence, updateProfile } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-        import { getFirestore, collection, doc, setDoc, getDoc, updateDoc, deleteDoc, onSnapshot, writeBatch, query, where, getDocs } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+        import { getFirestore, initializeFirestore, persistentLocalCache, persistentMultipleTabManager, collection, doc, setDoc, getDoc, updateDoc, deleteDoc, onSnapshot, writeBatch, query, where, getDocs } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
         // ⚠️ Firebase Config
         const firebaseConfig = {
@@ -633,7 +646,11 @@
             firebaseApp = initializeApp(firebaseConfig);
             import("https://www.gstatic.com/firebasejs/11.6.1/firebase-analytics.js").then((module) => { module.getAnalytics(firebaseApp); }).catch(() => {});
             auth = getAuth(firebaseApp);
-            db = getFirestore(firebaseApp);
+            
+            // 🌟 深度離線體驗 (Local-First Architecture / IndexedDB)
+            db = initializeFirestore(firebaseApp, {
+                localCache: persistentLocalCache({tabManager: persistentMultipleTabManager()})
+            });
             
             googleProvider = new GoogleAuthProvider();
             setPersistence(auth, browserLocalPersistence).catch(console.error);
@@ -1401,6 +1418,40 @@
                     const elE1 = document.getElementById('todo-empty'); if(elE1) elE1.style.display = tc===0?'flex':'none';
                     const elE2 = document.getElementById('history-empty'); if(elE2) elE2.style.display = hc===0?'flex':'none';
 
+                    // 🌟 學習數據儀表板 (Chart.js) 更新
+                    const chartContainer = document.getElementById('history-chart-container');
+                    const completedTasks = displayTasks.filter(t => t.status === 'completed');
+                    if (completedTasks.length > 0 && chartContainer) {
+                        chartContainer.classList.remove('hidden');
+                        const subjCounts = {};
+                        completedTasks.forEach(t => { subjCounts[t.subject] = (subjCounts[t.subject] || 0) + 1; });
+                        const labels = Object.keys(subjCounts);
+                        const data = Object.values(subjCounts);
+                        const bgColors = labels.map(l => {
+                            const s = state.subjects.find(sub => sub.name === l);
+                            return s ? s.color : '#6366f1';
+                        });
+
+                        if (window.historyChartInstance) window.historyChartInstance.destroy();
+                        const ctx = document.getElementById('historyChart');
+                        if(ctx) {
+                            const isDark = document.documentElement.classList.contains('dark');
+                            window.historyChartInstance = new Chart(ctx.getContext('2d'), {
+                                type: 'doughnut',
+                                data: { labels: labels, datasets: [{ data: data, backgroundColor: bgColors, borderWidth: 0, hoverOffset: 4 }] },
+                                options: {
+                                    responsive: true, maintainAspectRatio: false,
+                                    plugins: {
+                                        legend: { position: 'right', labels: { color: isDark ? '#9ca3af' : '#64748b', font: { family: 'Inter', weight: 'bold' } } }
+                                    },
+                                    layout: { padding: 10 }
+                                }
+                            });
+                        }
+                    } else if (chartContainer) {
+                        chartContainer.classList.add('hidden');
+                    }
+
                     // 🌟 骨牌動畫 (加速顯示)
                     if (typeof gsap !== 'undefined') {
                         gsap.fromTo(".task-card-anim", 
@@ -2013,13 +2064,18 @@
 
                     if (app.timetable.isEditMode) {
                         html += `<div class="flex text-[11px] font-bold text-theme-muted mb-3 px-2 uppercase tracking-widest">
+                            <div class="w-8 shrink-0"></div>
                             <div class="w-[80px] shrink-0">時間</div>
                             <div class="flex-1">標籤與科目</div>
                             <div class="w-11 shrink-0 text-center"></div>
                         </div>`;
 
-                        html += slots.map(s => `
-                            <div class="flex items-center gap-3 p-3 mb-3 bg-theme-input/50 border border-theme-border rounded-2xl transition-colors hover:border-brand-500/40 focus-within:border-brand-500/80 shadow-sm">
+                        html += slots.map((s, index) => `
+                            <div class="flex items-center gap-3 p-3 mb-3 bg-theme-input/50 border border-theme-border rounded-2xl transition-colors hover:border-brand-500/40 focus-within:border-brand-500/80 shadow-sm" data-id="${s.id}">
+                                <!-- 🌟 拖曳手柄 -->
+                                <div class="drag-handle w-6 flex items-center justify-center cursor-grab text-theme-muted hover:text-brand-500 shrink-0 text-lg active:cursor-grabbing">
+                                    <i class="fa-solid fa-grip-vertical"></i>
+                                </div>
                                 <div class="flex flex-col gap-2 w-[80px] shrink-0">
                                     <input type="time" value="${s.start}" onchange="app.timetable.updateSlotInline('${s.id}', 'start', this.value)" class="bg-transparent text-[14px] font-mono font-bold text-theme-text outline-none border-b border-transparent focus:border-brand-500 pb-0.5 dark:[color-scheme:dark] min-h-[30px]">
                                     <input type="time" value="${s.end}" onchange="app.timetable.updateSlotInline('${s.id}', 'end', this.value)" class="bg-transparent text-[12px] font-mono text-theme-muted outline-none border-b border-transparent focus:border-brand-500 pb-0.5 dark:[color-scheme:dark] min-h-[30px]">
@@ -2084,6 +2140,23 @@
                         c.innerHTML = html;
                         if(typeof gsap !== 'undefined' && !app.timetable.isEditMode) {
                             gsap.fromTo(".tt-slot-anim", { opacity: 0, x: -20 }, { opacity: 1, x: 0, duration: 0.5, stagger: 0.05, ease: "power2.out" });
+                        }
+                        
+                        // 🌟 初始化拖曳排序 (SortableJS)
+                        if (app.timetable.isEditMode) {
+                            if (app.timetable.sortableInstance) app.timetable.sortableInstance.destroy();
+                            app.timetable.sortableInstance = new Sortable(c, {
+                                animation: 250,
+                                handle: '.drag-handle',
+                                ghostClass: 'opacity-50',
+                                onEnd: (evt) => {
+                                    const daySlots = state.timetableConfig[state.currentDayTab];
+                                    const movedItem = daySlots.splice(evt.oldIndex, 1)[0];
+                                    daySlots.splice(evt.newIndex, 0, movedItem);
+                                    app.timetable.saveConfig();
+                                    // 靜默儲存排序，無需重新渲染以保留順暢體驗
+                                }
+                            });
                         }
                     }
                 },

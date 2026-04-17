@@ -133,6 +133,23 @@
         }
         .task-card-anim:hover::before { opacity: 0.12; transform: scale(1.05); }
 
+        /* 🌈 資訊屏任務卡片 (高鐵站式極簡漸變) */
+        .task-card-anim-board { 
+            position: relative; overflow: hidden; z-index: 1; border-radius: 16px; 
+            background: linear-gradient(90deg, rgba(var(--subj-color-rgb, 99, 102, 241), 0.05) 0%, transparent 100%);
+            background-color: var(--card); 
+            border: 1px solid var(--border); 
+            border-left: 4px solid var(--urgency-color, #6366f1);
+            box-shadow: 0 4px 20px -5px rgba(0,0,0,0.03);
+        }
+        .dark .task-card-anim-board { 
+            background: linear-gradient(90deg, rgba(var(--subj-color-rgb, 99, 102, 241), 0.1) 0%, transparent 100%);
+            background-color: var(--card);
+            border-color: rgba(255,255,255,0.04); 
+            border-left: 4px solid var(--urgency-color, #6366f1);
+            box-shadow: 0 4px 20px -5px rgba(0,0,0,0.4);
+        }
+
         /* 🛡️ 神盾局終端機特效 (Super Admin Terminal) */
         .terminal-panel {
             background-color: var(--theme-terminal-dark, #050505);
@@ -874,7 +891,7 @@
             customDays: [], currentDayTab: '', timetableConfig: {}, classTimerInterval: null, unsubscribers: [],
             tempImageBase64: null,
             filters: { subject: 'all', sortDesc: false },
-            viewMode: localStorage.getItem('hw_view_mode') || 'normal' // 🌟 記憶視圖模式
+            viewMode: localStorage.getItem('hw_view_mode') || 'normal'
         };
 
         const safeStr = (str) => encodeURIComponent(str || '');
@@ -902,32 +919,31 @@
             let urgencyColor = '#6366f1'; 
             let isOverdue = false;
             
-            // 🚄 資訊屏狀態分類
             let groupType = 'future';
 
             if(diffDays === 0) { 
                 diffStr = '今天到期'; 
                 statusClass = 'bg-red-500/10 text-red-600 dark:text-red-400 border-red-500/20'; 
-                urgencyColor = '#ef4444'; // Red
+                urgencyColor = '#ef4444'; 
                 groupType = 'urgent';
             }
             else if(diffDays === 1) { 
                 diffStr = '明天到期'; 
                 statusClass = 'bg-amber-500/10 text-amber-600 dark:text-amber-400 border-amber-500/20'; 
-                urgencyColor = '#f59e0b'; // Amber
+                urgencyColor = '#f59e0b'; 
                 groupType = 'tomorrow';
             }
             else if(diffDays > 1) { 
                 diffStr = `${diffDays} 天後`; 
                 statusClass = 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/20'; 
-                urgencyColor = '#10b981'; // Emerald
+                urgencyColor = '#10b981'; 
                 groupType = 'future';
             }
             else { 
                 diffStr = '已逾期'; 
                 isOverdue = true; 
                 statusClass = 'bg-red-500 text-white border-red-600 animate-pulse'; 
-                urgencyColor = '#ef4444'; // Red
+                urgencyColor = '#ef4444'; 
                 groupType = 'urgent';
             }
 
@@ -1097,7 +1113,7 @@
                                 core.classList.remove('hidden'); 
                                 core.classList.add('flex'); 
                                 
-                                app.admin.init(); // 🛡️ Check if user is Super Admin
+                                app.admin.init(); 
                                 app.startSystem();
                                 AdminService.log('USER_LOGIN', { method: user.providerData[0]?.providerId || 'email' });
                             } else {
@@ -1382,13 +1398,20 @@
                         app.notifications.render(); 
                     }));
                     
+                    // 🌟 修正版：全域設定與維護模式監聽 (加入神盾局免疫系統)
                     const gRef = doc(db, `artifacts/${internalAppId}/public/data/global_settings`, 'main');
                     state.unsubscribers.push(onSnapshot(gRef, (snap) => {
                         if (snap.exists()) {
                             const data = snap.data();
-                            if (data.status === 'maintenance' || data.status === 'update' || data.status === 'reset') {
+                            
+                            // 👑 檢查是否為神盾局超級管理員
+                            const isSuperAdmin = state.user && state.user.email === 'chimhinhin@gmail.com';
+
+                            // 🚨 只有當系統處於維護狀態，且「不是」超級管理員時，才觸發封鎖畫面
+                            if ((data.status === 'maintenance' || data.status === 'update' || data.status === 'reset') && !isSuperAdmin) {
                                 AdminService.triggerBlocker(data.maintTitle || '系統維護中', data.message || '超級管理員正在進行升級。', false);
                             } else {
+                                // ✅ 正常模式，或者登入者是管理員 (擁有免疫權)，解除封鎖
                                 const blocker = document.getElementById('system-blocker');
                                 if (blocker && !blocker.classList.contains('hidden') && state.profile && !state.profile.isBanned) {
                                     blocker.classList.add('hidden');
@@ -1397,9 +1420,9 @@
                                 }
                             }
                             
+                            // 跑馬燈廣播邏輯
                             const marqueeBanner = document.getElementById('global-marquee-banner');
                             const marqueeText = document.getElementById('global-marquee-text');
-                            
                             if (data.marqueeMsg) {
                                 if(marqueeBanner) marqueeBanner.classList.remove('hidden');
                                 if(marqueeText) marqueeText.textContent = data.marqueeMsg;
@@ -1559,7 +1582,7 @@
                             state.subjects.splice(evt.newIndex, 0, movedItem);
                             app.settings.saveSubjects();
                             app.renders.subjectsPills();
-                            app.renders.tasks(); // 科目權重改變，重新渲染主頁順序
+                            app.renders.tasks(); 
                             UI.notify('科目權重已更新', 'success');
                         }
                     });
@@ -1663,7 +1686,7 @@
                     app.settings.saveSubjects();
                     app.settings.renderSubjects();
                     app.renders.subjectsPills();
-                    app.renders.tasks(); // 科目數量改變，重新渲染主頁
+                    app.renders.tasks(); 
                     
                     const innerContainer = document.getElementById('preset-modal-inner');
                     if (innerContainer) {

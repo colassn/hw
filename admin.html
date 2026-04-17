@@ -336,3 +336,546 @@
                 </button>
             </div>
         </header>
+        <main id="main-content-area" class="flex-1 w-full relative z-10 pt-[120px] md:pt-[130px] pb-[140px] md:pb-[140px] transition-all duration-300 max-w-5xl lg:max-w-6xl mx-auto">
+            
+            <div class="px-4 md:px-8 w-full mx-auto relative">
+                
+                <section id="view-home" class="view-section active w-full max-w-5xl mx-auto">
+                    <div id="home-announcements" class="mb-8 space-y-4 w-full hidden"></div>
+
+                    <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 w-full mb-10">
+                        <div class="glass-card p-5 cursor-pointer hover:shadow-xl hover:-translate-y-1 active:scale-95 transition-all duration-300 group" onclick="app.nav.switch('timetable')">
+                            <div class="flex justify-between items-center mb-3">
+                                <span class="text-[11px] text-theme-muted font-bold uppercase tracking-wider"><i class="fa-solid fa-satellite-dish mr-1.5 text-emerald-500 animate-pulse"></i>實時課堂</span>
+                            </div>
+                            <h3 id="widget-class-title" class="text-[17px] font-bold text-theme-text truncate font-display">分析中...</h3>
+                            <p id="widget-class-timer" class="text-[13px] text-emerald-500 font-mono mt-1.5 font-bold tracking-wide opacity-90">--:--:--</p>
+                        </div>
+                        <div class="glass-card p-5 cursor-pointer hover:shadow-xl hover:-translate-y-1 active:scale-95 transition-all duration-300 group" onclick="app.tasks.openWidgetTasksModal('today')">
+                            <div class="flex justify-between items-center mb-3">
+                                <span class="text-[11px] text-theme-muted font-bold uppercase tracking-wider"><i class="fa-solid fa-calendar-day mr-1.5 group-hover:text-brand-500 transition-colors"></i>今日到期</span>
+                            </div>
+                            <h3 class="text-[15px] font-bold text-theme-text"><span id="widget-today-count" class="text-4xl font-black text-brand-500 mr-2 drop-shadow-sm tracking-tighter">0</span>項</h3>
+                        </div>
+                        <div class="glass-card p-5 cursor-pointer hover:shadow-xl hover:-translate-y-1 active:scale-95 transition-all duration-300 group" onclick="app.tasks.openWidgetTasksModal('future')">
+                            <div class="flex justify-between items-center mb-3">
+                                <span class="text-[11px] text-theme-muted font-bold uppercase tracking-wider"><i class="fa-solid fa-calendar-week mr-1.5 group-hover:text-brand-500 transition-colors"></i>未來任務</span>
+                            </div>
+                            <h3 class="text-[15px] font-bold text-theme-text"><span id="widget-future-count" class="text-4xl font-black text-theme-muted mr-2 drop-shadow-sm tracking-tighter">0</span>項</h3>
+                        </div>
+                        <div class="glass-card p-5 cursor-pointer hover:shadow-[0_15px_30px_rgba(236,72,153,0.15)] dark:hover:shadow-[0_15px_30px_rgba(236,72,153,0.25)] hover:-translate-y-1 active:scale-95 transition-all duration-300 border-pink-500/20 group" onclick="app.tasks.openWidgetTasksModal('exam')">
+                            <div class="flex justify-between items-center mb-3">
+                                <span class="text-[11px] text-pink-500 font-bold uppercase tracking-wider"><i class="fa-solid fa-triangle-exclamation mr-1.5 group-hover:animate-bounce"></i>測驗/考試</span>
+                            </div>
+                            <h3 class="text-[15px] font-bold text-theme-text"><span id="widget-exam-count" class="text-4xl font-black text-pink-500 mr-2 drop-shadow-[0_0_10px_rgba(236,72,153,0.3)] tracking-tighter">0</span>項</h3>
+                        </div>
+                    </div>
+
+                    <div class="flex justify-between items-end mb-6 px-2">
+                        <h2 class="text-[28px] md:text-[32px] font-black text-theme-text tracking-tight font-display">待辦清單 <span class="text-brand-500 opacity-80 text-xl ml-1">Tasks</span></h2>
+                    </div>
+
+                    <div class="flex gap-3 mb-8 px-2 overflow-x-auto no-scrollbar snap-container w-full items-center">
+                        <button id="toggle-view-btn" onclick="app.tasks.toggleViewMode()" class="snap-item bg-theme-card text-brand-500 text-[14px] font-bold px-6 py-3 rounded-[20px] border border-theme-border whitespace-nowrap transition-all flex items-center gap-2 shrink-0 hover:shadow-md active:scale-95 shadow-sm min-h-[48px]">
+                            <i id="view-mode-icon" class="fa-solid fa-list"></i> <span id="view-mode-text">正常模式</span>
+                        </button>
+                        <button id="filter-subject-btn" onclick="app.tasks.openFilterSubjectModal()" class="snap-item bg-theme-card text-theme-text text-[14px] font-bold px-6 py-3 rounded-[20px] border border-theme-border outline-none transition-all flex items-center gap-2 shrink-0 hover:shadow-md active:scale-95 shadow-sm min-h-[48px]">
+                            <span id="filter-subject-text">所有科目</span> <i class="fa-solid fa-chevron-down text-[10px] opacity-50 ml-1"></i>
+                        </button>
+                        <button id="filter-sort" onclick="app.tasks.toggleSortFilter()" class="snap-item bg-theme-card text-emerald-600 dark:text-emerald-400 text-[14px] font-bold px-6 py-3 rounded-[20px] border border-theme-border whitespace-nowrap transition-all flex items-center gap-2 shrink-0 hover:shadow-md active:scale-95 shadow-sm min-h-[48px]">
+                            <i class="fa-solid fa-arrow-down-short-wide text-lg"></i> <span id="filter-sort-text">日期排序 (主科優先)</span>
+                        </button>
+                    </div>
+
+                    <div id="todo-list-wrapper" class="w-full">
+                        <div id="todo-list-flat" class="flex flex-col gap-4 md:gap-5 w-full"></div>
+                        
+                        <div id="todo-list-grouped" class="hidden w-full flex-col">
+                            <div class="glass-card overflow-hidden border border-theme-border shadow-sm overflow-x-auto no-scrollbar">
+                                <div class="min-w-[650px]">
+                                    <div class="flex items-center px-4 py-3 bg-[#f1f5f9]/80 dark:bg-[#334155]/80 border-b border-theme-border text-[12px] font-black text-theme-muted uppercase tracking-widest">
+                                        <div class="w-10 text-center shrink-0"><i class="fa-solid fa-list-check"></i></div>
+                                        <div class="w-[100px] shrink-0">期限 Due</div>
+                                        <div class="w-[100px] shrink-0">科目 Subj</div>
+                                        <div class="flex-1">任務內容 Task Content</div>
+                                        <div class="w-[100px] shrink-0 text-center">操作 Act</div>
+                                    </div>
+                                    
+                                    <div class="flex flex-col bg-theme-card" id="todo-table-body"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div id="todo-empty" class="hidden flex-col items-center justify-center py-24 mt-10 text-theme-muted glass-card">
+                        <div class="w-24 h-24 mb-6 rounded-[32px] bg-brand-500/10 flex items-center justify-center border border-brand-500/20 shadow-inner">
+                            <i class="fa-solid fa-mug-hot text-4xl text-brand-500 opacity-80"></i>
+                        </div>
+                        <p class="text-[20px] font-black tracking-widest uppercase text-theme-text font-display">Great Job!</p>
+                        <p class="text-[15px] mt-2 opacity-70 font-mono">所有任務已清空</p>
+                    </div>
+                </section>
+
+                <section id="view-timetable" class="view-section w-full max-w-5xl mx-auto">
+                    <div class="flex justify-between items-end mb-6 px-2 md:px-0">
+                        <h2 class="text-[28px] md:text-[32px] font-black text-theme-text tracking-tight font-display">時間表 <span class="text-brand-500 opacity-80 text-xl ml-1">Timetable</span></h2>
+                    </div>
+                    <div id="timetable-day-selector" class="flex gap-3 overflow-x-auto no-scrollbar pb-6 mb-2 snap-container md:justify-center w-full items-center px-2"></div>
+                    
+                    <div class="glass-card p-4 shadow-lg border-theme-border flex flex-col w-full">
+                        <div class="flex justify-between items-center p-5 mb-4 border-b border-theme-border shrink-0 bg-[#f1f5f9]/50 dark:bg-[#334155]/50 rounded-[28px]">
+                            <h3 class="font-bold text-[18px] text-theme-text font-literary tracking-wide flex items-center"><i class="fa-solid fa-clock text-brand-500 mr-3 text-xl"></i> 每日課表</h3>
+                            <div class="flex gap-3">
+                                <button id="tt-btn-edit" onclick="app.timetable.toggleEditMode()" class="text-[14px] text-brand-500 font-bold bg-brand-500/10 px-6 py-2.5 rounded-[16px] hover:bg-brand-500 hover:text-white active:scale-95 transition-all min-h-[48px]"><i class="fa-solid fa-pen mr-1.5"></i> 編輯</button>
+                                <button id="tt-btn-copy" onclick="app.timetable.copyToAllWeekModal()" class="hidden text-[14px] text-emerald-500 font-bold bg-emerald-500/10 px-6 py-2.5 rounded-[16px] hover:bg-emerald-500 hover:text-white active:scale-95 transition-all min-h-[48px]"><i class="fa-solid fa-copy mr-1.5"></i> 複製全週</button>
+                                <button id="tt-btn-add" onclick="app.timetable.addSlotDirect()" class="hidden text-[14px] text-brand-500 font-bold bg-brand-500/10 px-6 py-2.5 rounded-[16px] hover:bg-brand-500 hover:text-white active:scale-95 transition-all min-h-[48px]"><i class="fa-solid fa-plus mr-1.5"></i> 新增</button>
+                                <button id="tt-btn-done" onclick="app.timetable.toggleEditMode()" class="hidden text-[14px] text-white font-bold bg-brand-500 px-6 py-2.5 rounded-[16px] hover:bg-brand-600 active:scale-95 transition-all shadow-[0_5px_15px_rgba(99,102,241,0.4)] min-h-[48px]"><i class="fa-solid fa-check mr-1.5"></i> 完成</button>
+                            </div>
+                        </div>
+                        <div id="timetable-slots" class="w-full p-2"></div>
+                    </div>
+                </section>
+
+                <section id="view-history" class="view-section w-full max-w-5xl mx-auto">
+                    <div class="flex justify-between items-end mb-6 px-2 md:px-0">
+                        <div>
+                            <h2 class="text-[28px] md:text-[32px] font-black text-theme-text tracking-tight font-display">歷史記錄 <span class="text-emerald-500 opacity-80 text-xl ml-1">History</span></h2>
+                            <span class="inline-block mt-2 text-[13px] font-bold text-emerald-500 tracking-wider bg-emerald-500/10 px-4 py-2 rounded-xl border border-emerald-500/20">已歸檔任務</span>
+                        </div>
+                        <button id="btn-clear-history" onclick="app.tasks.confirmClearHistory()" class="hidden text-[13px] text-red-500 font-bold bg-red-500/10 px-4 py-2 rounded-xl border border-red-500/20 hover:bg-red-500 hover:text-white active:scale-95 transition-all shadow-sm flex items-center gap-1.5 shrink-0">
+                            <i class="fa-solid fa-trash-can"></i> 清空
+                        </button>
+                    </div>
+
+                    <div class="glass-card p-6 md:p-8 mb-8 w-full hidden border-t-4 border-t-emerald-500" id="history-chart-container">
+                        <h3 class="text-[18px] font-bold text-theme-text mb-6 font-literary tracking-wide flex items-center"><i class="fa-solid fa-chart-pie text-emerald-500 mr-3 text-2xl"></i>學習數據分析 (Completed)</h3>
+                        <div class="relative h-64 w-full flex justify-center">
+                            <canvas id="historyChart"></canvas>
+                        </div>
+                    </div>
+
+                    <div id="history-list" class="flex flex-col gap-3 md:gap-4 w-full"></div>
+                    
+                    <div id="history-empty" class="hidden flex-col items-center justify-center py-24 mt-10 text-theme-muted glass-card">
+                        <i class="fa-solid fa-clock-rotate-left text-5xl mb-6 opacity-30 text-emerald-500"></i>
+                        <p class="text-[20px] font-black tracking-widest uppercase text-theme-text font-display">No History</p>
+                    </div>
+                </section>
+
+                <section id="view-groups" class="view-section w-full max-w-5xl mx-auto">
+                    <div class="flex justify-between items-end mb-6 px-2 md:px-0">
+                        <h2 class="text-[28px] md:text-[32px] font-black text-theme-text tracking-tight font-display">班級與群組 <span class="text-blue-500 opacity-80 text-xl ml-1">Classes</span></h2>
+                    </div>
+                    
+                    <div class="glass-card p-8 mb-8 relative overflow-hidden shadow-sm hover:shadow-lg transition-all duration-500 w-full border-t-4 border-t-blue-500">
+                        <div class="absolute top-0 right-0 w-40 h-40 bg-blue-500/10 blur-3xl rounded-full pointer-events-none"></div>
+                        <h3 class="text-[20px] font-bold text-theme-text mb-6 font-literary tracking-wide flex items-center relative z-10"><i class="fa-solid fa-users text-blue-500 mr-3 text-2xl"></i>加入班級 (學生)</h3>
+                        
+                        <div class="flex flex-col sm:flex-row gap-4 mb-8 relative z-10">
+                            <input type="text" id="join-group-code" class="premium-input h-[60px] px-6 text-[18px] font-mono font-bold uppercase placeholder-theme-muted transition-colors shadow-inner flex-1" placeholder="輸入班級代碼..." maxlength="10">
+                            <button onclick="app.groups.join()" class="bg-blue-600 hover:bg-blue-500 px-8 rounded-[20px] text-white font-bold text-[16px] hover:-translate-y-1 transition-all shadow-[0_5px_20px_rgba(59,130,246,0.4)] active:scale-95 flex items-center justify-center gap-2 shrink-0 min-h-[60px]"><i class="fa-solid fa-right-to-bracket"></i> 加入</button>
+                        </div>
+
+                        <div id="provider-create-group" class="hidden border-t border-theme-border pt-8 mb-4 relative z-10">
+                            <p class="text-[13px] font-bold text-pink-500 mb-4 uppercase tracking-widest flex items-center gap-2"><i class="fa-solid fa-crown"></i> 建立班級 (老師/Provider 專用)</p>
+                            <div class="flex flex-col md:flex-row gap-4">
+                                <input type="text" id="create-group-name" class="premium-input h-[60px] px-6 text-[16px] font-bold transition-colors shadow-inner flex-1" placeholder="班別名稱 (例: 5A)...">
+                                <input type="text" id="create-group-custom-code" class="premium-input h-[60px] px-6 text-[16px] font-mono font-bold uppercase transition-colors shadow-inner flex-1" placeholder="自訂代碼 (例: 5A2026)..." maxlength="10">
+                                <button onclick="app.groups.create()" class="bg-pink-600 hover:bg-pink-500 px-10 rounded-[20px] text-white font-bold text-[16px] hover:-translate-y-1 transition-all shadow-[0_5px_20px_rgba(236,72,153,0.4)] active:scale-95 flex items-center justify-center gap-2 shrink-0 min-h-[60px]"><i class="fa-solid fa-plus"></i> 建立</button>
+                            </div>
+                        </div>
+
+                        <div id="groups-tab-list" class="space-y-4 relative z-10 mt-10"></div>
+                    </div>
+                </section>
+
+                <section id="view-settings" class="view-section w-full max-w-5xl mx-auto">
+                    <div class="flex justify-between items-end mb-6 px-2 md:px-0">
+                        <h2 class="text-[28px] md:text-[32px] font-black text-theme-text tracking-tight font-display">個人化設定 <span class="text-brand-500 opacity-80 text-xl ml-1">Settings</span></h2>
+                    </div>
+                    
+                    <div class="flex justify-center mb-8 w-full">
+                        <button onclick="app.settings.toggleTheme()" class="glass-card p-6 flex flex-col items-center justify-center gap-4 hover:-translate-y-1 hover:shadow-lg transition-all active:scale-95 text-theme-text group min-h-[160px] w-full max-w-sm border-t-4 border-t-brand-500">
+                            <div class="w-16 h-16 rounded-[20px] bg-brand-500/10 flex items-center justify-center group-hover:bg-brand-500 group-hover:text-white transition-colors">
+                                <i class="fa-solid fa-circle-half-stroke text-3xl text-brand-500 group-hover:text-white transition-colors"></i>
+                            </div>
+                            <span class="text-[18px] font-bold mt-2">外觀主題切換</span>
+                        </button>
+                    </div>
+
+                    <div class="glass-card p-8 mb-8 relative shadow-sm hover:shadow-lg transition-all duration-500 w-full border-t-4 border-t-emerald-500">
+                        <div class="flex justify-between items-center mb-2">
+                            <h3 class="text-[20px] font-bold text-theme-text font-literary tracking-wide flex items-center"><i class="fa-solid fa-palette text-emerald-500 mr-3 text-2xl"></i>科目與排序管理</h3>
+                            <button onclick="app.settings.openPresetModal()" class="text-[13px] font-bold text-emerald-500 bg-emerald-500/10 px-4 py-2 rounded-xl border border-emerald-500/20 hover:bg-emerald-500 hover:text-white transition-all flex items-center gap-1.5 active:scale-95 shrink-0"><i class="fa-solid fa-book-open"></i> 預設庫</button>
+                        </div>
+                        <p class="text-[13px] text-theme-muted mb-6 font-medium">💡 提示：按住左側圖示可以<strong class="text-emerald-500">拖曳排序</strong>，越上面的科目，在首頁的功課顯示會越優先！</p>
+                        
+                        <div id="settings-subjects-list" class="flex flex-col gap-2.5 mb-8"></div>
+                        
+                        <div class="bg-[#f1f5f9]/50 dark:bg-[#334155]/50 p-6 rounded-[24px] border border-theme-border shadow-inner">
+                            <p class="text-[13px] font-bold text-theme-muted uppercase tracking-widest mb-4">新增自訂科目</p>
+                            <div class="flex gap-4 items-center">
+                                <input type="text" id="new-subj-name" placeholder="科目名稱 (如: 物理)" class="premium-input h-[60px] px-6 text-[16px] font-bold flex-1 shadow-sm">
+                                <input type="color" id="new-subj-color" value="#6366f1" class="w-16 h-[60px] rounded-xl cursor-pointer border-0 bg-transparent p-0 shrink-0 hover:scale-105 transition-transform shadow-sm" title="選擇專屬顏色">
+                                <button onclick="app.settings.addSubject()" class="bg-emerald-600 hover:bg-emerald-500 h-[60px] w-[60px] rounded-[20px] text-white font-bold transition-all shadow-[0_5px_15px_rgba(16,185,129,0.4)] active:scale-90 flex items-center justify-center shrink-0">
+                                    <i class="fa-solid fa-plus text-2xl"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mt-24 mb-8 text-center opacity-30 hover:opacity-100 transition duration-500 cursor-default w-full">
+                        <div class="w-14 h-14 border border-theme-border rounded-[20px] flex items-center justify-center mx-auto mb-5 hover:bg-theme-input hover:scale-110 transition-all shadow-sm">
+                            <i class="fa-solid fa-code text-theme-text text-xl"></i>
+                        </div>
+                        <p class="text-[11px] text-theme-text font-mono tracking-widest leading-loose font-bold">
+                            ENTERPRISE GRADE SYSTEM<br>
+                            PROUDLY CRAFTED BY <span class="text-brand-500">@colasonyt1123</span>
+                        </p>
+                    </div>
+                </section>
+
+                <section id="view-admin" class="view-section w-full max-w-6xl mx-auto hidden">
+                    <div class="flex flex-col md:flex-row gap-6 w-full min-h-[75vh]">
+                        
+                        <div class="w-full md:w-[260px] shrink-0 flex flex-row md:flex-col gap-2 overflow-x-auto md:overflow-y-auto no-scrollbar bg-theme-card border border-theme-border p-4 md:p-5 rounded-[28px] shadow-sm h-max md:h-full">
+                            <div class="hidden md:block mb-6 px-2 pt-2">
+                                <h2 class="text-[20px] font-black text-theme-text font-display flex items-center gap-2.5">
+                                    <div class="w-8 h-8 rounded-[10px] bg-brand-500 text-white flex items-center justify-center shadow-md">
+                                        <i class="fa-solid fa-shield-halved text-[14px]"></i>
+                                    </div>
+                                    管理中心
+                                </h2>
+                                <p class="text-[10px] text-theme-muted font-mono mt-1.5 uppercase tracking-widest pl-[42px] opacity-70">Super Console</p>
+                            </div>
+                            
+                            <button onclick="app.admin.switchTab('overview')" id="admin-nav-overview" class="admin-nav-item active shrink-0 px-5 py-3 md:py-4 rounded-[16px] text-[15px] font-bold flex items-center gap-3.5 w-auto md:w-full text-left">
+                                <i class="fa-solid fa-chart-pie w-5 text-center text-[18px]"></i> <span>系統概覽</span>
+                            </button>
+                            <button onclick="app.admin.switchTab('users')" id="admin-nav-users" class="admin-nav-item shrink-0 px-5 py-3 md:py-4 rounded-[16px] text-[15px] font-bold flex items-center gap-3.5 w-auto md:w-full text-left">
+                                <i class="fa-solid fa-users-viewfinder w-5 text-center text-[18px]"></i> <span>用戶與審計</span>
+                            </button>
+                            <button onclick="app.admin.switchTab('broadcast')" id="admin-nav-broadcast" class="admin-nav-item shrink-0 px-5 py-3 md:py-4 rounded-[16px] text-[15px] font-bold flex items-center gap-3.5 w-auto md:w-full text-left">
+                                <i class="fa-solid fa-satellite-dish w-5 text-center text-[18px]"></i> <span>廣播任務</span>
+                            </button>
+                            <button onclick="app.admin.switchTab('core')" id="admin-nav-core" class="admin-nav-item shrink-0 px-5 py-3 md:py-4 rounded-[16px] text-[15px] font-bold flex items-center gap-3.5 w-auto md:w-full text-left">
+                                <i class="fa-solid fa-sliders w-5 text-center text-[18px]"></i> <span>核心系統設定</span>
+                            </button>
+                        </div>
+                        
+                        <div class="flex-1 bg-theme-card border border-theme-border rounded-[28px] shadow-sm p-6 md:p-10 relative overflow-y-auto no-scrollbar" id="admin-content-wrapper">
+                            
+                            <div id="admin-tab-overview" class="admin-tab-content block animate-[fadeIn_0.3s_ease-out]">
+                                <h3 class="text-[24px] font-black text-theme-text mb-8 font-display">系統運行狀態</h3>
+                                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                                    <div class="bg-gradient-to-br from-[#f1f5f9] to-[#e2e8f0] dark:from-[#334155] dark:to-[#1e293b] p-6 rounded-[24px] border border-theme-border shadow-inner relative overflow-hidden">
+                                        <div class="absolute -right-4 -bottom-4 opacity-10 text-brand-500"><i class="fa-solid fa-users text-8xl"></i></div>
+                                        <p class="text-[13px] text-theme-muted font-bold tracking-widest uppercase mb-2 relative z-10">Total Users</p>
+                                        <p class="text-[36px] font-black text-theme-text relative z-10 font-mono" id="admin-stat-users">--</p>
+                                    </div>
+                                    <div class="bg-gradient-to-br from-[#f1f5f9] to-[#e2e8f0] dark:from-[#334155] dark:to-[#1e293b] p-6 rounded-[24px] border border-theme-border shadow-inner relative overflow-hidden">
+                                        <div class="absolute -right-4 -bottom-4 opacity-10 text-emerald-500"><i class="fa-solid fa-list-check text-8xl"></i></div>
+                                        <p class="text-[13px] text-theme-muted font-bold tracking-widest uppercase mb-2 relative z-10">Global Tasks</p>
+                                        <p class="text-[36px] font-black text-theme-text relative z-10 font-mono" id="admin-stat-tasks">--</p>
+                                    </div>
+                                    <div class="bg-emerald-500/10 border border-emerald-500/30 p-6 rounded-[24px] shadow-inner relative overflow-hidden sm:col-span-2 lg:col-span-1">
+                                        <div class="absolute -right-4 -bottom-4 opacity-10 text-emerald-500"><i class="fa-solid fa-server text-8xl"></i></div>
+                                        <p class="text-[13px] text-emerald-600 dark:text-emerald-400 font-bold tracking-widest uppercase mb-2 relative z-10">System Status</p>
+                                        <div class="flex items-center gap-3 mt-3 relative z-10">
+                                            <span class="w-4 h-4 rounded-full bg-emerald-500 shadow-[0_0_15px_rgba(16,185,129,0.8)] animate-pulse"></span>
+                                            <p class="text-[24px] font-black text-emerald-600 dark:text-emerald-400 tracking-wider">ONLINE</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div id="admin-tab-users" class="admin-tab-content hidden animate-[fadeIn_0.3s_ease-out]">
+                                <h3 class="text-[24px] font-black text-theme-text mb-8 font-display">系統審計日誌 (Live Audit)</h3>
+                                <div class="bg-[#f8fafc] dark:bg-[#0f172a] rounded-[24px] border border-theme-border overflow-hidden">
+                                    <div id="admin-audit-logs" class="p-4 md:p-6 h-[400px] overflow-y-auto no-scrollbar font-mono text-[12px] md:text-[13px] leading-relaxed space-y-2">
+                                        <p class="text-theme-muted animate-pulse">> 正在建立加密連線...</p>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div id="admin-tab-broadcast" class="admin-tab-content hidden animate-[fadeIn_0.3s_ease-out]">
+                                <h3 class="text-[24px] font-black text-theme-text mb-2 font-display">全域跑馬燈廣播</h3>
+                                <p class="text-[14px] text-theme-muted mb-8 font-medium">發送最高級別的全域紅色警告橫幅，所有在線使用者均會立即收到。</p>
+                                
+                                <div class="bg-[#f1f5f9]/50 dark:bg-[#334155]/50 p-6 md:p-8 rounded-[28px] border border-theme-border">
+                                    <textarea id="admin-broadcast-msg" class="w-full bg-theme-card border border-theme-border rounded-[20px] p-5 text-[16px] text-theme-text focus:border-brand-500 focus:ring-4 focus:ring-brand-500/10 outline-none transition-all resize-none min-h-[150px] shadow-inner mb-6 font-bold" placeholder="輸入最高級別的紅色跑馬燈廣播內容..."></textarea>
+                                    <div class="flex flex-col sm:flex-row gap-4">
+                                        <button onclick="app.admin.sendBroadcast()" class="flex-1 h-[56px] bg-brand-600 hover:bg-brand-500 text-white font-bold rounded-[20px] shadow-[0_5px_20px_rgba(99,102,241,0.4)] active:scale-95 transition-all text-[16px] flex items-center justify-center gap-2"><i class="fa-solid fa-paper-plane"></i> 發送廣播</button>
+                                        <button onclick="app.admin.clearBroadcast()" class="flex-1 h-[56px] bg-theme-card hover:bg-red-500/10 border border-theme-border hover:border-red-500/30 text-red-500 font-bold rounded-[20px] active:scale-95 transition-all text-[16px] flex items-center justify-center gap-2 shadow-sm"><i class="fa-solid fa-eraser"></i> 撤銷廣播</button>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div id="admin-tab-core" class="admin-tab-content hidden animate-[fadeIn_0.3s_ease-out] space-y-10">
+                                
+                                <div class="bg-[#f8fafc]/50 dark:bg-[#1e293b]/30 border border-emerald-500/20 rounded-[28px] p-6 shadow-sm">
+                                    <div class="flex items-center justify-between mb-4">
+                                        <h4 class="text-[18px] font-black text-theme-text flex items-center gap-2.5"><i class="fa-solid fa-shield-virus text-emerald-500"></i> 白名單系統</h4>
+                                        <div class="flex items-center gap-3">
+                                            <span class="text-[13px] font-bold text-theme-muted" id="whitelist-status-text">已停用</span>
+                                            <label class="relative inline-flex items-center cursor-pointer">
+                                                <input type="checkbox" id="whitelist-toggle" class="sr-only toggle-checkbox" onchange="app.admin.toggleList('whitelist', this.checked)">
+                                                <div class="toggle-label w-12 h-6 bg-gray-300 dark:bg-gray-600 rounded-full transition-colors relative after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all shadow-inner"></div>
+                                            </label>
+                                        </div>
+                                    </div>
+                                    <p class="text-[13px] text-theme-muted mb-6">當啟用白名單模式時，只有下列清單中的電郵地址可以登入並使用系統。</p>
+                                    
+                                    <div class="flex flex-col sm:flex-row gap-3 mb-6">
+                                        <input type="email" id="whitelist-input" class="premium-input h-[50px] px-5 text-[15px]" placeholder="輸入電郵地址...">
+                                        <button onclick="app.admin.addToList('whitelist')" class="h-[50px] px-6 rounded-[16px] bg-emerald-600 hover:bg-emerald-500 text-white font-bold transition-all shadow-sm active:scale-95 whitespace-nowrap shrink-0"><i class="fa-solid fa-plus mr-1"></i> 新增</button>
+                                    </div>
+                                    
+                                    <div class="bg-theme-card border border-theme-border rounded-[16px] overflow-hidden shadow-inner">
+                                        <div class="flex justify-between items-center px-5 py-3 bg-[#f1f5f9]/50 dark:bg-[#334155]/50 border-b border-theme-border text-[12px] font-bold text-theme-muted">
+                                            <span>電郵地址</span><span>操作</span>
+                                        </div>
+                                        <div id="whitelist-container" class="flex flex-col max-h-[150px] overflow-y-auto no-scrollbar">
+                                            </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="bg-[#f8fafc]/50 dark:bg-[#1e293b]/30 border border-red-500/20 rounded-[28px] p-6 shadow-sm">
+                                    <div class="flex items-center justify-between mb-4">
+                                        <h4 class="text-[18px] font-black text-theme-text flex items-center gap-2.5"><i class="fa-solid fa-ban text-red-500"></i> 黑名單系統</h4>
+                                        <div class="flex items-center gap-3">
+                                            <span class="text-[13px] font-bold text-red-500" id="blacklist-status-text">已啟用</span>
+                                            <label class="relative inline-flex items-center cursor-pointer">
+                                                <input type="checkbox" id="blacklist-toggle" class="sr-only toggle-checkbox" checked onchange="app.admin.toggleList('blacklist', this.checked)">
+                                                <div class="toggle-label w-12 h-6 bg-red-500 rounded-full transition-colors relative after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:translate-x-full after:transition-all shadow-inner"></div>
+                                            </label>
+                                        </div>
+                                    </div>
+                                    <p class="text-[13px] text-theme-muted mb-6">當啟用黑名單模式時，下列清單中的電郵地址將被<strong class="text-red-500">強制停權</strong>，無法登入使用。</p>
+                                    
+                                    <div class="flex flex-col sm:flex-row gap-3 mb-6">
+                                        <input type="email" id="blacklist-input" class="premium-input h-[50px] px-5 text-[15px]" placeholder="輸入要封鎖的電郵地址...">
+                                        <button onclick="app.admin.addToList('blacklist')" class="h-[50px] px-6 rounded-[16px] bg-red-600 hover:bg-red-500 text-white font-bold transition-all shadow-sm active:scale-95 whitespace-nowrap shrink-0"><i class="fa-solid fa-ban mr-1"></i> 封鎖</button>
+                                    </div>
+                                    
+                                    <div class="bg-theme-card border border-theme-border rounded-[16px] overflow-hidden shadow-inner">
+                                        <div id="blacklist-container" class="flex flex-col max-h-[150px] overflow-y-auto no-scrollbar">
+                                            </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="bg-theme-bg border border-theme-border rounded-[28px] p-6 md:p-8 shadow-sm mt-8">
+                                    <h4 class="text-[20px] font-black text-theme-text mb-6 flex items-center gap-2.5"><i class="fa-solid fa-power-off text-brand-500"></i> 系統維護模式</h4>
+                                    
+                                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
+                                        <button onclick="app.admin.setMaintMode('normal')" id="maint-btn-normal" class="maint-mode-card active-normal h-[120px] rounded-[20px] flex flex-col items-center justify-center gap-3 relative overflow-hidden group">
+                                            <div class="absolute top-3 right-3 w-2.5 h-2.5 rounded-full bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.8)]" id="maint-dot-normal"></div>
+                                            <i class="fa-regular fa-circle-check text-3xl opacity-80 group-hover:scale-110 transition-transform"></i>
+                                            <span class="font-bold text-[16px] tracking-wide">正常運作</span>
+                                        </button>
+                                        
+                                        <button onclick="app.admin.setMaintMode('update')" id="maint-btn-update" class="maint-mode-card h-[120px] rounded-[20px] flex flex-col items-center justify-center gap-3 relative overflow-hidden group text-theme-muted">
+                                            <div class="absolute top-3 right-3 w-2.5 h-2.5 rounded-full bg-transparent" id="maint-dot-update"></div>
+                                            <i class="fa-solid fa-hammer text-3xl opacity-60 group-hover:scale-110 transition-transform"></i>
+                                            <span class="font-bold text-[16px] tracking-wide">網站更新</span>
+                                        </button>
+                                        
+                                        <button onclick="app.admin.setMaintMode('reset')" id="maint-btn-reset" class="maint-mode-card h-[120px] rounded-[20px] flex flex-col items-center justify-center gap-3 relative overflow-hidden group text-theme-muted">
+                                            <div class="absolute top-3 right-3 w-2.5 h-2.5 rounded-full bg-transparent" id="maint-dot-reset"></div>
+                                            <i class="fa-solid fa-database text-3xl opacity-60 group-hover:scale-110 transition-transform"></i>
+                                            <span class="font-bold text-[16px] tracking-wide">資料重整</span>
+                                        </button>
+                                    </div>
+                                    
+                                    <h5 class="text-[14px] font-bold text-theme-muted mb-4 tracking-widest uppercase">維護頁面自定義內容</h5>
+                                    
+                                    <div class="flex flex-col md:flex-row gap-5 mb-5">
+                                        <div class="flex-1">
+                                            <label class="block text-[12px] font-bold text-theme-muted mb-2 pl-1">維護標題 (留空顯示預設)</label>
+                                            <input type="text" id="maint-input-title" class="premium-input h-[56px] text-[15px]" placeholder="數據發生錯誤">
+                                        </div>
+                                        <div class="flex-1">
+                                            <label class="block text-[12px] font-bold text-theme-muted mb-2 pl-1">預計恢復時間</label>
+                                            <input type="text" id="maint-input-time" class="premium-input h-[56px] text-[15px]" placeholder="4月16日">
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="mb-8">
+                                        <label class="block text-[12px] font-bold text-theme-muted mb-2 pl-1">維護詳細訊息 (支援換行)</label>
+                                        <textarea id="maint-input-msg" class="premium-input min-h-[120px] resize-none text-[15px] p-5" placeholder="如需查看功課，請聯絡管理員"></textarea>
+                                    </div>
+                                    
+                                    <div class="flex justify-end">
+                                        <button onclick="app.admin.saveCoreSettings()" class="bg-brand-600 hover:bg-brand-500 text-white font-bold px-8 h-[56px] rounded-[16px] shadow-[0_5px_20px_rgba(99,102,241,0.4)] active:scale-95 transition-all text-[16px] w-full sm:w-auto min-w-[160px]">儲存維護資訊</button>
+                                    </div>
+                                </div>
+                                
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+            </div>
+        </main>
+
+        <button onclick="app.nav.toggleAdd()" id="global-fab" class="fixed bottom-[calc(6.5rem+env(safe-area-inset-bottom,0px))] right-6 md:bottom-24 md:right-12 w-[68px] h-[68px] bg-gradient-to-tr from-brand-600 to-pink-500 rounded-full flex items-center justify-center text-white text-2xl shadow-[0_10px_30px_rgba(99,102,241,0.5)] hover:shadow-[0_15px_40px_rgba(99,102,241,0.8)] hover:scale-110 active:scale-90 transition-all duration-500 z-50 overflow-hidden group">
+            <div class="absolute inset-0 bg-white/20 transform -translate-y-full group-hover:translate-y-0 transition-transform duration-300 rounded-full"></div>
+            <i class="fa-solid fa-plus transition-transform duration-500 relative z-10 drop-shadow-md text-3xl" id="add-icon"></i>
+        </button>
+
+        <nav id="main-nav-bar" class="fixed bottom-0 left-0 right-0 z-40 pb-safe pointer-events-none transition-transform duration-500 w-full">
+            <div class="mx-auto w-full max-w-[450px] px-4 mb-4 md:mb-8">
+                <div class="flex items-center justify-around p-2 bg-white/85 dark:bg-[#1e293b]/85 backdrop-blur-2xl border border-theme-border shadow-[0_10px_40px_rgba(0,0,0,0.1)] dark:shadow-[0_10px_40px_rgba(0,0,0,0.5)] rounded-[100px] pointer-events-auto relative">
+                    <button onclick="app.nav.switch('home')" id="nav-home" class="bottom-nav-item active min-h-[56px]">
+                        <i class="fa-solid fa-layer-group"></i> <span>任務</span>
+                    </button>
+                    <button onclick="app.nav.switch('timetable')" id="nav-timetable" class="bottom-nav-item min-h-[56px]">
+                        <i class="fa-solid fa-calendar-week"></i> <span>課表</span>
+                    </button>
+                    <button onclick="app.nav.switch('history')" id="nav-history" class="bottom-nav-item min-h-[56px]">
+                        <i class="fa-solid fa-clock-rotate-left"></i> <span>歷史</span>
+                    </button>
+                    <button onclick="app.nav.switch('groups')" id="nav-groups" class="bottom-nav-item min-h-[56px]">
+                        <i class="fa-solid fa-users"></i> <span>班級</span>
+                    </button>
+                    <button onclick="app.nav.switch('settings')" id="nav-settings" class="bottom-nav-item min-h-[56px]">
+                        <i class="fa-solid fa-gear"></i> <span>設定</span>
+                    </button>
+                </div>
+            </div>
+        </nav>
+
+    </div>
+
+    <div id="global-overlay" onclick="if(app.UI) { app.UI.sheet.close(); app.UI.modal.close(); const np = document.getElementById('notif-panel'); if(np && !np.classList.contains('hidden')) app.notifications.toggle(); }" class="fixed inset-0 bg-black/20 dark:bg-black/70 backdrop-blur-md z-[200] hidden opacity-0 transition-opacity duration-400 cursor-pointer"></div>
+    
+    <div id="center-modal" class="fixed inset-0 z-[210] hidden flex items-center justify-center p-4 md:p-6 pointer-events-none">
+        <div id="center-modal-content" class="glass-card w-full max-w-[448px] p-6 md:p-8 transform scale-95 opacity-0 pointer-events-auto shadow-[0_20px_60px_rgba(0,0,0,0.4)] border-theme-border"></div>
+    </div>
+    
+    <div id="bottom-sheet" class="fixed inset-x-0 bottom-0 z-[210] hidden flex flex-col justify-end pointer-events-none">
+        <div id="bottom-sheet-content" class="glass-card bg-theme-bg w-full md:max-w-lg md:mx-auto rounded-b-none md:rounded-[32px] p-6 md:p-8 pb-safe transform translate-y-full pointer-events-auto border border-theme-border shadow-[0_-20px_60px_rgba(0,0,0,0.15)] dark:shadow-[0_-20px_60px_rgba(0,0,0,0.8)] flex flex-col max-h-[85vh]">
+            <div class="w-16 h-1.5 bg-gray-300 dark:bg-white/20 rounded-full mx-auto mb-6 shrink-0 md:hidden"></div>
+            <div id="bottom-sheet-body" class="flex-1 overflow-y-auto no-scrollbar"></div>
+        </div>
+    </div>
+    
+    <div id="notif-panel" class="fixed inset-y-0 right-0 w-full md:w-[420px] bg-[#f8fafc]/95 dark:bg-[#0f172a]/95 backdrop-blur-3xl z-[210] hidden transform translate-x-full border-l border-theme-border flex flex-col shadow-2xl">
+        <div class="p-6 md:p-8 border-b border-theme-border flex justify-between items-center bg-[#f1f5f9]/50 dark:bg-[#334155]/50">
+            <h3 class="text-[26px] font-black text-theme-text font-display flex items-center gap-3"><i class="fa-solid fa-bell text-brand-500"></i> 通知中心</h3>
+            <button onclick="app.notifications.toggle()" class="w-12 h-12 rounded-full bg-theme-card flex items-center justify-center text-theme-muted hover:text-brand-500 hover:shadow-md border border-theme-border shadow-sm active:scale-90 transition-all min-h-[48px] min-w-[48px] shrink-0"><i class="fa-solid fa-xmark text-xl"></i></button>
+        </div>
+        <div id="notif-list" class="flex-1 overflow-y-auto p-4 md:p-6 space-y-4 no-scrollbar bg-theme-bg"></div>
+    </div>
+    
+    <div id="lightbox-modal" class="fixed inset-0 z-[600] hidden bg-black/90 backdrop-blur-md flex items-center justify-center opacity-0 transition-opacity duration-300" onclick="app.UI.lightbox.close()">
+        <button class="absolute top-6 right-6 md:top-10 md:right-10 w-12 h-12 bg-white/20 hover:bg-white/40 rounded-full flex items-center justify-center text-white backdrop-blur-md transition-colors shadow-lg active:scale-90 z-10" onclick="event.stopPropagation(); app.UI.lightbox.close()">
+            <i class="fa-solid fa-xmark text-2xl"></i>
+        </button>
+        <div class="relative max-w-[95vw] max-h-[90vh] w-auto h-auto rounded-[24px] overflow-hidden shadow-[0_20px_60px_rgba(0,0,0,0.5)]">
+            <img id="lightbox-img" src="" class="w-auto h-auto max-w-full max-h-[90vh] object-contain transform scale-95 transition-transform duration-300" onclick="event.stopPropagation()">
+        </div>
+    </div>
+
+    <div id="add-task-modal" class="fixed inset-0 z-[300] hidden flex items-end md:items-center justify-center bg-black/40 dark:bg-black/60 backdrop-blur-sm opacity-0 transition-opacity duration-200">
+        <div class="absolute inset-0" onclick="app.nav.toggleAdd()"></div>
+        <div id="add-task-content" class="glass-card w-full md:max-w-3xl bg-theme-bg md:rounded-[32px] rounded-t-[32px] rounded-b-none p-6 md:p-10 max-h-[90vh] overflow-y-auto transform translate-y-full md:translate-y-10 transition-transform duration-200 relative shadow-[0_-20px_60px_rgba(0,0,0,0.2)]">
+            
+            <div class="w-16 h-1.5 bg-theme-border rounded-full mx-auto mb-6 md:hidden"></div>
+            
+            <div class="flex items-center justify-between mb-8">
+                <div class="flex items-center gap-3">
+                    <div class="w-12 h-12 rounded-[18px] bg-brand-500/10 text-brand-500 flex items-center justify-center">
+                        <i class="fa-solid fa-pen-nib text-xl"></i>
+                    </div>
+                    <h2 id="form-header-title" class="text-[26px] font-black text-theme-text tracking-tight font-literary">新增任務</h2>
+                </div>
+                <button onclick="app.nav.toggleAdd()" class="w-10 h-10 rounded-[14px] bg-theme-input text-theme-muted flex items-center justify-center hover:text-brand-500 active:scale-90 transition-all duration-200"><i class="fa-solid fa-xmark text-[16px]"></i></button>
+            </div>
+            
+            <input type="hidden" id="form-task-id">
+            
+            <div class="flex flex-col sm:flex-row bg-theme-input p-1.5 rounded-[18px] mb-6 relative border border-theme-border shadow-inner gap-1.5">
+                <button id="type-btn-task" onclick="app.tasks.setFormType('task')" class="flex-1 py-2 text-[15px] font-bold rounded-[14px] bg-theme-card text-brand-600 shadow-sm border border-theme-border transition-all flex justify-center items-center gap-2 min-h-[44px]">
+                    <i class="fa-solid fa-book-open"></i> 新增功課
+                </button>
+                <button id="type-btn-exam" onclick="app.tasks.setFormType('exam')" class="flex-1 py-2 text-[15px] font-bold rounded-[14px] text-theme-muted hover:text-theme-text transition-all flex justify-center items-center gap-2 border border-transparent min-h-[44px]">
+                    <i class="fa-regular fa-circle-question"></i> 新增測驗
+                </button>
+                <input type="hidden" id="form-type" value="task">
+            </div>
+            
+            <div class="space-y-6">
+                <div class="flex flex-col gap-2">
+                    <p class="text-[12px] font-bold text-theme-muted uppercase tracking-widest pl-1">選擇科目 Subject</p>
+                    <div class="flex items-center gap-2 -mx-2 px-2 overflow-hidden">
+                        <div id="form-subjects-scroll" class="flex flex-1 gap-2.5 overflow-x-auto no-scrollbar py-2 snap-container items-center px-1"></div>
+                        <input type="hidden" id="form-subject-value">
+                    </div>
+                </div>
+
+                <div class="flex flex-col lg:flex-row gap-6">
+                    <div class="flex-1 flex flex-col gap-4">
+                        <div class="relative flex-1 flex flex-col group">
+                            <textarea id="form-content" class="w-full flex-1 px-6 py-5 bg-[#f1f5f9]/50 dark:bg-[#334155]/50 border border-black/5 dark:border-white/5 hover:border-brand-500/50 focus:border-brand-500 focus:bg-theme-card focus:ring-4 focus:ring-brand-500/10 rounded-[28px] text-[16px] leading-relaxed text-theme-text placeholder-theme-muted resize-none min-h-[200px] shadow-inner transition-all duration-200 outline-none" placeholder="在此輸入功課詳細內容... (必填)"></textarea>
+                            
+                            <div class="absolute bottom-5 right-5 flex gap-3">
+                                <input type="file" id="form-image" accept="image/*" class="hidden" onchange="app.tasks.handleImageUpload(event)">
+                                <button onclick="document.getElementById('form-image').click()" class="w-12 h-12 rounded-[16px] bg-theme-card text-theme-muted hover:text-brand-500 hover:bg-brand-500/10 flex items-center justify-center backdrop-blur-xl transition-all duration-200 border border-theme-border shadow-sm hover:shadow-md hover:-translate-y-1 active:scale-90 group-focus-within:border-brand-500/50 min-h-[48px] min-w-[48px]" title="附加圖片">
+                                    <i class="fa-solid fa-camera text-lg"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div id="form-image-preview-container" class="hidden relative mt-1 group">
+                            <img id="form-image-preview" class="w-full h-48 object-cover rounded-[28px] border border-theme-border shadow-sm transition-all duration-200">
+                            <div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-200 rounded-[28px] pointer-events-none"></div>
+                            <button onclick="app.tasks.removeImage()" class="absolute top-4 right-4 w-10 h-10 bg-black/50 hover:bg-red-500 text-white rounded-[12px] flex items-center justify-center backdrop-blur-md opacity-0 group-hover:opacity-100 transition-all scale-90 group-hover:scale-100 shadow-sm min-h-[40px] min-w-[40px]"><i class="fa-solid fa-xmark text-lg"></i></button>
+                        </div>
+                    </div>
+
+                    <div class="w-full lg:w-[280px] flex flex-col gap-5 shrink-0">
+                        <div class="relative group">
+                            <label class="block text-[12px] font-bold text-theme-muted uppercase tracking-widest mb-2 pl-1">繳交日期 Due Date</label>
+                            <div class="w-full h-[56px] px-4 bg-[#f1f5f9]/50 dark:bg-[#334155]/50 border border-theme-border focus-within:border-brand-500 focus-within:bg-theme-card rounded-[20px] shadow-inner transition-all flex items-center justify-center overflow-hidden">
+                                <input type="date" id="form-date" onchange="app.tasks.checkStress()" class="w-full bg-transparent text-[16px] font-bold text-theme-text text-center outline-none cursor-pointer appearance-none border-none p-0 m-0">
+                            </div>
+                        </div>
+                        
+                        <button id="btn-save-task" onclick="app.tasks.save()" class="w-full mt-auto h-[64px] bg-gradient-to-r from-brand-600 to-brand-500 hover:from-brand-500 hover:to-brand-400 text-white rounded-[20px] font-black shadow-[0_8px_25px_rgba(99,102,241,0.4)] hover:-translate-y-1 hover:shadow-[0_12px_30px_rgba(99,102,241,0.6)] active:scale-95 transition-all duration-200 flex justify-center items-center gap-2 text-[18px] tracking-wider border border-transparent overflow-hidden relative group min-h-[56px]">
+                            <div class="absolute inset-0 bg-white/20 transform -skew-x-12 -translate-x-full group-hover:animate-[shine_1s_ease-in-out_infinite]"></div>
+                            <i class="fa-solid fa-paper-plane text-xl drop-shadow-md"></i> 發佈任務
+                        </button>
+                    </div>
+                </div>
+                
+                <div id="form-warning-msg" class="hidden mt-2 bg-yellow-500/10 border border-yellow-500/30 p-5 rounded-[24px] flex items-center gap-4 shadow-inner">
+                    <i class="fa-solid fa-triangle-exclamation text-yellow-600 dark:text-yellow-500 text-3xl animate-pulse"></i>
+                    <div>
+                        <p class="text-[15px] font-bold text-yellow-700 dark:text-yellow-400">注意！任務量警報</p>
+                        <p class="text-[13px] text-yellow-700/80 dark:text-yellow-200/80 font-medium mt-1">該日已有 <span id="form-warning-count" class="font-black text-lg px-1"></span> 項任務，建議提早規劃。</p>
+                    </div>
+                </div>
+
+                <div id="provider-target-section" class="hidden pt-6 border-t border-theme-border/50 mt-4">
+                    <div class="flex items-center justify-between p-5 bg-[#f1f5f9]/30 dark:bg-[#334155]/30 border border-theme-border rounded-[24px] transition-colors hover:border-pink-500/40 hover:bg-pink-500/5 group cursor-pointer shadow-sm min-h-[56px]" onclick="document.getElementById('broadcast-toggle').click()">
+                        <div class="flex items-center gap-4">
+                            <div class="w-12 h-12 rounded-[16px] bg-pink-500/10 flex items-center justify-center text-pink-500 shadow-inner group-hover:scale-110 transition-transform">
+                                <i class="fa-solid fa-bullhorn text-xl"></i>
+                            </div>
+                            <div>
+                                <p class="text-[16px] font-bold text-theme-text leading-tight tracking-wide">廣播至班級群組</p>
+                                <p class="text-[13px] text-theme-muted font-bold mt-1" id="form-target-text">私人任務 (僅自己可見)</p>
+                            </div>
+                        </div>
+                        <input type="hidden" id="form-target" value="self">
+                        <label class="relative inline-flex items-center cursor-pointer scale-[1.2] mr-2" onclick="event.stopPropagation()">
+                            <input type="checkbox" id="broadcast-toggle" class="sr-only peer" onchange="app.tasks.handleBroadcastToggle(this)">
+                            <div class="w-10 h-6 bg-gray-300 dark:bg-gray-600 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all duration-200 peer-checked:bg-pink-500 shadow-inner"></div>
+                        </label>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="toast-root" class="fixed top-24 left-1/2 -translate-x-1/2 z-[500] flex flex-col items-center gap-3 pointer-events-none px-4 w-full md:w-auto"></div>

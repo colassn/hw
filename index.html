@@ -103,38 +103,50 @@
         .glass-card { 
             background: var(--card); 
             border: 1px solid var(--border); 
-            border-radius: 28px; 
+            border-radius: 20px; 
             box-shadow: 0 10px 40px -10px rgba(0,0,0,0.04); 
             transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); 
         }
         .dark .glass-card { box-shadow: 0 10px 40px -10px rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.05); }
         
-        /* 🌈 科目專屬動態光暈背景與微底色 (柔和琉璃漸變設計) */
+        /* 🌈 正常卡片模式 (琉璃漸變設計) */
         .task-card-anim { 
             position: relative; overflow: hidden; z-index: 1; border-radius: 24px; 
-            /* 加入非常淺的線性漸變色背景 */
             background: linear-gradient(135deg, rgba(var(--subj-color-rgb, 99, 102, 241), 0.06) 0%, rgba(var(--subj-color-rgb, 99, 102, 241), 0.01) 100%);
-            background-color: var(--card); /* 疊加在卡片底色上以確保對比度 */
+            background-color: var(--card); 
             border: 1px solid rgba(var(--subj-color-rgb, 99, 102, 241), 0.12); 
-            border-left: 5px solid var(--subj-color-soft, #6366f1); /* 收斂左側色條厚度，更精緻 */
+            border-left: 6px solid var(--subj-color-soft, #6366f1);
             box-shadow: 0 6px 24px -6px rgba(0,0,0,0.03);
         }
         .dark .task-card-anim { 
             background: linear-gradient(135deg, rgba(var(--subj-color-rgb, 99, 102, 241), 0.12) 0%, rgba(var(--subj-color-rgb, 99, 102, 241), 0.02) 100%);
             background-color: var(--card);
             border-color: rgba(var(--subj-color-rgb, 99, 102, 241), 0.2); 
-            border-left: 5px solid var(--subj-color-soft, #6366f1);
+            border-left: 6px solid var(--subj-color-soft, #6366f1);
             box-shadow: 0 6px 24px -6px rgba(0,0,0,0.3);
         }
         .task-card-anim::before {
             content: ''; position: absolute; inset: 0;
             background: radial-gradient(circle at 100% 0%, var(--subj-color-soft, transparent), transparent 60%);
-            opacity: 0.06; /* 大幅降低光暈透明度，避免顏色過於鮮豔刺眼 */
-            z-index: -1; transition: opacity 0.4s ease, transform 0.4s ease; pointer-events: none;
+            opacity: 0.06; z-index: -1; transition: opacity 0.4s ease, transform 0.4s ease; pointer-events: none;
         }
-        .task-card-anim:hover::before {
-            opacity: 0.12; /* 滑鼠懸停時微光閃爍 */
-            transform: scale(1.05);
+        .task-card-anim:hover::before { opacity: 0.12; transform: scale(1.05); }
+
+        /* 🌈 資訊屏任務卡片 (高鐵站式極簡漸變) */
+        .task-card-anim-board { 
+            position: relative; overflow: hidden; z-index: 1; border-radius: 16px; 
+            background: linear-gradient(90deg, rgba(var(--subj-color-rgb, 99, 102, 241), 0.05) 0%, transparent 100%);
+            background-color: var(--card); 
+            border: 1px solid var(--border); 
+            border-left: 4px solid var(--urgency-color, #6366f1);
+            box-shadow: 0 4px 20px -5px rgba(0,0,0,0.03);
+        }
+        .dark .task-card-anim-board { 
+            background: linear-gradient(90deg, rgba(var(--subj-color-rgb, 99, 102, 241), 0.1) 0%, transparent 100%);
+            background-color: var(--card);
+            border-color: rgba(255,255,255,0.04); 
+            border-left: 4px solid var(--urgency-color, #6366f1);
+            box-shadow: 0 4px 20px -5px rgba(0,0,0,0.4);
         }
 
         /* 🌟 防誤觸的任務完成按鈕 */
@@ -148,14 +160,15 @@
         .task-check-btn i { opacity: 0; transform: scale(0.5); transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
 
         /* 🌟 拖曳排序專用樣式與效能修復 */
-        .drag-handle { touch-action: none; }
-        .sortable-ghost-class { opacity: 0.3; background: var(--input); border: 2px dashed #6366f1; border-radius: 24px; transform: scale(0.98); }
+        .drag-handle { touch-action: none; cursor: grab; }
+        .drag-handle:active { cursor: grabbing; }
+        .sortable-ghost-class { opacity: 0.3; background: var(--input); border: 2px dashed #6366f1; border-radius: 16px; transform: scale(0.98); }
         .sortable-drag-class { cursor: grabbing !important; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.3); transform: scale(1.03); z-index: 100; background: var(--card); }
 
         /* --- 精緻輸入框 --- */
         .premium-input { 
             background: var(--input); border: 1px solid transparent; color: var(--text); 
-            padding: 1rem 1.25rem; border-radius: 20px; width: 100%; 
+            padding: 1rem 1.25rem; border-radius: 16px; width: 100%; 
             transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); box-shadow: inset 0 2px 4px rgba(0,0,0,0.02);
         }
         .dark .premium-input { box-shadow: inset 0 2px 4px rgba(0,0,0,0.2); border-color: rgba(255,255,255,0.02); }
@@ -202,7 +215,7 @@
         input[type="color"]::-webkit-color-swatch-wrapper { padding: 0; }
         input[type="color"]::-webkit-color-swatch { border: none; border-radius: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.2); }
         
-        /* 🌟 CSS 狀態控制動畫 (修復深色模式頂部捲動變色問題) */
+        /* 🌟 CSS 狀態控制動畫 */
         #main-header { transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1); }
         body.is-scrolled #main-header { padding-top: 0.75rem; padding-bottom: 0.75rem; background-color: rgba(255,255,255,0.85); box-shadow: 0 10px 30px rgba(0,0,0,0.08); }
         .dark body.is-scrolled #main-header { background-color: rgba(30,41,59,0.85); box-shadow: 0 10px 30px rgba(0,0,0,0.5); } 
@@ -312,7 +325,7 @@
                 <section id="view-home" class="view-section active w-full">
                     <div id="home-announcements" class="mb-8 space-y-4 w-full hidden"></div>
 
-                    <!-- 動態欄 (Widgets) 移至 HOME 頁面內 (已修復點擊彈出 Modal 事件) -->
+                    <!-- 動態欄 (Widgets) -->
                     <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 w-full mb-10">
                         <div class="glass-card p-5 cursor-pointer hover:shadow-xl hover:-translate-y-1 active:scale-95 transition-all duration-300 group" onclick="app.nav.switch('timetable')">
                             <div class="flex justify-between items-center mb-3">
@@ -345,18 +358,43 @@
                         <h2 class="text-[28px] md:text-[32px] font-black text-theme-text tracking-tight font-display">待辦清單 <span class="text-brand-500 opacity-80 text-xl ml-1">Tasks</span></h2>
                     </div>
 
-                    <!-- 🌟 磁吸滑動的篩選器 (移除僅未完成按鈕) -->
+                    <!-- 🌟 磁吸滑動的篩選器 -->
                     <div class="flex gap-3 mb-8 px-2 overflow-x-auto no-scrollbar snap-container w-full items-center">
+                        <button id="toggle-view-btn" onclick="app.tasks.toggleViewMode()" class="snap-item bg-theme-card text-brand-500 text-[14px] font-bold px-6 py-3 rounded-[20px] border border-theme-border whitespace-nowrap transition-all flex items-center gap-2 shrink-0 hover:shadow-md active:scale-95 shadow-sm min-h-[48px]">
+                            <i id="view-mode-icon" class="fa-solid fa-list"></i> <span id="view-mode-text">正常模式</span>
+                        </button>
                         <button id="filter-subject-btn" onclick="app.tasks.openFilterSubjectModal()" class="snap-item bg-theme-card text-theme-text text-[14px] font-bold px-6 py-3 rounded-[20px] border border-theme-border outline-none transition-all flex items-center gap-2 shrink-0 hover:shadow-md active:scale-95 shadow-sm min-h-[48px]">
                             <span id="filter-subject-text">所有科目</span> <i class="fa-solid fa-chevron-down text-[10px] opacity-50 ml-1"></i>
                         </button>
-                        <button id="filter-sort" onclick="app.tasks.toggleSortFilter()" class="snap-item bg-theme-card text-brand-500 text-[14px] font-bold px-6 py-3 rounded-[20px] border border-theme-border whitespace-nowrap transition-all flex items-center gap-2 shrink-0 hover:shadow-md active:scale-95 shadow-sm min-h-[48px]">
-                            <i class="fa-solid fa-arrow-down-short-wide text-lg"></i> <span>繳交日期</span>
+                        <button id="filter-sort" onclick="app.tasks.toggleSortFilter()" class="snap-item bg-theme-card text-emerald-600 dark:text-emerald-400 text-[14px] font-bold px-6 py-3 rounded-[20px] border border-theme-border whitespace-nowrap transition-all flex items-center gap-2 shrink-0 hover:shadow-md active:scale-95 shadow-sm min-h-[48px]">
+                            <i class="fa-solid fa-arrow-down-short-wide text-lg"></i> <span id="filter-sort-text">日期排序 (主科優先)</span>
                         </button>
                     </div>
 
-                    <!-- 🌟 列表佈局 -->
-                    <div id="todo-list" class="flex flex-col gap-4 md:gap-5 w-full"></div>
+                    <!-- 🌟 列表佈局容器 -->
+                    <div id="todo-list-wrapper" class="w-full">
+                        <!-- 正常模式 (扁平清單) -->
+                        <div id="todo-list-flat" class="flex flex-col gap-4 md:gap-5 w-full"></div>
+                        
+                        <!-- 資訊屏模式 (高密度表格 Google Sheets Style) -->
+                        <div id="todo-list-grouped" class="hidden w-full flex-col">
+                            <div class="glass-card overflow-hidden border border-theme-border shadow-sm overflow-x-auto no-scrollbar">
+                                <div class="min-w-[650px]">
+                                    <!-- 表格標題 -->
+                                    <div class="flex items-center px-4 py-3 bg-[#f1f5f9]/80 dark:bg-[#334155]/80 border-b border-theme-border text-[12px] font-black text-theme-muted uppercase tracking-widest">
+                                        <div class="w-10 text-center shrink-0"><i class="fa-solid fa-list-check"></i></div>
+                                        <div class="w-[100px] shrink-0">期限 Due</div>
+                                        <div class="w-[100px] shrink-0">科目 Subj</div>
+                                        <div class="flex-1">任務內容 Task Content</div>
+                                        <div class="w-[100px] shrink-0 text-center">操作 Act</div>
+                                    </div>
+                                    
+                                    <!-- 表格內容 (動態插入群組) -->
+                                    <div class="flex flex-col bg-theme-card" id="todo-table-body"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                     
                     <div id="todo-empty" class="hidden flex-col items-center justify-center py-24 mt-10 text-theme-muted glass-card">
                         <div class="w-24 h-24 mb-6 rounded-[32px] bg-brand-500/10 flex items-center justify-center border border-brand-500/20 shadow-inner">
@@ -462,15 +500,17 @@
                         </button>
                     </div>
 
-                    <div class="glass-card p-8 mb-8 relative overflow-hidden shadow-sm hover:shadow-lg transition-all duration-500 w-full border-t-4 border-t-emerald-500">
-                        <div class="flex justify-between items-center mb-6">
-                            <h3 class="text-[20px] font-bold text-theme-text font-literary tracking-wide flex items-center"><i class="fa-solid fa-palette text-emerald-500 mr-3 text-2xl"></i>科目與顏色管理</h3>
+                    <div class="glass-card p-8 mb-8 relative shadow-sm hover:shadow-lg transition-all duration-500 w-full border-t-4 border-t-emerald-500">
+                        <div class="flex justify-between items-center mb-2">
+                            <h3 class="text-[20px] font-bold text-theme-text font-literary tracking-wide flex items-center"><i class="fa-solid fa-palette text-emerald-500 mr-3 text-2xl"></i>科目與排序管理</h3>
                             <button onclick="app.settings.openPresetModal()" class="text-[13px] font-bold text-emerald-500 bg-emerald-500/10 px-4 py-2 rounded-xl border border-emerald-500/20 hover:bg-emerald-500 hover:text-white transition-all flex items-center gap-1.5 active:scale-95 shrink-0"><i class="fa-solid fa-book-open"></i> 預設庫</button>
                         </div>
+                        <p class="text-[13px] text-theme-muted mb-6 font-medium">💡 提示：按住左側圖示可以<strong class="text-emerald-500">拖曳排序</strong>，越上面的科目，在首頁的功課顯示會越優先！</p>
                         
-                        <div id="settings-subjects-list" class="flex flex-wrap gap-3 mb-8"></div>
+                        <!-- 🌟 加入 SortableJS 支援的科目清單 -->
+                        <div id="settings-subjects-list" class="flex flex-col gap-2.5 mb-8"></div>
                         
-                        <div class="bg-[#f1f5f9]/50 dark:bg-[#334155]/50 p-6 rounded-[28px] border border-theme-border shadow-inner">
+                        <div class="bg-[#f1f5f9]/50 dark:bg-[#334155]/50 p-6 rounded-[24px] border border-theme-border shadow-inner">
                             <p class="text-[13px] font-bold text-theme-muted uppercase tracking-widest mb-4">新增自訂科目</p>
                             <div class="flex gap-4 items-center">
                                 <input type="text" id="new-subj-name" placeholder="科目名稱 (如: 物理)" class="premium-input h-[60px] px-6 text-[16px] font-bold flex-1 shadow-sm">
@@ -536,8 +576,8 @@
     </div>
     
     <div id="bottom-sheet" class="fixed inset-x-0 bottom-0 z-[210] hidden flex flex-col justify-end pointer-events-none">
-        <div id="bottom-sheet-content" class="glass-card bg-theme-bg w-full md:max-w-lg md:mx-auto rounded-b-none md:rounded-t-[40px] p-6 md:p-10 pb-safe transform translate-y-full pointer-events-auto border md:border-b-theme-border border-t-theme-border shadow-[0_-20px_60px_rgba(0,0,0,0.15)] dark:shadow-[0_-20px_60px_rgba(0,0,0,0.8)] flex flex-col max-h-[85vh]">
-            <div class="w-16 h-1.5 bg-gray-300 dark:bg-white/20 rounded-full mx-auto mb-8 shrink-0"></div>
+        <div id="bottom-sheet-content" class="glass-card bg-theme-bg w-full md:max-w-lg md:mx-auto rounded-b-none md:rounded-[32px] p-6 md:p-8 pb-safe transform translate-y-full pointer-events-auto border border-theme-border shadow-[0_-20px_60px_rgba(0,0,0,0.15)] dark:shadow-[0_-20px_60px_rgba(0,0,0,0.8)] flex flex-col max-h-[85vh]">
+            <div class="w-16 h-1.5 bg-gray-300 dark:bg-white/20 rounded-full mx-auto mb-6 shrink-0 md:hidden"></div>
             <div id="bottom-sheet-body" class="flex-1 overflow-y-auto no-scrollbar"></div>
         </div>
     </div>
@@ -687,7 +727,7 @@
             import("https://www.gstatic.com/firebasejs/11.6.1/firebase-analytics.js").then((module) => { module.getAnalytics(firebaseApp); }).catch(() => {});
             auth = getAuth(firebaseApp);
             
-            // 🌟 深度離線體驗 (Local-First Architecture / IndexedDB)
+            // 🌟 深度離線體驗
             db = initializeFirestore(firebaseApp, {
                 localCache: persistentLocalCache({tabManager: persistentMultipleTabManager()})
             });
@@ -734,7 +774,8 @@
             subjects: [], 
             customDays: [], currentDayTab: '', timetableConfig: {}, classTimerInterval: null, unsubscribers: [],
             tempImageBase64: null,
-            filters: { subject: 'all', incompleteOnly: false, sortDesc: false }
+            filters: { subject: 'all', sortDesc: false },
+            viewMode: localStorage.getItem('hw_view_mode') || 'normal' // 🌟 記憶視圖模式
         };
 
         const safeStr = (str) => encodeURIComponent(str || '');
@@ -744,9 +785,9 @@
             );
         };
 
-        // 🌟 日期格式與過期判定 (精準版)
+        // 🌟 日期格式與過期判定
         const formatDateExact = (dateStr) => {
-            if(!dateStr) return { full: '無期限', diff: '', isOverdue: false, statusClass: 'bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-400' };
+            if(!dateStr) return { full: '無期限', diff: '', isOverdue: false, statusClass: 'bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-400', groupType: 'future' };
             const d = new Date(dateStr);
             const days = ['日','一','二','三','四','五','六'];
             const full = `${d.getFullYear()}-${(d.getMonth()+1).toString().padStart(2,'0')}-${d.getDate().toString().padStart(2,'0')} (星期${days[d.getDay()]})`;
@@ -759,14 +800,39 @@
 
             let diffStr = '';
             let statusClass = '';
+            let urgencyColor = '#6366f1'; 
             let isOverdue = false;
+            
+            // 🚄 資訊屏狀態分類
+            let groupType = 'future';
 
-            if(diffDays === 0) { diffStr = '今天到期'; statusClass = 'bg-amber-100 text-amber-700 dark:bg-amber-500/20 dark:text-amber-400 border-amber-200 dark:border-amber-500/30'; }
-            else if(diffDays === 1) { diffStr = '明天到期'; statusClass = 'bg-emerald-100 text-emerald-700 dark:bg-emerald-500/20 dark:text-emerald-400 border-emerald-200 dark:border-emerald-500/30'; }
-            else if(diffDays > 1) { diffStr = `${diffDays} 天後`; statusClass = 'bg-emerald-100 text-emerald-700 dark:bg-emerald-500/20 dark:text-emerald-400 border-emerald-200 dark:border-emerald-500/30'; }
-            else { diffStr = '已逾期'; isOverdue = true; statusClass = 'bg-red-100 text-red-700 dark:bg-red-500/20 dark:text-red-400 border-red-200 dark:border-red-500/30'; }
+            if(diffDays === 0) { 
+                diffStr = '今天到期'; 
+                statusClass = 'bg-red-500/10 text-red-600 dark:text-red-400 border-red-500/20'; 
+                urgencyColor = '#ef4444'; // Red
+                groupType = 'urgent';
+            }
+            else if(diffDays === 1) { 
+                diffStr = '明天到期'; 
+                statusClass = 'bg-amber-500/10 text-amber-600 dark:text-amber-400 border-amber-500/20'; 
+                urgencyColor = '#f59e0b'; // Amber
+                groupType = 'tomorrow';
+            }
+            else if(diffDays > 1) { 
+                diffStr = `${diffDays} 天後`; 
+                statusClass = 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/20'; 
+                urgencyColor = '#10b981'; // Emerald
+                groupType = 'future';
+            }
+            else { 
+                diffStr = '已逾期'; 
+                isOverdue = true; 
+                statusClass = 'bg-red-500 text-white border-red-600 animate-pulse'; 
+                urgencyColor = '#ef4444'; // Red
+                groupType = 'urgent';
+            }
 
-            return { full, diff: diffStr, isOverdue, diffDays, statusClass };
+            return { full, diff: diffStr, isOverdue, diffDays, statusClass, urgencyColor, groupType };
         };
 
         const UI = {
@@ -974,7 +1040,6 @@
                                 }).catch(e=>{});
                             }
 
-                            // --- 🌟 同步雲端資料庫設定 (Cloud Sync) ---
                             let needsRender = false;
                             if (state.profile.subjects && JSON.stringify(state.profile.subjects) !== JSON.stringify(state.subjects)) {
                                 state.subjects = state.profile.subjects;
@@ -997,6 +1062,7 @@
                                 app.settings.renderSubjects();
                                 app.timetable.renderDaySelector();
                                 app.timetable.initTracker();
+                                app.renders.tasks(); 
                             }
                         } else {
                             setDoc(docSnap.ref, { 
@@ -1041,7 +1107,7 @@
                 
                 if (typeof gsap !== 'undefined') {
                     gsap.fromTo("header", {y: -30, opacity: 0}, {y: 0, opacity: 1, duration: 0.5, ease: "power2.out"});
-                    gsap.fromTo(".glass-card:not(.task-card-anim)", {y: 20, opacity: 0}, {y: 0, opacity: 1, duration: 0.4, stagger: 0.03, ease: "power2.out", delay: 0.1});
+                    gsap.fromTo(".glass-card:not(.task-card-anim):not(.task-card-anim-board)", {y: 20, opacity: 0}, {y: 0, opacity: 1, duration: 0.4, stagger: 0.03, ease: "power2.out", delay: 0.1});
                     
                     const navBarMobile = document.getElementById('main-nav-bar');
                     if(navBarMobile) gsap.fromTo(navBarMobile, {y: 50, opacity: 0}, {y: 0, opacity: 1, duration: 0.6, ease: "back.out(1.2)", delay: 0.2});
@@ -1313,12 +1379,32 @@
                     state.subjects.forEach((s, index) => {
                         const hex = s.color || '#6366f1';
                         c.innerHTML += `
-                            <div class="flex items-center gap-3 bg-theme-card border border-theme-border rounded-[16px] pl-5 pr-2 py-2 shadow-sm transition-transform hover:scale-105 duration-300 group">
-                                <div class="w-3.5 h-3.5 rounded-full shadow-inner ring-2 ring-theme-bg" style="background-color: ${hex}"></div>
-                                <span class="text-[15px] font-bold text-theme-text font-literary tracking-wide mr-2">${escapeHTML(s.name)}</span>
-                                <button onclick="app.settings.deleteSubject(${index})" class="w-10 h-10 flex items-center justify-center rounded-[14px] text-theme-muted hover:bg-red-500/10 hover:text-red-500 transition-colors opacity-0 group-hover:opacity-100 focus:opacity-100 min-h-[44px] min-w-[44px]"><i class="fa-solid fa-xmark text-[16px]"></i></button>
+                            <div class="flex items-center gap-3 bg-theme-card border border-theme-border rounded-[16px] pl-4 pr-2 py-2 shadow-sm transition-transform hover:shadow-md duration-300 group cursor-grab active:cursor-grabbing" data-id="${s.name}">
+                                <div class="w-8 h-8 flex items-center justify-center text-theme-muted opacity-50 group-hover:opacity-100 drag-subject-handle shrink-0">
+                                    <i class="fa-solid fa-grip-vertical"></i>
+                                </div>
+                                <div class="w-3.5 h-3.5 rounded-full shadow-inner ring-2 ring-theme-bg shrink-0" style="background-color: ${hex}"></div>
+                                <span class="text-[15px] font-bold text-theme-text font-literary tracking-wide mr-2 flex-1 truncate">${escapeHTML(s.name)}</span>
+                                <button onclick="app.settings.deleteSubject(${index})" class="w-10 h-10 flex items-center justify-center rounded-[14px] text-theme-muted hover:bg-red-500/10 hover:text-red-500 transition-colors opacity-0 group-hover:opacity-100 focus:opacity-100 shrink-0"><i class="fa-solid fa-xmark text-[16px]"></i></button>
                             </div>
                         `;
+                    });
+
+                    // 🌟 啟動 SortableJS 拖曳排序
+                    if (app.settings.sortableSubjects) app.settings.sortableSubjects.destroy();
+                    app.settings.sortableSubjects = new Sortable(c, {
+                        animation: 250,
+                        handle: '.drag-subject-handle',
+                        ghostClass: 'sortable-ghost-class',
+                        onEnd: (evt) => {
+                            if(evt.oldIndex === evt.newIndex) return;
+                            const movedItem = state.subjects.splice(evt.oldIndex, 1)[0];
+                            state.subjects.splice(evt.newIndex, 0, movedItem);
+                            app.settings.saveSubjects();
+                            app.renders.subjectsPills();
+                            app.renders.tasks(); // 科目權重改變，重新渲染主頁順序
+                            UI.notify('科目權重已更新', 'success');
+                        }
                     });
                 },
                 addSubject: () => { 
@@ -1340,6 +1426,7 @@
                     app.settings.saveSubjects();
                     app.settings.renderSubjects();
                     app.renders.subjectsPills();
+                    app.renders.tasks();
                 },
                 saveSubjects: () => {
                     try { 
@@ -1404,7 +1491,7 @@
                                 <div id="preset-modal-inner" class="max-h-[60vh] overflow-y-auto no-scrollbar space-y-8 pb-2 text-left">
                                     ${app.settings.getPresetModalInnerHtml()}
                                 </div>`;
-                    UI.modal.open(html); // 將 sheet.open 替換為 modal.open 以實現中央浮空
+                    UI.modal.open(html);
                 },
                 togglePreset: (name, color) => {
                     const idx = state.subjects.findIndex(s => s.name === name);
@@ -1419,8 +1506,8 @@
                     app.settings.saveSubjects();
                     app.settings.renderSubjects();
                     app.renders.subjectsPills();
+                    app.renders.tasks(); // 科目數量改變，重新渲染主頁
                     
-                    // 動態重新渲染選單內部，不重新觸發整個彈窗的開啟動畫，徹底解決頁面跳動問題
                     const innerContainer = document.getElementById('preset-modal-inner');
                     if (innerContainer) {
                         innerContainer.innerHTML = app.settings.getPresetModalInnerHtml();
@@ -1451,7 +1538,7 @@
                     if(html) { c.innerHTML = html; c.classList.remove('hidden'); if(typeof gsap!=='undefined') gsap.fromTo(c, {opacity:0, y:-10}, {opacity:1, y:0, duration:0.5}); } 
                     else { c.classList.add('hidden'); }
                 },
-                generateTaskCard: (t, isAdmin) => {
+                generateTaskCard: (t, isAdmin, isBoard = false) => {
                     const done = t.status === 'completed', exam = t.type === 'exam';
                     const dateInfo = formatDateExact(t.dueDate);
                     const subjObj = state.subjects.find(s => s.name === t.subject) || { color: '#6366f1' };
@@ -1459,19 +1546,6 @@
                     const isGroupTask = !!t.groupId;
                     const rgbVals = hexToRgbVals(hexColor);
                     
-                    const cStyle = `style="--subj-color-rgb: ${rgbVals}; --subj-color-soft: ${hexColor};"`;
-                    const cClass = `glass-card task-card-anim p-4 md:p-5 relative flex items-stretch gap-3 md:gap-4 transition-all duration-300 w-full group ${done?'opacity-60 grayscale-[20%]':''} ${dateInfo.isOverdue && !done?'ring-2 ring-red-500/50 shadow-[0_0_20px_rgba(239,68,68,0.15)]':''}`; 
-                    
-                    const tagBaseClass = "px-2.5 py-1 rounded-[8px] text-[11px] font-bold tracking-wider whitespace-nowrap border";
-                    let bTagHtml = '';
-                    if (exam) {
-                        bTagHtml = `<span class="${tagBaseClass} bg-pink-500/10 text-pink-600 dark:text-pink-400 border-pink-500/20">測驗</span>`;
-                    } else {
-                        bTagHtml = `<span class="${tagBaseClass}" style="background: ${hexToRgba(hexColor, 0.1)}; color: ${hexColor}; border-color: ${hexToRgba(hexColor, 0.2)};">${escapeHTML(t.subject)}</span>`;
-                    }
-                    const broadcastTag = isGroupTask ? `<span class="${tagBaseClass} bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 border-indigo-500/20">廣播</span>` : '';
-                    
-                    // --- 修改：自動偵測第一行為標題，若有內文或標題過長才允許點擊 ---
                     let displayTitleHTML = '';
                     let hasMoreContent = false;
                     let rawTitleStr = '';
@@ -1483,7 +1557,6 @@
                             hasMoreContent = true;
                         }
                     } else {
-                        // 兼容舊資料
                         const lines = (t.content || '').trim().split('\n');
                         rawTitleStr = lines[0] || '無標題任務';
                         displayTitleHTML = escapeHTML(rawTitleStr);
@@ -1492,12 +1565,62 @@
                         }
                     }
                     
-                    if (hasMoreContent) {
-                        displayTitleHTML += '<span class="opacity-40 ml-1.5 font-sans font-normal text-[14px]">...</span>';
+                    if (hasMoreContent) displayTitleHTML += '<span class="opacity-40 ml-1.5 font-sans font-normal text-[14px]">...</span>';
+
+                    // 📊 如果是「Google 表格模式 (Board Mode)」
+                    if (isBoard) {
+                        const checkBtnBoard = !done ? `
+                            <button class="w-5 h-5 rounded-[6px] border-[2px] border-theme-muted/40 hover:border-brand-500 flex items-center justify-center text-transparent hover:text-brand-500 transition-colors bg-transparent shrink-0 group/chkbtn" onclick="event.stopPropagation(); app.tasks.markComplete('${t.id}', this.closest('[id^=task-]'))">
+                                <i class="fa-solid fa-check text-[10px] transform scale-50 opacity-0 transition-all group-hover/chkbtn:scale-100 group-hover/chkbtn:opacity-100"></i>
+                            </button>
+                        ` : `
+                            <button class="w-5 h-5 rounded-[6px] bg-emerald-500 border-none flex items-center justify-center text-white shrink-0 cursor-pointer" onclick="event.stopPropagation(); app.tasks.undoComplete('${t.id}')">
+                                <i class="fa-solid fa-check text-[10px]"></i>
+                            </button>
+                        `;
+
+                        return `
+                            <div class="flex items-center px-4 py-3 border-b border-theme-border/40 hover:bg-black/5 dark:hover:bg-white/5 transition-colors group/row ${done?'opacity-50 bg-theme-input/30':''}" id="task-${t.id}">
+                                <div class="w-10 shrink-0 flex justify-center">
+                                    ${checkBtnBoard}
+                                </div>
+                                <div class="w-[100px] shrink-0 flex flex-col text-[12px] font-mono tracking-tight">
+                                    <span class="${dateInfo.isOverdue && !done ? 'text-red-500 font-bold' : 'text-theme-text font-bold'}">${dateInfo.full.split(' ')[0].substring(5)}</span>
+                                    <span class="text-[10.5px] ${dateInfo.isOverdue || dateInfo.diffDays===0 && !done ? 'text-red-500 font-black' : 'text-theme-muted'}">${done ? 'Completed' : dateInfo.diff}</span>
+                                </div>
+                                <div class="w-[100px] shrink-0 pr-2">
+                                    ${exam ? `<span class="px-2 py-1 rounded-[6px] text-[11px] font-bold border truncate max-w-full inline-block bg-pink-500/10 text-pink-600 dark:text-pink-400 border-pink-500/20">測驗</span>` 
+                                           : `<span class="px-2.5 py-1 rounded-[6px] text-[11px] font-bold border truncate max-w-full inline-block" style="background: ${hexToRgba(hexColor, 0.1)}; color: ${hexColor}; border-color: ${hexToRgba(hexColor, 0.2)};">${escapeHTML(t.subject)}</span>`}
+                                </div>
+                                <div class="flex-1 min-w-0 flex items-center gap-2.5 cursor-pointer" onclick="app.tasks.openViewModal('${t.id}')">
+                                    <span class="text-[15px] font-bold text-theme-text truncate ${done?'line-through':''} hover:text-brand-500 transition-colors">${displayTitleHTML}</span>
+                                    ${hasMoreContent ? '<i class="fa-regular fa-comment-dots text-brand-500 text-[14px] opacity-70 flex-shrink-0" title="點擊查看內文"></i>' : ''}
+                                    ${t.attachment ? '<i class="fa-regular fa-image text-blue-500 text-[14px] opacity-70 flex-shrink-0" title="包含圖片"></i>' : ''}
+                                    ${isGroupTask ? '<i class="fa-solid fa-users text-indigo-500 text-[12px] opacity-70 flex-shrink-0" title="群組廣播任務"></i>' : ''}
+                                </div>
+                                <div class="w-[100px] shrink-0 flex justify-center items-center gap-2 opacity-100 sm:opacity-0 sm:group-hover/row:opacity-100 transition-opacity">
+                                    ${!done ? `<button onclick="event.stopPropagation(); app.tasks.openEditModal('${t.id}')" class="w-8 h-8 rounded-[8px] text-theme-muted hover:bg-theme-input hover:text-brand-500 transition-colors border border-transparent hover:border-theme-border"><i class="fa-solid fa-pen text-[13px]"></i></button>` : ''}
+                                    <button onclick="event.stopPropagation(); app.tasks.confirmDelete('${t.id}')" class="w-8 h-8 rounded-[8px] text-theme-muted hover:bg-red-500/10 hover:text-red-500 transition-colors border border-transparent hover:border-red-500/20"><i class="fa-solid fa-trash text-[13px]"></i></button>
+                                </div>
+                            </div>
+                        `;
                     }
 
-                    const isTitleLong = rawTitleStr.length > 18; // 標題超過 18 個字視為過長
-                    const isClickable = hasMoreContent || isTitleLong; // 只有內文多於一行，或標題太長，才啟動點擊查看
+                    // 📇 正常卡片模式 (Normal Mode)
+                    const cStyle = `style="--subj-color-rgb: ${rgbVals}; --subj-color-soft: ${hexColor};"`;
+                    const cClass = `glass-card task-card-anim p-4 md:p-5 relative flex flex-col sm:flex-row items-start sm:items-center gap-3 md:gap-4 transition-all duration-300 w-full group ${done?'opacity-60 grayscale-[20%]':''}`; 
+                    
+                    const tagBaseClass = "px-2.5 py-1 rounded-[8px] text-[11px] font-bold tracking-wider whitespace-nowrap border";
+                    let bTagHtml = '';
+                    if (exam) {
+                        bTagHtml = `<span class="${tagBaseClass} bg-pink-500/10 text-pink-600 dark:text-pink-400 border-pink-500/20">測驗</span>`;
+                    } else {
+                        bTagHtml = `<span class="${tagBaseClass}" style="background: ${hexToRgba(hexColor, 0.1)}; color: ${hexColor}; border-color: ${hexToRgba(hexColor, 0.2)};">${escapeHTML(t.subject)}</span>`;
+                    }
+                    const broadcastTag = isGroupTask ? `<span class="${tagBaseClass} bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 border-indigo-500/20">廣播</span>` : '';
+
+                    const isTitleLong = rawTitleStr.length > 18; 
+                    const isClickable = hasMoreContent || isTitleLong; 
                     
                     const moreContentHint = isClickable 
                         ? `<p class="text-[12px] text-brand-500 mt-1 font-bold flex items-center justify-center sm:justify-start gap-1.5 opacity-80 group-hover:opacity-100 transition-opacity"><i class="fa-regular fa-comment-dots text-[14px]"></i> 點擊查看完整內容</p>` 
@@ -1513,7 +1636,7 @@
                     ` : '';
 
                     const checkBtn = !done ? `
-                        <button class="w-[28px] h-[28px] rounded-full border-[2px] border-theme-muted/40 hover:border-brand-500 flex items-center justify-center text-transparent hover:text-white transition-all duration-300 group/chk shadow-sm bg-transparent shrink-0 relative" onclick="event.stopPropagation(); app.tasks.markComplete('${t.id}', this.closest('.task-card-anim'))" title="標記完成">
+                        <button class="w-[28px] h-[28px] rounded-full border-[2px] border-theme-muted/40 hover:border-brand-500 flex items-center justify-center text-transparent hover:text-white transition-all duration-300 group/chk shadow-sm bg-transparent shrink-0 relative" onclick="event.stopPropagation(); app.tasks.markComplete('${t.id}', this.closest('.glass-card'))" title="標記完成">
                             <div class="absolute inset-0 opacity-0 group-hover/chk:opacity-100 transition-opacity rounded-full bg-brand-500"></div>
                             <i class="fa-solid fa-check text-[13px] relative z-10 transform scale-50 group-hover/chk:scale-100 transition-transform duration-300"></i>
                         </button>
@@ -1523,16 +1646,10 @@
                         </button>
                     `;
 
-                    let badgeColors = 'bg-slate-100 text-slate-500 dark:bg-slate-800 dark:text-slate-400 border-slate-200 dark:border-slate-700';
-                    if (!done && dateInfo.diff) {
-                        if(dateInfo.diffDays === 0) badgeColors = 'bg-amber-100 text-amber-700 dark:bg-amber-500/20 dark:text-amber-400 border-amber-200 dark:border-amber-500/30';
-                        else if(dateInfo.diffDays > 0) badgeColors = 'bg-emerald-100 text-emerald-700 dark:bg-emerald-500/20 dark:text-emerald-400 border-emerald-200 dark:border-emerald-500/30';
-                        else badgeColors = 'bg-red-100 text-red-700 dark:bg-red-500/20 dark:text-red-400 border-red-200 dark:border-red-500/30';
-                    }
-                    const statusBadgeHtml = `<span class="px-2.5 py-1 rounded-[8px] text-[11px] font-bold tracking-widest whitespace-nowrap border ${badgeColors}">${done ? '已完成' : (dateInfo.diff || '無期限')}</span>`;
+                    const statusBadgeHtml = `<span class="px-2.5 py-1 rounded-[8px] text-[11px] font-bold tracking-widest whitespace-nowrap border ${dateInfo.statusClass}">${done ? '已完成' : (dateInfo.isOverdue ? '延誤 / OVERDUE' : (dateInfo.diff || '無期限'))}</span>`;
 
                     return `
-                        <div class="${cClass} flex-col sm:flex-row items-start sm:items-center py-4 sm:py-5" id="task-${t.id}" ${cStyle}>
+                        <div class="${cClass}" id="task-${t.id}" ${cStyle}>
                             <div class="flex items-center gap-3.5 w-full sm:w-[130px] shrink-0 mb-3 sm:mb-0">
                                 <div class="shrink-0 flex justify-center">
                                     ${checkBtn}
@@ -1543,7 +1660,6 @@
                                 </div>
                             </div>
                             
-                            <!-- ✨ 修正：還原原本清爽佈局，移除突兀的背景圓角，僅讓內部文字層有透明度點擊效果 -->
                             <div class="flex-1 min-w-0 w-full mb-4 sm:mb-0 sm:px-5 flex items-center justify-center sm:justify-start gap-3 border-l-0 sm:border-l-[2px] border-black/5 dark:border-white/5">
                                 <div class="flex-1 min-w-0 w-full flex flex-col justify-center text-center sm:text-left ${clickableClass}" ${onClickAttr}>
                                     <h3 class="text-[17px] md:text-[18px] font-bold text-theme-text leading-snug truncate ${done?'line-through opacity-50':''}">${displayTitleHTML}</h3>
@@ -1555,7 +1671,7 @@
                             <div class="flex items-center justify-between sm:justify-end gap-4 w-full sm:w-auto shrink-0 border-t border-theme-border/30 sm:border-none pt-4 sm:pt-0">
                                 <div class="flex sm:flex-col items-center sm:items-end gap-2 sm:gap-1.5 text-right">
                                     ${statusBadgeHtml}
-                                    <div class="text-[12px] font-medium text-theme-muted flex items-center gap-1.5">
+                                    <div class="text-[12px] font-medium text-theme-muted flex items-center gap-1.5" style="${!done && dateInfo.diffDays <= 1 && dateInfo.diffDays >= 0 ? `color: ${dateInfo.urgencyColor};` : ''}">
                                         <i class="fa-regular fa-calendar opacity-70"></i> ${dateInfo.diffDays <= 1 && dateInfo.diffDays >= 0 ? dateInfo.diff : dateInfo.full.split(' ')[0]}
                                     </div>
                                 </div>
@@ -1575,36 +1691,114 @@
                         </div>`;
                 },
                 tasks: () => {
-                    const todo = document.getElementById('todo-list'), hist = document.getElementById('history-list'); 
-                    if(!todo || !hist) return;
-                    let tc=0, hc=0; todo.innerHTML = ''; hist.innerHTML = '';
+                    const isBoard = state.viewMode === 'board';
+                    
+                    const viewIcon = document.getElementById('view-mode-icon');
+                    const viewText = document.getElementById('view-mode-text');
+                    const viewBtn = document.getElementById('toggle-view-btn');
+                    if(viewIcon && viewText && viewBtn) {
+                        if(isBoard) {
+                            viewIcon.className = 'fa-solid fa-table-list';
+                            viewText.textContent = '資訊屏模式';
+                            viewBtn.classList.replace('text-brand-500', 'text-pink-500');
+                        } else {
+                            viewIcon.className = 'fa-solid fa-list';
+                            viewText.textContent = '正常模式';
+                            viewBtn.classList.replace('text-pink-500', 'text-brand-500');
+                        }
+                    }
+
+                    const flatContainer = document.getElementById('todo-list-flat');
+                    const groupedContainer = document.getElementById('todo-list-grouped');
+                    
+                    if(isBoard) {
+                        flatContainer.classList.add('hidden');
+                        flatContainer.classList.remove('flex');
+                        groupedContainer.classList.remove('hidden');
+                        groupedContainer.classList.add('flex');
+                    } else {
+                        groupedContainer.classList.add('hidden');
+                        groupedContainer.classList.remove('flex');
+                        flatContainer.classList.remove('hidden');
+                        flatContainer.classList.add('flex');
+                    }
+
+                    const todoTableBody = document.getElementById('todo-table-body');
+                    const hist = document.getElementById('history-list'); 
+                    
+                    if(!todoTableBody || !hist) return;
+                    
+                    let tc=0, hc=0; 
+                    todoTableBody.innerHTML = ''; 
+                    flatContainer.innerHTML = ''; 
+                    hist.innerHTML = '';
                     
                     let displayTasks = [...state.tasks];
                     
                     if (state.filters.subject !== 'all') {
                         displayTasks = displayTasks.filter(t => t.subject === state.filters.subject);
                     }
-                    if (state.filters.incompleteOnly) {
-                        displayTasks = displayTasks.filter(t => t.status !== 'completed');
-                    }
+                    
                     displayTasks.sort((a,b) => {
                         let d1 = a.dueDate || '2099'; let d2 = b.dueDate || '2099';
-                        return state.filters.sortDesc ? d2.localeCompare(d1) : d1.localeCompare(d2);
+                        if (d1 !== d2) {
+                            return state.filters.sortDesc ? d2.localeCompare(d1) : d1.localeCompare(d2);
+                        } else {
+                            const idxA = state.subjects.findIndex(s => s.name === a.subject);
+                            const idxB = state.subjects.findIndex(s => s.name === b.subject);
+                            const weightA = idxA !== -1 ? idxA : 999;
+                            const weightB = idxB !== -1 ? idxB : 999;
+                            return weightA - weightB;
+                        }
                     });
 
-                    let newHtmlTodo = '';
+                    let newHtmlUrgent = '';
+                    let newHtmlTomorrow = '';
+                    let newHtmlFuture = '';
+                    let newHtmlFlat = '';
                     let newHtmlHist = '';
                     
+                    let cUrgent=0, cTomorrow=0, cFuture=0;
                     const isAdmin = state.profile && state.profile.role === 'provider';
 
                     displayTasks.forEach(t => {
                         const done = t.status === 'completed';
-                        const cardHTML = app.renders.generateTaskCard(t, isAdmin);
+                        const cardHTML = app.renders.generateTaskCard(t, isAdmin, isBoard);
                         
-                        if (done) { newHtmlHist += cardHTML; hc++; } else { newHtmlTodo += cardHTML; tc++; }
+                        if (done) { 
+                            newHtmlHist += app.renders.generateTaskCard(t, isAdmin, false); hc++; 
+                        } else { 
+                            if (isBoard) {
+                                const dateInfo = formatDateExact(t.dueDate);
+                                if (dateInfo.groupType === 'urgent') { newHtmlUrgent += cardHTML; cUrgent++; }
+                                else if (dateInfo.groupType === 'tomorrow') { newHtmlTomorrow += cardHTML; cTomorrow++; }
+                                else { newHtmlFuture += cardHTML; cFuture++; }
+                            } else {
+                                newHtmlFlat += cardHTML;
+                            }
+                            tc++; 
+                        }
                     });
                     
-                    todo.innerHTML = newHtmlTodo;
+                    if (isBoard) {
+                        let finalTableHtml = '';
+                        if (cUrgent > 0) {
+                            finalTableHtml += `<div class="bg-red-500/10 border-y border-red-500/20 px-4 py-2 text-[12px] font-bold text-red-600 dark:text-red-400 uppercase tracking-widest flex items-center gap-2"><i class="fa-solid fa-triangle-exclamation"></i> 緊急 / 今日交</div>`;
+                            finalTableHtml += newHtmlUrgent;
+                        }
+                        if (cTomorrow > 0) {
+                            finalTableHtml += `<div class="bg-amber-500/10 border-y border-amber-500/20 px-4 py-2 text-[12px] font-bold text-amber-600 dark:text-amber-400 uppercase tracking-widest flex items-center gap-2"><i class="fa-regular fa-clock"></i> 明日需交</div>`;
+                            finalTableHtml += newHtmlTomorrow;
+                        }
+                        if (cFuture > 0) {
+                            finalTableHtml += `<div class="bg-emerald-500/10 border-y border-emerald-500/20 px-4 py-2 text-[12px] font-bold text-emerald-600 dark:text-emerald-400 uppercase tracking-widest flex items-center gap-2"><i class="fa-regular fa-calendar-check"></i> 未來任務</div>`;
+                            finalTableHtml += newHtmlFuture;
+                        }
+                        todoTableBody.innerHTML = finalTableHtml;
+                    } else {
+                        flatContainer.innerHTML = newHtmlFlat;
+                    }
+                    
                     hist.innerHTML = newHtmlHist;
                     
                     const elE1 = document.getElementById('todo-empty'); if(elE1) elE1.style.display = tc===0?'flex':'none';
@@ -1646,7 +1840,7 @@
                     }
 
                     if (typeof gsap !== 'undefined') {
-                        gsap.fromTo(".task-card-anim", 
+                        gsap.fromTo(".task-card-anim, .task-card-anim-board", 
                             { opacity: 0, y: 15, scale: 0.98 }, 
                             { opacity: 1, y: 0, scale: 1, duration: 0.2, stagger: 0.02, ease: "power2.out", clearProps: "opacity,transform" }
                         );
@@ -1712,6 +1906,12 @@
                 }
             },
             tasks: {
+                toggleViewMode: () => {
+                    state.viewMode = state.viewMode === 'normal' ? 'board' : 'normal';
+                    localStorage.setItem('hw_view_mode', state.viewMode);
+                    app.renders.tasks();
+                    UI.notify(state.viewMode === 'board' ? '切換至資訊屏 (主科+時間分組)' : '切換至正常模式 (扁平清單)', 'info');
+                },
                 openWidgetTasksModal: (type) => {
                     const today = new Date().toISOString().split('T')[0];
                     const isAdmin = state.profile && state.profile.role === 'provider';
@@ -1735,7 +1935,10 @@
 
                     filteredTasks.sort((a,b) => {
                         let d1 = a.dueDate || '2099'; let d2 = b.dueDate || '2099';
-                        return d1.localeCompare(d2);
+                        if (d1 !== d2) return d1.localeCompare(d2);
+                        const idxA = state.subjects.findIndex(s => s.name === a.subject);
+                        const idxB = state.subjects.findIndex(s => s.name === b.subject);
+                        return (idxA !== -1 ? idxA : 999) - (idxB !== -1 ? idxB : 999);
                     });
 
                     let html = `
@@ -1750,7 +1953,7 @@
                         html += `<div class="text-center py-12 text-theme-muted font-bold"><i class="fa-solid fa-mug-hot text-4xl mb-4 opacity-50"></i><br>目前沒有此類任務</div>`;
                     } else {
                         filteredTasks.forEach(t => {
-                            html += app.renders.generateTaskCard(t, isAdmin);
+                            html += app.renders.generateTaskCard(t, isAdmin, state.viewMode === 'board');
                         });
                     }
                     html += `</div>`;
@@ -1760,7 +1963,6 @@
                 openFilterSubjectModal: () => {
                     const currentVal = state.filters.subject;
                     
-                    // 📊 統計目前有哪些科目有「未完成」的任務，並計算數量
                     const subjCounts = {};
                     let totalIncomplete = 0;
                     state.tasks.forEach(t => {
@@ -1774,7 +1976,6 @@
                     html += `<p class="text-[14px] text-theme-muted mb-6 font-medium">系統僅顯示目前有待辦任務的科目，方便您聚焦。</p>`;
                     html += `<div class="flex flex-col gap-3 max-h-[60vh] overflow-y-auto no-scrollbar pb-6">`;
                     
-                    // 🌟 所有科目按鈕
                     const isAll = currentVal === 'all';
                     html += `
                         <button onclick="app.tasks.setFilterSubject('all')" class="w-full flex items-center justify-between p-4 rounded-[24px] border transition-all duration-300 active:scale-95 ${isAll ? 'bg-brand-500/10 border-brand-500/30 shadow-md' : 'bg-[#f1f5f9]/50 dark:bg-[#334155]/50 border-theme-border hover:bg-theme-border hover:shadow-sm'}">
@@ -1788,7 +1989,6 @@
                         </button>
                     `;
 
-                    // 🌟 動態生成「有任務」的科目標籤
                     const activeSubjects = Object.keys(subjCounts).sort();
                     
                     if (activeSubjects.length === 0) {
@@ -1796,7 +1996,6 @@
                     } else {
                         activeSubjects.forEach(subjName => {
                             const count = subjCounts[subjName];
-                            // 查找科目設定以獲取顏色
                             const s = state.subjects.find(sub => sub.name === subjName) || { color: '#6366f1' };
                             const hex = s.color;
                             const isActive = currentVal === subjName;
@@ -1835,10 +2034,13 @@
                     const btn = document.getElementById('filter-sort');
                     if(btn) {
                         const icon = btn.querySelector('i');
+                        const text = document.getElementById('filter-sort-text');
                         if (state.filters.sortDesc) {
                             icon.classList.replace('fa-arrow-down-short-wide', 'fa-arrow-up-wide-short');
+                            text.textContent = '最遠到期優先';
                         } else {
                             icon.classList.replace('fa-arrow-up-wide-short', 'fa-arrow-down-short-wide');
+                            text.textContent = '日期排序 (主科優先)';
                         }
                     }
                     app.renders.tasks();
@@ -2002,7 +2204,6 @@
                     const id = elId ? elId.value : '';
                     const rawContent = elContent ? elContent.value.trim() : '';
                     
-                    // --- 智慧拆分：第一行為標題，其餘為內文 ---
                     let title = '';
                     let content = '';
                     const lines = rawContent.split('\n');
@@ -2030,7 +2231,7 @@
                         if(typeof gsap !== 'undefined') gsap.to(saveBtn, { scale: 0.98, duration: 0.2, yoyo: true, repeat: -1 });
                     }
                     
-                    const data = { title: '', content, subject, type, attachment: state.tempImageBase64 };
+                    const data = { title, content, subject, type, attachment: state.tempImageBase64 };
                     const createDates = [dueDate];
                     
                     try {
@@ -2148,7 +2349,6 @@
                 openEditModal: (id) => {
                     const task = state.tasks.find(x => x.id === id); if(!task) return;
                     
-                    // 重新組合標題與內文供編輯
                     const fullContent = task.title ? (task.title + (task.content ? '\n' + task.content : '')) : (task.content || '');
                     
                     let dropdownItems = '';
@@ -2179,7 +2379,6 @@
                                 <div class="flex-1 relative">
                                     <label class="block text-[12px] font-bold text-theme-muted uppercase tracking-widest mb-2 pl-1">科目 Subject</label>
                                     
-                                    <!-- 🌟 自訂科目下拉選單 (Custom Dropdown Model) -->
                                     <div class="relative w-full">
                                         <input type="hidden" id="edit-subject" value="${escapeHTML(task.subject)}">
                                         <button type="button" onclick="app.tasks.toggleEditSubjectDropdown()" id="edit-subject-btn" class="w-full h-[56px] px-5 bg-[#f1f5f9]/50 dark:bg-[#334155]/50 border border-black/5 dark:border-white/5 focus:border-brand-500 focus:bg-theme-card rounded-[20px] text-[15px] font-bold text-theme-text font-literary tracking-wide flex justify-between items-center shadow-inner transition-all duration-200 outline-none hover:border-brand-500/50">
@@ -2187,7 +2386,6 @@
                                             <i class="fa-solid fa-chevron-down text-[13px] text-theme-muted transition-transform duration-300" id="edit-subject-icon"></i>
                                         </button>
                                         
-                                        <!-- 展開層 -->
                                         <div id="edit-subject-dropdown" class="absolute left-0 right-0 top-[calc(100%+8px)] bg-theme-card border border-theme-border rounded-[20px] shadow-[0_15px_40px_rgba(0,0,0,0.12)] dark:shadow-[0_15px_40px_rgba(0,0,0,0.6)] z-[60] hidden flex-col py-2 max-h-[220px] overflow-y-auto opacity-0 transform -translate-y-2 transition-all duration-300 no-scrollbar">
                                             ${dropdownItems}
                                         </div>
@@ -2237,7 +2435,6 @@
                 saveEdit: async (id) => {
                     const rawContent = document.getElementById('edit-content').value.trim();
                     
-                    // --- 智慧拆分：第一行為標題，其餘為內文 ---
                     let title = '';
                     let content = '';
                     const lines = rawContent.split('\n');
@@ -2304,7 +2501,6 @@
                 confirmDelete: (id) => { UI.modal.open(`<div class="text-center"><div class="w-24 h-24 bg-red-500/10 rounded-[32px] flex items-center justify-center mx-auto mb-8 shadow-inner border border-red-500/20"><i class="fa-solid fa-trash-can text-red-500 text-5xl drop-shadow-md"></i></div><h3 class="text-[28px] font-black text-theme-text mb-4 tracking-tight">刪除任務？</h3><p class="text-[16px] text-theme-muted mb-10 font-medium">刪除後將無法從歷史紀錄中找回。</p><div class="flex gap-4"><button onclick="app.UI.modal.close()" class="flex-1 glass-card py-4 font-bold text-theme-text hover:-translate-y-1 hover:bg-theme-input active:scale-95 transition-all duration-300 text-[16px] min-h-[56px]">取消</button><button onclick="app.tasks.doDelete('${id}')" class="flex-1 bg-red-600 hover:bg-red-500 rounded-[20px] py-4 font-bold text-white shadow-[0_5px_20px_rgba(239,68,68,0.4)] hover:-translate-y-1 active:scale-95 transition-all duration-300 text-[16px] border border-transparent min-h-[56px]">確認刪除</button></div></div>`); },
                 doDelete: async (id) => { try { await deleteDoc(doc(db, API.paths.tasks(), id)); AdminService.log('TASK_DELETED', { taskId: id }); UI.modal.close(); UI.notify('已永久刪除'); } catch(e) { UI.notify('刪除失敗', 'error'); } },
                 
-                // 🌍 全域刪除邏輯
                 confirmGlobalDelete: (localId, originalId, groupId) => {
                     UI.modal.open(`
                         <div class="text-center">
@@ -2322,21 +2518,18 @@
                 },
                 doGlobalDelete: async (localId, originalId, groupId) => {
                     try {
-                        // 1. 先刪除自己的本地副本
                         await deleteDoc(doc(db, API.paths.tasks(), localId));
                         AdminService.log('TASK_GLOBAL_DELETED', { taskId: localId, originalId, groupId });
                         UI.modal.close();
                         
                         UI.notify('已為您刪除。系統正嘗試同步至其他成員裝置。', 'success');
                         
-                        // 2. Client-side Fan-out Delete (嘗試為每個成員刪除)
-                        // 注意：這依賴於 Firebase Security Rules 允許 Provider 讀寫成員的 Subcollection
                         try {
                             const gSnap = await getDoc(doc(db, API.paths.groups(), groupId));
                             if(gSnap.exists()) {
                                 const members = gSnap.data().members || [];
                                 members.forEach(async uid => {
-                                    if(uid === state.user.uid) return; // 自己已經刪了
+                                    if(uid === state.user.uid) return; 
                                     try {
                                         const q = query(collection(db, `artifacts/${internalAppId}/users/${uid}/assignments`), where('originalTaskId', '==', originalId));
                                         const snap = await getDocs(q);
@@ -2373,7 +2566,6 @@
                     
                     try {
                         const batch = writeBatch(db);
-                        // Firebase 的 batch 刪除最多一次支援 500 個，通常歷史記錄不太會超過這個數值，直接加入 batch
                         completedTasks.forEach(t => {
                             batch.delete(doc(db, API.paths.tasks(), t.id));
                         });
